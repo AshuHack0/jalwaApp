@@ -1,18 +1,39 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function ActivityScreen() {
   const [todayBonus] = useState('₹0.00');
   const [totalBonus] = useState('₹0.00');
 
   const activityCategories = [
-    { name: 'Activity Award', icon: 'medal', color: '#F97316' },
-    { name: 'Invitation bonus', icon: 'person-add', color: '#3B82F6' },
-    { name: 'Betting rebate', icon: 'wallet', color: '#F97316' },
-    { name: 'Super Jackpot', icon: 'trophy', color: '#10B981' },
+    { name: 'Activity Award', icon: 'medal' as const, color: '#F97316' },
+    { name: 'Invitation bonus', icon: 'person-add' as const, color: '#3B82F6' },
+    { name: 'Betting rebate', icon: 'wallet' as const, color: '#F97316' },
+    { name: 'Super Jackpot', icon: 'trophy' as const, color: '#10B981' },
+  ];
+
+  const promotionalBanners = [
+    {
+      id: 1,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_202505051626178ysv.png'),
+    },
+    {
+      id: 2,
+      title: 'MINI GAMES DAILY MISSION REWARDS!',
+      icon: 'baseball' as const,
+      bannerImage: require('@/assets/Banner_20250505174559l35y.jpg'),
+    },
+    {
+      id: 3,
+      title: 'Benefits of Using AR WALLET',
+      icon: 'wallet' as const,
+      bannerImage: require('@/assets/Banner_20250509160039hucu.jpg'),
+    },
   ];
 
   return (
@@ -89,61 +110,26 @@ export default function ActivityScreen() {
 
         {/* Promotional Banners */}
         <View style={styles.bannersSection}>
-          {/* 7-DAYS CUMULATIVE BETTING REWARDS */}
-          <TouchableOpacity style={styles.bannerCard}>
-            <View style={styles.bannerHeader}>
-              <ThemedText style={styles.bannerLogo}>Jalwa.Game</ThemedText>
-            </View>
-            <View style={styles.bannerImagePlaceholder}>
-              <Ionicons name="airplane" size={48} color="#3B82F6" />
-              <View style={styles.bannerBadge}>
-                <ThemedText style={styles.badgeText}>DAY 7</ThemedText>
-                <ThemedText style={styles.badgePercent}>500%</ThemedText>
+          {promotionalBanners.map((banner) => (
+            <TouchableOpacity key={banner.id} style={styles.bannerCard}>
+              <View style={styles.bannerHeader}>
+                <Image 
+                  source={require('@/assets/h5setting_20250315141734j61m.png')} 
+                  style={styles.bannerLogo}
+                  resizeMode="contain"
+                />
               </View>
-            </View>
-            <View style={styles.bannerContent}>
-              <ThemedText style={styles.bannerTitle}>7-DAYS CUMULATIVE BETTING REWARDS</ThemedText>
-              <ThemedText style={styles.bannerDescription}>
-                Weekly betting task for mini games Claim your rewards every week!
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
-
-          {/* MINI GAMES DAILY MISSION REWARDS */}
-          <TouchableOpacity style={styles.bannerCard}>
-            <View style={styles.bannerHeader}>
-              <ThemedText style={styles.bannerLogo}>Jalwa.Game</ThemedText>
-            </View>
-            <View style={styles.bannerImagePlaceholder}>
-              <Ionicons name="baseball" size={48} color="#3B82F6" />
-              <View style={styles.dailyBadge}>
-                <ThemedText style={styles.dailyBadgeText}>+100 DAILY</ThemedText>
+              <ImageBackground 
+                source={banner.bannerImage} 
+                style={styles.bannerImagePlaceholder}
+                imageStyle={styles.bannerImageStyle}
+              >
+              </ImageBackground>
+              <View style={styles.bannerContent}>
+                <ThemedText style={styles.bannerTitle}>{banner.title}</ThemedText>
               </View>
-            </View>
-            <View style={styles.bannerContent}>
-              <ThemedText style={styles.bannerTitle}>MINI GAMES DAILY MISSION REWARDS!</ThemedText>
-              <ThemedText style={styles.bannerDescription}>
-                Daily Mini Games Recharge Betting Tasks New excitement awaits you!
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
-
-          {/* Benefits of Using AR WALLET */}
-          <TouchableOpacity style={styles.bannerCard}>
-            <View style={styles.bannerHeader}>
-              <ThemedText style={styles.bannerLogo}>Jalwa.Game</ThemedText>
-            </View>
-            <View style={styles.bannerImagePlaceholder}>
-              <Ionicons name="wallet" size={48} color="#3B82F6" />
-              <Ionicons name="lock-closed" size={24} color="#3B82F6" style={styles.lockIcon} />
-            </View>
-            <View style={styles.bannerContent}>
-              <ThemedText style={styles.bannerTitle}>Benefits of Using AR WALLET</ThemedText>
-              <ThemedText style={styles.bannerDescription}>
-                Boost your Deposit to Earn and Withdraw Easily Using AR Wallet!
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          ))}
         </View>
 
         {/* Advertisement Banner */}
@@ -315,26 +301,39 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   bannerCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    position: 'relative',
+    backgroundColor: '#011341',
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 16,
   },
   bannerHeader: {
-    padding: 12,
-    paddingBottom: 8,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 10,
+    elevation: 10,
+    padding: 6,
+    paddingLeft: 2,
+    paddingVertical: 4,
+    // paddingBottom: 8,
+    backgroundColor: '#0D31A9',
+    borderTopLeftRadius: 16,
+    borderBottomRightRadius: 36,
+    overflow: 'hidden',
   },
   bannerLogo: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#fff',
+    width: 100,
+    height: 20,
+    // backgroundColor: 'red',
   },
   bannerImagePlaceholder: {
     height: 160,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    alignItems: 'center',
-    justifyContent: 'center',
     position: 'relative',
+  },
+  bannerImageStyle: {
+    resizeMode: 'cover',
   },
   bannerBadge: {
     position: 'absolute',
@@ -376,17 +375,13 @@ const styles = StyleSheet.create({
   },
   bannerContent: {
     padding: 16,
+    paddingVertical: 10,
     gap: 8,
   },
   bannerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
-  },
-  bannerDescription: {
-    fontSize: 12,
-    color: '#9BA1A6',
-    lineHeight: 18,
   },
   adBanner: {
     marginHorizontal: 16,
