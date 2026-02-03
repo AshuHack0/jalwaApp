@@ -1,6 +1,5 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -9,10 +8,10 @@ export default function ActivityScreen() {
   const [totalBonus] = useState('₹0.00');
 
   const activityCategories = [
-    { name: 'Activity Award', icon: 'medal' as const, color: '#F97316' },
-    { name: 'Invitation bonus', icon: 'person-add' as const, color: '#3B82F6' },
-    { name: 'Betting rebate', icon: 'wallet' as const, color: '#F97316' },
-    { name: 'Super Jackpot', icon: 'trophy' as const, color: '#10B981' },
+    { name: 'Activity Award', image: require('@/assets/activityReward-66772619.webp') },
+    { name: 'Invitation bonus', image: require('@/assets/activityReward-66772619.webp') },
+    { name: 'Betting rebate', image: require('@/assets/activityReward-66772619.webp') },
+    { name: 'Super Jackpot', image: require('@/assets/activityReward-66772619.webp') },
   ];
 
   const promotionalBanners = [
@@ -42,10 +41,15 @@ export default function ActivityScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[0]}
       >
         {/* Top Header */}
         <View style={styles.header}>
-          <ThemedText style={styles.logoText}>Jalwa.Game</ThemedText>
+          <Image 
+            source={require('@/assets/h5setting_20250315140925tbe6.png')} 
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         {/* Bonus Information Section */}
@@ -70,8 +74,12 @@ export default function ActivityScreen() {
         <View style={styles.categoriesGrid}>
           {activityCategories.map((category, index) => (
             <TouchableOpacity key={index} style={styles.categoryCard}>
-              <View style={[styles.categoryIconContainer, { backgroundColor: category.color + '20' }]}>
-                <Ionicons name={category.icon} size={32} color={category.color} />
+              <View style={[styles.categoryIconContainer]}>
+                <Image 
+                  source={category.image} 
+                  style={styles.categoryImage}
+                  resizeMode="contain"
+                />
               </View>
               <ThemedText style={styles.categoryLabel}>{category.name}</ThemedText>
             </TouchableOpacity>
@@ -82,6 +90,12 @@ export default function ActivityScreen() {
         <View style={styles.mainCards}>
           <TouchableOpacity style={[styles.mainCard, styles.giftsCard]}>
             <View style={styles.cardContent}>
+              <ImageBackground 
+                source={require('@/assets/signInBanner-ff4a210f.webp')} 
+                style={styles.giftsCardImage}
+                imageStyle={styles.giftsCardImage}
+              >
+              </ImageBackground>
               <View style={styles.cardTextContainer}>
                 <ThemedText style={styles.cardTitle}>Gifts</ThemedText>
                 <ThemedText style={styles.cardDescription}>
@@ -93,6 +107,12 @@ export default function ActivityScreen() {
 
           <TouchableOpacity style={[styles.mainCard, styles.attendanceCard]}>
             <View style={styles.cardContent}>
+              <ImageBackground 
+                source={require('@/assets/giftRedeem-bb2f7a92.webp')} 
+                style={styles.giftsCardImage}
+                imageStyle={styles.giftsCardImage}
+              >
+              </ImageBackground>
               <View style={styles.cardTextContainer}>
                 <ThemedText style={styles.cardTitle}>Attendance bonus</ThemedText>
                 <ThemedText style={styles.cardDescription}>
@@ -103,10 +123,6 @@ export default function ActivityScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Recharge Bonus Section */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>RECHARGE BONUS FOR NEW PLAYERS</ThemedText>
-        </View>
 
         {/* Promotional Banners */}
         <View style={styles.bannersSection}>
@@ -132,28 +148,6 @@ export default function ActivityScreen() {
           ))}
         </View>
 
-        {/* Advertisement Banner */}
-        <View style={styles.adBanner}>
-          <View style={styles.adHeader}>
-            <ThemedText style={styles.adLogo}>Jalwa.Game</ThemedText>
-          </View>
-          <View style={styles.adContent}>
-            <View style={styles.adTextContainer}>
-              <ThemedText style={styles.adTitle}>Take Your Experience to the Next Level</ThemedText>
-              <ThemedText style={styles.adDescription}>
-                Install Now 1.1.1.1 for Faster, Safer, and Smoother browsing
-              </ThemedText>
-            </View>
-            <View style={styles.adImagePlaceholder}>
-              <Ionicons name="rocket" size={48} color="#3B82F6" />
-            </View>
-          </View>
-          <View style={styles.adFooter}>
-            <ThemedText style={styles.adFooterText}>
-              INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE
-            </ThemedText>
-          </View>
-        </View>
 
         {/* No More Indicator */}
         <View style={styles.noMoreContainer}>
@@ -171,19 +165,22 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    position: 'relative',
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 5,
   },
   header: {
+    backgroundColor: '#05012B',
     alignItems: 'center',
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingTop: 40,
+    paddingBottom: 10,
+    zIndex: 1000,
+    elevation: 1000,
   },
-  logoText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+  logoImage: {
+    width: 150,
+    height: 40,
   },
   bonusSection: {
     paddingHorizontal: 16,
@@ -191,7 +188,6 @@ const styles = StyleSheet.create({
   },
   bonusInfo: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -202,29 +198,33 @@ const styles = StyleSheet.create({
   },
   bonusDivider: {
     width: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#005b74',
     marginHorizontal: 16,
   },
   bonusLabel: {
-    fontSize: 12,
-    color: '#9BA1A6',
+    fontSize: 15,
+    color: '#fff',
     marginBottom: 8,
   },
   bonusAmount: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
   },
   bonusDetailsButton: {
-    backgroundColor: '#14B8A6',
-    borderRadius: 12,
+    width: '50%',
+    backgroundColor: '#001C54',
+    borderRadius: 32,
     paddingVertical: 12,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#005b74',
+    alignSelf: 'center',
   },
   bonusDetailsText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#00ECBE',
   },
   categoriesGrid: {
     flexDirection: 'row',
@@ -238,15 +238,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   categoryIconContainer: {
-    width: 64,
-    height: 64,
+    width: 52,
+    height: 52,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  categoryImage: {
+    width: 52,
+    height: 52,
+  },
   categoryLabel: {
     fontSize: 11,
-    color: '#fff',
+    color: '#92a8e3',
     textAlign: 'center',
   },
   mainCards: {
@@ -257,9 +261,13 @@ const styles = StyleSheet.create({
   },
   mainCard: {
     flex: 1,
-    borderRadius: 16,
+    borderRadius: 8,
     overflow: 'hidden',
     minHeight: 120,
+  },
+  giftsCardImage: {
+    width: '100%',
+    height: 120,
   },
   giftsCard: {
     backgroundColor: '#EF4444',
@@ -269,43 +277,37 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    padding: 16,
     justifyContent: 'flex-end',
   },
   cardTextContainer: {
+    height: 100,
     gap: 8,
+    backgroundColor: '#011341',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
   },
   cardDescription: {
     fontSize: 12,
+    lineHeight: 18,
     color: '#fff',
     opacity: 0.9,
-  },
-  section: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
   },
   bannersSection: {
     paddingHorizontal: 16,
     gap: 16,
-    marginBottom: 24,
+    marginBottom: 4,
   },
   bannerCard: {
     position: 'relative',
     backgroundColor: '#011341',
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 2,
   },
   bannerHeader: {
     position: 'absolute',
@@ -316,7 +318,6 @@ const styles = StyleSheet.create({
     padding: 6,
     paddingLeft: 2,
     paddingVertical: 4,
-    // paddingBottom: 8,
     backgroundColor: '#0D31A9',
     borderTopLeftRadius: 16,
     borderBottomRightRadius: 36,
@@ -325,7 +326,6 @@ const styles = StyleSheet.create({
   bannerLogo: {
     width: 100,
     height: 20,
-    // backgroundColor: 'red',
   },
   bannerImagePlaceholder: {
     height: 160,
@@ -334,44 +334,6 @@ const styles = StyleSheet.create({
   },
   bannerImageStyle: {
     resizeMode: 'cover',
-  },
-  bannerBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: '#FBBF24',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  badgePercent: {
-    fontSize: 10,
-    color: '#000',
-  },
-  dailyBadge: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: '#FBBF24',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  dailyBadgeText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  lockIcon: {
-    position: 'absolute',
-    bottom: 12,
-    right: 12,
   },
   bannerContent: {
     padding: 16,
@@ -383,62 +345,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-  adBanner: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  adHeader: {
-    padding: 12,
-    paddingBottom: 8,
-  },
-  adLogo: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  adContent: {
-    flexDirection: 'row',
-    padding: 16,
-    gap: 16,
-  },
-  adTextContainer: {
-    flex: 1,
-    gap: 8,
-  },
-  adTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  adDescription: {
-    fontSize: 12,
-    color: '#9BA1A6',
-    lineHeight: 18,
-  },
-  adImagePlaceholder: {
-    width: 80,
-    height: 80,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  adFooter: {
-    backgroundColor: '#1a0a3d',
-    padding: 12,
-    alignItems: 'center',
-  },
-  adFooterText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
-  },
   noMoreContainer: {
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   noMoreText: {
     fontSize: 14,

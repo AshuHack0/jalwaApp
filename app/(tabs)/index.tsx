@@ -1,11 +1,11 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -85,14 +85,14 @@ export default function HomeScreen() {
         <View style={styles.promoBanners}>
           <TouchableOpacity style={styles.promoBanner}>
             <Image 
-              source={require('@/assets/home1-14aaac97.svg')} 
+              source={require('@/assets/home1-14aaac97.png')} 
               style={styles.promoBannerImage}
               contentFit="contain"
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.promoBanner}>
             <Image 
-              source={require('@/assets/home2-44a54115.svg')} 
+              source={require('@/assets/home2-44a54115.png')} 
               style={styles.promoBannerImage}
               contentFit="contain"
             />
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 120,
+    paddingTop: 86,
     paddingBottom: 100,
   },
   header: {
@@ -466,16 +466,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
+    paddingTop: 40,
+    paddingBottom: 6,
     backgroundColor: '#05012B',
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1000,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   logoImage: {
     width: 120,
@@ -504,8 +502,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   promoBanners: {
+    // backgroundColor: 'red',
     flexDirection: 'row',
-    gap: 12,
+    gap: 0,
     paddingHorizontal: 16,
     marginBottom: 16,
   },
@@ -513,11 +512,14 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     overflow: 'hidden',
-    height: 100,
+    height: 60,
   },
   promoBannerImage: {
     width: '100%',
     height: '100%',
+    opacity: 1,
+    backgroundColor: 'transparent',
+    resizeMode: 'contain',
   },
   carouselSection: {
     paddingHorizontal: 16,
