@@ -68,11 +68,26 @@ export default function HomeScreen() {
   ];
 
   const lotteryGames = [
-    { name: 'WIN GO', image: require('@/assets/lotterycategory_20250311104257c812.png') },
-    { name: 'MOTO RACING', image: require('@/assets/lotterycategory_20250311104327ptke.png') },
-    { name: 'K3', image: require('@/assets/lotterycategory_202503241646119i36.png') },
-    { name: '5D', image: require('@/assets/lotterycategory_20250430143859y2i2.png') },
-    { name: 'TRX WINGO', image: require('@/assets/lotterycategory_20250311104257c812.png') },
+    {
+      name: "WIN GO",
+      image: require("@/assets/lotterycategory_20250311104257c812.png"),
+    },
+    {
+      name: "MOTO RACING",
+      image: require("@/assets/lotterycategory_20250311104327ptke.png"),
+    },
+    {
+      name: "K3",
+      image: require("@/assets/lotterycategory_202503241646119i36.png"),
+    },
+    {
+      name: "5D",
+      image: require("@/assets/lotterycategory_20250430143859y2i2.png"),
+    },
+    {
+      name: "TRX WINGO",
+      image: require("@/assets/lotterycategory_20250311104257c812.png"),
+    },
   ];
 
   const winners = [
@@ -100,13 +115,13 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       {/* Fixed Header */}
       <View style={styles.header}>
-        <Image 
-          source={require('@/assets/logo-e926b199.png')} 
+        <Image
+          source={require("@/assets/logo-e926b199.png")}
           style={styles.logoImage}
           contentFit="contain"
         />
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
+          {/* <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="arrow-down" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
@@ -117,11 +132,35 @@ export default function HomeScreen() {
               <Ionicons name="flag" size={14} color="#fff" />
               <ThemedText style={styles.languageText}>EN</ThemedText>
             </View>
+          </TouchableOpacity> */}
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            activeOpacity={0.8}
+            onPress={() => router.push("/auth/login")}
+          >
+            <ThemedText style={styles.loginButtonText}>Log in</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.registerButtonWrap}
+            activeOpacity={0.8}
+            onPress={() => router.push("/auth/register")}
+          >
+            <LinearGradient
+              colors={["#00D4FF", "#00E5A8"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.registerButton}
+            >
+              <ThemedText style={styles.registerButtonText}>
+                Register
+              </ThemedText>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -129,15 +168,15 @@ export default function HomeScreen() {
         {/* Promotional Banners */}
         <View style={styles.promoBanners}>
           <TouchableOpacity style={styles.promoBanner}>
-            <Image 
-              source={require('@/assets/home1-14aaac97.png')} 
+            <Image
+              source={require("@/assets/home1-14aaac97.png")}
               style={styles.promoBannerImage}
               contentFit="contain"
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.promoBanner}>
-            <Image 
-              source={require('@/assets/home2-44a54115.png')} 
+            <Image
+              source={require("@/assets/home2-44a54115.png")}
               style={styles.promoBannerImage}
               contentFit="contain"
             />
@@ -190,7 +229,8 @@ export default function HomeScreen() {
           style={styles.alertBanner}>
           <Ionicons name="megaphone-outline" size={20} color="#10B981" />
           <ThemedText style={styles.alertText}>
-            हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी – यदि आपको कोई लिंक किसी
+            हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी – यदि
+            आपको कोई लिंक किसी
           </ThemedText>
           <LinearGradient
           colors={['#75FBC3', '#0CB6B7']}
@@ -213,7 +253,9 @@ export default function HomeScreen() {
               <ThemedText style={styles.walletLabel}>Wallet balance</ThemedText>
             </View>
             <View style={styles.balanceRow}>
-              <ThemedText style={styles.balanceAmount}>{walletBalance}</ThemedText>
+              <ThemedText style={styles.balanceAmount}>
+                {walletBalance}
+              </ThemedText>
               <TouchableOpacity>
                 <Ionicons name="refresh" size={20} color="#fff" />
               </TouchableOpacity>
@@ -271,8 +313,8 @@ export default function HomeScreen() {
         {/* Lottery Section */}
         <View style={styles.lotterySection}>
           <View style={styles.lotteryHeader}>
-            <Image 
-              source={require('@/assets/icon_lottery-d44718d5.svg')} 
+            <Image
+              source={require("@/assets/icon_lottery-d44718d5.svg")}
               style={styles.lotteryIcon}
               contentFit="contain"
             />
@@ -280,17 +322,17 @@ export default function HomeScreen() {
           </View>
           <View style={styles.lotteryGamesGrid}>
             {lotteryGames.map((game, index) => (
-              <TouchableOpacity 
-                key={index} 
+              <TouchableOpacity
+                key={index}
                 style={styles.lotteryGameCard}
                 onPress={() => {
-                  if (game.name === 'WIN GO') {
-                    router.push('/wingo');
+                  if (game.name === "WIN GO") {
+                    router.push("/wingo");
                   }
                 }}
               >
-                <Image 
-                  source={game.image} 
+                <Image
+                  source={game.image}
                   style={styles.lotteryGameImage}
                   contentFit="cover"
                 />
@@ -305,77 +347,77 @@ export default function HomeScreen() {
             <ThemedText style={styles.casinoIcon}>🎰</ThemedText>
             <ThemedText style={styles.casinoTitle}>Casino</ThemedText>
           </View>
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.casinoGamesScroll}
             contentContainerStyle={styles.casinoGamesContainer}
           >
             <TouchableOpacity style={styles.casinoGameCard}>
-              <Image 
-                source={require('@/assets/7001.png')} 
+              <Image
+                source={require("@/assets/7001.png")}
                 style={styles.casinoGameImage}
                 contentFit="cover"
               />
               <View style={styles.casinoGameLogo}>
-                <Image 
-                  source={require('@/assets/vendorlogo_20250311105152d49l.png')} 
+                <Image
+                  source={require("@/assets/vendorlogo_20250311105152d49l.png")}
                   style={styles.vendorLogo}
                   contentFit="contain"
                 />
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.casinoGameCard}>
-              <Image 
-                source={require('@/assets/7002.png')} 
+              <Image
+                source={require("@/assets/7002.png")}
                 style={styles.casinoGameImage}
                 contentFit="cover"
               />
               <View style={styles.casinoGameLogo}>
-                <Image 
-                  source={require('@/assets/vendorlogo_20250311105256rbnp.png')} 
+                <Image
+                  source={require("@/assets/vendorlogo_20250311105256rbnp.png")}
                   style={styles.vendorLogo}
                   contentFit="contain"
                 />
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.casinoGameCard}>
-              <Image 
-                source={require('@/assets/7003.png')} 
+              <Image
+                source={require("@/assets/7003.png")}
                 style={styles.casinoGameImage}
                 contentFit="cover"
               />
               <View style={styles.casinoGameLogo}>
-                <Image 
-                  source={require('@/assets/vendorlogo_20250311105326ntuv.png')} 
+                <Image
+                  source={require("@/assets/vendorlogo_20250311105326ntuv.png")}
                   style={styles.vendorLogo}
                   contentFit="contain"
                 />
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.casinoGameCard}>
-              <Image 
-                source={require('@/assets/7004.png')} 
+              <Image
+                source={require("@/assets/7004.png")}
                 style={styles.casinoGameImage}
                 contentFit="cover"
               />
               <View style={styles.casinoGameLogo}>
-                <Image 
-                  source={require('@/assets/vendorlogo_20250311105339pi1y.png')} 
+                <Image
+                  source={require("@/assets/vendorlogo_20250311105339pi1y.png")}
                   style={styles.vendorLogo}
                   contentFit="contain"
                 />
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.casinoGameCard}>
-              <Image 
-                source={require('@/assets/7005.png')} 
+              <Image
+                source={require("@/assets/7005.png")}
                 style={styles.casinoGameImage}
                 contentFit="cover"
               />
               <View style={styles.casinoGameLogo}>
-                <Image 
-                  source={require('@/assets/vendorlogo_202503111054516cx3.png')} 
+                <Image
+                  source={require("@/assets/vendorlogo_202503111054516cx3.png")}
                   style={styles.vendorLogo}
                   contentFit="contain"
                 />
@@ -668,24 +710,31 @@ export default function HomeScreen() {
             <View style={styles.bulletItem}>
               <ThemedText style={styles.bulletIcon}>◆</ThemedText>
               <ThemedText style={styles.bulletText}>
-                The platform advocates fairness, justice, and openness. We mainly operate fair lottery, blockchain games, live casinos, and slot machine games.
+                The platform advocates fairness, justice, and openness. We
+                mainly operate fair lottery, blockchain games, live casinos, and
+                slot machine games.
               </ThemedText>
             </View>
             <View style={styles.bulletItem}>
               <ThemedText style={styles.bulletIcon}>◆</ThemedText>
               <ThemedText style={styles.bulletText}>
-                Jalwa works with more than 10,000 online live game dealers and slot games, all of which are verified fair games.
+                Jalwa works with more than 10,000 online live game dealers and
+                slot games, all of which are verified fair games.
               </ThemedText>
             </View>
             <View style={styles.bulletItem}>
               <ThemedText style={styles.bulletIcon}>◆</ThemedText>
               <ThemedText style={styles.bulletText}>
-                Jalwa supports fast deposit and withdrawal, and looks forward to your visit.
+                Jalwa supports fast deposit and withdrawal, and looks forward to
+                your visit.
               </ThemedText>
             </View>
           </View>
           <ThemedText style={styles.responsibleGambling}>
-            <ThemedText style={styles.boldText}>Gambling can be addictive, please play rationally.</ThemedText> Jalwa only accepts customers above the age of 18.
+            <ThemedText style={styles.boldText}>
+              Gambling can be addictive, please play rationally.
+            </ThemedText>{" "}
+            Jalwa only accepts customers above the age of 18.
           </ThemedText>
         </View>
 
@@ -716,7 +765,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
+    backgroundColor: "#05012B",
   },
   scrollView: {
     position: 'relative',
@@ -727,14 +776,14 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 6,
-    backgroundColor: '#05012B',
-    position: 'absolute',
+    backgroundColor: "#05012B",
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -745,30 +794,59 @@ const styles = StyleSheet.create({
     height: 32,
   },
   headerIcons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   iconButton: {
     padding: 4,
   },
+  loginButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: "rgba(10, 20, 45, 0.9)",
+    borderWidth: 1,
+    borderColor: "#00D4FF",
+  },
+  loginButtonText: {
+    color: "#00D4FF",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  registerButtonWrap: {
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  registerButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  registerButtonText: {
+    color: "#0a0e27",
+    fontSize: 14,
+    fontWeight: "600",
+  },
   languageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
   },
   languageText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   promoBanners: {
     // backgroundColor: 'red',
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 0,
     paddingHorizontal: 16,
     marginBottom: 16,
@@ -776,15 +854,15 @@ const styles = StyleSheet.create({
   promoBanner: {
     flex: 1,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
     height: 60,
   },
   promoBannerImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     opacity: 1,
-    backgroundColor: 'transparent',
-    resizeMode: 'contain',
+    backgroundColor: "transparent",
+    resizeMode: "contain",
   },
   carouselSection: {
     paddingHorizontal: 16,
@@ -804,65 +882,65 @@ const styles = StyleSheet.create({
     marginRight: 0,
   },
   mainCarouselImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   carouselOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "center",
     padding: 20,
   },
   carouselMainTitle: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
   newBadge: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 12,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   newBadgeText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   carouselGameTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FBBF24',
+    fontWeight: "bold",
+    color: "#FBBF24",
   },
   carouselTagline: {
     fontSize: 14,
-    color: '#fff',
-    fontWeight: '500',
+    color: "#fff",
+    fontWeight: "500",
   },
   noticeSection: {
     paddingHorizontal: 16,
     marginBottom: 16,
   },
   noticeCard: {
-    backgroundColor: '#1a0a3d',
+    backgroundColor: "#1a0a3d",
     borderRadius: 16,
     padding: 20,
     gap: 12,
   },
   noticeTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#EF4444',
+    fontWeight: "bold",
+    color: "#EF4444",
     marginBottom: 8,
   },
   noticeText: {
     fontSize: 14,
-    color: '#fff',
+    color: "#fff",
     lineHeight: 20,
     marginBottom: 12,
   },
@@ -871,12 +949,12 @@ const styles = StyleSheet.create({
   },
   officialLabel: {
     fontSize: 14,
-    color: '#FBBF24',
+    color: "#FBBF24",
   },
   officialUrl: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#F97316',
+    fontWeight: "bold",
+    color: "#F97316",
   },
   carouselIndicators: {
     flexDirection: 'row',
@@ -888,16 +966,16 @@ const styles = StyleSheet.create({
     width: 5,
     height: 5,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
   indicatorActive: {
     width: 24,
-    backgroundColor: '#14B8A6',
+    backgroundColor: "#14B8A6",
   },
   alertBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 12,
     paddingVertical:1,
     marginHorizontal: 16,
@@ -935,8 +1013,8 @@ const styles = StyleSheet.create({
     // backgroundColor: 'blue',
   },
   walletHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 8,
 },
@@ -955,8 +1033,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   balanceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   balanceAmount: {
@@ -993,10 +1071,10 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   withdrawButton: {
-    backgroundColor: '#F97316',
+    backgroundColor: "#F97316",
   },
   depositButton: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
   },
   walletButtonText: {
     color: '#fff',
@@ -1006,8 +1084,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   gameGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     paddingHorizontal: 16,
     gap: 12,
     marginBottom: 24,
@@ -1060,8 +1138,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   lotteryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 16,
   },
@@ -1071,31 +1149,31 @@ const styles = StyleSheet.create({
   },
   lotteryTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   lotteryGamesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
   },
   lotteryGameCard: {
-    width: '47%',
+    width: "47%",
     height: 100,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   lotteryGameImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   casinoSection: {
     paddingHorizontal: 16,
     marginBottom: 24,
   },
   casinoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 16,
   },
@@ -1104,8 +1182,8 @@ const styles = StyleSheet.create({
   },
   casinoTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   casinoGamesScroll: {
     marginHorizontal: -16,
@@ -1118,41 +1196,41 @@ const styles = StyleSheet.create({
     width: 160,
     height: 200,
     borderRadius: 12,
-    overflow: 'hidden',
-    position: 'relative',
+    overflow: "hidden",
+    position: "relative",
   },
   casinoGameImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   casinoGameLogo: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 8,
     left: 8,
     width: 60,
     height: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 4,
     padding: 4,
   },
   vendorLogo: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   winningSection: {
     paddingHorizontal: 16,
     marginBottom: 24,
   },
   winningHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 16,
   },
   winningTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   winnersList: {
     borderRadius: 12,
@@ -1169,7 +1247,7 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   winnerLeft: {
     flexDirection: 'row',
@@ -1199,9 +1277,9 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   winnerId: {
     fontSize: 15,
@@ -1230,7 +1308,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   topThree: {
     width: '100%',
@@ -1312,11 +1390,11 @@ const styles = StyleSheet.create({
   leaderboardList: {
     // backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   leaderboardItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: '#224BA2',
@@ -1332,19 +1410,19 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   leaderboardUsernameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     flex: 1,
   },
   leaderboardUsername: {
     fontSize: 14,
-    color: '#fff',
+    color: "#fff",
   },
   leaderboardEmojis: {
     fontSize: 14,
@@ -1359,8 +1437,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     marginBottom: 16,
     // backgroundColor: 'blue',
@@ -1389,29 +1467,29 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   bulletItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   bulletIcon: {
     fontSize: 12,
-    color: '#fff',
+    color: "#fff",
     marginTop: 4,
   },
   bulletText: {
     flex: 1,
     fontSize: 14,
-    color: '#9BA1A6',
+    color: "#9BA1A6",
     lineHeight: 20,
     fontFamily:'',
   },
   responsibleGambling: {
     fontSize: 14,
-    color: '#9BA1A6',
+    color: "#9BA1A6",
     lineHeight: 20,
   },
   boldText: {
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   addToDesktopSection: {
     position: 'absolute',
