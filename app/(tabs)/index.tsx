@@ -1,49 +1,70 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { Ionicons } from '@expo/vector-icons';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from 'expo-blur';
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [walletBalance] = useState("₹0.00");
+  const [walletBalance] = useState('₹0.00');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselRef = useRef<ScrollView>(null);
+  const screenWidth = Dimensions.get('window').width;
+  const carouselWidth = screenWidth - 32; // accounting for padding
+
+  const carouselImages = [
+    require('@/assets/Banner_20250319132416d7h9.jpg'),
+    require('@/assets/Banner_202503191331431vwd.jpg'),
+    require('@/assets/Banner_20250319134711g6c7.jpg'),
+    require('@/assets/Banner_202504141354389bes.jpg'),
+    require('@/assets/Banner_20250430183534nx9g.jpg'),
+    require('@/assets/Banner_202505051626178ysv.png'),
+    require('@/assets/Banner_20250505174559l35y.jpg'),
+    require('@/assets/Banner_20250509160039hucu.jpg'),
+    require('@/assets/Banner_20250728143957ji78.jpg'),
+    require('@/assets/Banner_20250812180120amou.jpg'),
+    require('@/assets/Banner_20250819005455jgmi.png'),
+    require('@/assets/Banner_20250825134813th74.jpg'),
+    require('@/assets/Banner_20250925125457tlhn.jpg'),
+    require('@/assets/Banner_20251209170621lke3.jpg'),
+  ];
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => {
+        const nextSlide = (prev + 1) % carouselImages.length;
+        carouselRef.current?.scrollTo({
+          x: nextSlide * carouselWidth,
+          animated: true,
+        });
+        return nextSlide;
+      });
+    }, 3000); // Change slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [carouselImages.length, carouselWidth]);
+
+  const handleScroll = useCallback((event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const slideIndex = Math.round(offsetX / carouselWidth);
+    setCurrentSlide(slideIndex);
+  }, [carouselWidth]);
 
   const gameCategories = [
-    {
-      name: "Lottery",
-      image: require("@/assets/gamecategory_20250313171546obyl.png"),
-    },
-    {
-      name: "Mini games",
-      image: require("@/assets/gamecategory_20250313171619xdvp.png"),
-    },
-    {
-      name: "Hot Slots",
-      image: require("@/assets/gamecategory_202503131717268awj.png"),
-    },
-    {
-      name: "Slots",
-      image: require("@/assets/gamecategory_202503131718032ig4.png"),
-    },
-    {
-      name: "Fishing",
-      image: require("@/assets/gamecategory_202503131718208r77.png"),
-    },
-    {
-      name: "PVC",
-      image: require("@/assets/gamecategory_202503131718274ean.png"),
-    },
-    {
-      name: "Casino",
-      image: require("@/assets/gamecategory_20250313171546obyl.png"),
-    },
-    {
-      name: "Sports",
-      image: require("@/assets/gamecategory_20250313171619xdvp.png"),
-    },
+    { name: 'Lottery', image: require('@/assets/gamecategory_202503131718208r77.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'Mini games', image: require('@/assets/gamecategory_20250313171619xdvp.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'Hot Slots', image: require('@/assets/gamecategory_202503131717268awj.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'Slots', image: require('@/assets/gamecategory_202503131718032ig4.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp')  },
+    { name: 'Fishing', image: require('@/assets/gamecategory_202503131718208r77.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'PVC', image: require('@/assets/gamecategory_202503131718274ean.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'Casino', image: require('@/assets/gamecategory_20250313171546obyl.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    { name: 'Sports', image: require('@/assets/gamecategory_20250313171619xdvp.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
   ];
 
   const lotteryGames = [
@@ -70,53 +91,24 @@ export default function HomeScreen() {
   ];
 
   const winners = [
-    { id: "Mem***LHV", amount: "₹48.02" },
-    { id: "Mem***ABC", amount: "₹125.50" },
-    { id: "Mem***XYZ", amount: "₹89.30" },
-    { id: "Mem***DEF", amount: "₹256.80" },
-    { id: "Mem***GHI", amount: "₹192.45" },
+    { id: 'Mem***LHV', amount: '₹48.02', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
+    { id: 'Mem***ABC', amount: '₹125.50', vendor: require('@/assets/lotterycategory_20250311104327ptke.png') ,avatar: require('@/assets/8-ea087ede.webp')},
+    { id: 'Mem***XYZ', amount: '₹89.30', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
+    { id: 'Mem***DEF', amount: '₹256.80', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
+    { id: 'Mem***GHI', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
   ];
 
   const leaderboard = [
-    {
-      rank: 1,
-      username: "Mem***NLR",
-      amount: "₹1,832,198,343.08",
-      isTop3: true,
-      medal: "gold",
-    },
-    {
-      rank: 2,
-      username: "SHI***IP",
-      amount: "₹1,148,305,200.00",
-      isTop3: true,
-      medal: "silver",
-    },
-    {
-      rank: 3,
-      username: "Mem***HWT",
-      amount: "₹74,132,198.00",
-      isTop3: true,
-      medal: "bronze",
-    },
-    { rank: 4, username: "Mem***00A", amount: "₹64,860,502.28", isTop3: false },
-    { rank: 5, username: "Mem***TTO", amount: "₹53,753,751.17", isTop3: false },
-    { rank: 6, username: "Mem***XMI", amount: "₹50,383,957.96", isTop3: false },
-    { rank: 7, username: "GH***TT", amount: "₹44,927,396.36", isTop3: false },
-    { rank: 8, username: "Mem***5XB", amount: "₹43,732,264.80", isTop3: false },
-    {
-      rank: 9,
-      username: "DA***S",
-      amount: "₹32,751,600.00",
-      isTop3: false,
-      emojis: "⚡💀",
-    },
-    {
-      rank: 10,
-      username: "Mem***P2K",
-      amount: "₹26,403,945.96",
-      isTop3: false,
-    },
+    { rank: 1, username: 'Mem***NLR', amount: '1,832,198,343.08', isTop3: true, medal: 'gold' },
+    { rank: 2, username: 'SHI***IP', amount: '1,148,305,200.00', isTop3: true, medal: 'silver' },
+    { rank: 3, username: 'Mem***HWT', amount: '74,132,198.00', isTop3: true, medal: 'bronze' },
+    { rank: 4, username: 'Mem***00A', amount: '64,860,502.28', isTop3: false },
+    { rank: 5, username: 'Mem***TTO', amount: '53,753,751.17', isTop3: false },
+    { rank: 6, username: 'Mem***XMI', amount: '50,383,957.96', isTop3: false },
+    { rank: 7, username: 'GH***TT', amount: '44,927,396.36', isTop3: false },
+    { rank: 8, username: 'Mem***5XB', amount: '43,732,264.80', isTop3: false },
+    { rank: 9, username: 'DA***S', amount: '32,751,600.00', isTop3: false, emojis: '⚡💀' },
+    { rank: 10, username: 'Mem***P2K', amount: '26,403,945.96', isTop3: false },
   ];
 
   return (
@@ -193,76 +185,71 @@ export default function HomeScreen() {
 
         {/* Main Promotional Carousel */}
         <View style={styles.carouselSection}>
-          <TouchableOpacity style={styles.mainCarouselCard}>
-            <Image
-              source={require("@/assets/Banner_202504141354389bes.jpg")}
-              style={styles.mainCarouselImage}
-              contentFit="cover"
-            />
-            <View style={styles.carouselOverlay}>
-              <View style={styles.carouselContent}>
-                <ThemedText style={styles.carouselMainTitle}>
-                  Introducing Our Newest Game Addition
-                </ThemedText>
-                <View style={styles.newBadge}>
-                  <ThemedText style={styles.newBadgeText}>NEW</ThemedText>
-                </View>
-                <ThemedText style={styles.carouselGameTitle}>
-                  Moto Racing Lottery
-                </ThemedText>
-                <ThemedText style={styles.carouselTagline}>
-                  Bet Your Lucky Racer & Win Big Now!
-                </ThemedText>
-              </View>
-            </View>
-          </TouchableOpacity>
+          <ScrollView
+            ref={carouselRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            style={styles.carouselScrollView}
+            contentContainerStyle={styles.carouselContent}
+          >
+            {carouselImages.map((image, index) => (
+              <TouchableOpacity 
+                key={index} 
+                style={[styles.mainCarouselCard, { width: carouselWidth }]}
+              >
+                <Image 
+                  source={image} 
+                  style={styles.mainCarouselImage}
+                  contentFit="cover"
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           <View style={styles.carouselIndicators}>
-            <View style={[styles.indicator, styles.indicatorActive]} />
-            <View style={styles.indicator} />
-            <View style={styles.indicator} />
-          </View>
-        </View>
-
-        {/* Warning/Notice Section */}
-        <View style={styles.noticeSection}>
-          <View style={styles.noticeCard}>
-            <ThemedText style={styles.noticeTitle}>
-              Notice: Beware of Fake Platforms!
-            </ThemedText>
-            <ThemedText style={styles.noticeText}>
-              Recently, we have discovered third-party websites impersonating
-              our platform to conduct scams or unauthorized promotions. Please
-              stay vigilant and avoid accessing unverified websites to prevent
-              potential financial loss.
-            </ThemedText>
-            <View style={styles.officialWebsite}>
-              <ThemedText style={styles.officialLabel}>
-                Our only official website is:
-              </ThemedText>
-              <ThemedText style={styles.officialUrl}>
-                https://jalwa.games/
-              </ThemedText>
-            </View>
+            {carouselImages.map((_, index) => (
+              <View 
+                key={index} 
+                style={[
+                  styles.indicator, 
+                  index === currentSlide && styles.indicatorActive
+                ]} 
+              />
+            ))}
           </View>
         </View>
 
         {/* Announcement Bar */}
-        <View style={styles.alertBanner}>
+        <LinearGradient
+          colors={['#072766', '#000b2e']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.alertBanner}>
           <Ionicons name="megaphone-outline" size={20} color="#10B981" />
           <ThemedText style={styles.alertText}>
             हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी – यदि
             आपको कोई लिंक किसी
           </ThemedText>
-          <TouchableOpacity style={styles.detailButtonContainer}>
+          <LinearGradient
+          colors={['#75FBC3', '#0CB6B7']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.detailButtonContainer}>
             <ThemedText style={styles.detailButton}>Detail</ThemedText>
-          </TouchableOpacity>
-        </View>
+          </LinearGradient>
+        </LinearGradient> 
 
         {/* Wallet Balance Section */}
         <View style={styles.walletSection}>
-          <View style={styles.walletBalance}>
+          <View style={[styles.walletBalance, { width: '40%' }]}>
             <View style={styles.walletHeader}>
-              <View style={styles.yellowDot} />
+              <Image 
+                source={require('@/assets/coin.png')} 
+                style={styles.coinImage}
+                contentFit="contain"
+              />
               <ThemedText style={styles.walletLabel}>Wallet balance</ThemedText>
             </View>
             <View style={styles.balanceRow}>
@@ -274,18 +261,28 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.walletButtons}>
-            <TouchableOpacity
-              style={[styles.walletButton, styles.withdrawButton]}
-            >
-              <Ionicons name="arrow-up" size={20} color="#fff" />
-              <ThemedText style={styles.walletButtonText}>Withdraw</ThemedText>
+          <View style={[styles.walletButtons, { width: '60%' }]}>
+            <TouchableOpacity style={styles.walletButton}>
+              <Image 
+                source={require('@/assets/91-withdraw_btn-c8a3085c.svg')} 
+                style={styles.walletButtonBackground}
+                contentFit="cover"
+              />
+              <View style={styles.walletButtonContent}>
+                <Ionicons name="arrow-up" size={20} color="#fff" />
+                <ThemedText style={styles.walletButtonText} numberOfLines={1}>Withdraw</ThemedText>
+              </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.walletButton, styles.depositButton]}
-            >
-              <Ionicons name="arrow-down" size={20} color="#fff" />
-              <ThemedText style={styles.walletButtonText}>Deposit</ThemedText>
+            <TouchableOpacity style={styles.walletButton}>
+              <Image 
+                source={require('@/assets/91-recharge_btn-ff2482b8.svg')} 
+                style={styles.walletButtonBackground}
+                contentFit="cover"
+              />
+              <View style={styles.walletButtonContent}>
+                <Ionicons name="arrow-down" size={20} color="#fff" />
+                <ThemedText style={styles.walletButtonText} numberOfLines={1}>Deposit</ThemedText>
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -294,12 +291,19 @@ export default function HomeScreen() {
         <View style={styles.gameGrid}>
           {gameCategories.map((category, index) => (
             <TouchableOpacity key={index} style={styles.gameCard}>
-              <View style={styles.gameIconContainer}>
-                <Image
-                  source={category.image}
-                  style={styles.gameIcon}
-                  contentFit="contain"
-                />
+              <View style={styles.gameCardBackgroundContainer}>
+                <Image 
+                  source={category.backgroundImage} 
+                  style={styles.gameCardBackground}
+                  contentFit="cover"
+                  />
+                <View style={styles.gameIconContainer}>
+                  <Image 
+                    source={category.image} 
+                    style={styles.gameIcon}
+                    contentFit="contain"
+                    />
+                </View>
               </View>
               <ThemedText style={styles.gameName}>{category.name}</ThemedText>
             </TouchableOpacity>
@@ -424,142 +428,280 @@ export default function HomeScreen() {
 
         {/* Winning Information Section */}
         <View style={styles.winningSection}>
-          <View style={styles.winningHeader}>
-            <Ionicons name="calendar" size={20} color="#fff" />
-            <ThemedText style={styles.winningTitle}>
-              Winning information
-            </ThemedText>
+          <View style={styles.lotteryHeader}>
+            <Image 
+              source={require('@/assets/icon_lottery-d44718d5.svg')} 
+              style={styles.lotteryIcon}
+              contentFit="contain"
+            />
+            <ThemedText style={styles.lotteryTitle}>Winning information</ThemedText>
           </View>
-          <View style={styles.winnersList}>
+          <LinearGradient
+            colors={['#072766', '#000b2e']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.winnersList}
+          >
             {winners.map((winner, index) => (
               <View key={index} style={styles.winnerItem}>
                 <View style={styles.winnerLeft}>
                   <View style={styles.winnerIcon}>
-                    <Image
-                      source={require("@/assets/icon_win-91513609.svg")}
+                    <Image 
+                      source={winner.vendor} 
                       style={styles.winnerIconImage}
                       contentFit="contain"
                     />
                   </View>
-                  <View style={styles.winnerAvatar}>
-                    <Ionicons name="person" size={20} color="#9BA1A6" />
-                  </View>
-                  <ThemedText style={styles.winnerId}>{winner.id}</ThemedText>
                 </View>
-                <View style={styles.winnerRight}>
-                  <ThemedText style={styles.winnerLabel}>
-                    Winning amount
-                  </ThemedText>
-                  <ThemedText style={styles.winnerAmount}>
-                    {winner.amount}
-                  </ThemedText>
+                <View style={styles.winnerIdContainer}>
+                  <View style={styles.winnerAmountContainer}>
+                    <View style={styles.winnerAvatar}>
+                      <Image 
+                      source={winner.avatar} 
+                      style={styles.winnerIconImage}
+                      contentFit="contain"
+                    />
+                    </View>
+                    <ThemedText style={styles.winnerId}>{winner.id}</ThemedText>
+                  </View>
+                  <View style={styles.winnerRight}>
+                    <ThemedText style={styles.winnerLabel}>Winning amount</ThemedText>
+                    <ThemedText style={styles.winnerAmount}>{winner.amount}</ThemedText>
+                  </View>
                 </View>
               </View>
             ))}
-          </View>
+          </LinearGradient>
         </View>
 
         {/* Today Earning Chart / Leaderboard Section */}
         <View style={styles.leaderboardSection}>
-          <ThemedText style={styles.leaderboardTitle}>
-            Today Earning Chart
-          </ThemedText>
-          <View style={styles.topThree}>
-            {/* Rank 2 */}
-            <View style={[styles.topThreeCard, styles.silverCard]}>
-              <View style={styles.topThreeAvatar}>
-                <Ionicons name="person" size={32} color="#fff" />
-                <Ionicons
-                  name="medal"
-                  size={20}
-                  color="#C0C0C0"
-                  style={styles.crownIcon}
-                />
-              </View>
-              <ThemedText style={styles.topThreeRank}>2</ThemedText>
-              <ThemedText style={styles.topThreeUsername}>
-                {leaderboard[1].username}
-              </ThemedText>
-              <ThemedText style={styles.topThreeAmount}>
-                {leaderboard[1].amount}
-              </ThemedText>
-            </View>
-
-            {/* Rank 1 */}
-            <View style={[styles.topThreeCard, styles.goldCard]}>
-              <View style={styles.topThreeAvatar}>
-                <Ionicons name="person" size={40} color="#fff" />
-                <Ionicons
-                  name="medal"
-                  size={24}
-                  color="#FFD700"
-                  style={styles.crownIcon}
-                />
-              </View>
-              <ThemedText style={styles.topThreeRank}>1</ThemedText>
-              <ThemedText style={styles.topThreeUsername}>
-                {leaderboard[0].username}
-              </ThemedText>
-              <ThemedText style={styles.topThreeAmount}>
-                {leaderboard[0].amount}
-              </ThemedText>
-            </View>
-
-            {/* Rank 3 */}
-            <View style={[styles.topThreeCard, styles.bronzeCard]}>
-              <View style={styles.topThreeAvatar}>
-                <Ionicons name="person" size={32} color="#fff" />
-                <Ionicons
-                  name="medal"
-                  size={20}
-                  color="#CD7F32"
-                  style={styles.crownIcon}
-                />
-              </View>
-              <ThemedText style={styles.topThreeRank}>3</ThemedText>
-              <ThemedText style={styles.topThreeUsername}>
-                {leaderboard[2].username}
-              </ThemedText>
-              <ThemedText style={styles.topThreeAmount}>
-                {leaderboard[2].amount}
-              </ThemedText>
-            </View>
+          <View style={styles.lotteryHeader}>
+            <Image 
+              source={require('@/assets/icon_lottery-d44718d5.svg')} 
+              style={styles.lotteryIcon}
+              contentFit="contain"
+            />
+            <ThemedText style={styles.lotteryTitle}>Today Earning Chart</ThemedText>
           </View>
+          <LinearGradient
+            colors={['#212d61', '#000b2e']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.winnersList}>
+            {/* Top Three */}
+            <View style={styles.topThree}>
+              {/* Rank 2 */}
+                <View style={[styles.topThreeCardContent, styles.silverCard]}>
+                  <Image 
+                    source={require('@/assets/gradient22.png')} 
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    contentFit="cover"
+                  />
+                  <MaskedView
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '50%',
+                    }}
+                    maskElement={
+                      <LinearGradient
+                        colors={['transparent', 'black']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={{ flex: 1 }}
+                      />
+                    }
+                  >
+                    <BlurView
+                      intensity={20}
+                      tint="dark"
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                  </MaskedView>
+                  <View style={[styles.topThreeAvatar]}>
+                    <Image 
+                      source={require('@/assets/1-a6662edb.webp')} 
+                      style={[styles.topThreeAvatarImage, { backgroundColor: '#C0C0C0' }]}
+                      contentFit="cover"
+                    />
+                    <Image 
+                      source={require('@/assets/crown2-c8aced52.webp')} 
+                      style={[styles.crownIcon, { width: 44, height: 44, top: -22, left: -12 }]}
+                      contentFit="contain"
+                    />
+                  </View>
+                  <ThemedText style={[styles.topThreeRank, { color: '#C7D6F6' }]}>2</ThemedText>
+                  <ThemedText style={[styles.topThreeUsername, { color: '#C7D6F6' }]}>{leaderboard[1].username}</ThemedText>
+                  <ThemedText style={[styles.topThreeAmount, { color: '#C7D6F6' }]}>{leaderboard[1].amount}</ThemedText>
+                </View>
 
-          {/* Rest of Leaderboard */}
-          <View style={styles.leaderboardList}>
-            {leaderboard.slice(3).map((entry, index) => (
-              <View key={index} style={styles.leaderboardItem}>
-                <ThemedText style={styles.leaderboardRank}>
-                  {entry.rank}
-                </ThemedText>
-                <View style={styles.leaderboardAvatar}>
-                  <Ionicons name="person" size={24} color="#9BA1A6" />
+              {/* Rank 1 */}
+                <View style={[styles.topThreeCardContent, styles.goldCard]}>
+                  <Image 
+                    source={require('@/assets/gradient11.png')} 
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    contentFit="cover"
+                  />
+                      <MaskedView
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '50%',
+                    }}
+                    maskElement={
+                      <LinearGradient
+                        colors={['transparent', 'black']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={{ flex: 1 }}
+                      />
+                    }
+                  >
+                    <BlurView
+                      intensity={20}
+                      tint="dark"
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                  </MaskedView>
+                  <View style={styles.topThreeAvatar}>
+                    <Image 
+                      source={require('@/assets/1-a6662edb.webp')} 
+                      style={[styles.topThreeAvatarImage, { backgroundColor: 'rgba(0, 0, 0, 0.2)' }]}
+                      contentFit="cover"
+                    />
+                    <Image 
+                      source={require('@/assets/crown1-3912fd85.webp')} 
+                      style={[styles.crownIcon, { width: 44, height: 44, top: -22, left: -12 }]}
+                      contentFit="contain"
+                    />
+                  </View>
+                  <ThemedText style={[styles.topThreeRank, { color: '#E0BB43', marginTop: 20 }]}>1</ThemedText>
+                  <ThemedText style={[styles.topThreeUsername, { color: '#E0BB43' }]}>{leaderboard[0].username}</ThemedText>
+                  <ThemedText style={[styles.topThreeAmount, { color: '#E0BB43' }]}>{leaderboard[0].amount}</ThemedText>
                 </View>
-                <View style={styles.leaderboardUsernameContainer}>
-                  <ThemedText style={styles.leaderboardUsername}>
-                    {entry.username}
-                  </ThemedText>
-                  {entry.emojis && (
-                    <ThemedText style={styles.leaderboardEmojis}>
-                      {entry.emojis}
-                    </ThemedText>
-                  )}
+
+              {/* Rank 3 */}
+                <View style={[styles.topThreeCardContent, styles.bronzeCard]}>
+                  <Image 
+                    source={require('@/assets/gradient33.png')} 
+                   style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    contentFit="cover"
+                  />
+                      <MaskedView
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '50%',
+                    }}
+                    maskElement={
+                      <LinearGradient
+                        colors={['transparent', 'black']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={{ flex: 1 }}
+                      />
+                    }
+                  >
+                    <BlurView
+                      intensity={20}
+                      tint="dark"
+                      style={{
+                        flex: 1,
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                  </MaskedView>
+                  <View style={styles.topThreeAvatar}>
+                    <Image 
+                      source={require('@/assets/1-a6662edb.webp')} 
+                      style={[styles.topThreeAvatarImage, { backgroundColor: '#FF9051' }]}
+                      contentFit="cover"
+                    />
+                    <Image 
+                      source={require('@/assets/crown3-2ca02146.webp')} 
+                      style={[styles.crownIcon, { width: 44, height: 44, top: -22, left: -12 }]}
+                      contentFit="contain"
+                    />
+                  </View>
+                  <ThemedText style={[styles.topThreeRank, { color: '#FE8423' }]}>3</ThemedText>
+                  <ThemedText style={[styles.topThreeUsername, { color: '#FE8423' }]}>{leaderboard[2].username}</ThemedText>
+                  <ThemedText style={[styles.topThreeAmount, { color: '#FE8423' }]}>{leaderboard[2].amount}</ThemedText>
                 </View>
-                <ThemedText style={styles.leaderboardAmount}>
-                  {entry.amount}
-                </ThemedText>
-              </View>
-            ))}
-          </View>
+            </View>
+
+            {/* Rest of Leaderboard */}
+            <View style={styles.leaderboardList}>
+              {leaderboard.slice(3).map((entry, index) => (
+                <View key={index} style={styles.leaderboardItem}>
+                  <ThemedText style={styles.leaderboardRank}>{entry.rank}</ThemedText>
+                  <View style={styles.leaderboardAvatar}>
+                    <Image 
+                      source={require('@/assets/6-7c7f5203.webp')} 
+                      style={{ width: 40, height: 40, borderRadius: 20 }}
+                      contentFit="cover"
+                    />
+                  </View>
+                  <View style={styles.leaderboardUsernameContainer}>
+                    <ThemedText style={styles.leaderboardUsername}>{entry.username}</ThemedText>
+                    {entry.emojis && (
+                      <ThemedText style={styles.leaderboardEmojis}>{entry.emojis}</ThemedText>
+                    )}
+                  </View>
+                  <ThemedText style={styles.leaderboardAmount}>{entry.amount}</ThemedText>
+                </View>
+              ))}
+            </View>
+          </LinearGradient>
         </View>
 
         {/* Information Section */}
         <View style={styles.infoSection}>
           <View style={styles.infoHeader}>
-            <ThemedText style={styles.infoLogo}>
-              Jalwa<ThemedText style={{ color: "#10B981" }}>.</ThemedText>Game
-            </ThemedText>
+            <Image 
+              source={require('@/assets/logo-e926b199.png')} 
+              style={styles.infoLogo}
+              contentFit="contain"
+            />
             <View style={styles.ageBadge}>
               <ThemedText style={styles.ageText}>+18</ThemedText>
             </View>
@@ -596,25 +738,26 @@ export default function HomeScreen() {
           </ThemedText>
         </View>
 
-        {/* Add to Desktop Button */}
-        <View style={styles.addToDesktopSection}>
-          <LinearGradient
-            colors={["#3B82F6", "#10B981"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.addToDesktopButton}
-          >
-            <TouchableOpacity style={styles.addToDesktopContent}>
-              <ThemedText style={styles.addToDesktopLogo}>
-                Jalwa<ThemedText style={{ color: "#10B981" }}>.</ThemedText>Game
-              </ThemedText>
-              <ThemedText style={styles.addToDesktopText}>
-                Add to Desktop
-              </ThemedText>
-            </TouchableOpacity>
-          </LinearGradient>
-        </View>
       </ScrollView>
+
+      {/* Add to Desktop Button - Sticky Bottom */}
+      <View style={styles.addToDesktopSection}>
+        <LinearGradient
+          colors={['#072766', '#000b2e']}
+          start={{ x: 1, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.addToDesktopButton}
+        >
+          <TouchableOpacity style={styles.addToDesktopContent}>
+            <Image 
+              source={require('@/assets/h5setting_20250311160357hftw.png')} 
+              style={styles.addToDesktopLogo}
+              contentFit="contain"
+            />
+            <ThemedText style={styles.addToDesktopText}>Add to Desktop</ThemedText>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
     </ThemedView>
   );
 }
@@ -625,11 +768,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#05012B",
   },
   scrollView: {
+    position: 'relative',
     flex: 1,
   },
   scrollContent: {
     paddingTop: 86,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   header: {
     flexDirection: "row",
@@ -724,12 +868,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
   },
+  carouselScrollView: {
+    marginBottom: 12,
+  },
+  carouselContent: {
+    alignItems: 'center',
+  },
   mainCarouselCard: {
     borderRadius: 16,
-    overflow: "hidden",
-    height: 200,
-    position: "relative",
-    marginBottom: 12,
+    overflow: 'hidden',
+    height: 160,
+    position: 'relative',
+    marginRight: 0,
   },
   mainCarouselImage: {
     width: "100%",
@@ -744,9 +894,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.4)",
     justifyContent: "center",
     padding: 20,
-  },
-  carouselContent: {
-    gap: 12,
   },
   carouselMainTitle: {
     fontSize: 16,
@@ -810,14 +957,14 @@ const styles = StyleSheet.create({
     color: "#F97316",
   },
   carouselIndicators: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 14,
     marginTop: 12,
   },
   indicator: {
-    width: 8,
-    height: 8,
+    width: 5,
+    height: 5,
     borderRadius: 4,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
   },
@@ -830,51 +977,60 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 12,
+    paddingVertical:1,
     marginHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 15,
+    borderWidth:1,
+    borderColor:"#1F4293",
     marginBottom: 16,
     gap: 12,
   },
   alertText: {
     flex: 1,
-    color: "#fff",
-    fontSize: 12,
+    color: '#fff',
+    fontSize: 13,
+    lineHeight: 17,
   },
   detailButtonContainer: {
-    backgroundColor: "#14B8A6",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 6,
+    backgroundColor: '#14B8A6',
+    paddingVertical: 2,
+    paddingHorizontal: 28,
+    borderRadius: 16,
   },
   detailButton: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+    color: '#05012B',
+    fontSize: 14,
+    fontWeight: '400',
   },
   walletSection: {
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     paddingHorizontal: 16,
     marginBottom: 24,
-    gap: 12,
+    gap: 2,
   },
   walletBalance: {
-    flex: 1,
+    // backgroundColor: 'blue',
   },
   walletHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     marginBottom: 8,
-  },
+},
   yellowDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#FBBF24",
+    backgroundColor: '#FBBF24',
+  },
+  coinImage: {
+    width: 20,
+    height: 20,
   },
   walletLabel: {
-    color: "#9BA1A6",
-    fontSize: 12,
+    color: '#92A8E3',
+    fontSize: 13,
   },
   balanceRow: {
     flexDirection: "row",
@@ -882,23 +1038,37 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   balanceAmount: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   walletButtons: {
-    flexDirection: "row",
+    flex: 1,
+    flexDirection: 'row',
     gap: 8,
   },
   walletButton: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    position: 'relative',
+    overflow: 'hidden',
     borderRadius: 8,
-    gap: 6,
+    minHeight: 48,  
+  },
+  walletButtonBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+  },
+  walletButtonContent: {
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    gap: 0,
+    zIndex: 1,
   },
   withdrawButton: {
     backgroundColor: "#F97316",
@@ -907,9 +1077,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF4444",
   },
   walletButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    flexShrink: 0,
   },
   gameGrid: {
     flexDirection: "row",
@@ -919,27 +1091,47 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   gameCard: {
-    width: "22%",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    width: '22%',
+    alignItems: 'center',
     borderRadius: 12,
-    padding: 12,
     gap: 8,
+    position: 'relative',
+    marginBottom: 5,
+  },
+  gameCardBackgroundContainer: {
+    padding: 12,
+    position: 'relative',
+    width: '100%',
+    height: 75,
+  },
+  gameCardBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   gameIconContainer: {
-    width: 48,
-    height: 48,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    zIndex: 2,
+    top: -15,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    // Remove explicit height so it can center vertically/horizontally in parent (full container)
   },
   gameIcon: {
-    width: 48,
-    height: 48,
+    width: 85,
+    height: 85,
+    zIndex: 2,
   },
   gameName: {
-    color: "#fff",
-    fontSize: 11,
-    textAlign: "center",
+    marginTop: -10,
+    color: '#6F80A4',
+    fontSize: 14,
+    textAlign: 'center',
   },
   lotterySection: {
     paddingHorizontal: 16,
@@ -1041,33 +1233,45 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   winnersList: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
-    overflow: "hidden",
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#224BA2',
+    paddingHorizontal: 12,
   },
   winnerItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
+    // backgroundColor: 'green',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 12,
+    padding: 8,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   winnerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  winnerIdContainer: {
+  },
+  winnerAmountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 12,
     flex: 1,
   },
   winnerIcon: {
-    width: 32,
-    height: 32,
-    alignItems: "center",
-    justifyContent: "center",
+    width: 62,
+    height: 62,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   winnerIconImage: {
-    width: 32,
-    height: 32,
+    width: '100%',
+    height: '100%',
+    borderRadius: 16, 
   },
   winnerAvatar: {
     width: 32,
@@ -1078,89 +1282,113 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   winnerId: {
-    fontSize: 14,
-    color: "#fff",
+    fontSize: 15,
+    color: '#fff',
   },
   winnerRight: {
-    alignItems: "flex-end",
+    flex: 1,
+    flexDirection: 'row',
+    gap: 6,
   },
   winnerLabel: {
-    fontSize: 12,
-    color: "#9BA1A6",
+    fontSize: 15,
+    color: '#9BA1A6',
     marginBottom: 4,
   },
   winnerAmount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#14B8A6",
+    fontSize: 15,
+    color: '#00ecbe',
   },
   leaderboardSection: {
     paddingHorizontal: 16,
     marginBottom: 24,
   },
   leaderboardTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 20,
     textAlign: "center",
   },
   topThree: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    gap: 8,
+    width: '100%',
+    flexDirection:'row',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
     marginBottom: 24,
   },
   topThreeCard: {
     flex: 1,
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 16,
+    alignItems: 'center',
+    overflow: 'hidden',
     gap: 8,
     maxWidth: 120,
   },
+  topThreeCardContent: {
+    position: 'relative',
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 0,
+  },
   goldCard: {
-    backgroundColor: "#FFD700",
-    marginBottom: -20,
+    width: '40%',
+    height: 112,
+    marginTop: 76,
   },
   silverCard: {
-    backgroundColor: "#C0C0C0",
+    width: '30%',
+    height: 82,
+    marginTop: 26,
   },
   bronzeCard: {
-    backgroundColor: "#CD7F32",
+    width: '30%',
+    marginTop: 26,
+    height: 85,
   },
   topThreeAvatar: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    position: 'absolute',
+    top: -35,
+    left: '50%',
+    marginLeft: -32,
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topThreeAvatarImage: {
+    width: '95%',
+    height: '95%',
+    borderRadius: 32,
   },
   crownIcon: {
-    position: "absolute",
-    top: -12,
+    position: 'absolute',
+    top: -22,
+    left: -12,
     zIndex: 10,
   },
   topThreeRank: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#fff",
+    marginTop: 45,
+    fontSize: 28,
+    lineHeight: 28,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   topThreeUsername: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600",
+    fontSize: 11,
+    lineHeight: 10,
+    color: '#fff',
+    fontWeight: '500',
   },
   topThreeAmount: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: 10,
+    color: '#fff',
+    fontWeight: '500',
   },
   leaderboardList: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    // backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -1168,14 +1396,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#224BA2',
     gap: 12,
   },
   leaderboardRank: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: 'bold',
+    color: '#92A8E3',
     width: 30,
   },
   leaderboardAvatar: {
@@ -1201,8 +1429,8 @@ const styles = StyleSheet.create({
   },
   leaderboardAmount: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#10B981",
+    fontWeight: 'medium',
+    color: '#00ecbe',
   },
   infoSection: {
     paddingHorizontal: 16,
@@ -1213,24 +1441,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     marginBottom: 16,
+    // backgroundColor: 'blue',
   },
   infoLogo: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
+    width: 165,
+    height: 30,
   },
   ageBadge: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#8B5CF6",
-    alignItems: "center",
-    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: '#00ecbe',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 70,
   },
   ageText: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: 'bold',
+    color: '#00ecbe', 
   },
   bulletPoints: {
     gap: 12,
@@ -1250,6 +1480,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#9BA1A6",
     lineHeight: 20,
+    fontFamily:'',
   },
   responsibleGambling: {
     fontSize: 14,
@@ -1261,29 +1492,37 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   addToDesktopSection: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: 16,
-    marginBottom: 24,
+    paddingBottom: 24,
+    zIndex: 100,
   },
   addToDesktopButton: {
-    borderRadius: 12,
-    overflow: "hidden",
+    borderRadius: 38,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#224BA2',
+    width: '55%',
+    alignSelf: 'center',
   },
   addToDesktopContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 6,
     paddingHorizontal: 20,
     gap: 12,
   },
   addToDesktopLogo: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
+    width: 30,
+    height: 30,
   },
   addToDesktopText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

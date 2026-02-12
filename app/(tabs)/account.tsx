@@ -1,9 +1,10 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function AccountScreen() {
   const router = useRouter();
@@ -30,7 +31,11 @@ export default function AccountScreen() {
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
-            <Ionicons name="person-circle" size={64} color="#9BA1A6" />
+            <Image 
+              source={require('@/assets/1-a6662edb.webp')} 
+              style={{ width: 84, height: 84 }}
+              contentFit="cover"
+            />
           </View>
           <View style={styles.profileInfo}>
             <View style={styles.usernameRow}>
@@ -41,88 +46,128 @@ export default function AccountScreen() {
               </View>
             </View>
             <TouchableOpacity style={styles.uidContainer} onPress={handleCopyUID}>
-              <View style={styles.uidTag}>
-                <ThemedText style={styles.uidLabel}>UID</ThemedText>
-              </View>
+              <ThemedText style={styles.uidLabel}>UID</ThemedText>
               <ThemedText style={styles.uidValue}>9111383</ThemedText>
-              <Ionicons name="copy-outline" size={16} color="#9BA1A6" />
+              <Ionicons name="copy-outline" size={16} color="#fff" />
             </TouchableOpacity>
             <ThemedText style={styles.lastLogin}>Last login: 2026-01-25 23:01:42</ThemedText>
           </View>
         </View>
 
+        <View style={styles.balanceSectionContainer}>
         {/* Balance Section */}
         <View style={styles.balanceSection}>
+          <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
           <View style={styles.balanceHeader}>
-            <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
-            <TouchableOpacity>
-              <Ionicons name="refresh" size={20} color="#fff" />
-            </TouchableOpacity>
+            <ThemedText style={styles.balanceAmount}>{balance}</ThemedText>
           </View>
-          <ThemedText style={styles.balanceAmount}>{balance}</ThemedText>
         </View>
 
         {/* Quick Action Buttons */}
         <View style={styles.quickActions}>
           <TouchableOpacity style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.walletIcon]}>
-              <Ionicons name="wallet" size={24} color="#fff" />
+              <Image 
+                source={require('@/assets/gfg4.png')} 
+                style={{ width: '100%', height: '100%' }}
+                contentFit="contain"
+              />
             </View>
-            <ThemedText style={styles.quickActionLabel}>Wallet</ThemedText>
+            <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.depositIcon]}>
-              <Ionicons name="bag" size={24} color="#fff" />
+              <Image 
+                source={require('@/assets/gfg3.png')} 
+                style={{ width: '100%', height: '100%' }}
+                contentFit="contain"
+              />
             </View>
             <ThemedText style={styles.quickActionLabel}>Deposit</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.withdrawIcon]}>
-              <Ionicons name="remove-circle" size={24} color="#fff" />
+              <Image 
+                source={require('@/assets/gfg2.png')} 
+                style={{ width: '100%', height: '100%' }}
+                contentFit="contain"
+              />
             </View>
             <ThemedText style={styles.quickActionLabel}>Withdraw</ThemedText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.vipIcon]}>
-              <Ionicons name="diamond" size={24} color="#fff" />
+              <Image 
+                source={require('@/assets/gfg1.png')} 
+                style={{ width: '100%', height: '100%' }}
+                contentFit="contain"
+              />
             </View>
             <ThemedText style={styles.quickActionLabel}>VIP</ThemedText>
           </TouchableOpacity>
+          </View>
         </View>
 
         {/* History Sections */}
         <View style={styles.historySection}>
-          <TouchableOpacity style={[styles.historyCard, styles.gameHistoryCard]}>
-            <View style={styles.historyIconContainer}>
-              <Ionicons name="document-text" size={32} color="#3B82F6" />
-            </View>
-            <ThemedText style={styles.historyTitle}>Game History</ThemedText>
-            <ThemedText style={styles.historySubtitle}>My game history</ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.historyCard, styles.transactionCard]}>
-            <View style={styles.historyIconContainer}>
-              <Ionicons name="swap-horizontal" size={32} color="#10B981" />
-            </View>
-            <ThemedText style={styles.historyTitle}>Transaction</ThemedText>
-            <ThemedText style={styles.historySubtitle}>My transaction history</ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.historyCard, styles.depositHistoryCard]}>
-            <View style={styles.historyIconContainer}>
-              <Ionicons name="arrow-up-circle" size={32} color="#EF4444" />
-            </View>
-            <ThemedText style={styles.historyTitle}>Deposit</ThemedText>
-            <ThemedText style={styles.historySubtitle}>My deposit history</ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={[styles.historyCard, styles.withdrawHistoryCard]}>
-            <View style={styles.historyIconContainer}>
-              <Ionicons name="checkmark-circle" size={32} color="#D97706" />
-            </View>
-            <ThemedText style={styles.historyTitle}>Withdraw</ThemedText>
-            <ThemedText style={styles.historySubtitle}>My withdraw history</ThemedText>
-          </TouchableOpacity>
+          <View style={styles.historyCardContainer}>
+            <TouchableOpacity style={[styles.historyCard, styles.gameHistoryCard]}>
+              <View style={styles.historyIconContainer}>
+                <Image 
+                  source={require('@/assets/ugi4.png')} 
+                  style={{ width: 40, height: 40 }}
+                  contentFit="contain"
+                />
+              </View>
+              <View style={styles.historyContent}>
+                <ThemedText style={styles.historyTitle}>Game History</ThemedText>
+                <ThemedText style={styles.historySubtitle}>My game history</ThemedText>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={[styles.historyCard, styles.transactionCard]}>
+              <View style={styles.historyIconContainer}>
+                <Image 
+                  source={require('@/assets/ugi1.png')} 
+                  style={{ width: 40, height: 40 }}
+                  contentFit="contain"
+                />
+              </View>
+              <View style={styles.historyContent}>
+                <ThemedText style={styles.historyTitle}>Transaction</ThemedText>
+                <ThemedText style={styles.historySubtitle}>My transaction history</ThemedText>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.historyCardContainer}>   
+            <TouchableOpacity style={[styles.historyCard, styles.depositHistoryCard]}>
+              <View style={styles.historyIconContainer}>
+                <Image 
+                  source={require('@/assets/ugi3.png')} 
+                  style={{ width: 40, height: 40 }}
+                  contentFit="contain"
+                />
+              </View>
+              <View style={styles.historyContent}>
+                <ThemedText style={styles.historyTitle}>Deposit</ThemedText>
+                <ThemedText style={styles.historySubtitle}>My deposit history</ThemedText>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={[styles.historyCard, styles.withdrawHistoryCard]}>
+              <View style={styles.historyIconContainer}>
+                <Image 
+                  source={require('@/assets/ugi2.png')} 
+                  style={{ width: 40, height: 40 }}
+                  contentFit="contain"
+                />
+              </View>
+              <View style={styles.historyContent}>
+                <ThemedText style={styles.historyTitle}>Withdraw</ThemedText>
+                <ThemedText style={styles.historySubtitle}>My withdraw history</ThemedText>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Account Settings List */}
@@ -130,7 +175,11 @@ export default function AccountScreen() {
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.notificationIcon]}>
-                <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr1.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.settingLabel}>Notification</ThemedText>
               {notificationCount > 0 && (
@@ -145,7 +194,11 @@ export default function AccountScreen() {
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.giftsIcon]}>
-                <Ionicons name="gift" size={20} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr2.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.settingLabel}>Gifts</ThemedText>
             </View>
@@ -155,7 +208,11 @@ export default function AccountScreen() {
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.statsIcon]}>
-                <Ionicons name="bar-chart" size={20} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr3.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.settingLabel}>Game statistics</ThemedText>
             </View>
@@ -165,7 +222,11 @@ export default function AccountScreen() {
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.languageIcon]}>
-                <Ionicons name="globe" size={20} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr4.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.settingLabel}>Language</ThemedText>
             </View>
@@ -182,42 +243,66 @@ export default function AccountScreen() {
           <View style={styles.serviceGrid}>
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="settings" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr5.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>Settings</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="document-text" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr6.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>Feedback</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="megaphone" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr7.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>Announcement</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="chatbubbles" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr8.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>Customer Service</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="book" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr9.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>Beginner's Guide</ThemedText>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Ionicons name="cube" size={24} color="#10B981" />
+                <Image 
+                  source={require('@/assets/eerrr10.png')} 
+                  style={{ width: '100%', height: '100%' }}
+                  contentFit="contain"
+                />
               </View>
               <ThemedText style={styles.serviceLabel}>About us</ThemedText>
             </TouchableOpacity>
@@ -253,14 +338,14 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   profileImageContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 84, 
+    height: 84,
+    borderRadius: 82,
     overflow: 'hidden',
   },
   profileInfo: {
     flex: 1,
-    gap: 8,
+    gap: 2,
   },
   usernameRow: {
     flexDirection: 'row',
@@ -287,9 +372,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   uidContainer: {
+    width: '50%', 
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: '#DD9138',
+    borderRadius: 18,
+    padding: 8,
+    paddingVertical: 2,
   },
   uidTag: {
     backgroundColor: '#F97316',
@@ -298,9 +388,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   uidLabel: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '500',
     color: '#fff',
+    paddingRight: 8,
+    borderRightWidth: 1,
+    borderRightColor: '#fff',
   },
   uidValue: {
     fontSize: 14,
@@ -308,25 +401,31 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   lastLogin: {
-    fontSize: 12,
-    color: '#9BA1A6',
+    fontSize: 13,
+    color: '#fff',
+  },
+  balanceSectionContainer: {
+    backgroundColor: '#001C54',
+    marginHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 24,
+    overflow: 'hidden',
   },
   balanceSection: {
     paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingVertical: 16,
   },
   balanceHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
   },
   balanceTitle: {
-    fontSize: 14,
-    color: '#9BA1A6',
+    fontSize: 19,
+    color: '#92A8E3',
   },
   balanceAmount: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
@@ -342,69 +441,80 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   quickActionIcon: {
-    width: 56,
-    height: 56,
+    width: 40,
+    height: 40,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   walletIcon: {
-    backgroundColor: '#EF4444',
   },
   depositIcon: {
-    backgroundColor: '#F97316',
+    // backgroundColor: '#F97316',
   },
   withdrawIcon: {
-    backgroundColor: '#3B82F6',
+    // backgroundColor: '#3B82F6',
   },
   vipIcon: {
-    backgroundColor: '#10B981',
+    // backgroundColor: '#10B981',
   },
   quickActionLabel: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#fff',
   },
   historySection: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
     paddingHorizontal: 16,
     marginBottom: 24,
     gap: 12,
   },
+  historyCardContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    flex: 1,
+  },
   historyCard: {
     width: '47%',
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: '#011341',
+    borderRadius: 9,
+    padding: 10,
     gap: 12,
+    flex: 1,
+    flexDirection: 'row',
   },
   gameHistoryCard: {
-    backgroundColor: '#1a0a3d',
+    backgroundColor: '#011341',
   },
   transactionCard: {
-    backgroundColor: '#1a0a3d',
+    backgroundColor: '#011341',
   },
   depositHistoryCard: {
-    backgroundColor: '#1a0a3d',
+    backgroundColor: '#011341',
   },
   withdrawHistoryCard: {
-    backgroundColor: '#1a0a3d',
+    backgroundColor: '#011341',
   },
   historyIconContainer: {
-    marginBottom: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 0,
+  },
+  historyContent: {
+    flex: 1,
+    flexDirection: 'column',
   },
   historyTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
-    marginBottom: 4,
   },
   historySubtitle: {
     fontSize: 12,
-    color: '#9BA1A6',
+    lineHeight: 14,
+    color: '#92A8E3',
+    flexShrink: 1,
   },
   settingsSection: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: '#011341',
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
@@ -425,23 +535,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingIconContainer: {
-    width: 32,
-    height: 32,
+    width: 38,
+    height: 38,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   notificationIcon: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   giftsIcon: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   statsIcon: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   languageIcon: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   settingLabel: {
     fontSize: 16,
@@ -474,6 +584,10 @@ const styles = StyleSheet.create({
   serviceSection: {
     paddingHorizontal: 16,
     marginBottom: 24,
+    backgroundColor: '#011341',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
   },
   sectionTitle: {
     fontSize: 18,
@@ -489,22 +603,21 @@ const styles = StyleSheet.create({
   serviceItem: {
     width: '30%',
     alignItems: 'center',
-    gap: 8,
+    gap: 0,
   },
   serviceIconContainer: {
-    width: 56,
-    height: 56,
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   serviceIcon: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   serviceLabel: {
     fontSize: 12,
-    color: '#fff',
+    color: '#92A8E3',
     textAlign: 'center',
   },
   logoutButton: {
@@ -513,15 +626,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 16,
     marginBottom: 24,
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 8,
+    borderRadius: 32,
     borderWidth: 1,
     borderColor: '#10B981',
     gap: 8,
   },
   logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: 17,
+    fontWeight: '400',
+    color: '#10B981',
   },
 });
