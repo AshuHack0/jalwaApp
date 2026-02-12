@@ -13,7 +13,7 @@ function formatBalance(amount: number): string {
 
 export default function AccountScreen() {
   const router = useRouter();
-  const { walletBalance } = useAuth();
+  const { walletBalance, logout } = useAuth();
   const [notificationCount] = useState(2);
 
   const handleCopyUID = () => {
@@ -21,9 +21,9 @@ export default function AccountScreen() {
     console.log('Copy UID');
   };
 
-  const handleLogout = () => {
-    // Handle logout functionality
-    console.log('Logout');
+  const handleLogout = async () => {
+    await logout();
+    router.replace("/auth/login");
   };
 
   return (
