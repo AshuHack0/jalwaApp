@@ -31,6 +31,7 @@ import {
   CHART_PERIOD_WIDTH,
   CHART_NUM_SPACING,
 } from "@/constants/Wingo";
+import { useAuth } from "@/contexts/AuthContext";
 import { fetchWinGoGameData, type WinGoGameData, type WinGoRound } from "@/services/api";
 import { Audio } from "expo-av";
 
@@ -54,7 +55,14 @@ function getSecondsRemaining(endsAt: string | Date | null): number {
 
 export default function WinGoScreen() {
   const router = useRouter();
-  const [walletBalance] = useState("₹0.00");
+  const { isAuthenticated, isLoading, walletBalance, refreshWallet } = useAuth();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) {
+      router.replace("/auth/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
   const [selectedMode, setSelectedMode] = useState(
     WINGO_GAMES[0]?.gameCode ?? "",
   );
@@ -132,6 +140,7 @@ export default function WinGoScreen() {
         if (refetchedForRoundEndRef.current !== end) {
           refetchedForRoundEndRef.current = end;
           fetchGameData();
+          refreshWallet();
         }
         setSecondsRemaining(0);
       } else {
@@ -146,7 +155,7 @@ export default function WinGoScreen() {
       setShowCountdownModal(remaining <= 5);
     }, 1000);
     return () => clearInterval(interval);
-  }, [gameData?.currentRound?.endsAt, fetchGameData]);
+  }, [gameData?.currentRound?.endsAt, fetchGameData, refreshWallet]);
 
   // Load countdown sounds on mount
   useEffect(() => {
@@ -312,6 +321,10 @@ export default function WinGoScreen() {
 
   const countdownDigits = String(secondsRemaining).padStart(2, "0").split("");
 
+  if (!isLoading && !isAuthenticated) {
+    return null;
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ThemedView style={styles.innerContainer}>
@@ -417,9 +430,9 @@ export default function WinGoScreen() {
               <ThemedText
                 style={{ fontSize: 24, fontWeight: "700", color: "#fff" }}
               >
-                {walletBalance}
+                ₹{walletBalance.toFixed(2)}
               </ThemedText>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={refreshWallet}>
                 <Image
                   source={
                     "https://www.jalwagame.win/assets/png/refireshIcon-2bc1b49f.webp"

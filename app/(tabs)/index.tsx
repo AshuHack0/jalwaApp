@@ -1,6 +1,7 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from "@/contexts/AuthContext";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Ionicons } from "@expo/vector-icons";
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
@@ -9,9 +10,13 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+function formatBalance(amount: number): string {
+  return `₹${amount.toFixed(2)}`;
+}
+
 export default function HomeScreen() {
   const router = useRouter();
-  const [walletBalance] = useState('₹0.00');
+  const { isAuthenticated, walletBalance, refreshWallet } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<ScrollView>(null);
   const screenWidth = Dimensions.get('window').width;
@@ -134,29 +139,33 @@ export default function HomeScreen() {
             </View>
           </TouchableOpacity> */}
 
-          <TouchableOpacity
-            style={styles.loginButton}
-            activeOpacity={0.8}
-            onPress={() => router.push("/auth/login")}
-          >
-            <ThemedText style={styles.loginButtonText}>Log in</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.registerButtonWrap}
-            activeOpacity={0.8}
-            onPress={() => router.push("/auth/register")}
-          >
-            <LinearGradient
-              colors={["#00D4FF", "#00E5A8"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.registerButton}
-            >
-              <ThemedText style={styles.registerButtonText}>
-                Register
-              </ThemedText>
-            </LinearGradient>
-          </TouchableOpacity>
+          {!isAuthenticated && (
+            <>
+              <TouchableOpacity
+                style={styles.loginButton}
+                activeOpacity={0.8}
+                onPress={() => router.push("/auth/login")}
+              >
+                <ThemedText style={styles.loginButtonText}>Log in</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.registerButtonWrap}
+                activeOpacity={0.8}
+                onPress={() => router.push("/auth/register")}
+              >
+                <LinearGradient
+                  colors={["#00D4FF", "#00E5A8"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.registerButton}
+                >
+                  <ThemedText style={styles.registerButtonText}>
+                    Register
+                  </ThemedText>
+                </LinearGradient>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
 
@@ -254,9 +263,9 @@ export default function HomeScreen() {
             </View>
             <View style={styles.balanceRow}>
               <ThemedText style={styles.balanceAmount}>
-                {walletBalance}
+                {formatBalance(walletBalance)}
               </ThemedText>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={refreshWallet}>
                 <Ionicons name="refresh" size={20} color="#fff" />
               </TouchableOpacity>
             </View>
@@ -740,24 +749,7 @@ export default function HomeScreen() {
 
       </ScrollView>
 
-      {/* Add to Desktop Button - Sticky Bottom */}
-      <View style={styles.addToDesktopSection}>
-        <LinearGradient
-          colors={['#072766', '#000b2e']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.addToDesktopButton}
-        >
-          <TouchableOpacity style={styles.addToDesktopContent}>
-            <Image 
-              source={require('@/assets/h5setting_20250311160357hftw.png')} 
-              style={styles.addToDesktopLogo}
-              contentFit="contain"
-            />
-            <ThemedText style={styles.addToDesktopText}>Add to Desktop</ThemedText>
-          </TouchableOpacity>
-        </LinearGradient>
-      </View>
+
     </ThemedView>
   );
 }

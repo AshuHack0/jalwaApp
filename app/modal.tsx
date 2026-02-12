@@ -1,10 +1,24 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { useAuth } from "@/contexts/AuthContext";
+import { Link, useRouter } from "expo-router";
+import { useEffect } from "react";
+import { StyleSheet } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 
 export default function ModalScreen() {
+  const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isAuthenticated) {
+      router.replace("/auth/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  if (!isLoading && !isAuthenticated) return null;
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">This is a modal</ThemedText>

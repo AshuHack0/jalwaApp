@@ -1,15 +1,19 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { CustomTabBar } from '@/components/custom-tab-bar';
+import { ProtectTabs } from "@/components/ProtectedRoute";
+import { CustomTabBar } from "@/components/custom-tab-bar";
+import { Tabs } from "expo-router";
+import React from "react";
 
 export default function TabLayout() {
   return (
-    <Tabs
-      tabBar={(props) => <CustomTabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-      }}>
+    <>
+      <ProtectTabs />
+      <Tabs
+        initialRouteName="index"
+        tabBar={(props) => <CustomTabBar {...props} />}
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
       <Tabs.Screen
         name="promotion"
         options={{
@@ -37,9 +41,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="account"
         options={{
-          title: 'Account',
+          title: "Account",
         }}
       />
     </Tabs>
+    </>
   );
 }

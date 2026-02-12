@@ -1,13 +1,19 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useAuth } from "@/contexts/AuthContext";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+
+function formatBalance(amount: number): string {
+  return `₹${amount.toFixed(2)}`;
+}
 
 export default function WalletScreen() {
   const router = useRouter();
+  const { walletBalance, refreshWallet } = useAuth();
 
   return (
     <ThemedView style={styles.container}>
@@ -17,7 +23,9 @@ export default function WalletScreen() {
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <ThemedText style={styles.screenTitle}>Wallet</ThemedText>
-        <View style={styles.placeholder} />
+        <TouchableOpacity onPress={refreshWallet} style={styles.refreshButton}>
+          <Ionicons name="refresh" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView 
@@ -34,16 +42,16 @@ export default function WalletScreen() {
               contentFit="contain"
             />
           </View>
-          <ThemedText style={styles.mainBalance}>₹0.00</ThemedText>
+          <ThemedText style={styles.mainBalance}>{formatBalance(walletBalance)}</ThemedText>
           <ThemedText style={styles.balanceLabel}>Total balance</ThemedText>
           
           <View style={styles.balanceDetails}>
             <View style={styles.balanceItem}>
-              <ThemedText style={styles.balanceNumber}>0</ThemedText>
+              <ThemedText style={styles.balanceNumber}>{walletBalance.toFixed(0)}</ThemedText>
               <ThemedText style={styles.balanceText}>Total amount</ThemedText>
             </View>
             <View style={styles.balanceItem}>
-              <ThemedText style={styles.balanceNumber}>0</ThemedText>
+              <ThemedText style={styles.balanceNumber}>{walletBalance.toFixed(0)}</ThemedText>
               <ThemedText style={styles.balanceText}>Total deposit amount</ThemedText>
             </View>
           </View>
@@ -56,7 +64,7 @@ export default function WalletScreen() {
               <View style={styles.progressCircle}>
                 <ThemedText style={styles.progressText}>0%</ThemedText>
               </View>
-              <ThemedText style={styles.walletAmount}>₹0.00</ThemedText>
+              <ThemedText style={styles.walletAmount}>{formatBalance(walletBalance)}</ThemedText>
               <ThemedText style={styles.walletTypeLabel}>Main wallet</ThemedText>
             </View>
             <View style={styles.walletTypeItem}>
@@ -183,6 +191,9 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 32,
+  },
+  refreshButton: {
+    padding: 4,
   },
   balanceSection: {
     alignItems: 'center',

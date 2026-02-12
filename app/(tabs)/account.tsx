@@ -1,14 +1,19 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useAuth } from "@/contexts/AuthContext";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+
+function formatBalance(amount: number): string {
+  return `₹${amount.toFixed(2)}`;
+}
 
 export default function AccountScreen() {
   const router = useRouter();
-  const [balance] = useState('₹0.00');
+  const { walletBalance } = useAuth();
   const [notificationCount] = useState(2);
 
   const handleCopyUID = () => {
@@ -59,7 +64,7 @@ export default function AccountScreen() {
         <View style={styles.balanceSection}>
           <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
           <View style={styles.balanceHeader}>
-            <ThemedText style={styles.balanceAmount}>{balance}</ThemedText>
+            <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText>
           </View>
         </View>
 
