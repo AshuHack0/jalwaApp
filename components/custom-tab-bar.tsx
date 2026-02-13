@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -24,11 +25,29 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
     account: 'happy',
   };
 
+  // Add your custom icons here - use require('@/assets/...') for each tab
+  // When provided, custom icons will be used instead of Ionicons
+  const customIcons: Partial<Record<string, number>> = {
+    promotion: require('@/assets/t6_promotion-a029ef45.webp'), // require('@/assets/tab_promotion.png'),
+    activity: require('@/assets/t6_activity-5e528f8c.webp'),  // require('@/assets/tab_activity.png'),
+    index: require('@/assets/t6_home-0a6ae2d5.webp'),     // require('@/assets/tab_home.png'),
+    wallet: require('@/assets/t6_wallet-3ae41933.webp'),    // require('@/assets/tab_wallet.png'),
+    account: require('@/assets/t6_main-bad84e0d.webp'),   // require('@/assets/tab_account.png'),
+  };
+
+  const customIconsActive: Partial<Record<string, number>> = {
+    promotion: require('@/assets/t6_promotion_a-923d9ced.webp'), // require('@/assets/tab_promotion_active.png'),
+    activity: require('@/assets/t6_activity_a-9c24c442.webp'),  // require('@/assets/tab_activity_active.png'),
+    index: undefined,     // require('@/assets/tab_home_active.png'),
+    wallet: require('@/assets/t6_wallet_a-60eb81d6.webp'),    // require('@/assets/tab_wallet_active.png'),
+    account: require('@/assets/t6_main_a-a7e8e1b6.webp'),   // require('@/assets/tab_account_active.png'),
+  };
+
   return (
     <View style={styles.tabBar}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label = options.tabBarLabel ?? options.title ?? route.name;
+        const label = (options.tabBarLabel ?? options.title ?? route.name) as string;
         const isFocused = state.index === index;
         const isHome = route.name === 'index';
 
@@ -48,40 +67,54 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           ? (activeIcons[route.name as keyof typeof activeIcons] || 'circle')
           : (icons[route.name as keyof typeof icons] || 'circle-outline');
 
+        const customIcon = isFocused 
+          ? (customIconsActive[route.name] ?? customIcons[route.name])
+          : customIcons[route.name];
+
+        const isHomeWithCustomIcon = isHome && customIcon;
+        const IconComponent = customIcon ? (
+          <Image
+            source={customIcon}
+            style={isHomeWithCustomIcon ? styles.tabHomeIconFull : styles.tabCustomIcon}
+            contentFit="contain"
+          />
+        ) : (
+          <Ionicons 
+            name={iconName as any} 
+            size={28} 
+            color={isHome && isFocused ? '#fff' : (isFocused ? activeColor : inactiveColor)} 
+          />
+        );
+
         return (
           <TouchableOpacity
             key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
+            testID={(options as any).tabBarTestID}
             onPress={onPress}
             style={styles.tabItem}
           >
             {isHome && isFocused ? (
               <View style={styles.homeTabContainer}>
-                <LinearGradient
-                  colors={['#14B8A6', '#10B981']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.homeTabBackground}
-                >
-                  <View style={styles.homeTabContent}>
-                    <Ionicons name={iconName} size={28} color="#fff" />
+                <View style={styles.homeTabContent}>
+                  {IconComponent}
+                  {isHomeWithCustomIcon ? (
+                    <Text style={[styles.tabLabel, styles.activeTabLabel, styles.homeLabelOnImage]}>{label}</Text>
+                  ) : (
                     <Text style={[styles.tabLabel, styles.activeTabLabel]}>{label}</Text>
-                  </View>
-                </LinearGradient>
+                  )}
+                </View>
               </View>
             ) : (
               <View style={styles.regularTab}>
-                <Ionicons 
-                  name={iconName} 
-                  size={28} 
-                  color={isFocused ? activeColor : inactiveColor} 
-                />
-                <Text style={[styles.tabLabel, { color: isFocused ? activeColor : inactiveColor }]}>
-                  {label}
-                </Text>
+                {IconComponent}
+                {isHomeWithCustomIcon ? (
+                  <Text style={[styles.tabLabel, styles.homeLabelOnImage, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
+                ) : (
+                  <Text style={[styles.tabLabel, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
+                )}
               </View>
             )}
           </TouchableOpacity>
@@ -115,7 +148,7 @@ const styles = StyleSheet.create({
   },
   homeTabContainer: {
     position: 'absolute',
-    top: -25,
+    top: -26,
     width: 70,
     height: 70,
     alignItems: 'center',
@@ -124,19 +157,17 @@ const styles = StyleSheet.create({
   homeTabBackground: {
     width: 70,
     height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#14B8A6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 10,
+     
   },
   homeTabContent: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
+  },
+  homeLabelOnImage: {
+    marginTop: -20,
+    fontSize: 11,
+    fontWeight: '600',
   },
   tabLabel: {
     fontSize: 12,
@@ -145,5 +176,13 @@ const styles = StyleSheet.create({
   activeTabLabel: {
     color: '#fff',
     fontWeight: '600',
+  },
+  tabCustomIcon: {
+    width: 28,
+    height: 28,
+  },
+  tabHomeIconFull: {
+    width: 70,
+    height: 70,
   },
 });

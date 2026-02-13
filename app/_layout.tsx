@@ -1,11 +1,16 @@
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SplashScreen as AppSplash } from "@/components/SplashScreen";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+
+SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -21,6 +26,24 @@ const customDarkTheme = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    if (appReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [appReady]);
+
+  useEffect(() => {
+ // Hide native splash soon so our custom splash overlay is visible
+    const hideNative = setTimeout(() => SplashScreen.hideAsync(), 100);
+    // Then hide our custom splash and show app after minimum display time
+    const ready = setTimeout(() => setAppReady(true), 2500);
+    return () => {
+      clearTimeout(hideNative);
+      clearTimeout(ready);
+    };
+  }, []);
 
   return (
     <AuthProvider>
@@ -35,6 +58,11 @@ export default function RootLayout() {
         <StatusBar style="light" />
         </ThemeProvider>
       </View>
+      {!appReady && (
+        <View style={[StyleSheet.absoluteFill, styles.splashOverlay]} pointerEvents="box-only">
+          <AppSplash />
+        </View>
+      )}
     </AuthProvider>
   );
 }
@@ -43,5 +71,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#05012B',
+  },
+  splashOverlay: {
+    zIndex: 9999,
+    elevation: 9999,
   },
 });

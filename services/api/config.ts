@@ -12,8 +12,8 @@ export const API_ENV = "local" as const;
 const BASE_URLS = {
   local:
     Platform.OS === "android"
-      ? "http://10.0.2.2:3000"
-      : "http://localhost:3000",
+      ? "https://jalwabackend.vercel.app"
+      : "http://192.168.0.104:3000",
   staging: "https://staging-api.example.com",
   production: "https://api.example.com",
 } as const;

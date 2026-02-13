@@ -143,6 +143,7 @@ export default function WalletScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.gameBalanceCard}>
+            
             <ThemedText style={styles.gameBalanceAmount}>0.00</ThemedText>
             <View style={styles.lotteryContent}>
               <ThemedText style={styles.gameBalanceLabel}>Lottery</ThemedText>
@@ -205,29 +206,34 @@ const styles = StyleSheet.create({
     marginVertical: 14,
   },
   mainBalance: {
-    fontSize: 30,
-    fontWeight: 'regular',
+    fontSize: 24,
+    fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 8, 
+    
   },
   balanceLabel: {
     fontSize: 16,
     color: '#fff',
     marginBottom:4,
+    fontWeight: 'bold',
   },
   balanceDetails: {
     flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around', 
+    fontWeight: 'bold',
   },
   balanceItem: {
     alignItems: 'center',
+    fontWeight: 'bold',
   },
   balanceNumber: {
-    fontSize: 24,
-    fontWeight: 'regular',
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#fff',
     marginBottom: 4,
+   
   },
   balanceText: {
     fontSize: 16,
@@ -266,7 +272,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   walletAmount: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 4,

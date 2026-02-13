@@ -7,8 +7,10 @@ import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Dimensions, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+
+const WINNER_ITEM_HEIGHT = 78;
 
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
@@ -18,9 +20,18 @@ export default function HomeScreen() {
   const router = useRouter();
   const { isAuthenticated, walletBalance, refreshWallet } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('Lottery');
+  const [showGameErrorModal, setShowGameErrorModal] = useState(false);
   const carouselRef = useRef<ScrollView>(null);
+  const winnersScrollRef = useRef<ScrollView>(null);
+  const winnersScrollY = useRef(0);
   const screenWidth = Dimensions.get('window').width;
   const carouselWidth = screenWidth - 32; // accounting for padding
+  const sectionPadding = 16;
+  const categoryGridGap = 12;
+  const categoryContentWidth = screenWidth - sectionPadding * 2;
+  const categoryCardWidth2 = (categoryContentWidth - categoryGridGap) / 2; // Lottery: 2 per row
+  const categoryCardWidth3 = (categoryContentWidth - categoryGridGap * 2) / 3; // Others: 3 per row
 
   const carouselImages = [
     require('@/assets/Banner_20250319132416d7h9.jpg'),
@@ -61,47 +72,200 @@ export default function HomeScreen() {
     setCurrentSlide(slideIndex);
   }, [carouselWidth]);
 
+  const activeBg = require('@/assets/icon_bg_select-cc5606e6.webp');
+  const inactiveBg = require('@/assets/icon_bg-f97e2540.webp');
+
   const gameCategories = [
-    { name: 'Lottery', image: require('@/assets/gamecategory_202503131718208r77.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'Mini games', image: require('@/assets/gamecategory_20250313171619xdvp.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'Hot Slots', image: require('@/assets/gamecategory_202503131717268awj.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'Slots', image: require('@/assets/gamecategory_202503131718032ig4.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp')  },
-    { name: 'Fishing', image: require('@/assets/gamecategory_202503131718208r77.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'PVC', image: require('@/assets/gamecategory_202503131718274ean.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'Casino', image: require('@/assets/gamecategory_20250313171546obyl.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
-    { name: 'Sports', image: require('@/assets/gamecategory_20250313171619xdvp.png'), backgroundImage: require('@/assets/icon_bg_select-cc5606e6.webp') },
+    {
+      name: 'Lottery',
+      image: require('@/assets/gamecategory_202503131718208r77.png'),
+      icon: require('@/assets/icon_lottery-d44718d5.svg'), // section header icon - replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "WIN GO", image: require("@/assets/lotterycategory_20250311104257c812.png") },
+        { name: "MOTO RACING", image: require("@/assets/lotterycategory_20250311104327ptke.png") },
+        { name: "K3", image: require("@/assets/lotterycategory_202503241646119i36.png") },
+        { name: "5D", image: require("@/assets/lotterycategory_20250430143859y2i2.png") },
+        { name: "TRX WINGO", image: require("@/assets/lotterycategory_2025031110434143p3.png") },
+      ],
+    },
+    {
+      name: 'Mini games',
+      image: require('@/assets/gamecategory_20250313171619xdvp.png'),
+      icon: require('@/assets/icon_mini-9bd4090f.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Game 1", image: require("@/assets/800_20250324182314304.png") }, // TODO: replace image
+        { name: "Game 2", image: require("@/assets/810_20250324182331029.png") }, // TODO: replace image 
+        { name: "Game 3", image: require("@/assets/804.png") }, // TODO: replace image 
+        { name: "Game 4", image: require("@/assets/804.png") },  
+        { name: "Game 5", image: require("@/assets/812.png") },
+        { name: "Game 6", image: require("@/assets/813.png") }, 
+        { name: "Game 7", image: require("@/assets/814.png") },
+        { name: "Game 8", image: require("@/assets/903.png") },
+        { name: "Game 9", image: require("@/assets/501.png") },
+        { name: "Game 10", image: require("@/assets/502.png") },
+        { name: "Game 12", image: require("@/assets/504.png") },
+        { name: "Game 13", image: require("@/assets/505.png") },
+        
+      ],
+    },
+    {
+      name: 'Hot Slots', 
+      image: require('@/assets/gamecategory_20250313171546obyl.png'),
+      icon: require('@/assets/icon_lottery-d44718d5.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Slot 1", image: require("@/assets/800_20250324182314304.png") }, // TODO: replace image
+        { name: "Slot 2", image: require("@/assets/810_20250324182331029.png") }, // TODO: replace image 
+        { name: "Slot 3", image: require("@/assets/804.png") }, // TODO: replace image 
+        { name: "Slot 4", image: require("@/assets/7003.png") }, // TODO: replace image
+        { name: "Slot 5", image: require("@/assets/49.png") }, // TODO: replace image 
+        { name: "Slot 6", image: require("@/assets/289.png") }, // TODO: replace image
+      ],
+    },
+    {
+      name: 'Slots',
+      image: require('@/assets/gamecategory_202503131718274ean.png'), 
+      icon: require('@/assets/icon_lottery-d44718d5.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Slot 1", image: require("@/assets/212.png") }, // TODO: replace image
+        { name: "Slot 2", image: require("@/assets/42.png") }, // TODO: replace image 
+        { name: "Slot 3", image: require("@/assets/7005.png") }, // TODO: replace image\\
+        { name: "Slot 4", image: require("@/assets/7006.png") }, // TODO: replace image\\
+        { name: "Slot 5", image: require("@/assets/7007.png") }, // TODO: replace image\\
+        { name: "Slot 6", image: require("@/assets/AT01.png") }, // TODO: replace image\\
+        { name: "Slot 7", image: require("@/assets/7009.png") }, // TODO: replace image\\
+        { name: "Slot 8", image: require("@/assets/7010.png") }, // TODO: replace image\\ 
+        { name: "Slot 9", image: require("@/assets/20.png") }, // TODO: replace image\\
+        { name: "Slot 10", image: require("@/assets/82.png") }, // TODO: replace image\\
+      ],
+    },
+    {
+      name: 'Fishing',
+      image: require('@/assets/gamecategory_202503131716285jqk.png'),
+      icon: require('@/assets/icon_fish-80dac6e1.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Fishing 16", image: require("@/assets/32.png") }, // TODO: replace image\\
+        { name: "Fishing 1", image: require("@/assets/7001.png") }, // TODO: replace image
+        { name: "Fishing 13", image: require("@/assets/464.png") }, // TODO: replace image
+        { name: "Fishing 2", image: require("@/assets/7002.png") }, // TODO: replace image 
+        { name: "Fishing 20", image: require("@/assets/1.png") }, // TODO: replace image
+        { name: "Fishing 3", image: require("@/assets/7003.png") }, // TODO: replace image
+        { name: "Fishing 4", image: require("@/assets/7004.png") }, // TODO: replace image\\
+        { name: "Fishing 5", image: require("@/assets/7005.png") }, // TODO: replace image\\
+        { name: "Fishing 6", image: require("@/assets/7006.png") }, // TODO: replace image\\
+        { name: "Fishing 7", image: require("@/assets/7007.png") }, // TODO: replace image\\
+        { name: "Fishing 8", image: require("@/assets/AT01.png") }, // TODO: replace image\\
+        { name: "Fishing 9", image: require("@/assets/7009.png") }, // TODO: replace image\\
+        { name: "Fishing 10", image: require("@/assets/7010.png") }, // TODO: replace image\\ 
+        { name: "Fishing 11", image: require("@/assets/20.png") }, // TODO: replace image\\
+        { name: "Fishing 15", image: require("@/assets/82.png") }, // TODO: replace image\\
+       
+      ],
+    },
+    {
+      name: 'PVC',
+      image: require('@/assets/gamecategory_202503131717268awj.png'),
+      icon: require('@/assets/icon_chess-b71f3e88.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "PVC 1", image: require("@/assets/vendorlogo_202503111054058v6w.png") }, // TODO: replace image
+        { name: "PVC 2", image: require("@/assets/vendorlogo_20250311105339pi1y.png") }, // TODO: replace image
+        { name: "PVC 3", image: require("@/assets/vendorlogo_20250830165501she8.png") }, // TO
+      ],
+    },
+    {
+      name: 'Casino',
+      image: require('@/assets/gamecategory_202503131718032ig4.png'), 
+ 
+    
+      icon: require('@/assets/icon_video-da93a00c.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Casino 6", image: require("@/assets/vendorlogo_20250311105326ntuv.png") },
+        { name: "Casino 4", image: require("@/assets/vendorlogo_202503111054418bsk.png") },
+        { name: "Casino 3", image: require("@/assets/vendorlogo_20250311105152d49l.png") },
+       
+        { name: "Casino 2", image: require("@/assets/vendorlogo_20250607164818rmhc.png") },
+     
+       
+        { name: "Casino 5", image: require("@/assets/vendorlogo_20250311105431knjh.png") },  
+        { name: "Casino 1", image: require("@/assets/vendorlogo_202503111054516cx3.png") },
+       
+      ],
+    },
+    {
+      name: 'Sports',
+      image: require('@/assets/gamecategory_20250315182024qtyt.png'),
+      icon: require('@/assets/icon_lottery-d44718d5.svg'), // TODO: replace with your icon
+      backgroundImage: activeBg,
+      inactiveBackgroundImage: inactiveBg,
+      games: [
+        { name: "Sport 1", image: require("@/assets/vendorlogo_20250311105256rbnp.png") }, // TODO: replace image
+        { name: "Sport 2", image: require("@/assets/vendorlogo_2025031116174076n9.png") }, // TODO: replace image
+      ],
+    },
   ];
 
-  const lotteryGames = [
-    {
-      name: "WIN GO",
-      image: require("@/assets/lotterycategory_20250311104257c812.png"),
-    },
-    {
-      name: "MOTO RACING",
-      image: require("@/assets/lotterycategory_20250311104327ptke.png"),
-    },
-    {
-      name: "K3",
-      image: require("@/assets/lotterycategory_202503241646119i36.png"),
-    },
-    {
-      name: "5D",
-      image: require("@/assets/lotterycategory_20250430143859y2i2.png"),
-    },
-    {
-      name: "TRX WINGO",
-      image: require("@/assets/lotterycategory_20250311104257c812.png"),
-    },
+  const avatarPool = [
+    require('@/assets/8-ea087ede.webp'),
+    require('@/assets/1-a6662edb.webp'),
+    require('@/assets/6-7c7f5203.webp'),
+    require('@/assets/7003.png'),
+    require('@/assets/7004.png'),
+    require('@/assets/7005.png'),
+    require('@/assets/7006.png'),
+    require('@/assets/7007.png'),
+    require('@/assets/7009.png'),
   ];
 
-  const winners = [
-    { id: 'Mem***LHV', amount: '₹48.02', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
-    { id: 'Mem***ABC', amount: '₹125.50', vendor: require('@/assets/lotterycategory_20250311104327ptke.png') ,avatar: require('@/assets/8-ea087ede.webp')},
-    { id: 'Mem***XYZ', amount: '₹89.30', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
-    { id: 'Mem***DEF', amount: '₹256.80', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
-    { id: 'Mem***GHI', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') ,avatar: require('@/assets/8-ea087ede.webp')},
+  const winnersRaw = [
+    { id: 'Mem***LHV', amount: '₹48.02', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***ABC', amount: '₹125.50', vendor: require('@/assets/lotterycategory_20250311104327ptke.png') },
+    { id: 'Mem***XYZ', amount: '₹89.30', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***DEF', amount: '₹256.80', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***GHI', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***JKL', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***MNO', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***PQR', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***STU', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***VWX', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
+    { id: 'Mem***YZ', amount: '₹192.45', vendor: require('@/assets/vendorlogo_20250311105256rbnp.png') },
   ];
+
+  const winners = useMemo(() => winnersRaw.map((w) => ({
+    ...w,
+    avatar: avatarPool[Math.floor(Math.random() * avatarPool.length)],
+  })), []);
+
+  // Winners list auto-scroll (new winner scrolls to top, old one moves down)
+  useEffect(() => {
+    const maxScroll = Math.max(0, winners.length * WINNER_ITEM_HEIGHT - WINNER_ITEM_HEIGHT * 4.5);
+    winnersScrollY.current = maxScroll;
+    winnersScrollRef.current?.scrollTo({ y: maxScroll, animated: false });
+
+    const interval = setInterval(() => {
+      const nextY = winnersScrollY.current - WINNER_ITEM_HEIGHT;
+      if (nextY <= 0) {
+        winnersScrollY.current = maxScroll;
+        winnersScrollRef.current?.scrollTo({ y: maxScroll, animated: false });
+      } else {
+        winnersScrollY.current = nextY;
+        winnersScrollRef.current?.scrollTo({ y: nextY, animated: true });
+      }
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [winners.length]);
 
   const leaderboard = [
     { rank: 1, username: 'Mem***NLR', amount: '1,832,198,343.08', isTop3: true, medal: 'gold' },
@@ -298,148 +462,99 @@ export default function HomeScreen() {
 
         {/* Game Category Grid */}
         <View style={styles.gameGrid}>
-          {gameCategories.map((category, index) => (
-            <TouchableOpacity key={index} style={styles.gameCard}>
-              <View style={styles.gameCardBackgroundContainer}>
-                <Image 
-                  source={category.backgroundImage} 
-                  style={styles.gameCardBackground}
-                  contentFit="cover"
-                  />
-                <View style={styles.gameIconContainer}>
-                  <Image 
-                    source={category.image} 
-                    style={styles.gameIcon}
-                    contentFit="contain"
-                    />
-                </View>
-              </View>
-              <ThemedText style={styles.gameName}>{category.name}</ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Lottery Section */}
-        <View style={styles.lotterySection}>
-          <View style={styles.lotteryHeader}>
-            <Image
-              source={require("@/assets/icon_lottery-d44718d5.svg")}
-              style={styles.lotteryIcon}
-              contentFit="contain"
-            />
-            <ThemedText style={styles.lotteryTitle}>Lottery</ThemedText>
-          </View>
-          <View style={styles.lotteryGamesGrid}>
-            {lotteryGames.map((game, index) => (
+          {gameCategories.map((category, index) => {
+            const isActive = selectedCategory === category.name;
+            return (
               <TouchableOpacity
                 key={index}
-                style={styles.lotteryGameCard}
-                onPress={() => {
-                  if (game.name === "WIN GO") {
-                    router.push("/wingo");
-                  }
-                }}
+                style={styles.gameCard}
+                onPress={() => setSelectedCategory(category.name)}
+                activeOpacity={0.8} 
+               
               >
-                <Image
-                  source={game.image}
-                  style={styles.lotteryGameImage}
-                  contentFit="cover"
-                />
+                <View style={styles.gameCardBackgroundContainer}>
+                  <Image
+                    source={isActive ? category.backgroundImage : category.inactiveBackgroundImage}
+                    style={styles.gameCardBackground}
+                    contentFit="contain"
+                  />
+                  <View style={styles.gameIconContainer}>
+                    <Image
+                      source={category.image}
+                      style={styles.gameIcon}
+                      contentFit="contain"
+                    />
+                  </View>
+                </View>
+                <ThemedText style={[styles.gameName, isActive && styles.gameNameActive]} numberOfLines={1} ellipsizeMode="tail">{category.name}</ThemedText>
               </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+            );
+          })}
+        </View>  
 
-        {/* Casino Section */}
-        <View style={styles.casinoSection}>
-          <View style={styles.casinoHeader}>
-            <ThemedText style={styles.casinoIcon}>🎰</ThemedText>
-            <ThemedText style={styles.casinoTitle}>Casino</ThemedText>
+        {/* Dynamic Category Section */}
+        <View style={styles.lotterySection}>
+          {(() => {
+            const category = gameCategories.find((c) => c.name === selectedCategory);
+            return (
+              <>
+          <View style={styles.lotteryHeader}>
+            {category?.icon && (
+              <Image
+                source={category.icon}
+                style={styles.lotteryIcon}
+                contentFit="contain"
+              />
+            )}
+            <ThemedText style={styles.lotteryTitle}>{selectedCategory}</ThemedText>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.casinoGamesScroll}
-            contentContainerStyle={styles.casinoGamesContainer}
-          >
-            <TouchableOpacity style={styles.casinoGameCard}>
-              <Image
-                source={require("@/assets/7001.png")}
-                style={styles.casinoGameImage}
-                contentFit="cover"
-              />
-              <View style={styles.casinoGameLogo}>
-                <Image
-                  source={require("@/assets/vendorlogo_20250311105152d49l.png")}
-                  style={styles.vendorLogo}
-                  contentFit="contain"
-                />
+
+          {(() => {
+            const games = category?.games ?? [];
+            if (games.length === 0) {
+              return (
+                <View style={styles.categoryPlaceholder}>
+                  <ThemedText style={styles.categoryPlaceholderText}>Coming soon</ThemedText>
+                </View>
+              );
+            }
+            const isLottery = selectedCategory === 'Lottery';
+            const cardWidth = isLottery ? categoryCardWidth2 : categoryCardWidth3;
+            const cardHeight = isLottery ? 100 : 140;
+            return (
+              <View style={[styles.lotteryGamesGrid, { gap: categoryGridGap }]}>
+                {games.map((game) => (
+                  <TouchableOpacity
+                    key={game.name}
+                    style={[styles.categoryGameCardBase, { width: cardWidth, height: cardHeight }]}
+                    onPress={() => {
+                      if (game.name === "WIN GO") {
+                        router.push("/wingo");
+                      } else {
+                        setShowGameErrorModal(true);
+                      }
+                    }}
+                  >
+                    <Image
+                      source={game.image}
+                      style={styles.lotteryGameImage}
+                      contentFit="cover"
+                    />
+                  </TouchableOpacity>
+                ))}
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.casinoGameCard}>
-              <Image
-                source={require("@/assets/7002.png")}
-                style={styles.casinoGameImage}
-                contentFit="cover"
-              />
-              <View style={styles.casinoGameLogo}>
-                <Image
-                  source={require("@/assets/vendorlogo_20250311105256rbnp.png")}
-                  style={styles.vendorLogo}
-                  contentFit="contain"
-                />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.casinoGameCard}>
-              <Image
-                source={require("@/assets/7003.png")}
-                style={styles.casinoGameImage}
-                contentFit="cover"
-              />
-              <View style={styles.casinoGameLogo}>
-                <Image
-                  source={require("@/assets/vendorlogo_20250311105326ntuv.png")}
-                  style={styles.vendorLogo}
-                  contentFit="contain"
-                />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.casinoGameCard}>
-              <Image
-                source={require("@/assets/7004.png")}
-                style={styles.casinoGameImage}
-                contentFit="cover"
-              />
-              <View style={styles.casinoGameLogo}>
-                <Image
-                  source={require("@/assets/vendorlogo_20250311105339pi1y.png")}
-                  style={styles.vendorLogo}
-                  contentFit="contain"
-                />
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.casinoGameCard}>
-              <Image
-                source={require("@/assets/7005.png")}
-                style={styles.casinoGameImage}
-                contentFit="cover"
-              />
-              <View style={styles.casinoGameLogo}>
-                <Image
-                  source={require("@/assets/vendorlogo_202503111054516cx3.png")}
-                  style={styles.vendorLogo}
-                  contentFit="contain"
-                />
-              </View>
-            </TouchableOpacity>
-          </ScrollView>
+            );
+          })()}
+              </>
+            );
+          })()}
         </View>
 
         {/* Winning Information Section */}
         <View style={styles.winningSection}>
           <View style={styles.lotteryHeader}>
             <Image 
-              source={require('@/assets/icon_lottery-d44718d5.svg')} 
+              source={require('@/assets/icon_win-91513609.svg')} 
               style={styles.lotteryIcon}
               contentFit="contain"
             />
@@ -451,35 +566,53 @@ export default function HomeScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.winnersList}
           >
-            {winners.map((winner, index) => (
-              <View key={index} style={styles.winnerItem}>
-                <View style={styles.winnerLeft}>
-                  <View style={styles.winnerIcon}>
-                    <Image 
-                      source={winner.vendor} 
-                      style={styles.winnerIconImage}
-                      contentFit="contain"
-                    />
-                  </View>
-                </View>
-                <View style={styles.winnerIdContainer}>
-                  <View style={styles.winnerAmountContainer}>
-                    <View style={styles.winnerAvatar}>
+            <View style={styles.winnersScrollWrapper}>
+              <ScrollView
+                ref={winnersScrollRef}
+                style={styles.winnersScrollView}
+                contentContainerStyle={styles.winnersScrollContent}
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={16}
+                onScroll={(e) => {
+                  winnersScrollY.current = e.nativeEvent.contentOffset.y;
+                }}
+              >
+                {winners.map((winner, index) => (
+                <View key={index} style={styles.winnerItem}>
+                  <View style={styles.winnerLeft}>
+                    <View style={styles.winnerIcon}>
                       <Image 
-                      source={winner.avatar} 
-                      style={styles.winnerIconImage}
-                      contentFit="contain"
-                    />
+                        source={winner.vendor} 
+                        style={styles.winnerIconImage}
+                        contentFit="contain"
+                      />
                     </View>
-                    <ThemedText style={styles.winnerId}>{winner.id}</ThemedText>
                   </View>
-                  <View style={styles.winnerRight}>
-                    <ThemedText style={styles.winnerLabel}>Winning amount</ThemedText>
-                    <ThemedText style={styles.winnerAmount}>{winner.amount}</ThemedText>
+                  <View style={styles.winnerIdContainer}>
+                    <View style={styles.winnerAmountContainer}>
+                      <View style={styles.winnerAvatar}>
+                        <Image 
+                          source={winner.avatar} 
+                          style={styles.winnerIconImage}
+                          contentFit="contain"
+                        />
+                      </View>
+                      <ThemedText style={styles.winnerId}>{winner.id}</ThemedText>
+                    </View>
+                    <View style={styles.winnerRight}>
+                      <ThemedText style={styles.winnerLabel}>Winning amount</ThemedText>
+                      <ThemedText style={styles.winnerAmount}>{winner.amount}</ThemedText>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              ))}
+              </ScrollView>
+              <LinearGradient
+                colors={['#072766', 'transparent']}
+                style={styles.winnersFadeTop}
+                pointerEvents="none"
+              />
+            </View>
           </LinearGradient>
         </View>
 
@@ -487,7 +620,7 @@ export default function HomeScreen() {
         <View style={styles.leaderboardSection}>
           <View style={styles.lotteryHeader}>
             <Image 
-              source={require('@/assets/icon_lottery-d44718d5.svg')} 
+              source={require('@/assets/icon_rank-432901c9.svg')} 
               style={styles.lotteryIcon}
               contentFit="contain"
             />
@@ -749,7 +882,44 @@ export default function HomeScreen() {
 
       </ScrollView>
 
-
+        {/* Game Error Modal */}
+        <Modal
+          visible={showGameErrorModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowGameErrorModal(false)}
+        >
+          <TouchableOpacity
+            style={styles.gameErrorOverlay}
+            activeOpacity={1}
+            onPress={() => setShowGameErrorModal(false)}
+          >
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={(e) => e.stopPropagation()}
+              style={styles.gameErrorPopup}
+            >
+              <View style={styles.gameErrorIconRow}>
+                <View style={styles.gameErrorRedCircle}>
+                  <Ionicons name="alert-circle" size={20} color="#fff" />
+                </View>
+                <View style={styles.gameErrorYellowTriangle}>
+                  <Ionicons name="warning" size={32} color="#000" />
+                </View>
+              </View>
+              <ThemedText style={styles.gameErrorTitle}>Game Error</ThemedText>
+              <ThemedText style={styles.gameErrorMessage}>
+                The Hack Only supports Lottery Games.
+              </ThemedText>
+              <TouchableOpacity
+                style={styles.gameErrorButton}
+                onPress={() => setShowGameErrorModal(false)}
+              >
+                <ThemedText style={styles.gameErrorButtonText}>OK</ThemedText>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
     </ThemedView>
   );
 }
@@ -839,7 +1009,7 @@ const styles = StyleSheet.create({
   promoBanners: {
     // backgroundColor: 'red',
     flexDirection: "row",
-    gap: 0,
+    gap: 7,
     paddingHorizontal: 16,
     marginBottom: 16,
   },
@@ -869,13 +1039,17 @@ const styles = StyleSheet.create({
   mainCarouselCard: {
     borderRadius: 16,
     overflow: 'hidden',
-    height: 160,
+    height: 160, 
     position: 'relative',
-    marginRight: 0,
+    marginRight: 0, 
+    padding: 1,
   },
   mainCarouselImage: {
-    width: "100%",
-    height: "100%",
+    width: "100%",     // 👈 smaller than 100%
+    height: "95%",
+    padding: 10,
+    alignSelf: "center",
+    resizeMode: "contain",
   },
   carouselOverlay: {
     position: "absolute",
@@ -952,7 +1126,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 14,
-    marginTop: 12,
+    marginTop: 0,
   },
   indicator: {
     width: 5,
@@ -1076,11 +1250,11 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   gameGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: 16,
-    gap: 12,
-    marginBottom: 24,
+    flexDirection: "row", 
+    flexWrap: "wrap", 
+    paddingHorizontal: 16, 
+    gap: 12, 
+    marginBottom: 24, 
   },
   gameCard: {
     width: '22%',
@@ -1094,7 +1268,8 @@ const styles = StyleSheet.create({
     padding: 12,
     position: 'relative',
     width: '100%',
-    height: 75,
+    height: 75, 
+  
   },
   gameCardBackground: {
     position: 'absolute',
@@ -1124,6 +1299,20 @@ const styles = StyleSheet.create({
     color: '#6F80A4',
     fontSize: 14,
     textAlign: 'center',
+  },
+  gameNameActive: {
+    color: '#fff',
+  },
+  categoryPlaceholder: {
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+  },
+  categoryPlaceholderText: {
+    color: '#6F80A4',
+    fontSize: 16,
   },
   lotterySection: {
     paddingHorizontal: 16,
@@ -1155,9 +1344,39 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
   },
+  categoryGameCardBase: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  categoryGameCardColumn: {
+    flexDirection: 'column',
+  },
+  hotSlotsImageContainer: {
+    width: '100%',
+    height: 100,
+  },
   lotteryGameImage: {
     width: "100%",
     height: "100%",
+  },
+  rtpBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#14B8A6',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginTop: 3,
+  },
+  rtpLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  rtpValue: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   casinoSection: {
     paddingHorizontal: 16,
@@ -1182,7 +1401,7 @@ const styles = StyleSheet.create({
   },
   casinoGamesContainer: {
     paddingHorizontal: 16,
-    gap: 12,
+    gap: 12, 
   },
   casinoGameCard: {
     width: 160,
@@ -1229,15 +1448,34 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#224BA2',
-    paddingHorizontal: 12,
+    paddingHorizontal: 1,
+  },
+  winnersScrollWrapper: {
+    position: 'relative',
+    paddingTop: 20,
+  },
+  winnersScrollView: {
+    maxHeight: WINNER_ITEM_HEIGHT * 4.5,
+  },
+  winnersScrollContent: {
+    paddingTop: 8,
+    paddingBottom: 2,
+  },
+  winnersFadeTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 40,
+    pointerEvents: 'none',
   },
   winnerItem: {
-    // backgroundColor: 'green',
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
     gap: 12,
     padding: 8,
+    minHeight: WINNER_ITEM_HEIGHT,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
@@ -1516,5 +1754,66 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#fff',
+  },
+  gameErrorOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  gameErrorPopup: {
+    backgroundColor: '#0f1635',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 320,
+    borderWidth: 2,
+    borderColor: '#E91E63',
+  },
+  gameErrorIconRow: {
+    alignItems: 'center',
+    marginBottom: 16,
+    gap: 12,
+  },
+  gameErrorRedCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EF4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gameErrorYellowTriangle: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: '#FBBF24',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gameErrorTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EF4444',
+    marginBottom: 8,
+  },
+  gameErrorMessage: {
+    fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  gameErrorButton: {
+    backgroundColor: '#14B8A6',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+  },
+  gameErrorButtonText: {
+    color: '#05012B',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

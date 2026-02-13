@@ -9,9 +9,9 @@ export default function ActivityScreen() {
 
   const activityCategories = [
     { name: 'Activity Award', image: require('@/assets/activityReward-66772619.webp') },
-    { name: 'Invitation bonus', image: require('@/assets/activityReward-66772619.webp') },
-    { name: 'Betting rebate', image: require('@/assets/activityReward-66772619.webp') },
-    { name: 'Super Jackpot', image: require('@/assets/activityReward-66772619.webp') },
+    { name: 'Invitation bonus', image: require('@/assets/invitationBonus-aa7acbd3.webp') },
+    { name: 'Betting rebate', image: require('@/assets/BettingRebate-17d35455.webp') },
+    { name: 'Super Jackpot', image: require('@/assets/superJackpot-ecb648b4.webp') },
   ];
 
   const promotionalBanners = [

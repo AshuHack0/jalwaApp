@@ -45,10 +45,7 @@ export default function AccountScreen() {
           <View style={styles.profileInfo}>
             <View style={styles.usernameRow}>
               <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
-              <View style={styles.vipBadge}>
-                <Ionicons name="shield" size={16} color="#fff" />
-                <ThemedText style={styles.vipText}>VIP0</ThemedText>
-              </View>
+                 <Image source={require('@/assets/pro.webp')} style={{ width: 40, height: 40 }} contentFit="contain" />
             </View>
             <TouchableOpacity style={styles.uidContainer} onPress={handleCopyUID}>
               <ThemedText style={styles.uidLabel}>UID</ThemedText>
@@ -67,6 +64,8 @@ export default function AccountScreen() {
             <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText>
           </View>
         </View>
+ 
+ 
 
         {/* Quick Action Buttons */}
         <View style={styles.quickActions}>
@@ -377,7 +376,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   uidContainer: {
-    width: '50%', 
+    width: '60%', 
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
