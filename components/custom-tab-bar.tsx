@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { Image } from 'expo-image';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const activeColor = '#14B8A6'; // Light blue-green
@@ -72,10 +71,17 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           : customIcons[route.name];
 
         const isHomeWithCustomIcon = isHome && customIcon;
+        const isRegularTabActive = !isHome && isFocused && customIcon;
         const IconComponent = customIcon ? (
           <Image
             source={customIcon}
-            style={isHomeWithCustomIcon ? styles.tabHomeIconFull : styles.tabCustomIcon}
+            style={
+              isHomeWithCustomIcon 
+                ? styles.tabHomeIconFull 
+                : isRegularTabActive 
+                ? styles.tabCustomIconActive 
+                : styles.tabCustomIcon
+            }
             contentFit="contain"
           />
         ) : (
@@ -135,22 +141,27 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     position: 'relative',
     overflow: 'visible',
+    marginBottom: 0,
   },
   tabItem: {
+  paddingBottom: 5,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   regularTab: {
+    height: 70,
+    width: 70,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 15,
     gap: 4,
   },
   homeTabContainer: {
     position: 'absolute',
     top: -26,
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -178,8 +189,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabCustomIcon: {
-    width: 28,
-    height: 28,
+    width: 20,
+    height: 20,
+  },
+  tabCustomIconActive: {
+    position: 'absolute',
+    top: 10,
+    width: 50,
+    height: 50,
   },
   tabHomeIconFull: {
     width: 70,
