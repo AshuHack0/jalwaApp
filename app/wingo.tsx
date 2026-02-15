@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Text,
   Pressable,
   Alert,
@@ -12,10 +11,6 @@ import {
   widthPercentageToDP as wpBase,
   heightPercentageToDP as hpBase,
 } from "react-native-responsive-screen";
-
-const SCALE = 0.80;
-const wp = (p: number) => wpBase(p * SCALE);
-const hp = (p: number) => hpBase(p * SCALE);
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -28,7 +23,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Polygon, Rect, Line } from "react-native-svg";
@@ -43,6 +38,20 @@ import {
   WINGO_TABS,
   WINGO_API_PATH_MAP,
 } from "@/constants/Wingo";
+import { BetModal } from "@/components/BetModal";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  useWinGoCurrentRound,
+  useWinGoHistory,
+  useWinGoMyHistory,
+  usePlaceWinGoBet,
+} from "@/services/api/hooks";
+import { type MyHistoryBet, type PlaceWinGoBetPayload } from "@/services/api";
+import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
+
+const SCALE = 0.80;
+const wp = (p: number) => wpBase(p * SCALE);
+const hp = (p: number) => hpBase(p * SCALE);
 
 const RS = {
   chartCircleSize: wp(4.8),
@@ -52,19 +61,9 @@ const RS = {
     return this.chartCircleSize + this.chartGap;
   },
 };
-import { BetModal } from "@/components/BetModal";
-import { useAuth } from "@/contexts/AuthContext";
-import {
-  fetchWinGoGameData,
-  fetchWinGoMyHistory,
-  placeWinGoBet,
-  type WinGoGameData,
-  type WinGoRound,
-  type MyHistoryData,
-  type MyHistoryBet,
-  type PlaceWinGoBetPayload,
-} from "@/services/api";
-import { Audio } from "expo-av";
+
+// Module-level guard to prevent double playback (e.g. from React Strict Mode)
+let lastCountdownSecondPlayed: number | null = null;
 
 function formatTimeRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 0): string {
   if (!endsAt) return "00 : 00";
@@ -175,9 +174,28 @@ export default function WinGoScreen() {
   const [selectedTab, setSelectedTab] = useState("Game history");
   const [pageGameHistory, setPageGameHistory] = useState(1);
   const [pageMyHistory, setPageMyHistory] = useState(1);
-  const [myHistoryData, setMyHistoryData] = useState<MyHistoryData | null>(null);
 
-  const [gameData, setGameData] = useState<WinGoGameData | null>(null);
+  const selectedGame =
+    WINGO_GAMES.find((game) => game.gameCode === selectedMode) ??
+    WINGO_GAMES[0];
+  const apiPath = WINGO_API_PATH_MAP[selectedGame.durationSeconds];
+
+  const placeBetMutation = usePlaceWinGoBet();
+  const { data: currentRoundRaw, refetch: refetchCurrentRound } = useWinGoCurrentRound(apiPath);
+  const currentRoundData = currentRoundRaw ?? null;
+  const { data: historyDataRaw, refetch: refetchHistory } = useWinGoHistory(
+    apiPath,
+    pageGameHistory,
+    10,
+    { enabled: selectedTab === "Game history" || selectedTab === "Chart" }
+  );
+  const historyData = historyDataRaw ?? null;
+  const { data: myHistoryData } = useWinGoMyHistory(
+    apiPath,
+    pageMyHistory,
+    10,
+    { enabled: selectedTab === "My history" }
+  );
   const [timeRemaining, setTimeRemaining] = useState("00 : 00");
   const [secondsRemaining, setSecondsRemaining] = useState(0);
   const [showCountdownModal, setShowCountdownModal] = useState(false);
@@ -193,7 +211,6 @@ export default function WinGoScreen() {
   const [betQuantity, setBetQuantity] = useState(1);
   const [selectedModalMultiplier, setSelectedModalMultiplier] = useState("X1");
   const [betModalAgreed, setBetModalAgreed] = useState(true);
-  const [betPlacingInProgress, setBetPlacingInProgress] = useState(false);
 
   const getMultiplierValue = (mult: string) =>
     parseInt(mult.replace("X", ""), 10);
@@ -222,67 +239,33 @@ export default function WinGoScreen() {
   const [chartRowLayouts, setChartRowLayouts] = useState<
     Record<number, { y: number; height: number }>
   >({});
-  const announcementFlatListRef = useRef<FlatList>(null);
+  const announcementScrollRef = useRef<ScrollView>(null);
   const announcementIndexRef = useRef(0);
   const infiniteAnnouncementData = [
     ...WINGO_ANNOUNCEMENT_MESSAGES,
     WINGO_ANNOUNCEMENT_MESSAGES[0],
   ];
 
-  const selectedGame =
-    WINGO_GAMES.find((game) => game.gameCode === selectedMode) ??
-    WINGO_GAMES[0];
-  const apiPath = WINGO_API_PATH_MAP[selectedGame.durationSeconds];
   const refetchedForRoundEndRef = useRef<string | null>(null);
-  const countdownSoundRef = useRef<{
-    di1: Audio.Sound | null;
-    di2: Audio.Sound | null;
-  }>({ di1: null, di2: null });
-  const lastPlayedSecondRef = useRef<number | null>(null);
+  const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
+  const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
 
-  const fetchGameData = useCallback(async () => {
-    if (!apiPath) return;
-    const beforeFetch = Date.now();
-    const data = await fetchWinGoGameData(apiPath, pageGameHistory, 10);
-    if (data) {
-      // Calculate server-client clock offset for accurate timers
-      if (data.serverTime) {
-        const afterFetch = Date.now();
-        const clientMidpoint = (beforeFetch + afterFetch) / 2;
-        const serverMs = new Date(data.serverTime).getTime();
-        serverTimeOffsetRef.current = serverMs - clientMidpoint;
-      }
-      setGameData(data);
-    }
-  }, [apiPath, pageGameHistory]);
+  // Compute server time offset when current-round data arrives
+  useEffect(() => {
+    if (!currentRoundData?.serverTime) return;
+    const serverMs = new Date(currentRoundData.serverTime).getTime();
+    const clientMidpoint = Date.now();
+    serverTimeOffsetRef.current = serverMs - clientMidpoint;
+  }, [currentRoundData?.serverTime]);
 
   // Reset ref when game mode changes
   useEffect(() => {
     refetchedForRoundEndRef.current = null;
   }, [apiPath]);
 
-  // Fetch WinGo game data (GET API)
-  useEffect(() => {
-    if (!apiPath) return;
-    fetchGameData();
-  }, [apiPath, pageGameHistory, fetchGameData]);
-
-  // Fetch My History when tab is active or game/page changes
-  const fetchMyHistory = useCallback(async () => {
-    if (!apiPath) return;
-    const data = await fetchWinGoMyHistory(apiPath, pageMyHistory, 10);
-    if (data) setMyHistoryData(data);
-  }, [apiPath, pageMyHistory]);
-
-  useEffect(() => {
-    if (selectedTab === "My history") {
-      fetchMyHistory();
-    }
-  }, [selectedTab, fetchMyHistory]);
-
   // Update time remaining every second; refetch when round ends; show countdown modal when 5 sec remain
   useEffect(() => {
-    const endsAt = gameData?.currentRound?.endsAt ?? null;
+    const endsAt = currentRoundData?.currentRound?.endsAt ?? null;
     const offset = serverTimeOffsetRef.current;
     setTimeRemaining(formatTimeRemaining(endsAt, offset));
     const secs = getSecondsRemaining(endsAt, offset);
@@ -290,14 +273,15 @@ export default function WinGoScreen() {
     setShowCountdownModal(secs <= 5);
 
     const interval = setInterval(() => {
-      const end = gameData?.currentRound?.endsAt;
+      const end = currentRoundData?.currentRound?.endsAt;
       const offset = serverTimeOffsetRef.current;
       const adjustedNow = Date.now() + offset;
 
       if (end && adjustedNow >= new Date(end).getTime()) {
         if (refetchedForRoundEndRef.current !== end) {
           refetchedForRoundEndRef.current = end;
-          fetchGameData();
+          refetchCurrentRound();
+          refetchHistory();
           refreshWallet();
         }
         setSecondsRemaining(0);
@@ -313,45 +297,33 @@ export default function WinGoScreen() {
       setShowCountdownModal(remaining <= 5);
     }, 1000);
     return () => clearInterval(interval);
-  }, [gameData?.currentRound?.endsAt, fetchGameData, refreshWallet]);
+  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refreshWallet]);
 
-  // Load countdown sounds on mount
+  // Set audio mode for countdown sounds
   useEffect(() => {
-    (async () => {
-      await Audio.setAudioModeAsync({
-        playsInSilentModeIOS: true,
-        staysActiveInBackground: false,
-      });
-      const { sound: di1 } = await Audio.Sound.createAsync(
-        require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"),
-      );
-      const { sound: di2 } = await Audio.Sound.createAsync(
-        require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"),
-      );
-      countdownSoundRef.current = { di1, di2 };
-    })();
-    return () => {
-      countdownSoundRef.current.di1?.unloadAsync();
-      countdownSoundRef.current.di2?.unloadAsync();
-    };
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+    });
   }, []);
 
   // Play countdown sounds when overlay is showing (5,4,3,2,1 -> di1; 0 -> di2)
   useEffect(() => {
     if (!showCountdownModal || secondsRemaining > 5) {
-      lastPlayedSecondRef.current = null;
+      lastCountdownSecondPlayed = null;
       return;
     }
-    if (lastPlayedSecondRef.current === secondsRemaining) return;
-    lastPlayedSecondRef.current = secondsRemaining;
+    if (lastCountdownSecondPlayed === secondsRemaining) return;
+    lastCountdownSecondPlayed = secondsRemaining;
 
-    const { di1, di2 } = countdownSoundRef.current;
     if (secondsRemaining === 0) {
-      di2?.replayAsync();
-    } else if (secondsRemaining <= 5 && di1) {
-      di1.replayAsync();
+      di2Player.seekTo(0);
+      di2Player.play();
+    } else if (secondsRemaining <= 5) {
+      di1Player.seekTo(0);
+      di1Player.play();
     }
-  }, [showCountdownModal, secondsRemaining]);
+  }, [showCountdownModal, secondsRemaining, di1Player, di2Player]);
 
   // Close bet modal when countdown starts
   useEffect(() => {
@@ -368,13 +340,13 @@ export default function WinGoScreen() {
       announcementIndexRef.current = nextIndex;
 
       if (nextIndex === 0) {
-        announcementFlatListRef.current?.scrollToOffset({
-          offset: 0,
+        announcementScrollRef.current?.scrollTo({
+          y: 0,
           animated: false,
         });
       } else {
-        announcementFlatListRef.current?.scrollToOffset({
-          offset: nextIndex * hp(5.2),
+        announcementScrollRef.current?.scrollTo({
+          y: nextIndex * hp(5.2),
           animated: true,
         });
       }
@@ -449,14 +421,14 @@ export default function WinGoScreen() {
     return { text: "Pending", color: "#EAB308" };
   };
 
-  // Derive UI data from API response
+  // Derive UI data from API responses
   const recentResults =
-    gameData?.historyRounds
+    historyData?.historyRounds
       ?.map((r) => r.outcomeNumber)
       .filter((n): n is number => n != null && n >= 0 && n <= 9)
       .slice(0, 5) ?? [];
   const gameHistory =
-    gameData?.historyRounds
+    historyData?.historyRounds
       ?.filter((r) => r.outcomeNumber != null && r.outcomeNumber >= 0)
       ?.map((r) => ({
         period: r.period,
@@ -465,11 +437,11 @@ export default function WinGoScreen() {
         color: "green",
       })) ?? [];
   const displayPeriod =
-    gameData?.currentRound?.period ??
-    gameData?.historyRounds?.[0]?.period ??
+    currentRoundData?.currentRound?.period ??
+    historyData?.historyRounds?.[0]?.period ??
     "-";
   const totalPagesGameHistory =
-    gameData?.historyPagination?.totalPages ?? 1;
+    historyData?.historyPagination?.totalPages ?? 1;
   const totalPagesMyHistory = myHistoryData?.pagination?.totalPages ?? 1;
   const myHistoryBets = myHistoryData?.bets ?? [];
 
@@ -710,17 +682,8 @@ export default function WinGoScreen() {
               color="rgb(122, 254, 195)"
             />
 
-            <FlatList
-              ref={announcementFlatListRef}
-              data={infiniteAnnouncementData}
-              keyExtractor={(_, i) => `announcement-${i}`}
-              horizontal={false}
-              scrollEnabled={true}
-              showsVerticalScrollIndicator={false}
-              pagingEnabled={false}
-              snapToInterval={hp(5.2)}
-              snapToAlignment="start"
-              decelerationRate="fast"
+            <ScrollView
+              ref={announcementScrollRef}
               scrollEventThrottle={16}
               onMomentumScrollEnd={(e) => {
                 const itemHeight = hp(5.2);
@@ -730,8 +693,8 @@ export default function WinGoScreen() {
                 if (idx >= WINGO_ANNOUNCEMENT_MESSAGES.length) {
                   announcementIndexRef.current = 0;
                   setTimeout(() => {
-                    announcementFlatListRef.current?.scrollToOffset({
-                      offset: 0,
+                    announcementScrollRef.current?.scrollTo({
+                      y: 0,
                       animated: false,
                     });
                   }, 0);
@@ -740,13 +703,14 @@ export default function WinGoScreen() {
                 }
               }}
               style={{ width: wp(72), height: hp(5.2) }}
-              getItemLayout={(_, index) => ({
-                length: hp(5.2),
-                offset: hp(5.2) * index,
-                index,
-              })}
-              renderItem={({ item }) => (
+              showsVerticalScrollIndicator={false}
+              snapToInterval={hp(5.2)}
+              snapToAlignment="start"
+              decelerationRate="fast"
+            >
+              {infiniteAnnouncementData.map((item, i) => (
                 <View
+                  key={`announcement-${i}`}
                   style={{
                     height: hp(5.2),
                     justifyContent: "center",
@@ -766,8 +730,8 @@ export default function WinGoScreen() {
                     {item}
                   </ThemedText>
                 </View>
-              )}
-            />
+              ))}
+            </ScrollView>
 
             <LinearGradient
               colors={["rgb(122, 254, 195)", "rgb(2, 175, 182)"]}
@@ -924,20 +888,16 @@ export default function WinGoScreen() {
               >
                 {selectedGame?.name}
               </ThemedText>
-              <FlatList
-                data={recentResults}
-                keyExtractor={(item, index) => `recent-${index}-${item}`}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.recentResults}
-                renderItem={({ item: result }) => (
+              <View style={styles.recentResults}>
+                {recentResults.map((result, index) => (
                   <Image
+                    key={`recent-${index}-${result}`}
                     source={WINGO_BALL_IMAGES[result]}
                     style={{ width: wp(7.5), height: wp(7.5) }}
                     contentFit="cover"
                   />
-                )}
-              />
+                ))}
+              </View>
             </View>
 
             <View
@@ -1064,67 +1024,71 @@ export default function WinGoScreen() {
               </View>
 
               {/* Number Betting Grid */}
-              <FlatList
-                data={numbers}
-                keyExtractor={(item) => item.toString()}
-                columnWrapperStyle={styles.numberGridRow}
-                contentContainerStyle={styles.numberGridContent}
-                renderItem={({ item }) => (
-                  <AnimatedNumberBall
-                    number={item}
-                    onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
-                    containerStyle={styles.numberBall}
-                    imageStyle={styles.numberBallImage}
-                    isHighlighted={highlightedBallForPicking === item}
-                  />
-                )}
-                numColumns={5}
-              />
+              <View style={styles.numberGridContent}>
+                <View style={[styles.numberGridRow, { flexDirection: "row" }]}>
+                  {numbers.slice(0, 5).map((item) => (
+                    <AnimatedNumberBall
+                      key={item}
+                      number={item}
+                      onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
+                      containerStyle={styles.numberBall}
+                      imageStyle={styles.numberBallImage}
+                      isHighlighted={highlightedBallForPicking === item}
+                    />
+                  ))}
+                </View>
+                <View style={[styles.numberGridRow, { flexDirection: "row" }]}>
+                  {numbers.slice(5, 10).map((item) => (
+                    <AnimatedNumberBall
+                      key={item}
+                      number={item}
+                      onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
+                      containerStyle={styles.numberBall}
+                      imageStyle={styles.numberBallImage}
+                      isHighlighted={highlightedBallForPicking === item}
+                    />
+                  ))}
+                </View>
+              </View>
 
               {/* Multiplier Buttons */}
-              <FlatList
-                data={multipliers}
-                keyExtractor={(item) => item}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.multiplierSection}
-                ListHeaderComponent={() => (
+              <View style={styles.multiplierSection}>
+                <TouchableOpacity
+                  style={[
+                    styles.randomButtonContainer,
+                    randomPickingInProgress && { opacity: 0.7 },
+                  ]}
+                  disabled={randomPickingInProgress}
+                  onPress={() => {
+                    if (randomPickingInProgress) return;
+                    setRandomPickingInProgress(true);
+                    const finalBall = numbers[Math.floor(Math.random() * numbers.length)];
+                    const delays = [120, 130, 145, 165, 190, 220, 260, 310, 370];
+                    let step = 0;
+                    const runCycle = () => {
+                      if (step < 9) {
+                        setHighlightedBallForPicking(numbers[Math.floor(Math.random() * numbers.length)]);
+                        step += 1;
+                        setTimeout(runCycle, delays[step - 1]);
+                      } else {
+                        setHighlightedBallForPicking(finalBall);
+                        setTimeout(() => {
+                          setRandomPickingInProgress(false);
+                          setHighlightedBallForPicking(null);
+                          openBetModal(finalBall.toString());
+                        }, 400);
+                      }
+                    };
+                    runCycle();
+                  }}
+                >
+                  <ThemedText style={styles.randomButtonText}>
+                    Random
+                  </ThemedText>
+                </TouchableOpacity>
+                {multipliers.map((mult) => (
                   <TouchableOpacity
-                    style={[
-                      styles.randomButtonContainer,
-                      randomPickingInProgress && { opacity: 0.7 },
-                    ]}
-                    disabled={randomPickingInProgress}
-                    onPress={() => {
-                      if (randomPickingInProgress) return;
-                      setRandomPickingInProgress(true);
-                      const finalBall = numbers[Math.floor(Math.random() * numbers.length)];
-                      const delays = [120, 130, 145, 165, 190, 220, 260, 310, 370];
-                      let step = 0;
-                      const runCycle = () => {
-                        if (step < 9) {
-                          setHighlightedBallForPicking(numbers[Math.floor(Math.random() * numbers.length)]);
-                          step += 1;
-                          setTimeout(runCycle, delays[step - 1]);
-                        } else {
-                          setHighlightedBallForPicking(finalBall);
-                          setTimeout(() => {
-                            setRandomPickingInProgress(false);
-                            setHighlightedBallForPicking(null);
-                            openBetModal(finalBall.toString());
-                          }, 400);
-                        }
-                      };
-                      runCycle();
-                    }}
-                  >
-                    <ThemedText style={styles.randomButtonText}>
-                      Random
-                    </ThemedText>
-                  </TouchableOpacity>
-                )}
-                renderItem={({ item: mult }) => (
-                  <TouchableOpacity
+                    key={mult}
                     style={[
                       styles.multiplierItemButton,
                       selectedMultiplier === mult &&
@@ -1142,8 +1106,8 @@ export default function WinGoScreen() {
                       {mult}
                     </ThemedText>
                   </TouchableOpacity>
-                )}
-              />
+                ))}
+              </View>
 
               {/* Big/Small Toggle */}
               <View style={styles.sizeToggleSection}>
@@ -1276,14 +1240,12 @@ export default function WinGoScreen() {
                     Color
                   </ThemedText>
                 </View>
-                <FlatList
-                  data={gameHistory}
-                  keyExtractor={(item, index) =>
-                    `history-${item.period}-${index}`
-                  }
-                  contentContainerStyle={{ backgroundColor: "#021341" }}
-                  renderItem={({ item }) => (
-                    <View style={styles.tableRow}>
+                <View style={{ backgroundColor: "#021341" }}>
+                  {gameHistory.map((item, index) => (
+                    <View
+                      key={`history-${item.period}-${index}`}
+                      style={styles.tableRow}
+                    >
                       <ThemedText style={styles.periodCell}>
                         {item.period}
                       </ThemedText>
@@ -1351,8 +1313,8 @@ export default function WinGoScreen() {
                         ))}
                       </View>
                     </View>
-                  )}
-                />
+                  ))}
+                </View>
               </View>
             ) : (
               <View
@@ -1548,14 +1510,11 @@ export default function WinGoScreen() {
                     Result
                   </ThemedText>
                 </View>
-                <FlatList
-                  data={myHistoryBets}
-                  keyExtractor={(item) => item._id}
-                  contentContainerStyle={{ backgroundColor: "#021341" }}
-                  renderItem={({ item: bet }) => {
+                <View style={{ backgroundColor: "#021341" }}>
+                  {myHistoryBets.map((bet) => {
                     const result = getBetResultLabel(bet);
                     return (
-                      <View style={styles.tableRow}>
+                      <View key={bet._id} style={styles.tableRow}>
                         <ThemedText style={{ flex: 2, fontSize: wp(3.2), color: "#fff" }}>
                           {bet.round?.period ?? "-"}
                         </ThemedText>
@@ -1570,8 +1529,8 @@ export default function WinGoScreen() {
                         </ThemedText>
                       </View>
                     );
-                  }}
-                />
+                  })}
+                </View>
               </View>
             ) : (
               <View
@@ -1668,9 +1627,9 @@ export default function WinGoScreen() {
             setSelectedMultiplier(mult);
           }}
           onAgreedChange={setBetModalAgreed}
-          confirmLoading={betPlacingInProgress}
+          confirmLoading={placeBetMutation.isPending}
           onConfirm={async () => {
-            const roundId = gameData?.currentRound?._id;
+            const roundId = currentRoundData?.currentRound?._id;
             if (!roundId) {
               Alert.alert("Error", "No active round. Please wait for the next round.");
               return;
@@ -1680,15 +1639,16 @@ export default function WinGoScreen() {
               Alert.alert("Error", "Invalid bet selection.");
               return;
             }
-            setBetPlacingInProgress(true);
-            const res = await placeWinGoBet(payload);
-            setBetPlacingInProgress(false);
-            if (res.success) {
-              setShowBetModal(false);
-              refreshWallet();
-              fetchMyHistory();
-            } else {
-              Alert.alert("Bet Failed", res.message ?? "Could not place bet.");
+            try {
+              const res = await placeBetMutation.mutateAsync(payload);
+              if (res.success) {
+                setShowBetModal(false);
+                refreshWallet();
+              } else {
+                Alert.alert("Bet Failed", res.message ?? "Could not place bet.");
+              }
+            } catch {
+              Alert.alert("Bet Failed", "Could not place bet.");
             }
           }}
         />

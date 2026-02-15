@@ -12,8 +12,14 @@ export type WinGoRound = {
   status: string;
 };
 
-export type WinGoGameData = {
+/** Data returned by the lightweight current-round endpoint */
+export type WinGoCurrentRoundData = {
   currentRound: WinGoRound | null;
+  serverTime?: string;
+};
+
+/** Data returned by the paginated history endpoint */
+export type WinGoHistoryData = {
   historyRounds: WinGoRound[];
   historyPagination: {
     totalItems: number;
@@ -21,35 +27,37 @@ export type WinGoGameData = {
     currentPage: number;
     pageSize: number;
   };
-  serverTime?: string;
 };
 
-type WinGoApiResponse = {
+type CurrentRoundApiResponse = {
   success: boolean;
-  data?: WinGoGameData;
+  data?: WinGoCurrentRoundData;
+};
+
+type HistoryApiResponse = {
+  success: boolean;
+  data?: WinGoHistoryData;
 };
 
 /**
- * Fetch WinGo game data (current round + history) for a given path.
- * All WinGo API calls go through here for easy debugging.
+ * Fetch only the current active round for a game duration.
+ * Lightweight — no history, no pagination overhead.
  */
-export async function fetchWinGoGameData(
-  apiPath: string,
-  page = 1,
-  pageSize = 10
-): Promise<WinGoGameData | null> {
-  const url = `${API_BASE_URL}/api/v1/WinGo/${apiPath}?page=${page}&pageSize=${pageSize}`;
+export async function fetchWinGoCurrentRound(
+  apiPath: string
+): Promise<WinGoCurrentRoundData | null> {
+  const url = `${API_BASE_URL}/api/v1/WinGo/${apiPath}`;
 
   if (API_DEBUG) {
-    console.log("[API] WinGo GET:", url);
+    console.log("[API] WinGo currentRound GET:", url);
   }
 
   try {
     const res = await fetch(url);
-    const json: WinGoApiResponse = await res.json();
+    const json: CurrentRoundApiResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] WinGo response:", { status: res.status, success: json.success });
+      console.log("[API] WinGo currentRound response:", { status: res.status, success: json.success });
     }
 
     if (json.success && json.data) {
@@ -58,7 +66,41 @@ export async function fetchWinGoGameData(
     return null;
   } catch (err) {
     if (API_DEBUG) {
-      console.warn("[API] WinGo error:", err);
+      console.warn("[API] WinGo currentRound error:", err);
+    }
+    return null;
+  }
+}
+
+/**
+ * Fetch paginated history of past rounds for a game duration.
+ */
+export async function fetchWinGoHistory(
+  apiPath: string,
+  page = 1,
+  pageSize = 10
+): Promise<WinGoHistoryData | null> {
+  const url = `${API_BASE_URL}/api/v1/WinGo/${apiPath}/history?page=${page}&pageSize=${pageSize}`;
+
+  if (API_DEBUG) {
+    console.log("[API] WinGo history GET:", url);
+  }
+
+  try {
+    const res = await fetch(url);
+    const json: HistoryApiResponse = await res.json();
+
+    if (API_DEBUG) {
+      console.log("[API] WinGo history response:", { status: res.status, success: json.success });
+    }
+
+    if (json.success && json.data) {
+      return json.data;
+    }
+    return null;
+  } catch (err) {
+    if (API_DEBUG) {
+      console.warn("[API] WinGo history error:", err);
     }
     return null;
   }

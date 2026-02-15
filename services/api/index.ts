@@ -10,13 +10,25 @@ export {
   type WalletResponse,
 } from "./auth";
 export {
-  fetchWinGoGameData,
+  fetchWinGoCurrentRound,
+  fetchWinGoHistory,
   fetchWinGoMyHistory,
   placeWinGoBet,
-  type WinGoGameData,
+  type WinGoCurrentRoundData,
+  type WinGoHistoryData,
   type WinGoRound,
   type MyHistoryBet,
   type MyHistoryData,
   type PlaceWinGoBetPayload,
   type PlaceWinGoBetResponse,
 } from "./winGo";
+export {
+  useWinGoCurrentRound,
+  useWinGoHistory,
+  useWinGoMyHistory,
+  usePlaceWinGoBet,
+  winGoKeys,
+  useMe,
+  useWalletBalance,
+  authKeys,
+} from "./hooks";

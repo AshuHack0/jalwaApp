@@ -1,6 +1,7 @@
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SplashScreen as AppSplash } from "@/components/SplashScreen";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -9,6 +10,15 @@ import { View, StyleSheet } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 10 * 1000, // 10 seconds
+      retry: 1,
+    },
+  },
+});
 
 SplashScreen.preventAutoHideAsync();
 
@@ -46,8 +56,9 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <AuthProvider>
-      <View style={styles.container}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <View style={styles.container}>
         <ThemeProvider value={colorScheme === "dark" ? customDarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -63,7 +74,8 @@ export default function RootLayout() {
           <AppSplash />
         </View>
       )}
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

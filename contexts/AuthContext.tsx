@@ -1,4 +1,6 @@
-import { getMe, getWalletBalance, type AuthUser } from "@/services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { authKeys, useMe, useWalletBalance } from "@/services/api/hooks";
+import type { AuthUser } from "@/services/api";
 import { getToken, removeToken, setToken } from "@/services/auth-storage";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
@@ -16,63 +18,52 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const [hasToken, setHasToken] = useState<boolean | null>(null);
+
+  const { data: user, isLoading: meLoading, refetch: refetchMe } = useMe({
+    enabled: hasToken === true,
+  });
+  const { data: walletBalanceData, refetch: refetchWallet } = useWalletBalance({
+    enabled: hasToken === true,
+  });
+
+  const isLoading = hasToken === null || (hasToken && meLoading);
+  const walletBalance = walletBalanceData ?? user?.walletBalance ?? 0;
 
   const refreshUser = useCallback(async () => {
-    const token = await getToken();
-    if (!token) {
-      setUser(null);
-      return;
-    }
-    const me = await getMe();
-    setUser(me);
-  }, []);
+    await refetchMe();
+  }, [refetchMe]);
 
   const refreshWallet = useCallback(async () => {
-    const balance = await getWalletBalance();
-    if (balance !== null) {
-      setUser((prev) => (prev ? { ...prev, walletBalance: balance } : null));
-    }
-  }, []);
+    await refetchWallet();
+  }, [refetchWallet]);
 
-  const login = useCallback(async (token: string) => {
-    await setToken(token);
-    const me = await getMe();
-    setUser(me);
-  }, []);
+  const login = useCallback(
+    async (token: string) => {
+      await setToken(token);
+      setHasToken(true);
+      await queryClient.invalidateQueries({ queryKey: authKeys.all });
+    },
+    [queryClient]
+  );
 
   const logout = useCallback(async () => {
     await removeToken();
-    setUser(null);
-  }, []);
+    setHasToken(false);
+    queryClient.setQueryData(authKeys.me(), null);
+    queryClient.setQueryData(authKeys.wallet(), null);
+  }, [queryClient]);
 
   useEffect(() => {
-    let mounted = true;
-    async function init() {
-      const token = await getToken();
-      if (!token) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-      const me = await getMe();
-      if (mounted) {
-        setUser(me);
-      }
-      setIsLoading(false);
-    }
-    init();
-    return () => {
-      mounted = false;
-    };
+    getToken().then((token) => setHasToken(!!token));
   }, []);
 
   const value: AuthContextType = {
-    user,
+    user: user ?? null,
     isLoading,
     isAuthenticated: !!user,
-    walletBalance: user?.walletBalance ?? 0,
+    walletBalance,
     login,
     logout,
     refreshUser,
