@@ -8,6 +8,14 @@ import {
   Pressable,
   Alert,
 } from "react-native";
+import {
+  widthPercentageToDP as wpBase,
+  heightPercentageToDP as hpBase,
+} from "react-native-responsive-screen";
+
+const SCALE = 0.80;
+const wp = (p: number) => wpBase(p * SCALE);
+const hp = (p: number) => hpBase(p * SCALE);
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -32,14 +40,18 @@ import {
   COLOR_MAP,
   WINGO_BALL_IMAGES,
   WINGO_ANNOUNCEMENT_MESSAGES,
-  WINGO_ANNOUNCEMENT_ITEM_HEIGHT,
   WINGO_TABS,
   WINGO_API_PATH_MAP,
-  CHART_CIRCLE_SIZE,
-  CHART_CIRCLE_GAP,
-  CHART_PERIOD_WIDTH,
-  CHART_NUM_SPACING,
 } from "@/constants/Wingo";
+
+const RS = {
+  chartCircleSize: wp(4.8),
+  chartGap: wp(1.1),
+  chartPeriodWidth: wp(38.7),
+  get chartNumSpacing() {
+    return this.chartCircleSize + this.chartGap;
+  },
+};
 import { BetModal } from "@/components/BetModal";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -362,7 +374,7 @@ export default function WinGoScreen() {
         });
       } else {
         announcementFlatListRef.current?.scrollToOffset({
-          offset: nextIndex * WINGO_ANNOUNCEMENT_ITEM_HEIGHT,
+          offset: nextIndex * hp(5.2),
           animated: true,
         });
       }
@@ -502,10 +514,10 @@ export default function WinGoScreen() {
         {/* Header */}
         <View
           style={{
-            height: 52.74,
+            height: hp(6.5),
             width: "100%",
-            paddingHorizontal: 16,
-            paddingVertical: 8,
+            paddingHorizontal: wp(4),
+            paddingVertical: hp(1),
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
@@ -516,13 +528,13 @@ export default function WinGoScreen() {
             onPress={() => router.back()}
             style={{ flex: 1, justifyContent: "center", height: "100%" }}
           >
-            <Ionicons name="chevron-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={wp(6.4)} color="white" />
           </TouchableOpacity>
           <Image
             source={
               "https://jalwaimg.jalwa-jalwa.com/Jalwa/other/h5setting_20250315140925tbe6.png"
             }
-            style={{ width: 128, height: "100%" }}
+            style={{ width: wp(34), height: "100%" }}
             contentFit="cover"
           />
 
@@ -531,13 +543,13 @@ export default function WinGoScreen() {
               flex: 1,
               height: "100%",
               flexDirection: "row",
-              gap: 10,
+              gap: wp(2.7),
               justifyContent: "flex-end",
             }}
           >
             <Image
               source={"https://www.jalwagame.win/assets/png/kefu-b361c42f.webp"}
-              style={{ width: 30, height: 30 }}
+              style={{ width: wp(8), height: wp(8) }}
               contentFit="cover"
             />
 
@@ -545,7 +557,7 @@ export default function WinGoScreen() {
               source={
                 "https://www.jalwagame.win/assets/png/voice-62dbf38c.webp"
               }
-              style={{ width: 30, height: 30 }}
+              style={{ width: wp(8), height: wp(8) }}
               contentFit="cover"
             />
           </View>
@@ -553,20 +565,20 @@ export default function WinGoScreen() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 16 }}
+          contentContainerStyle={{ paddingBottom: hp(2.5), paddingHorizontal: wp(4) }}
           showsVerticalScrollIndicator={false}
         >
           {/* Wallet Section */}
           <View
             style={{
               backgroundColor: "#001C54",
-              borderRadius: 16,
-              marginTop: 16,
-              marginBottom: 16,
+              borderRadius: wp(4.3),
+              marginTop: hp(2),
+              marginBottom: hp(2),
               overflow: "hidden",
               position: "relative",
-              padding: 20,
-              paddingHorizontal: 30,
+              padding: hp(2.5),
+              paddingHorizontal: wp(8),
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -578,7 +590,7 @@ export default function WinGoScreen() {
               style={{
                 width: "100%",
                 height: "100%",
-                borderRadius: 16,
+                borderRadius: wp(4.3),
                 position: "absolute",
                 top: 0,
                 left: 0,
@@ -593,13 +605,13 @@ export default function WinGoScreen() {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                marginBottom: 10,
-                gap: 38,
-                paddingLeft: 62,
+                marginBottom: hp(1.2),
+                gap: wp(10),
+                paddingLeft: wp(16.5),
               }}
             >
               <ThemedText
-                style={{ fontSize: 24, fontWeight: "700", color: "#fff" }}
+                style={{ fontSize: wp(6.4), fontWeight: "700", color: "#fff" }}
               >
                 ₹{walletBalance.toFixed(2)}
               </ThemedText>
@@ -608,7 +620,7 @@ export default function WinGoScreen() {
                   source={
                     "https://www.jalwagame.win/assets/png/refireshIcon-2bc1b49f.webp"
                   }
-                  style={{ width: 24, height: 24 }}
+                  style={{ width: wp(6.4), height: wp(6.4) }}
                   contentFit="cover"
                 />
               </TouchableOpacity>
@@ -618,13 +630,13 @@ export default function WinGoScreen() {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 8,
-                marginBottom: 20,
+                gap: wp(2.1),
+                marginBottom: hp(2.5),
               }}
             >
-              <Ionicons name="wallet-outline" size={16} color="white" />
+              <Ionicons name="wallet-outline" size={wp(4.3)} color="white" />
               <ThemedText
-                style={{ fontSize: 16, color: "white", fontWeight: "600" }}
+                style={{ fontSize: wp(4.3), color: "white", fontWeight: "600" }}
               >
                 Wallet balance
               </ThemedText>
@@ -636,12 +648,12 @@ export default function WinGoScreen() {
                 width: "100%",
                 justifyContent: "space-between",
                 alignItems: "center",
-                height: 40,
+                height: hp(5),
               }}
             >
               <TouchableOpacity
                 style={{
-                  width: 149,
+                  width: wp(40),
                   height: "100%",
                   backgroundColor: "#EF4444",
                   borderRadius: 100,
@@ -650,14 +662,14 @@ export default function WinGoScreen() {
                 }}
               >
                 <ThemedText
-                  style={{ fontSize: 18, fontWeight: "600", color: "#fff" }}
+                  style={{ fontSize: wp(4.8), fontWeight: "600", color: "#fff" }}
                 >
                   Withdraw
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
-                  width: 149,
+                  width: wp(40),
                   height: "100%",
                   backgroundColor: "#10B981",
                   borderRadius: 100,
@@ -666,7 +678,7 @@ export default function WinGoScreen() {
                 }}
               >
                 <ThemedText
-                  style={{ fontSize: 18, fontWeight: "600", color: "#fff" }}
+                  style={{ fontSize: wp(4.8), fontWeight: "600", color: "#fff" }}
                 >
                   Deposit
                 </ThemedText>
@@ -680,21 +692,21 @@ export default function WinGoScreen() {
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={{
-              height: 42.42,
+              height: hp(5.2),
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              borderRadius: 11,
-              marginBottom: 16,
+              borderRadius: wp(2.9),
+              marginBottom: hp(2),
               overflow: "hidden",
               borderColor: "#224ba2",
               borderWidth: 1,
-              paddingHorizontal: 10,
+              paddingHorizontal: wp(2.7),
             }}
           >
             <Ionicons
               name="volume-medium-sharp"
-              size={24}
+              size={wp(6.4)}
               color="rgb(122, 254, 195)"
             />
 
@@ -706,14 +718,14 @@ export default function WinGoScreen() {
               scrollEnabled={true}
               showsVerticalScrollIndicator={false}
               pagingEnabled={false}
-              snapToInterval={WINGO_ANNOUNCEMENT_ITEM_HEIGHT}
+              snapToInterval={hp(5.2)}
               snapToAlignment="start"
               decelerationRate="fast"
               scrollEventThrottle={16}
               onMomentumScrollEnd={(e) => {
+                const itemHeight = hp(5.2);
                 const idx = Math.round(
-                  e.nativeEvent.contentOffset.y /
-                    WINGO_ANNOUNCEMENT_ITEM_HEIGHT,
+                  e.nativeEvent.contentOffset.y / itemHeight,
                 );
                 if (idx >= WINGO_ANNOUNCEMENT_MESSAGES.length) {
                   announcementIndexRef.current = 0;
@@ -727,28 +739,28 @@ export default function WinGoScreen() {
                   announcementIndexRef.current = idx;
                 }
               }}
-              style={{ width: 270, height: WINGO_ANNOUNCEMENT_ITEM_HEIGHT }}
+              style={{ width: wp(72), height: hp(5.2) }}
               getItemLayout={(_, index) => ({
-                length: WINGO_ANNOUNCEMENT_ITEM_HEIGHT,
-                offset: WINGO_ANNOUNCEMENT_ITEM_HEIGHT * index,
+                length: hp(5.2),
+                offset: hp(5.2) * index,
                 index,
               })}
               renderItem={({ item }) => (
                 <View
                   style={{
-                    height: WINGO_ANNOUNCEMENT_ITEM_HEIGHT,
+                    height: hp(5.2),
                     justifyContent: "center",
-                    paddingHorizontal: 10,
-                    paddingVertical: 2,
+                    paddingHorizontal: wp(2.7),
+                    paddingVertical: hp(0.25),
                   }}
                 >
                   <ThemedText
                     numberOfLines={2}
                     style={{
                       color: "#fff",
-                      fontSize: 14,
+                      fontSize: wp(3.7),
                       fontWeight: "400",
-                      lineHeight: 16,
+                      lineHeight: wp(4.3),
                     }}
                   >
                     {item}
@@ -763,14 +775,14 @@ export default function WinGoScreen() {
               end={{ x: 0.5, y: 1 }}
               style={{
                 borderRadius: 100,
-                width: 86,
-                height: 28,
+                width: wp(23),
+                height: hp(3.4),
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               <ThemedText
-                style={{ color: "#05012B", fontSize: 16, fontWeight: "400" }}
+                style={{ color: "#05012B", fontSize: wp(4.3), fontWeight: "400" }}
               >
                 Detail
               </ThemedText>
@@ -782,11 +794,11 @@ export default function WinGoScreen() {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              height: 103,
+              height: hp(12.7),
               width: "100%",
               backgroundColor: "#001c54",
-              borderRadius: 13,
-              marginBottom: 16,
+              borderRadius: wp(3.5),
+              marginBottom: hp(2),
             }}
           >
             {gameModes.map((mode) => {
@@ -799,15 +811,15 @@ export default function WinGoScreen() {
                         ? "https://www.jalwagame.win/assets/png/time_a-14078cf4.webp"
                         : "https://www.jalwagame.win/assets/png/time-5d4e96a3.webp"
                     }
-                    style={{ width: 50, height: 50 }}
+                    style={{ width: wp(13.3), height: wp(13.3) }}
                   />
                   <ThemedText
                     style={{
-                      width: 70,
-                      fontSize: 15,
+                      width: wp(18.7),
+                      fontSize: wp(4),
                       fontWeight: "400",
                       color: isActive ? "black" : "#92A8E3",
-                      lineHeight: 17,
+                      lineHeight: wp(4.5),
                       textAlign: "center",
                     }}
                   >
@@ -841,7 +853,7 @@ export default function WinGoScreen() {
                         width: "100%",
                         alignItems: "center",
                         justifyContent: "center",
-                        borderRadius: 13,
+                        borderRadius: wp(3.5),
                       }}
                     >
                       {content}
@@ -866,14 +878,14 @@ export default function WinGoScreen() {
           {/* Current Game Round */}
           <View
             style={{
-              borderRadius: 13,
+              borderRadius: wp(3.5),
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: 16,
+              marginBottom: hp(2),
               position: "relative",
               overflow: "hidden",
-              padding: 16,
+              padding: wp(4.3),
             }}
           >
             <Image
@@ -889,12 +901,12 @@ export default function WinGoScreen() {
               }}
               contentFit="cover"
             />
-            <View style={{ height: "100%", width: "46%", gap: 4 }}>
+            <View style={{ height: "100%", width: "46%", gap: wp(1.1) }}>
               <TouchableOpacity
                 style={{
                   flexDirection: "row",
-                  gap: 6,
-                  height: 26,
+                  gap: wp(1.6),
+                  height: hp(3.2),
                   alignItems: "center",
                   justifyContent: "center",
                   borderWidth: 1,
@@ -902,13 +914,13 @@ export default function WinGoScreen() {
                   borderRadius: 50,
                 }}
               >
-                <Ionicons name="bar-chart-outline" size={16} color="#05012B" />
-                <ThemedText style={{ fontSize: 14, color: "#05012B" }}>
+                <Ionicons name="bar-chart-outline" size={wp(4.3)} color="#05012B" />
+                <ThemedText style={{ fontSize: wp(3.7), color: "#05012B" }}>
                   How to play
                 </ThemedText>
               </TouchableOpacity>
               <ThemedText
-                style={{ fontSize: 15, fontWeight: "500", color: "#05012B" }}
+                style={{ fontSize: wp(4), fontWeight: "500", color: "#05012B" }}
               >
                 {selectedGame?.name}
               </ThemedText>
@@ -921,7 +933,7 @@ export default function WinGoScreen() {
                 renderItem={({ item: result }) => (
                   <Image
                     source={WINGO_BALL_IMAGES[result]}
-                    style={{ width: 28, height: 28 }}
+                    style={{ width: wp(7.5), height: wp(7.5) }}
                     contentFit="cover"
                   />
                 )}
@@ -933,17 +945,17 @@ export default function WinGoScreen() {
                 height: "100%",
                 width: "46%",
                 alignItems: "flex-end",
-                gap: 4,
+                gap: wp(1.1),
               }}
             >
               <ThemedText
-                style={{ fontSize: 13, color: "#05012B", fontWeight: "800" }}
+                style={{ fontSize: wp(3.5), color: "#05012B", fontWeight: "800" }}
               >
                 Time remaining
               </ThemedText>
 
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 2 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: wp(0.5) }}
               >
                 {timeRemaining
                   .replace(/\s/g, "")
@@ -951,8 +963,8 @@ export default function WinGoScreen() {
                   .map((char, index, arr) => {
                     const isFirst = index === 0;
                     const isLast = index === arr.length - 1;
-                    const segmentWidth = char === ":" ? 12 : 28;
-                    const segmentHeight = 36;
+                    const segmentWidth = char === ":" ? wp(3.2) : wp(7.5);
+                    const segmentHeight = hp(4.4);
                     const maskElement = (
                       <View
                         style={{
@@ -1006,7 +1018,7 @@ export default function WinGoScreen() {
                         >
                           <ThemedText
                             style={{
-                              fontSize: 20,
+                              fontSize: wp(5.3),
                               fontWeight: "bold",
                               color: "#fff",
                             }}
@@ -1020,7 +1032,7 @@ export default function WinGoScreen() {
               </View>
 
               <ThemedText
-                style={{ fontSize: 16, fontWeight: "800", color: "#05012B" }}
+                style={{ fontSize: wp(4.3), fontWeight: "800", color: "#05012B" }}
               >
                 {displayPeriod}
               </ThemedText>
@@ -1178,14 +1190,14 @@ export default function WinGoScreen() {
 
           {/* History/Chart Tabs */}
           <View
-            style={{ flexDirection: "row", height: 48, marginVertical: 16 }}
+            style={{ flexDirection: "row", height: hp(5.9), marginVertical: hp(2) }}
           >
             {WINGO_TABS.map((tab) => {
               const isSelected = selectedTab === tab;
               const tabContent = (
                 <ThemedText
                   style={{
-                    fontSize: 16,
+                    fontSize: wp(4.3),
                     color: isSelected ? "#05012B" : "#929292",
                     fontWeight: "600",
                   }}
@@ -1199,8 +1211,8 @@ export default function WinGoScreen() {
                   style={{
                     flex: 1,
                     height: "100%",
-                    marginHorizontal: 4,
-                    borderRadius: 8,
+                    marginHorizontal: wp(1.1),
+                    borderRadius: wp(2.1),
                     overflow: "hidden",
                   }}
                   onPress={() => setSelectedTab(tab)}
@@ -1226,7 +1238,7 @@ export default function WinGoScreen() {
                         flex: 1,
                         justifyContent: "center",
                         alignItems: "center",
-                        borderRadius: 8,
+                        borderRadius: wp(2.1),
                         backgroundColor: "#011341",
                       }}
                     >
@@ -1344,21 +1356,21 @@ export default function WinGoScreen() {
               </View>
             ) : (
               <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#021341",
-                  padding: 20,
-                  marginBottom: 20,
-                }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#021341",
+                padding: hp(2.5),
+                marginBottom: hp(2.5),
+              }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: 16, fontWeight: "600", color: "black" }}
+                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
                 >
                   No data
                 </ThemedText>
@@ -1391,11 +1403,11 @@ export default function WinGoScreen() {
                       const layout1 = chartRowLayouts[idx];
                       const layout2 = chartRowLayouts[idx + 1];
                       if (!layout1 || !layout2) return null;
-                      const centerOffset = CHART_CIRCLE_SIZE / 2;
+                      const centerOffset = RS.chartCircleSize / 2;
                       const centerX1 =
-                        CHART_PERIOD_WIDTH + centerOffset + curr.number * CHART_NUM_SPACING;
+                        RS.chartPeriodWidth + centerOffset + curr.number * RS.chartNumSpacing;
                       const centerX2 =
-                        CHART_PERIOD_WIDTH + centerOffset + next.number * CHART_NUM_SPACING;
+                        RS.chartPeriodWidth + centerOffset + next.number * RS.chartNumSpacing;
                       const centerY1 = layout1.y + layout1.height / 2;
                       const centerY2 = layout2.y + layout2.height / 2;
                       return (
@@ -1497,21 +1509,21 @@ export default function WinGoScreen() {
               </View>
             ) : (
               <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#021341",
-                  padding: 20,
-                  marginBottom: 20,
-                }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#021341",
+                padding: hp(2.5),
+                marginBottom: hp(2.5),
+              }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: 16, fontWeight: "600", color: "black" }}
+                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
                 >
                   No data
                 </ThemedText>
@@ -1544,16 +1556,16 @@ export default function WinGoScreen() {
                     const result = getBetResultLabel(bet);
                     return (
                       <View style={styles.tableRow}>
-                        <ThemedText style={{ flex: 2, fontSize: 12, color: "#fff" }}>
+                        <ThemedText style={{ flex: 2, fontSize: wp(3.2), color: "#fff" }}>
                           {bet.round?.period ?? "-"}
                         </ThemedText>
-                        <ThemedText style={{ flex: 1, fontSize: 12, color: "#fff", textAlign: "center" }}>
+                        <ThemedText style={{ flex: 1, fontSize: wp(3.2), color: "#fff", textAlign: "center" }}>
                           {getBetSelectLabel(bet)}
                         </ThemedText>
-                        <ThemedText style={{ flex: 0.8, fontSize: 12, color: "#fff", textAlign: "center" }}>
+                        <ThemedText style={{ flex: 0.8, fontSize: wp(3.2), color: "#fff", textAlign: "center" }}>
                           ₹{bet.amount}
                         </ThemedText>
-                        <ThemedText style={{ flex: 1, fontSize: 12, color: result.color, textAlign: "right", fontWeight: "700" }}>
+                        <ThemedText style={{ flex: 1, fontSize: wp(3.2), color: result.color, textAlign: "right", fontWeight: "700" }}>
                           {result.text}
                         </ThemedText>
                       </View>
@@ -1563,21 +1575,21 @@ export default function WinGoScreen() {
               </View>
             ) : (
               <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#021341",
-                  padding: 20,
-                  marginBottom: 20,
-                }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#021341",
+                padding: hp(2.5),
+                marginBottom: hp(2.5),
+              }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: 16, fontWeight: "600", color: "black" }}
+                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
                 >
                   No data
                 </ThemedText>
@@ -1592,15 +1604,15 @@ export default function WinGoScreen() {
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "#021341",
-                gap: 40,
-                paddingVertical: 20,
+                gap: wp(10.7),
+                paddingVertical: hp(2.5),
               }}
             >
               <TouchableOpacity
                 style={{
-                  padding: 8,
+                  padding: wp(2.1),
                   backgroundColor: currentPage === 1 ? "#001C54" : "#00ECBE",
-                  borderRadius: 10,
+                  borderRadius: wp(2.7),
                 }}
                 onPress={() =>
                   currentPage > 1 && setCurrentPage(currentPage - 1)
@@ -1609,7 +1621,7 @@ export default function WinGoScreen() {
               >
                 <Ionicons
                   name="chevron-back"
-                  size={20}
+                  size={wp(5.3)}
                   color={currentPage === 1 ? "#9BA1A6" : "black"}
                 />
               </TouchableOpacity>
@@ -1618,10 +1630,10 @@ export default function WinGoScreen() {
               </ThemedText>
               <TouchableOpacity
                 style={{
-                  padding: 8,
+                  padding: wp(2.1),
                   backgroundColor:
                     currentPage >= totalPages ? "#001C54" : "#00ECBE",
-                  borderRadius: 10,
+                  borderRadius: wp(2.7),
                 }}
                 onPress={() =>
                   currentPage < totalPages &&
@@ -1631,7 +1643,7 @@ export default function WinGoScreen() {
               >
                 <Ionicons
                   name="chevron-forward"
-                  size={20}
+                  size={wp(5.3)}
                   color={currentPage >= totalPages ? "#9BA1A6" : "black"}
                 />
               </TouchableOpacity>
@@ -1698,14 +1710,14 @@ const styles = StyleSheet.create({
   },
   recentResults: {
     flexDirection: "row",
-    gap: 8,
+    gap: wp(2.1),
   },
   colorButtonsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
-    height: 45,
+    gap: wp(3.2),
+    height: hp(5.5),
   },
   greenColorButton: {
     backgroundColor: "#17B15E",
@@ -1714,8 +1726,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 12,
-    borderTopRightRadius: 12,
+    borderBottomLeftRadius: wp(3.2),
+    borderTopRightRadius: wp(3.2),
     borderBottomRightRadius: 0,
   },
   violetColorButton: {
@@ -1724,7 +1736,7 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: wp(3.2),
   },
   redColorButton: {
     backgroundColor: "#DB3838",
@@ -1732,25 +1744,25 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    borderTopLeftRadius: 12,
+    borderTopLeftRadius: wp(3.2),
     borderBottomLeftRadius: 0,
     borderTopRightRadius: 0,
-    borderBottomRightRadius: 12,
+    borderBottomRightRadius: wp(3.2),
   },
   colorBettingContainer: {
     backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 12,
-    gap: 12,
+    borderRadius: wp(3.2),
+    padding: wp(3.2),
+    gap: wp(3.2),
   },
   colorButtonText: {
-    fontSize: 16,
+    fontSize: wp(4.3),
     fontWeight: "600",
     color: "#fff",
   },
   numberBall: {
-    width: 70,
-    height: 70,
+    width: wp(18.7),
+    height: wp(18.7),
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
@@ -1760,35 +1772,35 @@ const styles = StyleSheet.create({
   numberBallImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 30,
+    borderRadius: wp(8),
   },
   numberGridRow: {
     justifyContent: "space-between",
   },
   numberGridContent: {
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
+    gap: wp(3.2),
+    padding: wp(3.2),
+    borderRadius: wp(3.2),
     backgroundColor: "#05012B",
   },
   multiplierSection: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 8,
-    flexWrap: "wrap",
+    gap: wp(2.1),
   },
   randomButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
-    height: 35,
-    width: 90,
-    borderRadius: 8,
+    height: hp(4.3),
+    width: wp(24),
+    borderRadius: wp(2.1),
     borderWidth: 1,
     borderColor: "#D23838",
   },
   randomButtonText: {
-    fontSize: 16,
+    fontSize: wp(4.3),
     fontWeight: "400",
     color: "#D23838",
   },
@@ -1796,15 +1808,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#05012B",
-    height: 35,
-    width: 42,
-    borderRadius: 8,
+    height: hp(4.3),
+    width: wp(11.2),
+    borderRadius: wp(2.1),
   },
   multiplierItemButtonActive: {
     backgroundColor: "#17B15E",
   },
   multiplierItemText: {
-    fontSize: 15,
+    fontSize: wp(4),
     fontWeight: "600",
     color: "#92A8E3",
   },
@@ -1831,25 +1843,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#5088D3",
   },
   sizeToggleSection: {
-    height: 45,
+    height: hp(5.5),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "blue",
-    marginHorizontal: 12,
-    borderRadius: 20,
+    marginHorizontal: wp(3.2),
+    borderRadius: wp(5.3),
     overflow: "hidden",
   },
   sizeButtonText: {
-    fontSize: 18,
+    fontSize: wp(4.8),
     color: "#fff",
   },
   chartContainer: {
     backgroundColor: "#021341",
-    borderRadius: 10,
-    marginBottom: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    borderRadius: wp(2.7),
+    marginBottom: hp(2),
+    paddingVertical: hp(1.2),
+    paddingHorizontal: wp(3.2),
     overflow: "hidden",
   },
   chartContentWrapper: {
@@ -1866,24 +1878,24 @@ const styles = StyleSheet.create({
   chartRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: hp(1.5),
     paddingHorizontal: 0,
   },
   chartPeriod: {
-    fontSize: 13.76,
+    fontSize: wp(3.7),
     color: "#fff",
     fontWeight: "600",
-    width: CHART_PERIOD_WIDTH,
+    width: wp(38.7),
   },
   chartNumbersRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: CHART_CIRCLE_GAP,
+    gap: wp(1.1),
   },
   chartNumberCircle: {
-    width: CHART_CIRCLE_SIZE,
-    height: CHART_CIRCLE_SIZE,
-    borderRadius: CHART_CIRCLE_SIZE / 2,
+    width: wp(4.8),
+    height: wp(4.8),
+    borderRadius: wp(2.4),
     borderWidth: 1,
     borderColor: "#fff",
     alignItems: "center",
@@ -1897,12 +1909,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   chartBSBadge: {
-    width: 19,
-    height: 19,
+    width: wp(5.1),
+    height: wp(5.1),
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 10
+    marginLeft: wp(2.7),
   },
   chartBSBadgeBig: {
     backgroundColor: "#EAB308",
@@ -1911,26 +1923,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#3B82F6",
   },
   chartBSBadgeText: {
-    fontSize: 14,
+    fontSize: wp(3.7),
     fontWeight: "700",
     color: "#fff",
   },
   historyTable: {
     overflow: "hidden",
-    borderTopEndRadius: 10,
-    borderTopStartRadius: 10,
-    marginBottom: 16,
+    borderTopEndRadius: wp(2.7),
+    borderTopStartRadius: wp(2.7),
+    marginBottom: hp(2),
   },
   tableHeader: {
     flexDirection: "row",
     backgroundColor: "#2C5ECA",
-    paddingVertical: 14,
-    paddingHorizontal: 12,
+    paddingVertical: hp(1.7),
+    paddingHorizontal: wp(3.2),
     alignItems: "center",
   },
   tableHeaderText: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: wp(3.5),
     fontWeight: "600",
   },
   periodHeader: {
@@ -1951,13 +1963,13 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: hp(1.5),
+    paddingHorizontal: wp(3.2),
     alignItems: "center",
   },
   periodCell: {
     flex: 2,
-    fontSize: 12,
+    fontSize: wp(3.2),
     color: "#fff",
   },
   numberCell: {
@@ -1966,7 +1978,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   numberText: {
-    fontSize: 18,
+    fontSize: wp(4.8),
     fontWeight: "bold",
   },
   gradientNumberMask: {
@@ -1981,7 +1993,7 @@ const styles = StyleSheet.create({
   },
   bigSmallCell: {
     flex: 1,
-    fontSize: 12,
+    fontSize: wp(3.2),
     color: "#fff",
     textAlign: "center",
   },
@@ -1990,15 +2002,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    gap: wp(1.1),
   },
   colorDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: wp(3.2),
+    height: wp(3.2),
+    borderRadius: wp(1.6),
   },
   paginationText: {
-    fontSize: 16,
+    fontSize: wp(4.3),
     color: "#fff",
   },
   bettingSectionWrapper: {
@@ -2007,28 +2019,28 @@ const styles = StyleSheet.create({
   countdownSectionOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.75)",
-    borderRadius: 12,
+    borderRadius: wp(3.2),
     justifyContent: "center",
     alignItems: "center",
   },
   countdownDigitsRow: {
     flexDirection: "row",
-    gap: 16,
+    gap: wp(4.3),
     alignItems: "center",
     justifyContent: "center",
   },
   countdownDigitCard: {
-    width: 120,
-    height: 160,
+    width: wp(32),
+    height: hp(19.7),
     backgroundColor: "#0A1F44",
-    borderRadius: 16,
+    borderRadius: wp(4.3),
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
     borderColor: "#1E3A5F",
   },
   countdownDigitText: {
-    fontSize: 96,
+    fontSize: wp(25),
     fontWeight: "800",
     color: "#7afec3",
   },

@@ -10,14 +10,14 @@ export const API_DEBUG = __DEV__;
 export const API_ENV = "local" as const;
 
 const BASE_URLS = {
-  // local:
-  //   Platform.OS === "android"
-  //     ? "http://192.168.29.131:3000"
-  //     : "http://192.168.29.131:3000",
   local:
     Platform.OS === "android"
-      ? "http://10.0.2.2:3000"
-      : "http://10.0.2.2:3000",
+      ? "http://192.168.29.131:3000"
+      : "http://192.168.29.131:3000",
+  // local:
+  //   Platform.OS === "android"
+  //     ? "http://10.0.2.2:3000"
+  //     : "http://10.0.2.2:3000",
   staging: "https://jalwabackend.vercel.app",
   production: "https://jalwabackend.vercel.app",
 } as const;
