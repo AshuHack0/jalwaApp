@@ -186,7 +186,7 @@ export type PlaceWinGoBetPayload = {
   betType: WinGoBetType;
   choice: string | number;
   amount: number;
-  roundId: string;
+  period: string;
 };
 
 export type PlaceWinGoBetResponse = {

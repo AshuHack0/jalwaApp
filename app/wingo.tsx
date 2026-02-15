@@ -86,21 +86,21 @@ function getSecondsRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 
 function buildBetPayload(
   betSelection: string,
   amount: number,
-  roundId: string
+  period: string
 ): PlaceWinGoBetPayload | null {
   const sel = betSelection.trim();
   if (sel === "Big") {
-    return { betType: "BIG_SMALL", choice: "BIG", amount, roundId };
+    return { betType: "BIG_SMALL", choice: "BIG", amount, period };
   }
   if (sel === "Small") {
-    return { betType: "BIG_SMALL", choice: "SMALL", amount, roundId };
+    return { betType: "BIG_SMALL", choice: "SMALL", amount, period };
   }
   if (["Green", "Red", "Violet"].includes(sel)) {
-    return { betType: "COLOR", choice: sel.toUpperCase(), amount, roundId };
+    return { betType: "COLOR", choice: sel.toUpperCase(), amount, period };
   }
   const num = parseInt(sel, 10);
   if (Number.isInteger(num) && num >= 0 && num <= 9) {
-    return { betType: "NUMBER", choice: num, amount, roundId };
+    return { betType: "NUMBER", choice: num, amount, period };
   }
   return null;
 }
@@ -1629,12 +1629,12 @@ export default function WinGoScreen() {
           onAgreedChange={setBetModalAgreed}
           confirmLoading={placeBetMutation.isPending}
           onConfirm={async () => {
-            const roundId = currentRoundData?.currentRound?._id;
-            if (!roundId) {
+            const period = currentRoundData?.currentRound?.period;
+            if (!period) {
               Alert.alert("Error", "No active round. Please wait for the next round.");
               return;
             }
-            const payload = buildBetPayload(betSelection, totalBetAmount, roundId);
+            const payload = buildBetPayload(betSelection, totalBetAmount, period);
             if (!payload) {
               Alert.alert("Error", "Invalid bet selection.");
               return;
