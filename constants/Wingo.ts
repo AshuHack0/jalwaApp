@@ -97,3 +97,24 @@ export const WINGO_MOCK_GAME_HISTORY = [
   { period: "20260125100052210", number: 5, size: "Big", color: "green" },
   { period: "20260125100052209", number: 0, size: "Small", color: "violet" },
 ];
+
+
+export const BET_SELECTION_MAP = {
+    'green': '#17b15e',
+    'violet': '#9b48db',
+    'red': '#d23838',
+    'big': '#dd9138',
+    'small': '#5088d3'
+}
+export const BET_SELECTION_NUMBER_MAP = {
+    '0': ["#d23838","#9b48db"],
+    '1': ["#17b15e"],
+    '2': ["#d23838"],
+    '3': ["#17b15e"],
+    '4': ["#d23838"],
+    '5': ["#17b15e","#9b48db"],
+    '6': ["#d23838"],
+    '7': ["#17b15e"],
+    '8': ["#d23838"],
+    '9': ["#17b15e"],
+}

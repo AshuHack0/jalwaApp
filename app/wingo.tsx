@@ -5,7 +5,16 @@ import {
   TouchableOpacity,
   FlatList,
   Text,
+  Pressable,
+  Alert,
 } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -31,14 +40,24 @@ import {
   CHART_PERIOD_WIDTH,
   CHART_NUM_SPACING,
 } from "@/constants/Wingo";
+import { BetModal } from "@/components/BetModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchWinGoGameData, type WinGoGameData, type WinGoRound } from "@/services/api";
+import {
+  fetchWinGoGameData,
+  fetchWinGoMyHistory,
+  placeWinGoBet,
+  type WinGoGameData,
+  type WinGoRound,
+  type MyHistoryData,
+  type MyHistoryBet,
+  type PlaceWinGoBetPayload,
+} from "@/services/api";
 import { Audio } from "expo-av";
 
-function formatTimeRemaining(endsAt: string | Date | null): string {
+function formatTimeRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 0): string {
   if (!endsAt) return "00 : 00";
   const end = new Date(endsAt).getTime();
-  const now = Date.now();
+  const now = Date.now() + serverTimeOffsetMs;
   const diffMs = Math.max(0, end - now);
   const totalSec = Math.floor(diffMs / 1000);
   const mins = Math.floor(totalSec / 60);
@@ -46,11 +65,84 @@ function formatTimeRemaining(endsAt: string | Date | null): string {
   return `${String(mins).padStart(2, "0")} : ${String(secs).padStart(2, "0")}`;
 }
 
-function getSecondsRemaining(endsAt: string | Date | null): number {
+function getSecondsRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 0): number {
   if (!endsAt) return 0;
   const end = new Date(endsAt).getTime();
-  const now = Date.now();
+  const now = Date.now() + serverTimeOffsetMs;
   return Math.max(0, Math.floor((end - now) / 1000));
+}
+
+function buildBetPayload(
+  betSelection: string,
+  amount: number,
+  roundId: string
+): PlaceWinGoBetPayload | null {
+  const sel = betSelection.trim();
+  if (sel === "Big") {
+    return { betType: "BIG_SMALL", choice: "BIG", amount, roundId };
+  }
+  if (sel === "Small") {
+    return { betType: "BIG_SMALL", choice: "SMALL", amount, roundId };
+  }
+  if (["Green", "Red", "Violet"].includes(sel)) {
+    return { betType: "COLOR", choice: sel.toUpperCase(), amount, roundId };
+  }
+  const num = parseInt(sel, 10);
+  if (Number.isInteger(num) && num >= 0 && num <= 9) {
+    return { betType: "NUMBER", choice: num, amount, roundId };
+  }
+  return null;
+}
+
+function AnimatedNumberBall({
+  number,
+  onPress,
+  containerStyle,
+  imageStyle,
+  isHighlighted,
+}: {
+  number: number;
+  onPress: () => void;
+  containerStyle: object;
+  imageStyle: object;
+  isHighlighted: boolean;
+}) {
+  const pressScale = useSharedValue(1);
+  const highlightScale = useSharedValue(1);
+
+  useEffect(() => {
+    if (isHighlighted) {
+      highlightScale.value = withSequence(
+        withTiming(1.2, { duration: 80 }),
+        withSpring(1.1, { damping: 12, stiffness: 200 })
+      );
+    } else {
+      highlightScale.value = withTiming(1);
+    }
+  }, [isHighlighted, highlightScale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pressScale.value * highlightScale.value }],
+  }));
+
+  return (
+    <Pressable
+      onPress={onPress}
+      onPressIn={() => {
+        pressScale.value = withSpring(0.85, { damping: 15, stiffness: 300 });
+      }}
+      onPressOut={() => {
+        pressScale.value = withSpring(1, { damping: 15, stiffness: 300 });
+      }}
+    >
+      <Animated.View style={[containerStyle, animatedStyle]}>
+        <Image
+          source={WINGO_BALL_IMAGES[number]}
+          style={imageStyle}
+        />
+      </Animated.View>
+    </Pressable>
+  );
 }
 
 export default function WinGoScreen() {
@@ -71,12 +163,41 @@ export default function WinGoScreen() {
   const [selectedTab, setSelectedTab] = useState("Game history");
   const [pageGameHistory, setPageGameHistory] = useState(1);
   const [pageMyHistory, setPageMyHistory] = useState(1);
-  const [gameMyHistory] = useState<WinGoRound[]>([]);
+  const [myHistoryData, setMyHistoryData] = useState<MyHistoryData | null>(null);
 
   const [gameData, setGameData] = useState<WinGoGameData | null>(null);
   const [timeRemaining, setTimeRemaining] = useState("00 : 00");
   const [secondsRemaining, setSecondsRemaining] = useState(0);
   const [showCountdownModal, setShowCountdownModal] = useState(false);
+  // Offset = serverTime - clientTime (positive means client clock is behind)
+  const serverTimeOffsetRef = useRef(0);
+
+  // Bet modal state
+  const [showBetModal, setShowBetModal] = useState(false);
+  const [betSelection, setBetSelection] = useState<string>("");
+  const [randomPickingInProgress, setRandomPickingInProgress] = useState(false);
+  const [highlightedBallForPicking, setHighlightedBallForPicking] = useState<number | null>(null);
+  const [selectedBalanceAmount, setSelectedBalanceAmount] = useState(1);
+  const [betQuantity, setBetQuantity] = useState(1);
+  const [selectedModalMultiplier, setSelectedModalMultiplier] = useState("X1");
+  const [betModalAgreed, setBetModalAgreed] = useState(true);
+  const [betPlacingInProgress, setBetPlacingInProgress] = useState(false);
+
+  const getMultiplierValue = (mult: string) =>
+    parseInt(mult.replace("X", ""), 10);
+
+  const openBetModal = (selection: string) => {
+    console.log("selection", selection);
+    setBetSelection(selection);
+    setShowBetModal(true);
+    setSelectedBalanceAmount(1);
+    setSelectedModalMultiplier(selectedMultiplier);
+    setBetQuantity(getMultiplierValue(selectedMultiplier));
+    setBetModalAgreed(true);
+  };
+
+  // Final price = Balance * Quantity (multiplier sets the quantity)
+  const totalBetAmount = selectedBalanceAmount * betQuantity;
 
   const gameModes = WINGO_GAMES.map((game) => ({
     id: game.gameCode,
@@ -109,8 +230,18 @@ export default function WinGoScreen() {
 
   const fetchGameData = useCallback(async () => {
     if (!apiPath) return;
+    const beforeFetch = Date.now();
     const data = await fetchWinGoGameData(apiPath, pageGameHistory, 10);
-    if (data) setGameData(data);
+    if (data) {
+      // Calculate server-client clock offset for accurate timers
+      if (data.serverTime) {
+        const afterFetch = Date.now();
+        const clientMidpoint = (beforeFetch + afterFetch) / 2;
+        const serverMs = new Date(data.serverTime).getTime();
+        serverTimeOffsetRef.current = serverMs - clientMidpoint;
+      }
+      setGameData(data);
+    }
   }, [apiPath, pageGameHistory]);
 
   // Reset ref when game mode changes
@@ -124,19 +255,34 @@ export default function WinGoScreen() {
     fetchGameData();
   }, [apiPath, pageGameHistory, fetchGameData]);
 
+  // Fetch My History when tab is active or game/page changes
+  const fetchMyHistory = useCallback(async () => {
+    if (!apiPath) return;
+    const data = await fetchWinGoMyHistory(apiPath, pageMyHistory, 10);
+    if (data) setMyHistoryData(data);
+  }, [apiPath, pageMyHistory]);
+
+  useEffect(() => {
+    if (selectedTab === "My history") {
+      fetchMyHistory();
+    }
+  }, [selectedTab, fetchMyHistory]);
+
   // Update time remaining every second; refetch when round ends; show countdown modal when 5 sec remain
   useEffect(() => {
     const endsAt = gameData?.currentRound?.endsAt ?? null;
-    setTimeRemaining(formatTimeRemaining(endsAt));
-    const secs = getSecondsRemaining(endsAt);
+    const offset = serverTimeOffsetRef.current;
+    setTimeRemaining(formatTimeRemaining(endsAt, offset));
+    const secs = getSecondsRemaining(endsAt, offset);
     setSecondsRemaining(secs);
     setShowCountdownModal(secs <= 5);
 
     const interval = setInterval(() => {
       const end = gameData?.currentRound?.endsAt;
-      const now = Date.now();
+      const offset = serverTimeOffsetRef.current;
+      const adjustedNow = Date.now() + offset;
 
-      if (end && now >= new Date(end).getTime()) {
+      if (end && adjustedNow >= new Date(end).getTime()) {
         if (refetchedForRoundEndRef.current !== end) {
           refetchedForRoundEndRef.current = end;
           fetchGameData();
@@ -147,8 +293,8 @@ export default function WinGoScreen() {
         refetchedForRoundEndRef.current = null;
       }
 
-      const formatted = formatTimeRemaining(end ?? null);
-      const remaining = getSecondsRemaining(end ?? null);
+      const formatted = formatTimeRemaining(end ?? null, offset);
+      const remaining = getSecondsRemaining(end ?? null, offset);
       setTimeRemaining(formatted);
       setSecondsRemaining(remaining);
       // Show modal when 5 sec or less remain (including 0)
@@ -194,6 +340,13 @@ export default function WinGoScreen() {
       di1.replayAsync();
     }
   }, [showCountdownModal, secondsRemaining]);
+
+  // Close bet modal when countdown starts
+  useEffect(() => {
+    if (showCountdownModal) {
+      setShowBetModal(false);
+    }
+  }, [showCountdownModal]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -267,6 +420,23 @@ export default function WinGoScreen() {
     );
   };
 
+  // Helper: readable label for a bet's selection
+  const getBetSelectLabel = (bet: MyHistoryBet): string => {
+    if (bet.betType === "NUMBER" && bet.choiceNumber != null) return String(bet.choiceNumber);
+    if (bet.betType === "COLOR" && bet.choiceColor) return bet.choiceColor.charAt(0) + bet.choiceColor.slice(1).toLowerCase();
+    if (bet.betType === "BIG_SMALL" && bet.choiceBigSmall) return bet.choiceBigSmall === "BIG" ? "Big" : "Small";
+    return "-";
+  };
+
+  const getBetResultLabel = (bet: MyHistoryBet): { text: string; color: string } => {
+    if (bet.round?.status !== "settled" && bet.round?.status !== "closed") {
+      return { text: "Pending", color: "#EAB308" };
+    }
+    if (bet.isWin === true) return { text: `+₹${bet.payoutAmount.toFixed(2)}`, color: "#10B981" };
+    if (bet.isWin === false) return { text: `-₹${bet.amount.toFixed(2)}`, color: "#EF4444" };
+    return { text: "Pending", color: "#EAB308" };
+  };
+
   // Derive UI data from API response
   const recentResults =
     gameData?.historyRounds
@@ -288,7 +458,8 @@ export default function WinGoScreen() {
     "-";
   const totalPagesGameHistory =
     gameData?.historyPagination?.totalPages ?? 1;
-  const totalPagesMyHistory = 1; // TODO: from API when My history has data
+  const totalPagesMyHistory = myHistoryData?.pagination?.totalPages ?? 1;
+  const myHistoryBets = myHistoryData?.bets ?? [];
 
   // Reset chart row layouts only when pagination changes (new rows will update via onLayout when game mode changes)
   useEffect(() => {
@@ -298,7 +469,7 @@ export default function WinGoScreen() {
   const hasDataForCurrentTab =
     (selectedTab === "Game history" && (gameHistory?.length ?? 0) > 0) ||
     (selectedTab === "Chart" && (gameHistory?.length ?? 0) > 0) ||
-    (selectedTab === "My history" && (gameMyHistory?.length ?? 0) > 0);
+    (selectedTab === "My history" && myHistoryBets.length > 0);
 
   const currentPage =
     selectedTab === "Game history"
@@ -860,13 +1031,22 @@ export default function WinGoScreen() {
             <View style={styles.colorBettingContainer}>
               {/* Color Betting Options */}
               <View style={styles.colorButtonsRow}>
-                <TouchableOpacity style={styles.greenColorButton}>
+                <TouchableOpacity
+                  style={styles.greenColorButton}
+                  onPress={() => openBetModal("Green")}
+                >
                   <ThemedText style={styles.colorButtonText}>Green</ThemedText>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.violetColorButton}>
+                <TouchableOpacity
+                  style={styles.violetColorButton}
+                  onPress={() => openBetModal("Violet")}
+                >
                   <ThemedText style={styles.colorButtonText}>Violet</ThemedText>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.redColorButton}>
+                <TouchableOpacity
+                  style={styles.redColorButton}
+                  onPress={() => openBetModal("Red")}
+                >
                   <ThemedText style={styles.colorButtonText}>Red</ThemedText>
                 </TouchableOpacity>
               </View>
@@ -878,12 +1058,13 @@ export default function WinGoScreen() {
                 columnWrapperStyle={styles.numberGridRow}
                 contentContainerStyle={styles.numberGridContent}
                 renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.numberBall}>
-                    <Image
-                      source={WINGO_BALL_IMAGES[item]}
-                      style={styles.numberBallImage}
-                    />
-                  </TouchableOpacity>
+                  <AnimatedNumberBall
+                    number={item}
+                    onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
+                    containerStyle={styles.numberBall}
+                    imageStyle={styles.numberBallImage}
+                    isHighlighted={highlightedBallForPicking === item}
+                  />
                 )}
                 numColumns={5}
               />
@@ -896,7 +1077,35 @@ export default function WinGoScreen() {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.multiplierSection}
                 ListHeaderComponent={() => (
-                  <TouchableOpacity style={styles.randomButtonContainer}>
+                  <TouchableOpacity
+                    style={[
+                      styles.randomButtonContainer,
+                      randomPickingInProgress && { opacity: 0.7 },
+                    ]}
+                    disabled={randomPickingInProgress}
+                    onPress={() => {
+                      if (randomPickingInProgress) return;
+                      setRandomPickingInProgress(true);
+                      const finalBall = numbers[Math.floor(Math.random() * numbers.length)];
+                      const delays = [120, 130, 145, 165, 190, 220, 260, 310, 370];
+                      let step = 0;
+                      const runCycle = () => {
+                        if (step < 9) {
+                          setHighlightedBallForPicking(numbers[Math.floor(Math.random() * numbers.length)]);
+                          step += 1;
+                          setTimeout(runCycle, delays[step - 1]);
+                        } else {
+                          setHighlightedBallForPicking(finalBall);
+                          setTimeout(() => {
+                            setRandomPickingInProgress(false);
+                            setHighlightedBallForPicking(null);
+                            openBetModal(finalBall.toString());
+                          }, 400);
+                        }
+                      };
+                      runCycle();
+                    }}
+                  >
                     <ThemedText style={styles.randomButtonText}>
                       Random
                     </ThemedText>
@@ -931,7 +1140,10 @@ export default function WinGoScreen() {
                     styles.bigSizeButton,
                     selectedSize !== "Big" && { opacity: 0.7 },
                   ]}
-                  onPress={() => setSelectedSize("Big")}
+                  onPress={() => {
+                    setSelectedSize("Big");
+                    openBetModal("Big");
+                  }}
                 >
                   <ThemedText style={styles.bigSizeButtonText}>Big</ThemedText>
                 </TouchableOpacity>
@@ -940,7 +1152,10 @@ export default function WinGoScreen() {
                     styles.smallSizeButton,
                     selectedSize !== "Small" && { opacity: 0.7 },
                   ]}
-                  onPress={() => setSelectedSize("Small")}
+                  onPress={() => {
+                    setSelectedSize("Small");
+                    openBetModal("Small");
+                  }}
                 >
                   <ThemedText style={styles.sizeButtonText}>Small</ThemedText>
                 </TouchableOpacity>
@@ -1305,9 +1520,46 @@ export default function WinGoScreen() {
 
           {/* My history */}
           {selectedTab === "My history" &&
-            (gameMyHistory?.length > 0 ? (
-              <View>
-                <Text>My history</Text>
+            (myHistoryBets.length > 0 ? (
+              <View style={styles.historyTable}>
+                <View style={styles.tableHeader}>
+                  <ThemedText style={[styles.tableHeaderText, { flex: 2, textAlign: "left" }]}>
+                    Period
+                  </ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, { flex: 1, textAlign: "center" }]}>
+                    Select
+                  </ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, { flex: 0.8, textAlign: "center" }]}>
+                    Point
+                  </ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>
+                    Result
+                  </ThemedText>
+                </View>
+                <FlatList
+                  data={myHistoryBets}
+                  keyExtractor={(item) => item._id}
+                  contentContainerStyle={{ backgroundColor: "#021341" }}
+                  renderItem={({ item: bet }) => {
+                    const result = getBetResultLabel(bet);
+                    return (
+                      <View style={styles.tableRow}>
+                        <ThemedText style={{ flex: 2, fontSize: 12, color: "#fff" }}>
+                          {bet.round?.period ?? "-"}
+                        </ThemedText>
+                        <ThemedText style={{ flex: 1, fontSize: 12, color: "#fff", textAlign: "center" }}>
+                          {getBetSelectLabel(bet)}
+                        </ThemedText>
+                        <ThemedText style={{ flex: 0.8, fontSize: 12, color: "#fff", textAlign: "center" }}>
+                          ₹{bet.amount}
+                        </ThemedText>
+                        <ThemedText style={{ flex: 1, fontSize: 12, color: result.color, textAlign: "right", fontWeight: "700" }}>
+                          {result.text}
+                        </ThemedText>
+                      </View>
+                    );
+                  }}
+                />
               </View>
             ) : (
               <View
@@ -1386,6 +1638,48 @@ export default function WinGoScreen() {
             </View>
           )}
         </ScrollView>
+
+        <BetModal
+          visible={showBetModal}
+          gameName={selectedGame?.name ?? "WinGo"}
+          betSelection={betSelection}
+          selectedBalanceAmount={selectedBalanceAmount}
+          betQuantity={betQuantity}
+          selectedMultiplier={selectedModalMultiplier}
+          agreed={betModalAgreed}
+          totalBetAmount={totalBetAmount}
+          onClose={() => setShowBetModal(false)}
+          onBalanceAmountChange={setSelectedBalanceAmount}
+          onQuantityChange={setBetQuantity}
+          onMultiplierChange={(mult) => {
+            setSelectedModalMultiplier(mult);
+            setSelectedMultiplier(mult);
+          }}
+          onAgreedChange={setBetModalAgreed}
+          confirmLoading={betPlacingInProgress}
+          onConfirm={async () => {
+            const roundId = gameData?.currentRound?._id;
+            if (!roundId) {
+              Alert.alert("Error", "No active round. Please wait for the next round.");
+              return;
+            }
+            const payload = buildBetPayload(betSelection, totalBetAmount, roundId);
+            if (!payload) {
+              Alert.alert("Error", "Invalid bet selection.");
+              return;
+            }
+            setBetPlacingInProgress(true);
+            const res = await placeWinGoBet(payload);
+            setBetPlacingInProgress(false);
+            if (res.success) {
+              setShowBetModal(false);
+              refreshWallet();
+              fetchMyHistory();
+            } else {
+              Alert.alert("Bet Failed", res.message ?? "Could not place bet.");
+            }
+          }}
+        />
       </ThemedView>
     </SafeAreaView>
   );

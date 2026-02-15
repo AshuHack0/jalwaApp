@@ -11,6 +11,12 @@ export {
 } from "./auth";
 export {
   fetchWinGoGameData,
+  fetchWinGoMyHistory,
+  placeWinGoBet,
   type WinGoGameData,
   type WinGoRound,
+  type MyHistoryBet,
+  type MyHistoryData,
+  type PlaceWinGoBetPayload,
+  type PlaceWinGoBetResponse,
 } from "./winGo";
