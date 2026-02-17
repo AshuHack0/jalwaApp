@@ -190,7 +190,7 @@ export default function WinGoScreen() {
     { enabled: selectedTab === "Game history" || selectedTab === "Chart" }
   );
   const historyData = historyDataRaw ?? null;
-  const { data: myHistoryData } = useWinGoMyHistory(
+  const { data: myHistoryData, refetch: refetchMyHistory } = useWinGoMyHistory(
     apiPath,
     pageMyHistory,
     10,
@@ -282,6 +282,7 @@ export default function WinGoScreen() {
           refetchedForRoundEndRef.current = end;
           refetchCurrentRound();
           refetchHistory();
+          refetchMyHistory();
           refreshWallet();
         }
         setSecondsRemaining(0);
@@ -297,7 +298,7 @@ export default function WinGoScreen() {
       setShowCountdownModal(remaining <= 5);
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refreshWallet]);
+  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refetchMyHistory, refreshWallet]);
 
   // Set audio mode for countdown sounds
   useEffect(() => {

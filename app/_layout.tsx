@@ -14,7 +14,8 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 10 * 1000, // 10 seconds
+      staleTime: 0,
+      gcTime: 0,
       retry: 1,
     },
   },

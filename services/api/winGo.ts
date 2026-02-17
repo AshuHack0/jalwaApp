@@ -14,8 +14,14 @@ export type WinGoRound = {
 
 /** Data returned by the lightweight current-round endpoint */
 export type WinGoCurrentRoundData = {
+  game: { name: string; durationSeconds: number; gameCode: string };
   currentRound: WinGoRound | null;
-  serverTime?: string;
+  nextRound: WinGoRound | null;
+  isBettingOpen: boolean;
+  isDrawPhase: boolean;
+  bettingEndsAt: string;
+  drawDurationMs: number;
+  serverTime: string;
 };
 
 /** Data returned by the paginated history endpoint */
