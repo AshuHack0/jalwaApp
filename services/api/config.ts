@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-/** Set to true to log API requests/responses in dev */
+/** Set to true to log all API requests/responses (full response body) in console */
 export const API_DEBUG = __DEV__;
 
 /**

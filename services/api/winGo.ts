@@ -63,7 +63,7 @@ export async function fetchWinGoCurrentRound(
     const json: CurrentRoundApiResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] WinGo currentRound response:", { status: res.status, success: json.success });
+      console.log("[API] WinGo currentRound response:", { status: res.status, ...json });
     }
 
     if (json.success && json.data) {
@@ -97,7 +97,7 @@ export async function fetchWinGoHistory(
     const json: HistoryApiResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] WinGo history response:", { status: res.status, success: json.success });
+      console.log("[API] WinGo history response:", { status: res.status, ...json });
     }
 
     if (json.success && json.data) {
@@ -170,7 +170,7 @@ export async function fetchWinGoMyHistory(
     const json: MyHistoryApiResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] WinGo myHistory response:", { status: res.status, success: json.success });
+      console.log("[API] WinGo myHistory response:", { status: res.status, ...json });
     }
 
     if (json.success && json.data) {
@@ -240,7 +240,7 @@ export async function placeWinGoBet(
     const json: PlaceWinGoBetResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] WinGo placeBet response:", { status: res.status, success: json.success });
+      console.log("[API] WinGo placeBet response:", { status: res.status, ...json });
     }
 
     return json;
