@@ -247,6 +247,7 @@ export default function WinGoScreen() {
   ];
 
   const refetchedForRoundEndRef = useRef<string | null>(null);
+  const lastHistoryDataRef = useRef<typeof historyData>(null);
   const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
   const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
 
@@ -263,14 +264,25 @@ export default function WinGoScreen() {
     refetchedForRoundEndRef.current = null;
   }, [apiPath]);
 
+  // Keep last valid history when switching games (don't flash empty)
+  useEffect(() => {
+    if (historyData) lastHistoryDataRef.current = historyData;
+  }, [historyData]);
+
+  const displayHistoryData = historyData ?? lastHistoryDataRef.current;
+
   // Update time remaining every second; refetch when round ends; show countdown modal when 5 sec remain
+  // Don't reset timer to 0 when switching games (keep previous values until new round data loads)
   useEffect(() => {
     const endsAt = currentRoundData?.currentRound?.endsAt ?? null;
     const offset = serverTimeOffsetRef.current;
-    setTimeRemaining(formatTimeRemaining(endsAt, offset));
-    const secs = getSecondsRemaining(endsAt, offset);
-    setSecondsRemaining(secs);
-    setShowCountdownModal(secs <= 5);
+
+    if (endsAt) {
+      setTimeRemaining(formatTimeRemaining(endsAt, offset));
+      const secs = getSecondsRemaining(endsAt, offset);
+      setSecondsRemaining(secs);
+      setShowCountdownModal(secs <= 5);
+    }
 
     const interval = setInterval(() => {
       const end = currentRoundData?.currentRound?.endsAt;
@@ -290,12 +302,13 @@ export default function WinGoScreen() {
         refetchedForRoundEndRef.current = null;
       }
 
-      const formatted = formatTimeRemaining(end ?? null, offset);
-      const remaining = getSecondsRemaining(end ?? null, offset);
-      setTimeRemaining(formatted);
-      setSecondsRemaining(remaining);
-      // Show modal when 5 sec or less remain (including 0)
-      setShowCountdownModal(remaining <= 5);
+      if (end) {
+        const formatted = formatTimeRemaining(end, offset);
+        const remaining = getSecondsRemaining(end, offset);
+        setTimeRemaining(formatted);
+        setSecondsRemaining(remaining);
+        setShowCountdownModal(remaining <= 5);
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refetchMyHistory, refreshWallet]);
@@ -422,14 +435,14 @@ export default function WinGoScreen() {
     return { text: "Pending", color: "#EAB308" };
   };
 
-  // Derive UI data from API responses
+  // Derive UI data from API responses (use displayHistoryData so we don't flash empty when switching games)
   const recentResults =
-    historyData?.historyRounds
+    displayHistoryData?.historyRounds
       ?.map((r) => r.outcomeNumber)
       .filter((n): n is number => n != null && n >= 0 && n <= 9)
       .slice(0, 5) ?? [];
   const gameHistory =
-    historyData?.historyRounds
+    displayHistoryData?.historyRounds
       ?.filter((r) => r.outcomeNumber != null && r.outcomeNumber >= 0)
       ?.map((r) => ({
         period: r.period,
@@ -439,10 +452,10 @@ export default function WinGoScreen() {
       })) ?? [];
   const displayPeriod =
     currentRoundData?.currentRound?.period ??
-    historyData?.historyRounds?.[0]?.period ??
+    displayHistoryData?.historyRounds?.[0]?.period ??
     "-";
   const totalPagesGameHistory =
-    historyData?.historyPagination?.totalPages ?? 1;
+    displayHistoryData?.historyPagination?.totalPages ?? 1;
   const totalPagesMyHistory = myHistoryData?.pagination?.totalPages ?? 1;
   const myHistoryBets = myHistoryData?.bets ?? [];
 
