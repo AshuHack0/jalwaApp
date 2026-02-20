@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useDepositModal } from "@/contexts/DepositModalContext";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,6 +15,7 @@ function formatBalance(amount: number): string {
 export default function WalletScreen() {
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
+  const { openDepositModal } = useDepositModal();
 
   return (
     <ThemedView style={styles.container}>
@@ -87,7 +89,7 @@ export default function WalletScreen() {
             </LinearGradient>
             {/* Transaction Actions */}
           <View style={styles.transactionGrid}>
-            <TouchableOpacity style={styles.transactionButton}>
+            <TouchableOpacity style={styles.transactionButton} onPress={() => openDepositModal()}>
               <View style={[styles.transactionIconContainer, styles.depositIcon]}>
                 <Image 
                   source={require('@/assets/rechargeIcon-efb79f43.webp')} 

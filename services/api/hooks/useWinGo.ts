@@ -23,7 +23,9 @@ export const winGoKeys = {
 };
 
 /**
- * Fetch only the current active round — lightweight, polled frequently.
+ * Fetch only the current active round — lightweight, polled every second.
+ * gcTime: 0 ensures stale data is discarded immediately when switching games,
+ * so returning to a game always shows fresh timing instead of cached values.
  */
 export function useWinGoCurrentRound(apiPath: string) {
   return useQuery({

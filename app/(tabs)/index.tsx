@@ -1,3 +1,5 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { useDepositModal } from "@/contexts/DepositModalContext";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +21,7 @@ function formatBalance(amount: number): string {
 export default function HomeScreen() {
   const router = useRouter();
   const { isAuthenticated, walletBalance, refreshWallet } = useAuth();
+  const { openDepositModal } = useDepositModal();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>('Lottery');
   const [showGameErrorModal, setShowGameErrorModal] = useState(false);
@@ -450,7 +453,7 @@ export default function HomeScreen() {
                 <ThemedText style={styles.walletButtonText} numberOfLines={1}>Withdraw</ThemedText>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.walletButton}>
+            <TouchableOpacity style={styles.walletButton} onPress={() => openDepositModal()}>
               <Image 
                 source={require('@/assets/91-recharge_btn-ff2482b8.svg')} 
                 style={styles.walletButtonBackground}

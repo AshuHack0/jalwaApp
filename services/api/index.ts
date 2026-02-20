@@ -32,3 +32,12 @@ export {
   useWalletBalance,
   authKeys,
 } from "./hooks";
+export {
+  getFirstDepositBonus,
+  deposit,
+  claimFirstDepositBonus,
+  type FirstDepositBonusItem,
+  type FirstDepositBonusResponse,
+  type DepositResponse,
+  type ClaimFirstDepositBonusResponse,
+} from "./promotion";

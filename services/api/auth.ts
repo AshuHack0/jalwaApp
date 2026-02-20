@@ -42,7 +42,7 @@ async function authFetch(
     const json: AuthResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] Auth response:", { status: res.status, success: json.success });
+      console.log("[API] Auth response:", { status: res.status, ...json });
     }
 
     return json;
@@ -108,7 +108,7 @@ export async function getMe(): Promise<AuthUser | null> {
     const json: GetMeResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] getMe response:", { status: res.status, success: json.success });
+      console.log("[API] getMe response:", { status: res.status, ...json });
     }
 
     if (json.success && json.data) {
@@ -152,7 +152,7 @@ export async function getWalletBalance(): Promise<number | null> {
     const json: WalletResponse = await res.json();
 
     if (API_DEBUG) {
-      console.log("[API] getWalletBalance response:", { status: res.status, success: json.success });
+      console.log("[API] getWalletBalance response:", { status: res.status, ...json });
     }
 
     if (json.success && json.data != null) {

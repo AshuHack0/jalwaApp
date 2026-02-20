@@ -1,6 +1,34 @@
-import { BetModal } from "@/components/BetModal";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  Pressable,
+  Alert,
+  Modal,
+} from "react-native";
+import {
+  widthPercentageToDP as wpBase,
+  heightPercentageToDP as hpBase,
+} from "react-native-responsive-screen";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
+import { useState, useRef, useEffect } from "react";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import Svg, { Polygon, Rect, Line } from "react-native-svg";
+import MaskedView from "@react-native-masked-view/masked-view";
+import * as Clipboard from "expo-clipboard";
 import {
   COLOR_MAP,
   WINGO_ANNOUNCEMENT_MESSAGES,
@@ -10,9 +38,12 @@ import {
   WINGO_MULTIPLIERS,
   WINGO_NUMBER_COLOR_MAP,
   WINGO_TABS,
+  WINGO_API_PATH_MAP,
+  BET_SELECTION_MAP,
+  BET_SELECTION_NUMBER_MAP,
 } from "@/constants/Wingo";
 import { useAuth } from "@/contexts/AuthContext";
-import { type MyHistoryBet, type PlaceWinGoBetPayload } from "@/services/api";
+import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
   usePlaceWinGoBet,
   useWinGoCurrentRound,
@@ -159,6 +190,7 @@ function AnimatedNumberBall({
 export default function WinGoScreen() {
   const router = useRouter();
   const { isAuthenticated, isLoading, walletBalance, refreshWallet } = useAuth();
+  const { openDepositModal } = useDepositModal();
 
   useEffect(() => {
     if (isLoading) return;
@@ -190,7 +222,7 @@ export default function WinGoScreen() {
     { enabled: selectedTab === "Game history" || selectedTab === "Chart" }
   );
   const historyData = historyDataRaw ?? null;
-  const { data: myHistoryData } = useWinGoMyHistory(
+  const { data: myHistoryData, refetch: refetchMyHistory } = useWinGoMyHistory(
     apiPath,
     pageMyHistory,
     10,
@@ -211,6 +243,12 @@ export default function WinGoScreen() {
   const [betQuantity, setBetQuantity] = useState(1);
   const [selectedModalMultiplier, setSelectedModalMultiplier] = useState("X1");
   const [betModalAgreed, setBetModalAgreed] = useState(true);
+  const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [winLossPopupVisible, setWinLossPopupVisible] = useState(false);
+  const [settledBet, setSettledBet] = useState<MyHistoryBet | null>(null);
+  const lastShownPopupPeriodRef = useRef<string | null>(null);
+  const [hasInitializedHistory, setHasInitializedHistory] = useState(false);
 
   const getMultiplierValue = (mult: string) =>
     parseInt(mult.replace("X", ""), 10);
@@ -247,6 +285,7 @@ export default function WinGoScreen() {
   ];
 
   const refetchedForRoundEndRef = useRef<string | null>(null);
+  const lastHistoryDataRef = useRef<typeof historyData>(null);
   const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
   const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
 
@@ -263,14 +302,25 @@ export default function WinGoScreen() {
     refetchedForRoundEndRef.current = null;
   }, [apiPath]);
 
-  // Update time remaining every second; refetch when round ends; show countdown modal when 5 sec remain
+  // Keep last valid history when switching games (don't flash empty)
+  useEffect(() => {
+    if (historyData) lastHistoryDataRef.current = historyData;
+  }, [historyData]);
+
+  const displayHistoryData = historyData ?? lastHistoryDataRef.current;
+
+  // Update time remaining every second; refetch when round ends; show countdown modal when 6 sec remain
+  // Don't reset timer to 0 when switching games (keep previous values until new round data loads)
   useEffect(() => {
     const endsAt = currentRoundData?.currentRound?.endsAt ?? null;
     const offset = serverTimeOffsetRef.current;
-    setTimeRemaining(formatTimeRemaining(endsAt, offset));
-    const secs = getSecondsRemaining(endsAt, offset);
-    setSecondsRemaining(secs);
-    setShowCountdownModal(secs <= 5);
+
+    if (endsAt) {
+      setTimeRemaining(formatTimeRemaining(endsAt, offset));
+      const secs = getSecondsRemaining(endsAt, offset);
+      setSecondsRemaining(secs);
+      setShowCountdownModal(secs <= 6);
+    }
 
     const interval = setInterval(() => {
       const end = currentRoundData?.currentRound?.endsAt;
@@ -282,6 +332,7 @@ export default function WinGoScreen() {
           refetchedForRoundEndRef.current = end;
           refetchCurrentRound();
           refetchHistory();
+          refetchMyHistory();
           refreshWallet();
         }
         setSecondsRemaining(0);
@@ -289,15 +340,16 @@ export default function WinGoScreen() {
         refetchedForRoundEndRef.current = null;
       }
 
-      const formatted = formatTimeRemaining(end ?? null, offset);
-      const remaining = getSecondsRemaining(end ?? null, offset);
-      setTimeRemaining(formatted);
-      setSecondsRemaining(remaining);
-      // Show modal when 5 sec or less remain (including 0)
-      setShowCountdownModal(remaining <= 5);
+      if (end) {
+        const formatted = formatTimeRemaining(end, offset);
+        const remaining = getSecondsRemaining(end, offset);
+        setTimeRemaining(formatted);
+        setSecondsRemaining(remaining);
+        setShowCountdownModal(remaining <= 6);
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refreshWallet]);
+  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refetchMyHistory, refreshWallet]);
 
   // Set audio mode for countdown sounds
   useEffect(() => {
@@ -307,9 +359,9 @@ export default function WinGoScreen() {
     });
   }, []);
 
-  // Play countdown sounds when overlay is showing (5,4,3,2,1 -> di1; 0 -> di2)
+  // Play countdown sounds when overlay is showing (6,5,4,3,2,1 -> di1; 0 -> di2)
   useEffect(() => {
-    if (!showCountdownModal || secondsRemaining > 5) {
+    if (!showCountdownModal || secondsRemaining > 6) {
       lastCountdownSecondPlayed = null;
       return;
     }
@@ -319,7 +371,7 @@ export default function WinGoScreen() {
     if (secondsRemaining === 0) {
       di2Player.seekTo(0);
       di2Player.play();
-    } else if (secondsRemaining <= 5) {
+    } else if (secondsRemaining <= 6) {
       di1Player.seekTo(0);
       di1Player.play();
     }
@@ -329,8 +381,50 @@ export default function WinGoScreen() {
   useEffect(() => {
     if (showCountdownModal) {
       setShowBetModal(false);
+      setSelectedBalanceAmount(0);
+      setSelectedMultiplier("X1");
+      setSelectedModalMultiplier("X1");
+      setBetQuantity(1);
     }
   }, [showCountdownModal]);
+
+  // Handle Win/Loss Popup detection
+  useEffect(() => {
+    if (!myHistoryData?.bets?.length) {
+      if (!hasInitializedHistory && myHistoryData) {
+        setHasInitializedHistory(true);
+      }
+      return;
+    }
+
+    // Look at the most recent bet in history
+    const latestBet = myHistoryData.bets[0];
+
+    // Check if the bet is settled (isWin is true or false, not undefined/null)
+    const isSettled = latestBet.isWin === true || latestBet.isWin === false;
+    const period = latestBet.round?.period;
+
+    if (!hasInitializedHistory) {
+      // First load: just record the latest period and mark as initialized
+      if (period) {
+        lastShownPopupPeriodRef.current = period;
+      }
+      setHasInitializedHistory(true);
+      return;
+    }
+
+    if (isSettled && period && period !== lastShownPopupPeriodRef.current) {
+      lastShownPopupPeriodRef.current = period;
+      setSettledBet(latestBet);
+      setWinLossPopupVisible(true);
+
+      const timer = setTimeout(() => {
+        setWinLossPopupVisible(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [myHistoryData, hasInitializedHistory]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -421,14 +515,14 @@ export default function WinGoScreen() {
     return { text: "Pending", color: "#EAB308" };
   };
 
-  // Derive UI data from API responses
+  // Derive UI data from API responses (use displayHistoryData so we don't flash empty when switching games)
   const recentResults =
-    historyData?.historyRounds
+    displayHistoryData?.historyRounds
       ?.map((r) => r.outcomeNumber)
       .filter((n): n is number => n != null && n >= 0 && n <= 9)
-      .slice(0, 5) ?? [];
+      .slice(0, 6) ?? [];
   const gameHistory =
-    historyData?.historyRounds
+    displayHistoryData?.historyRounds
       ?.filter((r) => r.outcomeNumber != null && r.outcomeNumber >= 0)
       ?.map((r) => ({
         period: r.period,
@@ -438,10 +532,10 @@ export default function WinGoScreen() {
       })) ?? [];
   const displayPeriod =
     currentRoundData?.currentRound?.period ??
-    historyData?.historyRounds?.[0]?.period ??
+    displayHistoryData?.historyRounds?.[0]?.period ??
     "-";
   const totalPagesGameHistory =
-    historyData?.historyPagination?.totalPages ?? 1;
+    displayHistoryData?.historyPagination?.totalPages ?? 1;
   const totalPagesMyHistory = myHistoryData?.pagination?.totalPages ?? 1;
   const myHistoryBets = myHistoryData?.bets ?? [];
 
@@ -496,12 +590,15 @@ export default function WinGoScreen() {
             backgroundColor: "#05012B",
           }}
         >
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
-            style={{ flex: 1, justifyContent: "center", height: "100%" }}
+            style={({ pressed }) => [
+              { flex: 1, justifyContent: "center", height: "100%" },
+              { opacity: pressed ? 0.7 : 1 }
+            ]}
           >
             <Ionicons name="chevron-back" size={wp(6.4)} color="white" />
-          </TouchableOpacity>
+          </Pressable>
           <Image
             source={
               "https://jalwaimg.jalwa-jalwa.com/Jalwa/other/h5setting_20250315140925tbe6.png"
@@ -585,7 +682,10 @@ export default function WinGoScreen() {
               >
                 {walletBalance.toFixed(2)}
               </ThemedText>
-              <TouchableOpacity onPress={refreshWallet}>
+              <Pressable
+                onPress={refreshWallet}
+                style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+              >
                 <Image
                   source={
                     "https://www.jalwagame.win/assets/png/refireshIcon-2bc1b49f.webp"
@@ -593,7 +693,7 @@ export default function WinGoScreen() {
                   style={{ width: wp(6.4), height: wp(6.4) }}
                   contentFit="cover"
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <View
@@ -625,38 +725,45 @@ export default function WinGoScreen() {
                 height: hp(6),
               }}
             >
-              <TouchableOpacity
-                style={{
-                  width: wp(45),
-                  height: "100%",
-                  backgroundColor: "#D23838",
-                  borderRadius: 100,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    width: wp(40),
+                    height: "100%",
+                    backgroundColor: "#EF4444",
+                    borderRadius: 100,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 }
+                ]}
               >
                 <ThemedText
                   style={{ fontSize: wp(6), fontWeight: "600", color: "#fff" }}
                 >
                   Withdraw
                 </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  width: wp(45),
-                  height: "100%",
-                  backgroundColor: "#17B15E",
-                  borderRadius: 100,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+              </Pressable>
+              <Pressable
+                onPress={() => openDepositModal()}
+                style={({ pressed }) => [
+                  {
+                    width: wp(40),
+                    height: "100%",
+                    backgroundColor: "#10B981",
+                    borderRadius: 100,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                  { opacity: pressed ? 0.7 : 1 }
+                ]}
               >
                 <ThemedText
                   style={{ fontSize: wp(6), fontWeight: "600", color: "#fff" }}
                 >
                   Deposit
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -794,20 +901,22 @@ export default function WinGoScreen() {
                 </>
               );
               return (
-                <TouchableOpacity
+                <Pressable
                   key={mode.id}
-                  style={{
-                    flex: 1,
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      flex: 1,
+                      height: "100%",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                    },
+                    { opacity: 1 }
+                  ]}
                   onPress={() => {
                     setSelectedMode(mode.id);
                     setCurrentPage(1);
                   }}
-                  activeOpacity={1}
                 >
                   {isActive ? (
                     <LinearGradient
@@ -836,7 +945,7 @@ export default function WinGoScreen() {
                       {content}
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>
@@ -868,17 +977,20 @@ export default function WinGoScreen() {
               contentFit="cover"
             />
             <View style={{ height: "100%", width: "46%", gap: wp(1.1) }}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  gap: wp(1.6),
-                  height: hp(4.1),
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderWidth: 1,
-                  borderColor: "#05012B",
-                  borderRadius: 50,
-                }}
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    flexDirection: "row",
+                    gap: wp(1.6),
+                    height: hp(3.2),
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderWidth: 1,
+                    borderColor: "#05012B",
+                    borderRadius: 50,
+                  },
+                  { opacity: pressed ? 0.7 : 1 }
+                ]}
               >
                 <Image
                   source={require("@/assets/ededed.png")}
@@ -888,18 +1000,18 @@ export default function WinGoScreen() {
                 <ThemedText style={{ fontSize: wp(4.4), color: "#05012B" }}>
                   How to play
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
               <ThemedText
                 style={{ fontSize: wp(4), fontWeight: "400", color: "#05012B" }}
               >
                 {selectedGame?.name}
               </ThemedText>
               <View style={styles.recentResults}>
-                {recentResults.map((result, index) => (
+                {recentResults.slice(0, 5).map((result, index) => (
                   <Image
                     key={`recent-${index}-${result}`}
                     source={WINGO_BALL_IMAGES[result]}
-                    style={{ width: wp(7.5), height: wp(7.5) }}
+                    style={{ width: wp(8.4), height: wp(8.4) }}
                     contentFit="cover"
                   />
                 ))}
@@ -1009,24 +1121,33 @@ export default function WinGoScreen() {
             <View style={styles.colorBettingContainer}>
               {/* Color Betting Options */}
               <View style={styles.colorButtonsRow}>
-                <TouchableOpacity
-                  style={styles.greenColorButton}
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.greenColorButton,
+                    { opacity: pressed ? 0.7 : 1 }
+                  ]}
                   onPress={() => openBetModal("Green")}
                 >
                   <ThemedText style={styles.colorButtonText}>Green</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.violetColorButton}
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.violetColorButton,
+                    { opacity: pressed ? 0.7 : 1 }
+                  ]}
                   onPress={() => openBetModal("Violet")}
                 >
                   <ThemedText style={styles.colorButtonText}>Violet</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.redColorButton}
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.redColorButton,
+                    { opacity: pressed ? 0.7 : 1 }
+                  ]}
                   onPress={() => openBetModal("Red")}
                 >
                   <ThemedText style={styles.colorButtonText}>Red</ThemedText>
-                </TouchableOpacity>
+                </Pressable>
               </View>
 
               {/* Number Betting Grid */}
@@ -1059,10 +1180,10 @@ export default function WinGoScreen() {
 
               {/* Multiplier Buttons */}
               <View style={styles.multiplierSection}>
-                <TouchableOpacity
-                  style={[
+                <Pressable
+                  style={({ pressed }) => [
                     styles.randomButtonContainer,
-                    randomPickingInProgress && { opacity: 0.7 },
+                    (randomPickingInProgress || pressed) && { opacity: 0.7 },
                   ]}
                   disabled={randomPickingInProgress}
                   onPress={() => {
@@ -1091,14 +1212,15 @@ export default function WinGoScreen() {
                   <ThemedText style={styles.randomButtonText}>
                     Random
                   </ThemedText>
-                </TouchableOpacity>
+                </Pressable>
                 {multipliers.map((mult) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={mult}
-                    style={[
+                    style={({ pressed }) => [
                       styles.multiplierItemButton,
                       selectedMultiplier === mult &&
-                        styles.multiplierItemButtonActive,
+                      styles.multiplierItemButtonActive,
+                      { opacity: pressed ? 0.7 : 1 }
                     ]}
                     onPress={() => setSelectedMultiplier(mult)}
                   >
@@ -1106,21 +1228,20 @@ export default function WinGoScreen() {
                       style={[
                         styles.multiplierItemText,
                         selectedMultiplier === mult &&
-                          styles.multiplierItemTextActive,
+                        styles.multiplierItemTextActive,
                       ]}
                     >
                       {mult}
                     </ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
 
               {/* Big/Small Toggle */}
               <View style={styles.sizeToggleSection}>
-                <TouchableOpacity
-                  style={[
+                <Pressable
+                  style={({ pressed }) => [
                     styles.bigSizeButton,
-                    selectedSize !== "Big" && { opacity: 0.7 },
                   ]}
                   onPress={() => {
                     setSelectedSize("Big");
@@ -1128,11 +1249,10 @@ export default function WinGoScreen() {
                   }}
                 >
                   <ThemedText style={styles.bigSizeButtonText}>Big</ThemedText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [
                     styles.smallSizeButton,
-                    selectedSize !== "Small" && { opacity: 0.7 },
                   ]}
                   onPress={() => {
                     setSelectedSize("Small");
@@ -1140,7 +1260,7 @@ export default function WinGoScreen() {
                   }}
                 >
                   <ThemedText style={styles.sizeButtonText}>Small</ThemedText>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
 
@@ -1176,17 +1296,19 @@ export default function WinGoScreen() {
                 </ThemedText>
               );
               return (
-                <TouchableOpacity
+                <Pressable
                   key={tab}
-                  style={{
-                    flex: 1,
-                    height: "100%",
-                    marginHorizontal: wp(1.1),
-                    borderRadius: wp(2.1),
-                    overflow: "hidden",
-                  }}
+                  style={({ pressed }) => [
+                    {
+                      flex: 1,
+                      height: "100%",
+                      marginHorizontal: wp(1.1),
+                      borderRadius: wp(2.1),
+                      overflow: "hidden",
+                    },
+                    { opacity: pressed ? 0.8 : 1 }
+                  ]}
                   onPress={() => setSelectedTab(tab)}
-                  activeOpacity={0.8}
                 >
                   {isSelected ? (
                     <LinearGradient
@@ -1215,7 +1337,7 @@ export default function WinGoScreen() {
                       {tabContent}
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>
@@ -1324,14 +1446,14 @@ export default function WinGoScreen() {
               </View>
             ) : (
               <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#021341",
-                padding: hp(2.5),
-                marginBottom: hp(2.5),
-              }}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#021341",
+                  padding: hp(2.5),
+                  marginBottom: hp(2.5),
+                }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
@@ -1392,99 +1514,99 @@ export default function WinGoScreen() {
                     })}
                   </Svg>
                   <View style={styles.chartRowsWrapper}>
-                  {gameHistory.map((item, index) => (
-                    <View
-                      key={`chart-row-${item.period}-${index}`}
-                      style={styles.chartRow}
-                      onLayout={(e) => {
-                        const { y, height } = e.nativeEvent.layout;
-                        setChartRowLayouts((prev) => {
-                          if (prev[index]?.y === y && prev[index]?.height === height)
-                            return prev;
-                          return { ...prev, [index]: { y, height } };
-                        });
-                      }}
-                    >
-                      <ThemedText style={styles.chartPeriod}>
-                        {item.period}
-                      </ThemedText>
-                      <View style={styles.chartNumbersRow}>
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
-                          const isHighlighted = item.number === n;
-                          if (!isHighlighted) {
+                    {gameHistory.map((item, index) => (
+                      <View
+                        key={`chart-row-${item.period}-${index}`}
+                        style={styles.chartRow}
+                        onLayout={(e) => {
+                          const { y, height } = e.nativeEvent.layout;
+                          setChartRowLayouts((prev) => {
+                            if (prev[index]?.y === y && prev[index]?.height === height)
+                              return prev;
+                            return { ...prev, [index]: { y, height } };
+                          });
+                        }}
+                      >
+                        <ThemedText style={styles.chartPeriod}>
+                          {item.period}
+                        </ThemedText>
+                        <View style={styles.chartNumbersRow}>
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
+                            const isHighlighted = item.number === n;
+                            if (!isHighlighted) {
+                              return (
+                                <View
+                                  key={n}
+                                  style={styles.chartNumberCircle}
+                                >
+                                  <Text style={[styles.chartNumberText, { color: "#fff" }]}>
+                                    {n}
+                                  </Text>
+                                </View>
+                              );
+                            }
+                            if (isGradientNumber(n)) {
+                              const dots = getColorDots(n);
+                              return (
+                                <LinearGradient
+                                  key={n}
+                                  colors={[dots[0], dots[1]] as [string, string]}
+                                  start={{ x: 0, y: 1 }}
+                                  end={{ x: 0, y: 0 }}
+                                  style={[
+                                    styles.chartNumberCircle,
+                                    styles.chartNumberCircleHighlighted,
+                                  ]}
+                                >
+                                  <Text style={[styles.chartNumberText, { color: "#fff" }]}>
+                                    {n}
+                                  </Text>
+                                </LinearGradient>
+                              );
+                            }
                             return (
                               <View
                                 key={n}
-                                style={styles.chartNumberCircle}
+                                style={[
+                                  styles.chartNumberCircle,
+                                  styles.chartNumberCircleHighlighted,
+                                  { backgroundColor: getResultColor(n) },
+                                ]}
                               >
                                 <Text style={[styles.chartNumberText, { color: "#fff" }]}>
                                   {n}
                                 </Text>
                               </View>
                             );
-                          }
-                          if (isGradientNumber(n)) {
-                            const dots = getColorDots(n);
-                            return (
-                              <LinearGradient
-                                key={n}
-                                colors={[dots[0], dots[1]] as [string, string]}
-                                start={{ x: 0, y: 1 }}
-                                end={{ x: 0, y: 0 }}
-                                style={[
-                                  styles.chartNumberCircle,
-                                  styles.chartNumberCircleHighlighted,
-                                ]}
-                              >
-                                <Text style={[styles.chartNumberText, { color: "#fff" }]}>
-                                  {n}
-                                </Text>
-                              </LinearGradient>
-                            );
-                          }
-                          return (
-                            <View
-                              key={n}
-                              style={[
-                                styles.chartNumberCircle,
-                                styles.chartNumberCircleHighlighted,
-                                { backgroundColor: getResultColor(n) },
-                              ]}
-                            >
-                              <Text style={[styles.chartNumberText, { color: "#fff" }]}>
-                                {n}
-                              </Text>
-                            </View>
-                          );
-                        })}
+                          })}
+                        </View>
+                        <View
+                          style={[
+                            styles.chartBSBadge,
+                            item.size === "Big"
+                              ? styles.chartBSBadgeBig
+                              : styles.chartBSBadgeSmall,
+                          ]}
+                        >
+                          <Text style={styles.chartBSBadgeText}>
+                            {item.size === "Big" ? "B" : "S"}
+                          </Text>
+                        </View>
                       </View>
-                      <View
-                        style={[
-                          styles.chartBSBadge,
-                          item.size === "Big"
-                            ? styles.chartBSBadgeBig
-                            : styles.chartBSBadgeSmall,
-                        ]}
-                      >
-                        <Text style={styles.chartBSBadgeText}>
-                          {item.size === "Big" ? "B" : "S"}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
+                    ))}
                   </View>
                 </View>
               </View>
             ) : (
               <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#021341",
-                padding: hp(2.5),
-                marginBottom: hp(2.5),
-              }}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#021341",
+                  padding: hp(2.5),
+                  marginBottom: hp(2.5),
+                }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
@@ -1498,56 +1620,242 @@ export default function WinGoScreen() {
               </View>
             ))}
 
-          {/* My history */}
           {selectedTab === "My history" &&
             (myHistoryBets.length > 0 ? (
-              <View style={styles.historyTable}>
-                <View style={styles.tableHeader}>
-                  <ThemedText style={[styles.tableHeaderText, { flex: 2, textAlign: "left" }]}>
-                    Period
-                  </ThemedText>
-                  <ThemedText style={[styles.tableHeaderText, { flex: 1, textAlign: "center" }]}>
-                    Select
-                  </ThemedText>
-                  <ThemedText style={[styles.tableHeaderText, { flex: 0.8, textAlign: "center" }]}>
-                    Point
-                  </ThemedText>
-                  <ThemedText style={[styles.tableHeaderText, { flex: 1, textAlign: "right" }]}>
-                    Result
-                  </ThemedText>
-                </View>
-                <View style={{ backgroundColor: "#021341" }}>
-                  {myHistoryBets.map((bet) => {
-                    const result = getBetResultLabel(bet);
-                    return (
-                      <View key={bet._id} style={styles.tableRow}>
-                        <ThemedText style={{ flex: 2, fontSize: wp(3.2), color: "#fff" }}>
-                          {bet.round?.period ?? "-"}
-                        </ThemedText>
-                        <ThemedText style={{ flex: 1, fontSize: wp(3.2), color: "#fff", textAlign: "center" }}>
-                          {getBetSelectLabel(bet)}
-                        </ThemedText>
-                        <ThemedText style={{ flex: 0.8, fontSize: wp(3.2), color: "#fff", textAlign: "center" }}>
-                          ₹{bet.amount}
-                        </ThemedText>
-                        <ThemedText style={{ flex: 1, fontSize: wp(3.2), color: result.color, textAlign: "right", fontWeight: "700" }}>
-                          {result.text}
-                        </ThemedText>
+              <View style={{ backgroundColor: "#021341" }}>
+                {myHistoryBets.map((bet) => {
+                  const result = getBetResultLabel(bet);
+                  const selection = getBetSelectLabel(bet);
+                  const outcomeNumber = bet.round?.outcomeNumber;
+                  const isPending = outcomeNumber == null || (bet.round?.status !== "settled" && bet.round?.status !== "closed");
+
+                  const formatDateTime = (dateStr: string) => {
+                    const d = new Date(dateStr);
+                    const pad = (n: number) => n.toString().padStart(2, "0");
+                    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                  };
+
+                  console.log(bet);
+
+                  const getOutcomeColor = (num: number) => {
+                    if (isGradientNumber(num)) return null;
+                    return getResultColor(num);
+                  };
+
+                  const isExpanded = bet._id === expandedBetId;
+                  const taxAmount = bet.amount * 0.02;
+                  const afterTax = bet.amount - taxAmount;
+                  const orderNumber = `WG${new Date(bet.createdAt).toISOString().replace(/[-:T.Z]/g, "")}${bet._id.slice(-6)}`.toUpperCase();
+
+                  const copyToClipboard = async () => {
+                    await Clipboard.setStringAsync(orderNumber);
+                    Alert.alert("Success", "Order number copied to clipboard");
+                  };
+
+                  return (
+                    <Pressable
+                      key={bet._id}
+                      onPress={() => setExpandedBetId(isExpanded ? null : bet._id)}
+                      style={({ pressed }) => [
+                        styles.myHistoryCardContainer,
+                        { opacity: pressed ? 0.9 : 1 }
+                      ]}
+                    >
+                      <View style={styles.myHistoryCard}>
+                        <View style={styles.myHistoryLeft}>
+                          {(() => {
+                            let colors: string[] = ["red"];
+                            if (bet.choiceColor) {
+                              colors = [BET_SELECTION_MAP[bet.choiceColor.toLowerCase() as keyof typeof BET_SELECTION_MAP] || "red"];
+                            } else if (bet.choiceNumber !== null && bet.choiceNumber !== undefined) {
+                              colors = BET_SELECTION_NUMBER_MAP[bet.choiceNumber.toString() as keyof typeof BET_SELECTION_NUMBER_MAP] || ["red"];
+                            } else if (bet.choiceBigSmall) {
+                              colors = [BET_SELECTION_MAP[bet.choiceBigSmall.toLowerCase() as keyof typeof BET_SELECTION_MAP] || "red"];
+                            }
+
+                            if (colors.length > 1) {
+                              return (
+                                <View style={{ height: wp(13), width: wp(14), borderRadius: wp(2.5), overflow: "hidden", justifyContent: "center", alignItems: "center" }}>
+                                  <Svg height="100%" width="100%" viewBox="0 0 100 100" style={{ position: "absolute" }}>
+                                    <Rect x="0" y="0" width="100" height="100" fill={colors[0]} />
+                                    <Polygon points="0,100 100,100 100,0" fill={colors[1]} />
+                                  </Svg>
+                                  <Text style={[styles.myHistoryNumberText, bet.betType === "BIG_SMALL" && { fontSize: wp(4) }]}>
+                                    {bet.betType === "BIG_SMALL"
+                                      ? (bet.round?.outcomeBigSmall
+                                        ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase())
+                                        : "?")
+                                      : outcomeNumber}
+                                  </Text>
+                                </View>
+                              );
+                            }
+                            return (
+                              <View style={{ height: wp(13), width: wp(14), borderRadius: wp(2), justifyContent: "center", alignItems: "center", backgroundColor: colors[0] }}>
+                                <Text style={[styles.myHistoryNumberText, bet.betType === "BIG_SMALL" && { fontSize: wp(4) }]}>
+                                  {bet.betType === "BIG_SMALL"
+                                    ? (bet.round?.outcomeBigSmall
+                                      ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase())
+                                      : "?")
+                                    : outcomeNumber}
+                                </Text>
+                              </View>
+                            );
+                          })()}
+                        </View>
+
+                        <View style={styles.myHistoryMiddle}>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: wp(1) }}>
+                            <ThemedText style={{ fontSize: wp(5), fontWeight: "600", color: "#E3EFFF" }}>
+                              {bet.round?.period ?? "-"}
+                            </ThemedText>
+                            <Ionicons name={isExpanded ? "caret-up" : "caret-down"} size={wp(3)} color="#3a3a3aff" />
+                          </View>
+                          <ThemedText style={{ fontSize: wp(4), fontWeight: "600", color: "#929292" }}>
+                            {formatDateTime(bet.createdAt)}
+                          </ThemedText>
+                        </View>
+
+                        {bet.isWin != null && <View style={styles.myHistoryRight}>
+                          <View style={[
+                            { height: wp(8.5), width: wp(24), borderRadius: wp(2), justifyContent: "center", alignItems: "center", borderWidth: wp(0.2) },
+                            { borderColor: result.color }
+                          ]}>
+                            <Text style={[
+                              { fontSize: wp(4), fontWeight: "400" },
+                              { color: result.color }
+                            ]}>
+                              {bet.isWin == null ? "Unpaid" : bet.isWin ? "Succeed" : "Failed"}
+                            </Text>
+                          </View>
+                          <ThemedText style={[
+                            { fontSize: wp(4), fontWeight: "400" },
+                            { color: result.color }
+                          ]}>
+                            {result.text.startsWith("+") || result.text.startsWith("-") ? result.text : `₹${bet.amount.toFixed(2)}`}
+                          </ThemedText>
+                        </View>}
                       </View>
-                    );
-                  })}
-                </View>
+
+                      {isExpanded && (
+                        <View style={styles.myHistoryDetails}>
+                          <ThemedText style={styles.detailsTitle}>Details</ThemedText>
+
+                          <View style={styles.detailsContent}>
+                            {/* Order number */}
+                            <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "flex-start", backgroundColor: "#001C54", borderRadius: 4, padding: 2 }}>
+                              <ThemedText style={{ fontSize: wp(5), fontWeight: "400", color: "#E3EFFF" }}>Order number</ThemedText>
+                              <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
+                                <ThemedText style={{ fontSize: wp(5), fontWeight: "400", color: "#92A8E3" }} numberOfLines={1}>{orderNumber}</ThemedText>
+                                <Pressable
+                                  onPress={copyToClipboard}
+                                  style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+                                >
+                                  <Ionicons name="copy-outline" size={wp(4)} color="#3b3b3bff" />
+                                </Pressable>
+                              </View>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Period</ThemedText>
+                              <ThemedText style={styles.detailsValue}>{bet.round?.period}</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Purchase amount</ThemedText>
+                              <ThemedText style={styles.detailsValue}>₹{bet.amount.toFixed(2)}</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Quantity</ThemedText>
+                              <ThemedText style={styles.detailsValue}>1</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Amount after tax</ThemedText>
+                              <ThemedText style={[styles.detailsValue, { color: "#EF4444" }]}>₹{afterTax.toFixed(2)}</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Tax</ThemedText>
+                              <ThemedText style={styles.detailsValue}>₹{taxAmount.toFixed(2)}</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Result</ThemedText>
+                              <View style={{ flexDirection: "row", gap: wp(2) }}>
+                                {
+                                  bet?.isWin != null ? (
+                                    <>
+                                      <ThemedText style={[styles.detailsValue, { color: "#92a8e3" }]}>{outcomeNumber ?? "?"}</ThemedText>
+                                      <View style={{ flexDirection: "row", gap: wp(1) }}>
+                                        {bet.round?.outcomeColor?.split("_").map((c, i) => {
+                                          const colorKey = c.toLowerCase() as keyof typeof BET_SELECTION_MAP;
+                                          const displayColor = BET_SELECTION_MAP[colorKey] ?? "#fff";
+                                          return (
+                                            <ThemedText key={i} style={[styles.detailsValue, { color: displayColor }]}>
+                                              {c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()}
+                                            </ThemedText>
+                                          );
+                                        })}
+                                      </View>
+                                      {(() => {
+                                        const sizeKey = bet.round?.outcomeBigSmall?.toLowerCase() as keyof typeof BET_SELECTION_MAP;
+                                        const sizeColor = BET_SELECTION_MAP[sizeKey] ?? "#fff";
+                                        const sizeName = bet.round?.outcomeBigSmall ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase()) : "";
+                                        return (
+                                          <ThemedText style={[styles.detailsValue, { color: sizeColor }]}>
+                                            {sizeName}
+                                          </ThemedText>
+                                        );
+                                      })()}
+                                    </>
+                                  ) : (
+                                    <ThemedText style={[styles.detailsValue]}>{"--"}</ThemedText>
+                                  )}
+                              </View>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Select</ThemedText>
+                              <ThemedText style={styles.detailsValue}>{selection}</ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Status</ThemedText>
+                              <ThemedText style={[styles.detailsValue, { color: result.color }]}>
+                                {result.text === "Pending" ? "Pending" : (bet.isWin ? "Succeed" : "Failed")}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Win/lose</ThemedText>
+                              <ThemedText style={[styles.detailsValue, { color: result.color }]}>
+                                {result.text}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>Order time</ThemedText>
+                              <ThemedText style={styles.detailsValue}>{formatDateTime(bet.createdAt)}</ThemedText>
+                            </View>
+                          </View>
+                        </View>
+                      )}
+                    </Pressable>
+                  );
+                })}
               </View>
             ) : (
               <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#021341",
-                padding: hp(2.5),
-                marginBottom: hp(2.5),
-              }}
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#021341",
+                  padding: hp(2.5),
+                  marginBottom: hp(2.5),
+                }}
               >
                 <Image
                   source={require("@/assets/Wingo/Empty.png")}
@@ -1573,12 +1881,15 @@ export default function WinGoScreen() {
                 paddingVertical: hp(2.5),
               }}
             >
-              <TouchableOpacity
-                style={{
-                  padding: wp(2.1),
-                  backgroundColor: currentPage === 1 ? "#001C54" : "#00ECBE",
-                  borderRadius: wp(2.7),
-                }}
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    padding: wp(2.1),
+                    backgroundColor: currentPage === 1 ? "#001C54" : "#00ECBE",
+                    borderRadius: wp(2.7),
+                  },
+                  { opacity: pressed && currentPage !== 1 ? 0.7 : 1 }
+                ]}
                 onPress={() =>
                   currentPage > 1 && setCurrentPage(currentPage - 1)
                 }
@@ -1589,17 +1900,20 @@ export default function WinGoScreen() {
                   size={wp(5.3)}
                   color={currentPage === 1 ? "#9BA1A6" : "black"}
                 />
-              </TouchableOpacity>
+              </Pressable>
               <ThemedText style={styles.paginationText}>
                 {currentPage}/{totalPages || 1}
               </ThemedText>
-              <TouchableOpacity
-                style={{
-                  padding: wp(2.1),
-                  backgroundColor:
-                    currentPage >= totalPages ? "#001C54" : "#00ECBE",
-                  borderRadius: wp(2.7),
-                }}
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    padding: wp(2.1),
+                    backgroundColor:
+                      currentPage >= totalPages ? "#001C54" : "#00ECBE",
+                    borderRadius: wp(2.7),
+                  },
+                  { opacity: pressed && currentPage < totalPages ? 0.7 : 1 }
+                ]}
                 onPress={() =>
                   currentPage < totalPages &&
                   setCurrentPage(currentPage + 1)
@@ -1611,7 +1925,7 @@ export default function WinGoScreen() {
                   size={wp(5.3)}
                   color={currentPage >= totalPages ? "#9BA1A6" : "black"}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           )}
         </ScrollView>
@@ -1650,6 +1964,8 @@ export default function WinGoScreen() {
               if (res.success) {
                 setShowBetModal(false);
                 refreshWallet();
+                setShowSuccessMessage(true);
+                setTimeout(() => setShowSuccessMessage(false), 3000);
               } else {
                 Alert.alert("Bet Failed", res.message ?? "Could not place bet.");
               }
@@ -1658,6 +1974,139 @@ export default function WinGoScreen() {
             }
           }}
         />
+        {showSuccessMessage && (
+          <View style={styles.successMessageOverlay} pointerEvents="none">
+            <View style={styles.successMessageContainer}>
+              <Text style={styles.successMessageText}>Bet Successful</Text>
+            </View>
+          </View>
+        )}
+
+        <Modal
+          transparent
+          animationType="fade"
+          visible={winLossPopupVisible}
+          // visible={true}
+          onRequestClose={() => setWinLossPopupVisible(false)}
+        >
+          <View style={styles.winLossModalOverlay}>
+            <View style={styles.winLossContentContainer}>
+              <Image
+                source={
+                  settledBet?.isWin
+                    ? require("@/assets/win.webp")
+                    : require("@/assets/loose.webp")
+                }
+                style={styles.winLossBackgroundImage}
+                contentFit="contain"
+              />
+
+              <View style={styles.winLossPopupContent}>
+                <Text style={[styles.winLossTitle, { color: settledBet?.isWin ? "white" : "#7190B4" }]}>
+                  {settledBet?.isWin ? "Congratulations" : "Sorry"}
+                </Text>
+
+                <View style={styles.winLossResultsRow}>
+                  <Text style={[styles.lotteryResultsRowLabel, { color: settledBet?.isWin ? "white" : "#7190B4" }]}>Lottery results</Text>
+
+                  {(() => {
+                    const outcomeColors = getColorDots(settledBet?.round?.outcomeNumber ?? 0);
+
+                    const ResultBox = ({ children, minWidth, alwaysShowBg = false, isCircle = false }: { children: React.ReactNode, minWidth?: number, alwaysShowBg?: boolean, isCircle?: boolean }) => {
+                      const hasMultiColor = outcomeColors.length > 1;
+                      const showBg = alwaysShowBg || !hasMultiColor;
+
+                      const boxStyle = [
+                        styles.winLossResultBox,
+                        { overflow: "hidden" },
+                        minWidth ? { minWidth } : {},
+                        isCircle && { width: minWidth || wp(8.5), height: minWidth || wp(8.5), borderRadius: 999, paddingHorizontal: 0, paddingVertical: 0 }
+                      ] as any;
+
+                      if (showBg) {
+                        return (
+                          <View style={[boxStyle, !hasMultiColor && { backgroundColor: outcomeColors[0] }]}>
+                            {hasMultiColor && (
+                              <Svg height="100%" width="100%" viewBox="0 0 100 100" style={StyleSheet.absoluteFill}>
+                                <Rect x="0" y="0" width="100" height="100" fill={outcomeColors[0]} />
+                                <Polygon points="0,100 100,100 100,0" fill={outcomeColors[1]} />
+                              </Svg>
+                            )}
+                            {children}
+                          </View>
+                        );
+                      }
+                      return (
+                        <View style={boxStyle}>
+                          {children}
+                        </View>
+                      );
+                    };
+
+                    return (
+                      <>
+                        {settledBet?.round?.outcomeColor && (
+                          <ResultBox alwaysShowBg={true}>
+                            <Text style={styles.winLossResultBoxText}>
+                              {settledBet.round.outcomeColor.charAt(0).toUpperCase() + settledBet.round.outcomeColor.slice(1).toLowerCase()}
+                            </Text>
+                          </ResultBox>
+                        )}
+
+                        <ResultBox minWidth={wp(8)} isCircle={true}>
+                          <Text style={styles.winLossResultBoxText}>
+                            {settledBet?.round?.outcomeNumber}
+                          </Text>
+                        </ResultBox>
+
+                        {settledBet?.round?.outcomeBigSmall && (
+                          <ResultBox>
+                            <Text style={styles.winLossResultBoxText}>
+                              {settledBet.round.outcomeBigSmall.charAt(0).toUpperCase() + settledBet.round.outcomeBigSmall.slice(1).toLowerCase()}
+                            </Text>
+                          </ResultBox>
+                        )}
+                      </>
+                    );
+                  })()}
+                </View>
+
+                <View style={styles.winLossScrollContent}>
+                  {settledBet?.isWin ? (
+                    <>
+                      <Text style={[styles.winLossBonusTitle, { fontSize: wp(4), marginBottom: 0, marginTop: wp(1) }]}>Bonus</Text>
+                      <Text style={[styles.winLossBonusAmount, { fontSize: wp(8) }]}>₹{settledBet.payoutAmount.toFixed(2)}</Text>
+                      <View style={styles.winLossPeriodInfo}>
+                        <Text style={styles.winLossPeriodText}>Period: {selectedGame.name}</Text>
+                        <Text style={styles.winLossPeriodText}>{settledBet.round?.period}</Text>
+                      </View>
+                    </>
+                  ) : (
+                    <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+                      <Text style={styles.winLossLoseTitle}>Lose</Text>
+                      <View style={styles.winLossPeriodInfo}>
+                        <Text style={styles.winLossPeriodText}>Period: {selectedGame.name}</Text>
+                        <Text style={styles.winLossPeriodText}>{settledBet?.round?.period}</Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.winLossAutoClose}>
+                  <Ionicons style={{ marginTop: -3 }} name="checkmark-circle-outline" size={wp(9)} color="#fff" />
+                  <Text style={styles.winLossAutoCloseText}>3 seconds auto close</Text>
+                </View>
+              </View>
+
+              <Pressable
+                style={styles.winLossCloseButton}
+                onPress={() => setWinLossPopupVisible(false)}
+              >
+                <Ionicons name="close-circle-outline" size={wp(15)} color="white" />
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </ThemedView>
     </SafeAreaView>
   );
@@ -1813,7 +2262,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "blue",
+    backgroundColor: "transparent",
     marginHorizontal: wp(3.2),
     borderRadius: wp(5.3),
     overflow: "hidden",
@@ -1899,6 +2348,95 @@ const styles = StyleSheet.create({
     borderTopEndRadius: wp(2.7),
     borderTopStartRadius: wp(2.7),
     marginBottom: hp(2),
+  },
+  myHistoryCardContainer: {
+    // backgroundColor: "#021341",
+    overflow: "hidden",
+  },
+  myHistoryCard: {
+    flexDirection: "row",
+    paddingHorizontal: wp(4),
+    paddingVertical: hp(0.8),
+    alignItems: "center",
+  },
+  myHistoryLeft: {
+    marginRight: wp(3.5),
+  },
+  myHistoryNumberCircle: {
+    width: wp(12),
+    height: wp(12),
+    borderRadius: wp(6),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  myHistoryNumberText: {
+    color: "#fff",
+    fontSize: wp(6),
+    fontWeight: "bold",
+  },
+  myHistoryMiddle: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  myHistoryPeriodText: {
+    fontSize: wp(4),
+    color: "#fff",
+    fontWeight: "600",
+  },
+  myHistoryTimeText: {
+    fontSize: wp(3.2),
+    color: "#929292",
+    marginTop: hp(0.5),
+  },
+  myHistoryRight: {
+    alignItems: "flex-end",
+    justifyContent: "center",
+    gap: hp(1),
+  },
+  myHistoryDetails: {
+    padding: wp(4),
+    paddingTop: 0
+  },
+  detailsTitle: {
+    fontSize: wp(4.5),
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: hp(1),
+  },
+  detailsContent: {
+    borderRadius: wp(2),
+    gap: hp(1),
+  },
+  detailsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#001C54",
+    borderRadius: 4,
+    padding: 1
+  },
+  detailsLabel: {
+    fontSize: wp(5),
+    color: "#E3EFFF",
+  },
+  detailsValue: {
+    fontSize: wp(4.8),
+    color: "#92a8e3",
+    fontWeight: "500",
+  },
+  statusBadge: {
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.35),
+    borderRadius: wp(1.5),
+    borderWidth: 1,
+  },
+  statusBadgeText: {
+    fontSize: wp(3.2),
+    fontWeight: "500",
+  },
+  myHistoryAmountText: {
+    fontSize: wp(4),
+    fontWeight: "700",
   },
   tableHeader: {
     flexDirection: "row",
@@ -2010,5 +2548,126 @@ const styles = StyleSheet.create({
     fontSize: wp(25),
     fontWeight: "800",
     color: "#7afec3",
+  },
+  successMessageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+  successMessageContainer: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingVertical: hp(1.5),
+    paddingHorizontal: wp(6),
+    borderRadius: wp(3.2),
+  },
+  successMessageText: {
+    color: "#fff",
+    fontSize: wp(4.8),
+    fontWeight: "600",
+  },
+  winLossModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  winLossContentContainer: {
+    width: "85%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  winLossBackgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
+  winLossPopupContent: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    paddingTop: hp(68),
+  },
+  winLossTitle: {
+    fontSize: wp(10),
+    fontWeight: "800",
+
+    marginBottom: hp(3),
+  },
+  winLossResultsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: hp(2),
+  },
+  lotteryResultsRowLabel: {
+    color: "#7190B4",
+    fontSize: wp(4.6),
+    marginRight: wp(2),
+  },
+  winLossResultBox: {
+    paddingHorizontal: wp(3),
+    paddingVertical: hp(0.4),
+    borderRadius: wp(1.5),
+    marginHorizontal: wp(1),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  winLossResultBoxText: {
+    color: "white",
+    fontSize: wp(4.5),
+    fontWeight: "800",
+  },
+  winLossResultNumber: {
+    fontSize: wp(5),
+    fontWeight: "900",
+    marginHorizontal: wp(1.5),
+    color: "white"
+  },
+  winLossScrollContent: {
+    width: wp(55),
+    height: hp(16.5),
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: hp(1.5),
+  },
+  winLossBonusTitle: {
+    fontSize: wp(5.5),
+    fontWeight: "700",
+    color: "#FF4500",
+    marginBottom: hp(0.4),
+  },
+  winLossBonusAmount: {
+    fontSize: wp(9),
+    fontWeight: "900",
+    color: "#FF4500",
+  },
+  winLossLoseTitle: {
+    fontSize: wp(10),
+    fontWeight: "900",
+    color: "#92A9E3",
+  },
+  winLossPeriodInfo: {
+    marginTop: hp(1),
+    alignItems: "center",
+  },
+  winLossPeriodText: {
+    color: "#92A9E3",
+    fontSize: wp(4.5),
+    textAlign: "center",
+  },
+  winLossAutoClose: {
+    flexDirection: "row",
+    marginTop: hp(6),
+    width: "90%",
+    paddingHorizontal: wp(6)
+  },
+  winLossAutoCloseText: {
+    color: "#fff",
+    fontSize: wp(5),
+    marginLeft: wp(2),
+  },
+  winLossCloseButton: {
+    marginBottom: hp(40),
   },
 });

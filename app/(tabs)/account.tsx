@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useDepositModal } from "@/contexts/DepositModalContext";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,6 +15,7 @@ function formatBalance(amount: number): string {
 export default function AccountScreen() {
   const router = useRouter();
   const { walletBalance, logout } = useAuth();
+  const { openDepositModal } = useDepositModal();
   const [notificationCount] = useState(2);
 
   const handleCopyUID = () => {
@@ -79,7 +81,7 @@ export default function AccountScreen() {
             </View>
             <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.quickActionButton}>
+          <TouchableOpacity style={styles.quickActionButton} onPress={() => openDepositModal()}>
             <View style={[styles.quickActionIcon, styles.depositIcon]}>
               <Image 
                 source={require('@/assets/gfg3.png')} 
