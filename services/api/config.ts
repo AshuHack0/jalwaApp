@@ -18,8 +18,8 @@ const BASE_URLS = {
     Platform.OS === "android"
       ? "http://10.0.2.2:3000"
       : "http://10.0.2.2:3000",
-  staging: "https://jalwabackend.vercel.app",
-  production: "https://jalwabackend.vercel.app",
+  staging: "http://185.219.83.167:3000",
+  production: "http://185.219.83.167:3000",
 } as const;
 
 export const API_BASE_URL = BASE_URLS[API_ENV];
