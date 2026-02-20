@@ -274,14 +274,15 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   walletAmount: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   walletTypeLabel: {
-    fontSize: 13,
-    color: '#fff',
+    fontSize: 14,
+    color: '#fff', 
+    fontFamily:'Inter',
   },
   transferButton: {
     borderRadius: 12,

@@ -16,8 +16,8 @@ const BASE_URLS = {
   //     : "http://192.168.29.131:3000",
   local:
     Platform.OS === "android"
-      ? "http://10.0.2.2:3000"
-      : "http://10.0.2.2:3000",
+      ? "http://185.219.83.167:3000"
+      : "http://185.219.83.167:3000",
   staging: "http://185.219.83.167:3000",
   production: "http://185.219.83.167:3000",
 } as const;

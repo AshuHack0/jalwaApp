@@ -63,7 +63,8 @@ export default function AccountScreen() {
         <View style={styles.balanceSection}>
           <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
           <View style={styles.balanceHeader}>
-            <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText>
+            <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText> 
+            <Image source={require('@/assets/43.png')} style={{ width: 25, height: 25 }} contentFit="contain" />
           </View>
         </View>
  
@@ -182,8 +183,8 @@ export default function AccountScreen() {
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.notificationIcon]}>
                 <Image 
-                  source={require('@/assets/eerrr1.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  source={require('@/assets/ss.png')} 
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
@@ -194,7 +195,7 @@ export default function AccountScreen() {
                 </View>
               )}
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
+           <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingItem}>
@@ -202,13 +203,13 @@ export default function AccountScreen() {
               <View style={[styles.settingIconContainer, styles.giftsIcon]}>
                 <Image 
                   source={require('@/assets/eerrr2.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.settingLabel}>Gifts</ThemedText>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
+            <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingItem}>
@@ -216,13 +217,13 @@ export default function AccountScreen() {
               <View style={[styles.settingIconContainer, styles.statsIcon]}>
                 <Image 
                   source={require('@/assets/eerrr3.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.settingLabel}>Game statistics</ThemedText>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
+            <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingItem}>
@@ -230,7 +231,7 @@ export default function AccountScreen() {
               <View style={[styles.settingIconContainer, styles.languageIcon]}>
                 <Image 
                   source={require('@/assets/eerrr4.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
@@ -238,7 +239,7 @@ export default function AccountScreen() {
             </View>
             <View style={styles.settingRight}>
               <ThemedText style={styles.languageValue}>English</ThemedText>
-              <Ionicons name="chevron-forward" size={20} color="#9BA1A6" />
+              <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
             </View>
           </TouchableOpacity>
         </View>
@@ -251,7 +252,7 @@ export default function AccountScreen() {
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr5.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
@@ -262,7 +263,7 @@ export default function AccountScreen() {
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr6.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
@@ -273,7 +274,7 @@ export default function AccountScreen() {
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr7.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '90%', height: '90%' }}
                   contentFit="contain"
                 />
               </View>
@@ -423,11 +424,11 @@ const styles = StyleSheet.create({
   },
   balanceHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 12,
     alignItems: 'center',
   },
   balanceTitle: {
-    fontSize: 19,
+    fontSize: 16,
     color: '#92A8E3',
   },
   balanceAmount: {
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#10B981',
   },
   quickActionLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
   },
   historySection: {
@@ -509,7 +510,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   historyTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#fff',
   },
@@ -560,7 +561,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   settingLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
     flex: 1,
   },
@@ -571,21 +572,24 @@ const styles = StyleSheet.create({
   },
   languageValue: {
     fontSize: 14,
-    color: '#9BA1A6',
+    color: '#fff',
   },
   badge: {
     backgroundColor: '#EF4444',
     borderRadius: 10,
-    minWidth: 20,
+    width: 25,
     height: 20,
+    paddingHorizontal: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 6,
+ 
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
     color: '#fff',
+    textAlign: 'center',
+    lineHeight: 20,
   },
   serviceSection: {
     paddingHorizontal: 16,
@@ -604,7 +608,7 @@ const styles = StyleSheet.create({
   serviceGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
   serviceItem: {
     width: '30%',
@@ -625,6 +629,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#92A8E3',
     textAlign: 'center',
+    lineHeight: 14, 
   },
   logoutButton: {
     flexDirection: 'row',
