@@ -1,12 +1,141 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Image } from 'expo-image';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+interface TabItemProps {
+  route: any;
+  index: number;
+  isFocused: boolean;
+  options: any;
+  onPress: () => void;
+  label: string;
+  isHome: boolean;
+  iconName: string;
+  customIcon: number | undefined;
+  isHomeWithCustomIcon: boolean;
+  isRegularTabActive: boolean;
+  activeColor: string;
+  inactiveColor: string;
+}
+
+function TabItem({
+  isFocused,
+  onPress,
+  options,
+  label,
+  isHome,
+  iconName,
+  customIcon,
+  isHomeWithCustomIcon,
+  isRegularTabActive,
+  activeColor,
+  inactiveColor,
+}: TabItemProps) {
+  const scaleAnim = useRef(new Animated.Value(isFocused ? 1 : 1)).current;
+  const opacityAnim = useRef(new Animated.Value(isFocused ? 1 : 1)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: isFocused ? 1 : 1,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: isFocused ? 1 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isFocused, scaleAnim, opacityAnim]);
+
+  const handlePress = () => {
+    if (!isFocused) {
+      // Animate press feedback
+      Animated.sequence([
+        Animated.spring(scaleAnim, {
+          toValue: 0.95,
+          useNativeDriver: true,
+          tension: 300,
+          friction: 5,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 300,
+          friction: 5,
+        }),
+      ]).start();
+    }
+    onPress();
+  };
+
+  const IconComponent = customIcon ? (
+    <Image
+      source={customIcon}
+      style={
+        isHomeWithCustomIcon 
+          ? styles.tabHomeIconFull 
+          : isRegularTabActive 
+          ? styles.tabCustomIconActive 
+          : styles.tabCustomIcon
+      }
+      contentFit="contain"
+    />
+  ) : (
+    <Ionicons 
+      name={iconName as any} 
+      size={28} 
+      color={isHome && isFocused ? '#fff' : (isFocused ? activeColor : inactiveColor)} 
+    />
+  );
+
+  return (
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityState={isFocused ? { selected: true } : {}}
+      accessibilityLabel={options.tabBarAccessibilityLabel}
+      testID={(options as any).tabBarTestID}
+      onPress={handlePress}
+      style={styles.tabItem}
+      activeOpacity={0.7}
+    >
+      <Animated.View
+        style={{
+          transform: [{ scale: scaleAnim }],
+          opacity: opacityAnim,
+        }}
+      >
+        {isHome && isFocused ? (
+          <View style={styles.homeTabContainer}>
+            {IconComponent}
+            {isHomeWithCustomIcon ? (
+              <Text style={[styles.tabLabel, styles.activeTabLabel, styles.homeLabelOnImage ,{color: isFocused ? activeColor : inactiveColor}]}>{label}</Text>
+            ) : (
+              <Text style={[styles.tabLabel, styles.activeTabLabel]}>{label}</Text>
+            )}
+          </View>
+        ) : (
+          <View style={styles.regularTab}>
+            {IconComponent}
+            {isHomeWithCustomIcon ? (
+              <Text style={[styles.tabLabel, styles.homeLabelOnImage, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
+            ) : (
+              <Text style={[styles.tabLabel, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
+            )}
+          </View>
+        )}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const activeColor = '#14B8A6'; // Light blue-green
-  const inactiveColor = '#9BA1A6'; // Grey
+  const inactiveColor = '#5C6283'; // Grey
 
   const icons = {
     promotion: 'heart-outline',
@@ -58,7 +187,9 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
+            setTimeout(() => {
+              navigation.navigate(route.name);
+            }, 200);
           }
         };
 
@@ -70,60 +201,26 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
           ? (customIconsActive[route.name] ?? customIcons[route.name])
           : customIcons[route.name];
 
-        const isHomeWithCustomIcon = isHome && customIcon;
-        const isRegularTabActive = !isHome && isFocused && customIcon;
-        const IconComponent = customIcon ? (
-          <Image
-            source={customIcon}
-            style={
-              isHomeWithCustomIcon 
-                ? styles.tabHomeIconFull 
-                : isRegularTabActive 
-                ? styles.tabCustomIconActive 
-                : styles.tabCustomIcon
-            }
-            contentFit="contain"
-          />
-        ) : (
-          <Ionicons 
-            name={iconName as any} 
-            size={28} 
-            color={isHome && isFocused ? '#fff' : (isFocused ? activeColor : inactiveColor)} 
-          />
-        );
+        const isHomeWithCustomIcon = !!(isHome && customIcon);
+        const isRegularTabActive = !!(!isHome && isFocused && customIcon);
 
         return (
-          <TouchableOpacity
+          <TabItem
             key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={(options as any).tabBarTestID}
+            route={route}
+            index={index}
+            isFocused={isFocused}
+            options={options}
             onPress={onPress}
-            style={styles.tabItem}
-          >
-            {isHome && isFocused ? (
-              <View style={styles.homeTabContainer}>
-                <View style={styles.homeTabContent}>
-                  {IconComponent}
-                  {isHomeWithCustomIcon ? (
-                    <Text style={[styles.tabLabel, styles.activeTabLabel, styles.homeLabelOnImage]}>{label}</Text>
-                  ) : (
-                    <Text style={[styles.tabLabel, styles.activeTabLabel]}>{label}</Text>
-                  )}
-                </View>
-              </View>
-            ) : (
-              <View style={styles.regularTab}>
-                {IconComponent}
-                {isHomeWithCustomIcon ? (
-                  <Text style={[styles.tabLabel, styles.homeLabelOnImage, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
-                ) : (
-                  <Text style={[styles.tabLabel, { color: isFocused ? activeColor : inactiveColor }]}>{label}</Text>
-                )}
-              </View>
-            )}
-          </TouchableOpacity>
+            label={label}
+            isHome={isHome}
+            iconName={iconName}
+            customIcon={customIcon}
+            isHomeWithCustomIcon={isHomeWithCustomIcon}
+            isRegularTabActive={isRegularTabActive}
+            activeColor={activeColor}
+            inactiveColor={inactiveColor}
+          />
         );
       })}
     </View>
@@ -133,8 +230,9 @@ export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    height: 70,
+    height: 80,
     backgroundColor: '#05012B',
+    // backgroundColor: 'red',
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',
     paddingBottom: 10,
@@ -144,7 +242,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   tabItem: {
-  paddingBottom: 5,
+    paddingBottom: 5,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -158,22 +256,16 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   homeTabContainer: {
-    position: 'absolute',
-    top: -26,
-    width: 80,
-    height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  homeTabBackground: {
     width: 70,
     height: 70,
-     
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 15,
+    gap: 4,
   },
   homeTabContent: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
   },
   homeLabelOnImage: {
     marginTop: -20,
@@ -189,14 +281,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabCustomIcon: {
-    width: 20,
-    height: 20,
+    width: 25,
+    height: 25,
   },
   tabCustomIconActive: {
     position: 'absolute',
-    top: 10,
-    width: 50,
-    height: 50,
+    top: 7,
+    width: 60,
+    height: 60,
   },
   tabHomeIconFull: {
     width: 70,

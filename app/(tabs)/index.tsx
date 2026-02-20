@@ -1,6 +1,6 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useAuth } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import MaskedView from '@react-native-masked-view/masked-view';
 import { BlurView } from 'expo-blur';
@@ -295,13 +295,17 @@ export default function HomeScreen() {
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="cloud-outline" size={20} color="#fff" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.iconButton}>
             <View style={styles.languageButton}>
-              <Ionicons name="flag" size={14} color="#fff" />
-              <ThemedText style={styles.languageText}>EN</ThemedText>
+              <View style={styles.flagContainer}>
+                <ThemedText style={styles.flagEmoji}>🇺🇸</ThemedText>
+              </View>
+              <View style={styles.languageTextMaskContainer}>
+                <ThemedText style={styles.languageTextMaskText}>EN</ThemedText>
+              </View>
             </View>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
 
           {!isAuthenticated && (
             <>
@@ -416,7 +420,7 @@ export default function HomeScreen() {
 
         {/* Wallet Balance Section */}
         <View style={styles.walletSection}>
-          <View style={[styles.walletBalance, { width: '40%' }]}>
+          <View style={[styles.walletBalance, { width: '52%' }]}>
             <View style={styles.walletHeader}>
               <Image 
                 source={require('@/assets/coin.png')} 
@@ -434,7 +438,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={[styles.walletButtons, { width: '60%' }]}>
+          <View style={[styles.walletButtons, { width: '48%' }]}>
             <TouchableOpacity style={styles.walletButton}>
               <Image 
                 source={require('@/assets/91-withdraw_btn-c8a3085c.svg')} 
@@ -442,7 +446,7 @@ export default function HomeScreen() {
                 contentFit="cover"
               />
               <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-up" size={20} color="#fff" />
+                <Ionicons name="arrow-up" size={17} color="#fff" />
                 <ThemedText style={styles.walletButtonText} numberOfLines={1}>Withdraw</ThemedText>
               </View>
             </TouchableOpacity>
@@ -453,7 +457,7 @@ export default function HomeScreen() {
                 contentFit="cover"
               />
               <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-down" size={20} color="#fff" />
+                <Ionicons name="arrow-down" size={17} color="#fff" />
                 <ThemedText style={styles.walletButtonText} numberOfLines={1}>Deposit</ThemedText>
               </View>
             </TouchableOpacity>
@@ -961,7 +965,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconButton: {
-    padding: 4,
+    padding: 0,
   },
   loginButton: {
     paddingHorizontal: 10,
@@ -995,19 +999,47 @@ const styles = StyleSheet.create({
   languageButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 12,
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  languageText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+  flagContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  flagEmoji: {
+    fontSize: 18,
+    transform: [{ scale: 1.9 }],
+  },
+  languageTextMask: {
+    height: 20,
+    justifyContent: "center",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+  },
+  languageTextMaskContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  languageTextMaskText: {
+    fontSize: 16,
+    fontWeight: "400",
+    letterSpacing: 0.5,
+    color: "#00ECBE",
+  },
+  languageTextGradient: {
+    flex: 1,
+    width: 30,
+    height: 20,
   },
   promoBanners: {
-    // backgroundColor: 'red',
     flexDirection: "row",
     gap: 7,
     paddingHorizontal: 16,
@@ -1045,7 +1077,7 @@ const styles = StyleSheet.create({
     padding: 1,
   },
   mainCarouselImage: {
-    width: "100%",     // 👈 smaller than 100%
+    width: "100%",    
     height: "95%",
     padding: 10,
     alignSelf: "center",
@@ -1211,14 +1243,15 @@ const styles = StyleSheet.create({
   walletButtons: {
     flex: 1,
     flexDirection: 'row',
-    gap: 8,
+    gap: 12,
+    paddingVertical: 5,
   },
   walletButton: {
     flex: 1,
     position: 'relative',
     overflow: 'hidden',
-    borderRadius: 8,
-    minHeight: 48,  
+    borderRadius: 6,
+    minHeight: 40,  
   },
   walletButtonBackground: {
     position: 'absolute',
@@ -1231,8 +1264,9 @@ const styles = StyleSheet.create({
   },
   walletButtonContent: {
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 3,
+    paddingTop: 7,
+    paddingHorizontal: 8,
     gap: 0,
     zIndex: 1,
   },
@@ -1244,10 +1278,13 @@ const styles = StyleSheet.create({
   },
   walletButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '400',
+    fontSize: 12,
+    fontWeight: '500',
     textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     flexShrink: 0,
+    lineHeight: 15,
   },
   gameGrid: {
     flexDirection: "row", 
@@ -1584,7 +1621,6 @@ const styles = StyleSheet.create({
     top: -35,
     left: '50%',
     marginLeft: -32,
-    // backgroundColor: 'red',
     alignItems: 'center',
     justifyContent: 'center',
   },

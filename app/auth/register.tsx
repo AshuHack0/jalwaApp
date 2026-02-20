@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
+import { useAuth } from "@/contexts/AuthContext";
+import { register as registerApi } from "@/services/api";
 import { Ionicons } from "@expo/vector-icons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -15,8 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth } from "@/contexts/AuthContext";
-import { register as registerApi } from "@/services/api";
 
 export default function RegisterScreen() {
   const { login: authLogin } = useAuth();
@@ -128,7 +127,10 @@ export default function RegisterScreen() {
 
           <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
             <View style={{ alignItems: "center", gap: 8, marginBottom: 10}}>
-              <MaterialIcons name="phone-android" size={26} color="#00ECBE" />
+              <Image 
+                      source={require("@/assets/Screenshot 2026-02-20 030004.png")}
+                      style={{width: 20, height: 26}} 
+                    />
               <ThemedText style={styles.registerPhoneLabel}>
                 Register your phone
               </ThemedText>
@@ -138,11 +140,10 @@ export default function RegisterScreen() {
             <View style={styles.form}>
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <MaterialIcons
-                    name="phone-android"
-                    size={26}
-                    color="#00ECBE"
-                  />
+                  <Image 
+                      source={require("@/assets/Screenshot 2026-02-20 030004.png")}
+                      style={{width: 20, height: 26}} 
+                    />
                   <ThemedText style={styles.label}>Phone number</ThemedText>
                 </View>
                 <View style={styles.phoneRow}>
@@ -163,10 +164,9 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={26}
-                    color="#00ECBE"
+                  <Image 
+                    source={require("@/assets/Screenshot 2026-02-20 030012.png")}
+                    style={{width: 26, height: 26}} 
                   />
                   <ThemedText style={styles.label}>Set password</ThemedText>
                 </View>
@@ -194,10 +194,9 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={26}
-                    color="#00ECBE"
+                  <Image 
+                    source={require("@/assets/Screenshot 2026-02-20 030012.png")}
+                    style={{width: 26, height: 26}} 
                   />
                   <ThemedText style={styles.label}>Confirm password</ThemedText>
                 </View>
@@ -227,11 +226,10 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <MaterialIcons
-                    name="confirmation-number"
-                    size={26}
-                    color="#00ECBE"
-                  />
+                  <Image 
+                      source={require("@/assets/Adobe Express - file (5).png")}
+                      style={{width: 23, height: 26}} 
+                    />
                   <ThemedText style={styles.label}>Invite code</ThemedText>
                 </View>
                 <TextInput

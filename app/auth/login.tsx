@@ -1,11 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
+import { useAuth } from "@/contexts/AuthContext";
+import { login } from "@/services/api";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Zocial from "@expo/vector-icons/Zocial";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -17,8 +17,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useAuth } from "@/contexts/AuthContext";
-import { login } from "@/services/api";
 
 export default function LoginScreen() {
   const { login: authLogin } = useAuth();
@@ -117,7 +115,13 @@ export default function LoginScreen() {
                 style={{flex: 1, height: "100%", alignItems: "center", paddingVertical: 12, justifyContent: "center", gap: 4}}
                 onPress={() => setActiveTab("phone")}
               >
-                <MaterialIcons name="phone-android" size={26} color={ activeTab === "phone" ? "#00ECBE" : "#92A8E3"} />
+               <Image 
+                  source={activeTab === "phone" 
+                    ? require("@/assets/Screenshot 2026-02-20 030004.png")
+                    : require("@/assets/Screenshot 2026-02-20 030820.png")
+                  } 
+                  style={{width: 20, height: 26}} 
+                />
                 <ThemedText
                   style={{ color: activeTab === "phone" ? "#00ECBE" : "#92A8E3", fontSize: 17, fontWeight: "600"}}
                 >
@@ -130,7 +134,13 @@ export default function LoginScreen() {
                 style={{flex: 1, height: "100%", alignItems: "center", paddingVertical: 12, justifyContent: "center", gap: 4}}
                 onPress={() => setActiveTab("email")}
               >
-                <Zocial name="email" size={23} color={ activeTab === "email" ? "#00ECBE" : "#92A8E3"} />
+                <Image 
+                  source={activeTab === "email" 
+                    ? require("@/assets/Screenshot 2026-02-20 030103.png")
+                    : require("@/assets/Screenshot 2026-02-20 030832.png")
+                  } 
+                  style={{width: 29, height: 20}} 
+                />
                 <ThemedText
                   style={{color: activeTab === "email" ? "#00ECBE" : "#92A8E3", fontSize: 17, fontWeight: "600"}}
                 >
@@ -145,8 +155,11 @@ export default function LoginScreen() {
               {activeTab === "phone" ? (
                 <View style={styles.field}>
                   <View style={styles.labelRow}>
-                    <MaterialIcons name="phone-android" size={26} color={ "#00ECBE"} />
-                    <ThemedText style={{color: "white", fontSize: 17, fontWeight: "500"}}>Phone number</ThemedText>
+                    <Image 
+                      source={require("@/assets/Screenshot 2026-02-20 030004.png")}
+                      style={{width: 20, height: 26}} 
+                    />
+                    <ThemedText style={{color: "white", fontSize: 17, fontWeight: "400"}}>Phone number</ThemedText>
                   </View>
                   <View style={styles.phoneRow}>
                     <TouchableOpacity style={styles.countryCode}>
@@ -157,7 +170,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                     <TextInput
                       style={styles.phoneInput}
-                      placeholder="9801403783"
+                      placeholder="Please enter the phone number"
                       placeholderTextColor="rgba(255,255,255,0.4)"
                       value={phone}
                       onChangeText={setPhone}
@@ -168,8 +181,11 @@ export default function LoginScreen() {
               ) : (
                 <View style={styles.field}>
                   <View style={styles.labelRow}>
-                    <Zocial name="email" size={23} color={"#00ECBE"} />
-                    <ThemedText style={{color: "white", fontSize: 17, fontWeight: "500"}}>Email Login</ThemedText>
+                    <Image 
+                      source={require("@/assets/Screenshot 2026-02-20 030103.png")}
+                      style={{width: 29, height: 20}} 
+                    />
+                    <ThemedText style={{color: "white", fontSize: 17, fontWeight: "400"}}>Email Login</ThemedText>
                   </View>
                   <TextInput
                     style={styles.input}
@@ -185,8 +201,11 @@ export default function LoginScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Ionicons name="lock-closed-outline" size={26} color={"#00ECBE"} />
-                  <ThemedText style={{color: "white", fontSize: 17, fontWeight: "500"}}>Password</ThemedText>
+                  <Image 
+                    source={require("@/assets/Screenshot 2026-02-20 030012.png")}
+                    style={{width: 26, height: 26}} 
+                  />
+                  <ThemedText style={{color: "white", fontSize: 17, fontWeight: "400"}}>Password</ThemedText>
                 </View>
                 <View style={styles.passwordRow}>
                   <TextInput
@@ -243,11 +262,11 @@ export default function LoginScreen() {
                 disabled={activeTab === "email" || loading}
               >
                 <LinearGradient
-                  colors={["#7AFEC3", "#02AFB6"]}
+                  colors={["#05B1B7", "#76FBC3"]}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 0, y: 0 }}
                   style={{
-                    paddingVertical: 16,
+                    paddingVertical: 12,
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: 9999,
@@ -256,7 +275,7 @@ export default function LoginScreen() {
                   {loading ? (
                     <ActivityIndicator color="#000" />
                   ) : (
-                    <ThemedText style={{ color: "black", fontSize: 20, fontWeight: "900" }}>
+                    <ThemedText style={{ color: "black", fontSize: 20, fontWeight: "700" ,letterSpacing: 2}}>
                       Log in
                     </ThemedText>
                   )}
@@ -264,11 +283,11 @@ export default function LoginScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{paddingVertical: 16, alignItems: "center", justifyContent: "center", borderRadius: 9999, borderWidth: 1, borderColor: "#00ECBE", backgroundColor: "transparent"}}
+                style={{paddingVertical: 12, alignItems: "center", justifyContent: "center", borderRadius: 9999, borderWidth: 1, borderColor: "#00ECBE", backgroundColor: "transparent"}}
                 onPress={() => router.replace("/auth/register")}
                 activeOpacity={0.8}
               >
-                <ThemedText style={{color: "#00ECBE", fontSize: 20, fontWeight: "900"}}>
+                <ThemedText style={{color: "#00ECBE", fontSize: 20, fontWeight: "700" ,letterSpacing: 2}}>
                   Register
                 </ThemedText>
               </TouchableOpacity>
@@ -277,16 +296,18 @@ export default function LoginScreen() {
             {/* Footer links */}
             <View style={styles.footer}>
               <TouchableOpacity style={styles.footerLink}>
-                <Ionicons name="lock-closed-outline" size={30} color={"#00ECBE"} />
+                <Image 
+                  source={require("@/assets/Screenshot 2026-02-20 030012.png")}
+                  style={{width: 38, height: 40}} 
+                />
                 <ThemedText style={{color: "white", fontSize: 13, fontWeight: "600"}}>
                   Forgot password
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.footerLink}>
-                <Ionicons
-                  name="chatbubble-ellipses-outline"
-                  size={30}
-                  color={"#00ECBE"}
+                <Image 
+                  source={require("@/assets/Screenshot 2026-02-20 030138.png")}
+                  style={{width: 40, height: 40}} 
                 />
                 <ThemedText style={{color: "white", fontSize: 13, fontWeight: "600"}}>
                   Customer Service
@@ -431,7 +452,7 @@ const styles = StyleSheet.create({
   },
   checkLabel: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.9)",
+    color: "#92A8E3",
   },
   errorText: {
     fontSize: 13,
