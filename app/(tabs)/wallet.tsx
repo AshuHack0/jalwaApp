@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#011341',
     marginHorizontal: 16,
     borderRadius: 16,
-    padding: 20,
+    padding: 10,
     marginBottom: 20,
     marginTop: 20,
   },
@@ -337,7 +337,8 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 12,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center', 
+    marginBottom: 4,
   },
   depositIcon: {
     // backgroundColor: '#D97706',

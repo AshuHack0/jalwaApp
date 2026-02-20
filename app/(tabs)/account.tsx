@@ -284,7 +284,7 @@ export default function AccountScreen() {
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
-                  source={require('@/assets/eerrr8.png')} 
+                  source={require('@/assets/eerrr10.png')} 
                   style={{ width: '100%', height: '100%' }}
                   contentFit="contain"
                 />
@@ -306,7 +306,7 @@ export default function AccountScreen() {
             <TouchableOpacity style={styles.serviceItem}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
-                  source={require('@/assets/eerrr10.png')} 
+                  source={require('@/assets/eerrr8.png')} 
                   style={{ width: '100%', height: '100%' }}
                   contentFit="contain"
                 />
@@ -318,7 +318,7 @@ export default function AccountScreen() {
 
         {/* Log Out Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="power" size={20} color="#10B981" />
+          <Ionicons name="power" size={25} color="#00ECBE" />
           <ThemedText style={styles.logoutText}>Log out</ThemedText>
         </TouchableOpacity>
       </ScrollView>
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DD9138',
     borderRadius: 18,
     padding: 8,
-    paddingVertical: 2,
+    paddingVertical: 0,
   },
   uidTag: {
     backgroundColor: '#F97316',
@@ -416,15 +416,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
-    overflow: 'hidden',
+    overflow: 'hidden', 
   },
   balanceSection: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 10,
   },
   balanceHeader: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
+    paddingVertical: 0,
     alignItems: 'center',
   },
   balanceTitle: {
@@ -640,12 +641,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 32,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: '#00ECBE',
     gap: 8,
   },
   logoutText: {
     fontSize: 17,
     fontWeight: '400',
-    color: '#10B981',
+    color: '#00ECBE',
   },
 });
