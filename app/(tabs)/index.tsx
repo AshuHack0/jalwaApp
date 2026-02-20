@@ -854,9 +854,6 @@ export default function HomeScreen() {
                     );
                   }
                   const isLottery = selectedCategory === "Lottery";
-                  const cardWidth = isLottery
-                    ? categoryCardWidth2
-                    : categoryCardWidth3;
                   const cardHeight = isLottery ? 100 : 140;
                   return (
                     <View
@@ -870,7 +867,11 @@ export default function HomeScreen() {
                           key={game.name}
                           style={[
                             styles.categoryGameCardBase,
-                            { width: cardWidth, height: cardHeight },
+                            {
+                              width: "31%",
+                              minWidth: "31%",
+                              height: cardHeight,
+                            },
                           ]}
                           onPress={() => {
                             if (game.name === "WIN GO") {
