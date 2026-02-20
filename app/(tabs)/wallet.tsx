@@ -355,7 +355,8 @@ const styles = StyleSheet.create({
     color: '#92A8E3',
     fontSize: 13,
     fontWeight: '500',
-    textAlign: 'center',
+    textAlign: 'center', 
+    lineHeight: 14,
   },
   gameBalances: {
     flexDirection: 'row',
