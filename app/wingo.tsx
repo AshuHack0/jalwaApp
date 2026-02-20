@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BetModal } from "@/components/BetModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -38,7 +39,6 @@ import {
   WINGO_MULTIPLIERS,
   WINGO_NUMBER_COLOR_MAP,
   WINGO_TABS,
-  WINGO_API_PATH_MAP,
   BET_SELECTION_MAP,
   BET_SELECTION_NUMBER_MAP,
 } from "@/constants/Wingo";
@@ -50,35 +50,7 @@ import {
   useWinGoHistory,
   useWinGoMyHistory,
 } from "@/services/api/hooks";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaskedView from "@react-native-masked-view/masked-view";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
-import {
-  heightPercentageToDP as hpBase,
-  widthPercentageToDP as wpBase,
-} from "react-native-responsive-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Line, Polygon, Rect } from "react-native-svg";
 
 const SCALE = 0.80;
 const wp = (p: number) => wpBase(p * SCALE);
