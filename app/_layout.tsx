@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import "react-native-reanimated";
@@ -44,12 +45,21 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [appReady, setAppReady] = useState(false);
   const [showBonusModal, setShowBonusModal] = useState(false);
+  const registerPlayer = useAudioPlayer(require("@/assets/register.mp3"));
 
   useEffect(() => {
     if (appReady) {
       SplashScreen.hideAsync();
     }
   }, [appReady]);
+
+  useEffect(() => {
+    if (appReady) {
+      setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false });
+      registerPlayer.seekTo(0);
+      registerPlayer.play();
+    }
+  }, [appReady, registerPlayer]);
 
   useEffect(() => {
     // Hide native splash soon so our custom splash overlay is visible

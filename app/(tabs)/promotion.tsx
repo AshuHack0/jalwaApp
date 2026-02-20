@@ -1,32 +1,46 @@
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Image } from 'expo-image';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Clipboard from "expo-clipboard";
+import { useState } from "react";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function PromotionScreen() {
-  const [invitationCode] = useState('681759111383');
+  const [invitationCode] = useState("681759111383");
 
-  const handleCopyCode = () => {
-    // Handle copy invitation code
-    console.log('Copy code:', invitationCode);
+  const handleCopyCode = async () => {
+    await Clipboard.setStringAsync(invitationCode);
+    Alert.alert("Success", "Invitation code copied to clipboard");
   };
 
   const agencyFeatures = [
-    { name: 'Partner Reward', iconImage: require('@/assets/111.png') },
-    { name: 'Copy invitation code', iconImage: require('@/assets/222.png') },
-    { name: 'Subordinate data', iconImage: require('@/assets/333.png') },
-    { name: 'Commission detail', iconImage: require('@/assets/4444.png') },
-    { name: 'Invitation rules', iconImage: require('@/assets/555.png') },
-    { name: 'Agent line customer service', iconImage: require('@/assets/666.png') },
-    { name: 'Rebate ratio', iconImage: require('@/assets/777.png') },
+    { name: "Partner Reward", iconImage: require("@/assets/111.png") },
+    {
+      name: "Copy invitation code",
+      iconImage: require("@/assets/222.png"),
+      hasCode: true,
+    },
+    { name: "Subordinate data", iconImage: require("@/assets/333.png") },
+    { name: "Commission detail", iconImage: require("@/assets/4444.png") },
+    { name: "Invitation rules", iconImage: require("@/assets/555.png") },
+    {
+      name: "Agent line customer service",
+      iconImage: require("@/assets/666.png"),
+    },
+    { name: "Rebate ratio", iconImage: require("@/assets/777.png") },
   ];
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -36,10 +50,11 @@ export default function PromotionScreen() {
         <View style={styles.header}>
           <ThemedText style={styles.headerTitle}>Agency</ThemedText>
           <View style={styles.headerRightCorner}>
-          
-            <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+            <TouchableOpacity
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
               <Image
-                source={require('@/assets/filter.png')}
+                source={require("@/assets/filter.png")}
                 style={styles.headerFilterIcon}
                 contentFit="contain"
               />
@@ -47,75 +62,123 @@ export default function PromotionScreen() {
           </View>
         </View>
         <View style={styles.contentContainer}>
+          <Image
+            source={require("@/assets/promotionbg.webp")}
+            style={styles.promotionBg}
+            contentFit="cover"
+          />
 
           {/* Commission Summary Area */}
           <View>
-            <View
-              style={styles.commissionGradient}
-            >
+            <View style={styles.commissionGradient}>
               <ThemedText style={styles.commissionAmount}>0</ThemedText>
               <View style={styles.commissionLabel}>
-                <ThemedText style={styles.commissionLabelText}>Yesterday's total commission</ThemedText>
+                <ThemedText style={styles.commissionLabelText}>
+                  Yesterday's total commission
+                </ThemedText>
               </View>
-              <ThemedText style={styles.upgradeText}>Upgrade the level to increase commission income</ThemedText>
+              <ThemedText style={styles.upgradeText}>
+                Upgrade the level to increase commission income
+              </ThemedText>
             </View>
           </View>
 
           {/* Subordinate Statistics */}
           <View style={styles.subordinateSection}>
-            <View style={styles.subordinateCardContainer}>   
-              <View style={[styles.subordinateCard ,{borderRightWidth: 0.2, borderRightColor: '#2C5ECA'}]}>
+            <View style={styles.subordinateCardContainer}>
+              <View
+                style={[
+                  styles.subordinateCard,
+                  { borderRightWidth: 0.2, borderRightColor: "#2C5ECA" },
+                ]}
+              >
                 <View style={styles.subordinateHeader1}>
-                <Image
-              source={require('@/assets/rightperson.png')}
-              style={styles.headerRightPersonIcon}
-              contentFit="contain"
-            />
-                  <ThemedText style={styles.subordinateTitle}>Direct subordinates</ThemedText>
+                  <Image
+                    source={require("@/assets/rightperson.png")}
+                    style={styles.headerRightPersonIcon}
+                    contentFit="contain"
+                  />
+                  <ThemedText style={styles.subordinateTitle}>
+                    Direct subordinates
+                  </ThemedText>
                 </View>
                 <View style={styles.statisticsList}>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>number of register</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      number of register
+                    </ThemedText>
                     <ThemedText style={styles.statisticValue}>0</ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Deposit number</ThemedText>
-                    <ThemedText style={[styles.statisticValue, styles.greenValue]}>0</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Deposit number
+                    </ThemedText>
+                    <ThemedText
+                      style={[styles.statisticValue, styles.greenValue]}
+                    >
+                      0
+                    </ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Deposit amount</ThemedText>
-                    <ThemedText style={[styles.statisticValue, styles.orangeValue]}>0</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Deposit amount
+                    </ThemedText>
+                    <ThemedText
+                      style={[styles.statisticValue, styles.orangeValue]}
+                    >
+                      0
+                    </ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Number of people making first deposit</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Number of people making first deposit
+                    </ThemedText>
                     <ThemedText style={styles.statisticValue}>0</ThemedText>
                   </View>
                 </View>
               </View>
               <View style={styles.subordinateCard}>
                 <View style={styles.subordinateHeader2}>
-                <Image
-              source={require('@/assets/rightperson.png')}
-              style={styles.headerRightPersonIcon}
-              contentFit="contain"
-            />
-                  <ThemedText style={styles.subordinateTitle}>Team subordinates</ThemedText>
+                  <Image
+                    source={require("@/assets/rightperson.png")}
+                    style={styles.headerRightPersonIcon}
+                    contentFit="contain"
+                  />
+                  <ThemedText style={styles.subordinateTitle}>
+                    Team subordinates
+                  </ThemedText>
                 </View>
                 <View style={styles.statisticsList}>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>number of register</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      number of register
+                    </ThemedText>
                     <ThemedText style={styles.statisticValue}>0</ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Deposit number</ThemedText>
-                    <ThemedText style={[styles.statisticValue, styles.greenValue]}>0</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Deposit number
+                    </ThemedText>
+                    <ThemedText
+                      style={[styles.statisticValue, styles.greenValue]}
+                    >
+                      0
+                    </ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Deposit amount</ThemedText>
-                    <ThemedText style={[styles.statisticValue, styles.orangeValue]}>0</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Deposit amount
+                    </ThemedText>
+                    <ThemedText
+                      style={[styles.statisticValue, styles.orangeValue]}
+                    >
+                      0
+                    </ThemedText>
                   </View>
                   <View style={styles.statisticItem}>
-                    <ThemedText style={styles.statisticLabel}>Number of people making first deposit</ThemedText>
+                    <ThemedText style={styles.statisticLabel}>
+                      Number of people making first deposit
+                    </ThemedText>
                     <ThemedText style={styles.statisticValue}>0</ThemedText>
                   </View>
                 </View>
@@ -126,13 +189,15 @@ export default function PromotionScreen() {
         {/* Download QR Code Button */}
         <View style={styles.qrSection}>
           <LinearGradient
-            colors={['#7AFEC3', '#02AFB6']}
+            colors={["#7AFEC3", "#02AFB6"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.qrButton}
           >
             <TouchableOpacity style={styles.qrButtonContent}>
-              <ThemedText style={styles.qrButtonText}>Download QR Code</ThemedText>
+              <ThemedText style={styles.qrButtonText}>
+                Download QR Code
+              </ThemedText>
             </TouchableOpacity>
           </LinearGradient>
         </View>
@@ -144,23 +209,34 @@ export default function PromotionScreen() {
               <View style={styles.featureLeft}>
                 <View style={styles.featureIconContainer}>
                   <Image
-              source={feature.iconImage}
-              style={styles.header111Icon}
-              contentFit="contain"
-            />
+                    source={feature.iconImage}
+                    style={styles.header111Icon}
+                    contentFit="contain"
+                  />
                 </View>
-                <ThemedText style={styles.featureLabel}>{feature.name}</ThemedText>
+                <ThemedText style={styles.featureLabel}>
+                  {feature.name}
+                </ThemedText>
                 {feature.hasCode && (
                   <View style={styles.codeContainer}>
-                    <ThemedText style={styles.codeText}>{invitationCode}</ThemedText>
+                    <ThemedText style={styles.codeText}>
+                      {invitationCode}
+                    </ThemedText>
                     <TouchableOpacity onPress={handleCopyCode}>
-                      <Ionicons name="copy-outline" size={16} color="#9BA1A6" />
+                      <Ionicons
+                        name="copy-outline"
+                        size={16}
+                        color="#92a8e3"
+                        style={{ transform: [{ scaleX: -1 }] }}
+                      />
                     </TouchableOpacity>
                   </View>
                 )}
               </View>
 
-              {!feature.hasCode ? <Ionicons name="chevron-forward" size={20} color="#ffffff" /> : null}
+              {!feature.hasCode ? (
+                <Ionicons name="chevron-forward" size={20} color="#ffffff" />
+              ) : null}
             </TouchableOpacity>
           ))}
         </View>
@@ -169,27 +245,64 @@ export default function PromotionScreen() {
         <View style={styles.promotionDataSection}>
           <View style={styles.promotionDataHeader}>
             <View style={styles.promotionDataIconContainer}>
-            
-              <Image source={require('@/assets/55.png')} style={styles.header888Icon} contentFit="contain" />
+              <Image
+                source={require("@/assets/55.png")}
+                style={styles.header888Icon}
+                contentFit="contain"
+              />
             </View>
-            <ThemedText style={styles.promotionDataTitle}>promotion data</ThemedText>
+            <ThemedText style={styles.promotionDataTitle}>
+              promotion data
+            </ThemedText>
           </View>
-          <View style={styles.promotionDataGrid}>
-            <View style={styles.promotionDataItem}>
-              <ThemedText style={styles.promotionDataValue}>0</ThemedText>
-              <ThemedText style={styles.promotionDataLabel}>This Week</ThemedText>
+
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={styles.promotionDataItem}>
+                <ThemedText style={styles.promotionDataValue}>0</ThemedText>
+                <ThemedText style={styles.promotionDataLabel}>
+                  This Week
+                </ThemedText>
+              </View>
+              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
+
+              <View style={styles.promotionDataItem}>
+                <ThemedText style={styles.promotionDataValue}>0</ThemedText>
+                <ThemedText style={styles.promotionDataLabel}>
+                  Total commission
+                </ThemedText>
+              </View>
             </View>
-            <View style={styles.promotionDataItem}>
-              <ThemedText style={styles.promotionDataValue}>0</ThemedText>
-              <ThemedText style={styles.promotionDataLabel}>Total commission</ThemedText>
-            </View>
-            <View style={styles.promotionDataItem}>
-              <ThemedText style={styles.promotionDataValue}>0</ThemedText>
-              <ThemedText style={styles.promotionDataLabel}>direct subordinate</ThemedText>
-            </View>
-            <View style={styles.promotionDataItem}>
-              <ThemedText style={styles.promotionDataValue}>0</ThemedText>
-              <ThemedText style={styles.promotionDataLabel}>Total number of subordinates in the team</ThemedText>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginTop: 16,
+              }}
+            >
+              <View style={styles.promotionDataItem}>
+                <ThemedText style={styles.promotionDataValue}>0</ThemedText>
+                <ThemedText style={styles.promotionDataLabel}>
+                  direct subordinate
+                </ThemedText>
+              </View>
+
+              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
+              
+              <View style={styles.promotionDataItem}>
+                <ThemedText style={styles.promotionDataValue}>0</ThemedText>
+                <ThemedText style={styles.promotionDataLabel}>
+                  Total number of subordinates in the team
+                </ThemedText>
+              </View>
             </View>
           </View>
         </View>
@@ -201,49 +314,48 @@ export default function PromotionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
-    position: 'relative',
+    backgroundColor: "#05012B",
+    position: "relative",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     paddingBottom: 20,
-
   },
   header: {
-    flex: 0, 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flex: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 14,
-    backgroundColor: '#05012B',
-    position: 'relative',
+    backgroundColor: "#05012B",
+    position: "relative",
     zIndex: 10000,
     elevation: 10000, // For Android
-    width: '100%',
+    width: "100%",
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
   headerRightCorner: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   headerRightPersonIcon: {
     width: 15,
     height: 18,
   },
-    header111Icon: {
+  header111Icon: {
     width: 25,
     height: 25,
   },
@@ -254,39 +366,39 @@ const styles = StyleSheet.create({
   commissionGradient: {
     borderRadius: 16,
     padding: 0,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 12,
   },
   commissionAmount: {
     fontSize: 30,
-    fontWeight: 'light',
+    fontWeight: "light",
     lineHeight: 30,
-    color: 'black',
+    color: "black",
   },
   commissionLabel: {
-    backgroundColor: '#05012B',
+    backgroundColor: "#05012B",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   commissionLabelText: {
     fontSize: 16,
     lineHeight: 18,
-    color: '#00ECBE',
-    fontWeight: '500',
+    color: "#00ECBE",
+    fontWeight: "500",
   },
   upgradeText: {
     fontSize: 12,
     color: "#00000",
     opacity: 0.9,
     lineHeight: 18,
-    textAlign: 'center',
-    fontWeight: '500',
+    textAlign: "center",
+    fontWeight: "500",
   },
   subordinateSection: {
-    flexDirection: 'row',
-    position: 'absolute',
+    flexDirection: "row",
+    position: "absolute",
     top: 140,
     elevation: 10, // For Android
     left: 0,
@@ -296,44 +408,44 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   subordinateCardContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: '#011341',
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: "#011341",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   subordinateCard: {
-    width: '50%',
-    backgroundColor: '#011341',
-    borderTopColor: '#14B8A6',
+    width: "50%",
+    backgroundColor: "#011341",
+    borderTopColor: "#14B8A6",
     borderTopWidth: 1,
   },
   subordinateHeader1: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderTopLeftRadius: 12,
     gap: 8,
     marginBottom: 16,
     padding: 16,
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: '#2C5ECA',
+    backgroundColor: "#2C5ECA",
   },
   subordinateHeader2: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderTopRightRadius: 12,
     gap: 8,
     marginBottom: 16,
     padding: 16,
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: '#2C5ECA',
+    backgroundColor: "#2C5ECA",
   },
   subordinateTitle: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: "600",
+    color: "#fff",
     lineHeight: 12,
   },
   header888Icon: {
@@ -347,28 +459,28 @@ const styles = StyleSheet.create({
   },
   statisticItem: {
     flex: 1,
-    flexDirection: 'column-reverse',
-    alignItems: 'center',
+    flexDirection: "column-reverse",
+    alignItems: "center",
     gap: 2,
   },
   statisticLabel: {
     fontSize: 12,
-    color: 'white',
+    color: "white",
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 14,
   },
   statisticValue: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     lineHeight: 14,
-    color: '#fff',
+    color: "#fff",
   },
   greenValue: {
-    color: '#10B981',
+    color: "#10B981",
   },
   orangeValue: {
-    color: '#F97316',
+    color: "#F97316",
   },
   qrSection: {
     paddingHorizontal: 18,
@@ -376,70 +488,69 @@ const styles = StyleSheet.create({
   },
   qrButton: {
     borderRadius: 30,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   qrButtonContent: {
     paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   qrButtonText: {
     fontSize: 18,
     lineHeight: 18,
-    fontWeight: '600',
-    color: '#05012B',
+    fontWeight: "600",
+    color: "#05012B",
   },
   featuresSection: {
     marginHorizontal: 16,
     marginBottom: 0,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   featureItem: {
     borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#011341',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#011341",
+    alignItems: "center",
     padding: 16,
     marginBottom: 10,
   },
   featureLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     flex: 1,
   },
   featureIconContainer: {
-    
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   featureLabel: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
     flex: 1,
   },
   codeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginLeft: 8,
   },
   codeText: {
-    fontSize: 14,
-    color: '#9BA1A6',
-    fontFamily: 'monospace',
+    fontSize: 13,
+    color: "#92a8e3",
+    fontWeight: "500",
   },
   promotionDataSection: {
-    backgroundColor: '#011341', 
+    backgroundColor: "#011341",
     marginHorizontal: 16,
     borderRadius: 12,
     padding: 16,
     marginBottom: 0,
   },
   promotionDataHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     marginBottom: 20,
   },
@@ -447,34 +558,35 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    
-    alignItems: 'center',
-    justifyContent: 'center',
+
+    alignItems: "center",
+    justifyContent: "center",
   },
   promotionDataTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: "600",
+    color: "#fff",
   },
   promotionDataGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 16,
   },
   promotionDataItem: {
-    width: '47%',
-    alignItems: 'center',
+    width: "47%",
+    alignItems: "center",
     gap: 8,
   },
   promotionDataValue: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   promotionDataLabel: {
-    fontSize: 12,
-    color: '#9BA1A6',
-    textAlign: 'center',
+    fontSize: 13,
+    color: "#92a8e3",
+    textAlign: "center",
+    fontWeight: "500",
     lineHeight: 14,
   },
   contentContainer: {
@@ -482,6 +594,15 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     height: 320,
     marginBottom: 85,
-    backgroundColor: '#75FBC2',
+    backgroundColor: "#75FBC2",
+    position: "relative",
+  },
+  promotionBg: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    resizeMode: "cover",
   },
 });

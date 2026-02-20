@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 50,
-    paddingBottom: 14,
+    paddingBottom: 12,
     backgroundColor: '#05012B',
   },
   backButton: {
@@ -357,7 +357,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     textAlign: 'center', 
-    lineHeight: 14,
+    lineHeight: 18, 
+    marginTop: 4,
   },
   gameBalances: {
     flexDirection: 'row',
