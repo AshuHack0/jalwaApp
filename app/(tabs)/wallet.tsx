@@ -26,7 +26,7 @@ export default function WalletScreen() {
         </TouchableOpacity>
         <ThemedText style={styles.screenTitle}>Wallet</ThemedText>
         <TouchableOpacity onPress={refreshWallet} style={styles.refreshButton}>
-          <Ionicons name="refresh" size={24} color="#fff" />
+          
         </TouchableOpacity>
       </View>
 
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 50,
-    paddingBottom: 20,
+    paddingBottom: 14,
     backgroundColor: '#05012B',
   },
   backButton: {

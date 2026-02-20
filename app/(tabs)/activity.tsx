@@ -19,16 +19,64 @@ export default function ActivityScreen() {
       id: 1,
       title: '7-DAYS CUMULATIVE BETTING REWARDS',
       icon: 'airplane' as const,
-      bannerImage: require('@/assets/Banner_202505051626178ysv.png'),
+      bannerImage: require('@/assets/Banner_20251209170621lke3.jpg'),
     },
     {
       id: 2,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_20250812180341sv9g.jpg'),
+    },
+    {
+      id: 3,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_20250728144118et9j.jpg'),
+    },
+    {
+      id: 4,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_202508190055411etn.png'),
+    },
+    {
+      id: 5,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_20250324130803du5l.jpg'),
+    },
+    {
+      id: 6,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_2025031913463468d9.jpg'),
+    },
+    {
+      id: 7,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_20250319134140rpj6.jpg'),
+    },
+    {
+      id: 8,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_20250324130748d4lf.jpg'),
+    },
+    {
+      id: 9,
+      title: '7-DAYS CUMULATIVE BETTING REWARDS',
+      icon: 'airplane' as const,
+      bannerImage: require('@/assets/Banner_202505051626178ysv.png'),
+    },
+    {
+    id: 10,
       title: 'MINI GAMES DAILY MISSION REWARDS!',
       icon: 'baseball' as const,
       bannerImage: require('@/assets/Banner_20250505174559l35y.jpg'),
     },
     {
-      id: 3,
+      id: 11,
       title: 'Benefits of Using AR WALLET',
       icon: 'wallet' as const,
       bannerImage: require('@/assets/Banner_20250509160039hucu.jpg'),
@@ -137,8 +185,9 @@ export default function ActivityScreen() {
               </View>
               <ImageBackground 
                 source={banner.bannerImage} 
-                style={styles.bannerImagePlaceholder}
+                style={styles.bannerImagePlaceholder} 
                 imageStyle={styles.bannerImageStyle}
+                resizeMode="stretch"
               >
               </ImageBackground>
               <View style={styles.bannerContent}>
@@ -252,6 +301,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#92a8e3',
     textAlign: 'center',
+    lineHeight: 14,
   },
   mainCards: {
     flexDirection: 'row',
@@ -281,20 +331,21 @@ const styles = StyleSheet.create({
   },
   cardTextContainer: {
     height: 100,
-    gap: 8,
+    gap: 3,
     backgroundColor: '#011341',
-    paddingVertical: 6,
-    paddingHorizontal: 16,
+    paddingVertical: 3,
+    paddingHorizontal: 16, 
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
+    lineHeight: 18,
   },
   cardDescription: {
     fontSize: 12,
     lineHeight: 18,
-    color: '#fff',
+    color: '#92A8E3',
     opacity: 0.9,
   },
   bannersSection: {
@@ -328,12 +379,15 @@ const styles = StyleSheet.create({
     height: 20,
   },
   bannerImagePlaceholder: {
-    height: 160,
+    height: 120,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     position: 'relative',
+    // width to be full and stretch to the width of the container
+    width: '100%',
   },
   bannerImageStyle: {
-    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
   bannerContent: {
     padding: 16,
@@ -341,7 +395,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
   },

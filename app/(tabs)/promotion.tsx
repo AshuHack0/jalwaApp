@@ -15,13 +15,13 @@ export default function PromotionScreen() {
   };
 
   const agencyFeatures = [
-    { name: 'Partner Reward', icon: 'bookmark' },
-    { name: 'Copy invitation code', icon: 'mail', hasCode: true },
-    { name: 'Subordinate data', icon: 'calendar' },
-    { name: 'Commission detail', icon: 'cash' },
-    { name: 'Invitation rules', icon: 'bookmark' },
-    { name: 'Agent line customer service', icon: 'headset' },
-    { name: 'Rebate ratio', icon: 'wallet' },
+    { name: 'Partner Reward', iconImage: require('@/assets/111.png') },
+    { name: 'Copy invitation code', iconImage: require('@/assets/222.png') },
+    { name: 'Subordinate data', iconImage: require('@/assets/333.png') },
+    { name: 'Commission detail', iconImage: require('@/assets/4444.png') },
+    { name: 'Invitation rules', iconImage: require('@/assets/555.png') },
+    { name: 'Agent line customer service', iconImage: require('@/assets/666.png') },
+    { name: 'Rebate ratio', iconImage: require('@/assets/777.png') },
   ];
 
   return (
@@ -35,9 +35,16 @@ export default function PromotionScreen() {
         {/* Header */}
         <View style={styles.header}>
           <ThemedText style={styles.headerTitle}>Agency</ThemedText>
-          {/* <TouchableOpacity>
-            <Ionicons name="stats-chart" size={24} color="#10B981" />
-          </TouchableOpacity> */}
+          <View style={styles.headerRightCorner}>
+          
+            <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <Image
+                source={require('@/assets/filter.png')}
+                style={styles.headerFilterIcon}
+                contentFit="contain"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.contentContainer}>
 
@@ -59,7 +66,11 @@ export default function PromotionScreen() {
             <View style={styles.subordinateCardContainer}>   
               <View style={[styles.subordinateCard ,{borderRightWidth: 0.2, borderRightColor: '#2C5ECA'}]}>
                 <View style={styles.subordinateHeader1}>
-                  <Ionicons name="people" size={20} color="#14B8A6" />
+                <Image
+              source={require('@/assets/rightperson.png')}
+              style={styles.headerRightPersonIcon}
+              contentFit="contain"
+            />
                   <ThemedText style={styles.subordinateTitle}>Direct subordinates</ThemedText>
                 </View>
                 <View style={styles.statisticsList}>
@@ -83,7 +94,11 @@ export default function PromotionScreen() {
               </View>
               <View style={styles.subordinateCard}>
                 <View style={styles.subordinateHeader2}>
-                  <Ionicons name="people" size={20} color="#14B8A6" />
+                <Image
+              source={require('@/assets/rightperson.png')}
+              style={styles.headerRightPersonIcon}
+              contentFit="contain"
+            />
                   <ThemedText style={styles.subordinateTitle}>Team subordinates</ThemedText>
                 </View>
                 <View style={styles.statisticsList}>
@@ -128,7 +143,11 @@ export default function PromotionScreen() {
             <TouchableOpacity key={index} style={styles.featureItem}>
               <View style={styles.featureLeft}>
                 <View style={styles.featureIconContainer}>
-                  <Ionicons name={feature.icon} size={20} color="#10B981" />
+                  <Image
+              source={feature.iconImage}
+              style={styles.header111Icon}
+              contentFit="contain"
+            />
                 </View>
                 <ThemedText style={styles.featureLabel}>{feature.name}</ThemedText>
                 {feature.hasCode && (
@@ -150,7 +169,8 @@ export default function PromotionScreen() {
         <View style={styles.promotionDataSection}>
           <View style={styles.promotionDataHeader}>
             <View style={styles.promotionDataIconContainer}>
-              <Ionicons name="grid" size={20} color="#10B981" />
+            
+              <Image source={require('@/assets/55.png')} style={styles.header888Icon} contentFit="contain" />
             </View>
             <ThemedText style={styles.promotionDataTitle}>promotion data</ThemedText>
           </View>
@@ -198,7 +218,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 50,
-    paddingBottom: 20,
+    paddingBottom: 14,
     backgroundColor: '#05012B',
     position: 'relative',
     zIndex: 10000,
@@ -206,10 +226,30 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
+  },
+  headerRightCorner: {
+    position: 'absolute',
+    top: 0,
+    right: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerRightPersonIcon: {
+    width: 15,
+    height: 18,
+  },
+    header111Icon: {
+    width: 25,
+    height: 25,
+  },
+  headerFilterIcon: {
+    width: 28,
+    height: 28,
   },
   commissionGradient: {
     borderRadius: 16,
@@ -218,9 +258,9 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   commissionAmount: {
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: 'light',
-    lineHeight: 32,
+    lineHeight: 30,
     color: 'black',
   },
   commissionLabel: {
@@ -228,6 +268,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
+    fontWeight: '500',
   },
   commissionLabelText: {
     fontSize: 16,
@@ -237,16 +278,16 @@ const styles = StyleSheet.create({
   },
   upgradeText: {
     fontSize: 12,
-    color: '#05012B',
+    color: "#00000",
     opacity: 0.9,
     lineHeight: 18,
     textAlign: 'center',
+    fontWeight: '500',
   },
   subordinateSection: {
     flexDirection: 'row',
     position: 'absolute',
     top: 140,
-    zIndex: 10,
     elevation: 10, // For Android
     left: 0,
     right: 0,
@@ -294,6 +335,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     lineHeight: 12,
+  },
+  header888Icon: {
+    width: 25,
+    height: 25,
   },
   statisticsList: {
     gap: 12,
@@ -365,10 +410,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featureIconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -405,7 +447,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -433,6 +475,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9BA1A6',
     textAlign: 'center',
+    lineHeight: 14,
   },
   contentContainer: {
     flex: 1,
