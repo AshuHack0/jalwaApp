@@ -23,6 +23,7 @@ import {
   heightPercentageToDP as hpBase,
 } from "react-native-responsive-screen";
 import { Feather } from "@expo/vector-icons";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 
 const ANNOUNCE_SCALE = 0.8;
 const wp = (p: number) => wpBase(p * ANNOUNCE_SCALE);
@@ -41,6 +42,7 @@ export default function HomeScreen() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
   const [showGameErrorModal, setShowGameErrorModal] = useState(false);
+  const gameErrorPlayer = useAudioPlayer(require("@/assets/only wingo game hack audio .mp3"));
   const carouselRef = useRef<ScrollView>(null);
   const winnersScrollRef = useRef<ScrollView>(null);
   const winnersScrollY = useRef(0);
@@ -90,6 +92,22 @@ export default function HomeScreen() {
 
     return () => clearInterval(interval);
   }, [carouselImages.length, carouselWidth]);
+
+  useEffect(() => {
+    if (showGameErrorModal) {
+      gameErrorPlayer.seekTo(0);
+      gameErrorPlayer.play();
+      setShowGameErrorModal(false);
+      router.push("/wingo");
+    }
+  }, [showGameErrorModal, gameErrorPlayer, router]);
+
+  useEffect(() => {
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+    });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

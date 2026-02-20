@@ -226,6 +226,12 @@ export default function WinGoScreen() {
     parseInt(mult.replace("X", ""), 10);
 
   const openBetModal = (selection: string) => {
+    if (walletBalance <= 0) {
+      minDepositPlayer.seekTo(0);
+      minDepositPlayer.play();
+      openDepositModal();
+      return;
+    }
     console.log("selection", selection);
     setBetSelection(selection);
     setShowBetModal(true);
@@ -260,6 +266,7 @@ export default function WinGoScreen() {
   const lastHistoryDataRef = useRef<typeof historyData>(null);
   const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
   const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
+  const minDepositPlayer = useAudioPlayer(require("@/assets/mininum 200 deposit.mp3"));
 
   // Compute server time offset when current-round data arrives
   useEffect(() => {

@@ -5,7 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -21,7 +22,17 @@ import {
 export default function LoginScreen() {
   const { login: authLogin } = useAuth();
   const router = useRouter();
+  const registerPlayer = useAudioPlayer(require("@/assets/register.mp3"));
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
+
+  useEffect(() => {
+    setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false });
+  }, []);
+
+  useEffect(() => {
+    registerPlayer.seekTo(0);
+    registerPlayer.play();
+  }, [registerPlayer]);
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
