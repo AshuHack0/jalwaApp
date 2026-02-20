@@ -7,7 +7,7 @@ export const API_DEBUG = __DEV__;
  * Environment: "local" | "staging" | "production"
  * Change this to switch API targets for debugging.
  */
-export const API_ENV = "production" as const;
+export const API_ENV = "local" as const;
 
 const BASE_URLS = {
   // local:
