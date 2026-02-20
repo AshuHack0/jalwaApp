@@ -43,6 +43,7 @@ import {
 } from "@/constants/Wingo";
 import { BetModal } from "@/components/BetModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
   useWinGoCurrentRound,
   useWinGoHistory,
@@ -162,6 +163,7 @@ function AnimatedNumberBall({
 export default function WinGoScreen() {
   const router = useRouter();
   const { isAuthenticated, isLoading, walletBalance, refreshWallet } = useAuth();
+  const { openDepositModal } = useDepositModal();
 
   useEffect(() => {
     if (isLoading) return;
@@ -714,6 +716,7 @@ export default function WinGoScreen() {
                 </ThemedText>
               </Pressable>
               <Pressable
+                onPress={() => openDepositModal()}
                 style={({ pressed }) => [
                   {
                     width: wp(40),
