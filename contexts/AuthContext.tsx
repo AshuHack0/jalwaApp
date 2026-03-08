@@ -1,8 +1,14 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { authKeys, useMe, useWalletBalance } from "@/services/api/hooks";
 import type { AuthUser } from "@/services/api";
+import { authKeys, useMe, useWalletBalance } from "@/services/api/hooks";
 import { getToken, removeToken, setToken } from "@/services/auth-storage";
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type AuthContextType = {
   user: AuthUser | null;
@@ -21,7 +27,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [hasToken, setHasToken] = useState<boolean | null>(null);
 
-  const { data: user, isLoading: meLoading, refetch: refetchMe } = useMe({
+  const {
+    data: user,
+    isLoading: meLoading,
+    refetch: refetchMe,
+  } = useMe({
     enabled: hasToken === true,
   });
   const { data: walletBalanceData, refetch: refetchWallet } = useWalletBalance({
@@ -45,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setHasToken(true);
       await queryClient.invalidateQueries({ queryKey: authKeys.all });
     },
-    [queryClient]
+    [queryClient],
   );
 
   const logout = useCallback(async () => {

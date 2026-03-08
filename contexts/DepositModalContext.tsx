@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
 import { DepositModal } from "@/components/DepositModal";
+import React, { createContext, useCallback, useContext, useState } from "react";
 
 type DepositModalContextType = {
   openDepositModal: (preselectedAmount?: number) => void;
@@ -8,9 +8,15 @@ type DepositModalContextType = {
 
 const DepositModalContext = createContext<DepositModalContextType | null>(null);
 
-export function DepositModalProvider({ children }: { children: React.ReactNode }) {
+export function DepositModalProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [visible, setVisible] = useState(false);
-  const [preselectedAmount, setPreselectedAmount] = useState<number | undefined>();
+  const [preselectedAmount, setPreselectedAmount] = useState<
+    number | undefined
+  >();
 
   const openDepositModal = useCallback((amount?: number) => {
     setPreselectedAmount(amount);
@@ -22,7 +28,9 @@ export function DepositModalProvider({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <DepositModalContext.Provider value={{ openDepositModal, closeDepositModal }}>
+    <DepositModalContext.Provider
+      value={{ openDepositModal, closeDepositModal }}
+    >
       {children}
       <DepositModal
         visible={visible}

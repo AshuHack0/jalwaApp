@@ -14,37 +14,37 @@ export default function TabLayout() {
           headerShown: false,
         }}
       >
-      <Tabs.Screen
-        name="promotion"
-        options={{
-          title: 'Promotion',
-        }}
-      />
-      <Tabs.Screen
-        name="activity"
-        options={{
-          title: 'Activity',
-        }}
-      />
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'Wallet',
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          title: "Account",
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="promotion"
+          options={{
+            title: "Promotion",
+          }}
+        />
+        <Tabs.Screen
+          name="activity"
+          options={{
+            title: "Activity",
+          }}
+        />
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+          }}
+        />
+        <Tabs.Screen
+          name="wallet"
+          options={{
+            title: "Wallet",
+          }}
+        />
+        <Tabs.Screen
+          name="account"
+          options={{
+            title: "Account",
+          }}
+        />
+      </Tabs>
     </>
   );
 }
