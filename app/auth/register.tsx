@@ -2,11 +2,11 @@ import { ThemedText } from "@/components/themed-text";
 import { useAuth } from "@/contexts/AuthContext";
 import { register as registerApi } from "@/services/api";
 import { Ionicons } from "@expo/vector-icons";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -33,7 +33,10 @@ export default function RegisterScreen() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false });
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+    });
   }, []);
 
   useEffect(() => {
@@ -84,7 +87,9 @@ export default function RegisterScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.headerIcon}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace("/(tabs)"))}
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace("/(tabs)")
+          }
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Ionicons name="chevron-back" size={24} color="#fff" />
@@ -137,24 +142,30 @@ export default function RegisterScreen() {
           </View>
 
           <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-            <View style={{ alignItems: "center", gap: 8, marginBottom: 10}}>
-              <Image 
-                      source={require("@/assets/Screenshot 2026-02-20 030004.png")}
-                      style={{width: 20, height: 26}} 
-                    />
+            <View style={{ alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <Image
+                source={require("@/assets/Screenshot 2026-02-20 030004.png")}
+                style={{ width: 20, height: 26 }}
+              />
               <ThemedText style={styles.registerPhoneLabel}>
                 Register your phone
               </ThemedText>
             </View>
-            <View style={{ height: 2, backgroundColor: "#00ECBE", marginBottom: 24 }} />
+            <View
+              style={{
+                height: 2,
+                backgroundColor: "#00ECBE",
+                marginBottom: 24,
+              }}
+            />
 
             <View style={styles.form}>
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Image 
-                      source={require("@/assets/Screenshot 2026-02-20 030004.png")}
-                      style={{width: 20, height: 26}} 
-                    />
+                  <Image
+                    source={require("@/assets/Screenshot 2026-02-20 030004.png")}
+                    style={{ width: 20, height: 26 }}
+                  />
                   <ThemedText style={styles.label}>Phone number</ThemedText>
                 </View>
                 <View style={styles.phoneRow}>
@@ -175,9 +186,9 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Image 
+                  <Image
                     source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                    style={{width: 26, height: 26}} 
+                    style={{ width: 26, height: 26 }}
                   />
                   <ThemedText style={styles.label}>Set password</ThemedText>
                 </View>
@@ -205,9 +216,9 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Image 
+                  <Image
                     source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                    style={{width: 26, height: 26}} 
+                    style={{ width: 26, height: 26 }}
                   />
                   <ThemedText style={styles.label}>Confirm password</ThemedText>
                 </View>
@@ -237,10 +248,10 @@ export default function RegisterScreen() {
 
               <View style={styles.field}>
                 <View style={styles.labelRow}>
-                  <Image 
-                      source={require("@/assets/Adobe Express - file (5).png")}
-                      style={{width: 23, height: 26}} 
-                    />
+                  <Image
+                    source={require("@/assets/Adobe Express - file (5).png")}
+                    style={{ width: 23, height: 26 }}
+                  />
                   <ThemedText style={styles.label}>Invite code</ThemedText>
                 </View>
                 <TextInput
