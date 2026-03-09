@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BetModal } from "@/components/BetModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -30,28 +31,26 @@ import Svg, { Polygon, Rect, Line } from "react-native-svg";
 import MaskedView from "@react-native-masked-view/masked-view";
 import * as Clipboard from "expo-clipboard";
 import {
+  COLOR_MAP,
+  WINGO_ANNOUNCEMENT_MESSAGES,
+  WINGO_API_PATH_MAP,
+  WINGO_BALL_IMAGES,
   WINGO_GAMES,
   WINGO_MULTIPLIERS,
   WINGO_NUMBER_COLOR_MAP,
-  COLOR_MAP,
-  WINGO_BALL_IMAGES,
-  WINGO_ANNOUNCEMENT_MESSAGES,
   WINGO_TABS,
-  WINGO_API_PATH_MAP,
   BET_SELECTION_MAP,
   BET_SELECTION_NUMBER_MAP,
 } from "@/constants/Wingo";
-import { BetModal } from "@/components/BetModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
+  usePlaceWinGoBet,
   useWinGoCurrentRound,
   useWinGoHistory,
   useWinGoMyHistory,
-  usePlaceWinGoBet,
 } from "@/services/api/hooks";
-import { type MyHistoryBet, type PlaceWinGoBetPayload } from "@/services/api";
-import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 
 const SCALE = 0.80;
 const wp = (p: number) => wpBase(p * SCALE);
@@ -227,6 +226,12 @@ export default function WinGoScreen() {
     parseInt(mult.replace("X", ""), 10);
 
   const openBetModal = (selection: string) => {
+    if (walletBalance <= 0) {
+      minDepositPlayer.seekTo(0);
+      minDepositPlayer.play();
+      openDepositModal();
+      return;
+    }
     console.log("selection", selection);
     setBetSelection(selection);
     setShowBetModal(true);
@@ -261,6 +266,7 @@ export default function WinGoScreen() {
   const lastHistoryDataRef = useRef<typeof historyData>(null);
   const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
   const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
+  const minDepositPlayer = useAudioPlayer(require("@/assets/mininum 200 deposit.mp3"));
 
   // Compute server time offset when current-round data arrives
   useEffect(() => {
@@ -630,14 +636,12 @@ export default function WinGoScreen() {
                 "https://www.jalwagame.win/assets/png/walletbg-dcbd4124.webp"
               }
               style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: wp(4.3),
                 position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
+                borderRadius: wp(4.3),
               }}
               contentFit="cover"
             />
@@ -655,7 +659,7 @@ export default function WinGoScreen() {
               <ThemedText
                 style={{ fontSize: wp(6.4), fontWeight: "700", color: "#fff" }}
               >
-                ₹{walletBalance.toFixed(2)}
+                {walletBalance.toFixed(2)}
               </ThemedText>
               <Pressable
                 onPress={refreshWallet}
@@ -679,9 +683,13 @@ export default function WinGoScreen() {
                 marginBottom: hp(2.5),
               }}
             >
-              <Ionicons name="wallet-outline" size={wp(4.3)} color="white" />
+              <Image
+                source={require("@/assets/klraansdkjnad.png")}
+                style={{ width: wp(7.3), height: wp(7.3) }}
+                contentFit="cover"
+              />
               <ThemedText
-                style={{ fontSize: wp(4.3), color: "white", fontWeight: "600" }}
+                style={{ fontSize: wp(5), color: "white", fontWeight: "400" }}
               >
                 Wallet balance
               </ThemedText>
@@ -693,7 +701,7 @@ export default function WinGoScreen() {
                 width: "100%",
                 justifyContent: "space-between",
                 alignItems: "center",
-                height: hp(5),
+                height: hp(6),
               }}
             >
               <Pressable
@@ -710,7 +718,7 @@ export default function WinGoScreen() {
                 ]}
               >
                 <ThemedText
-                  style={{ fontSize: wp(4.8), fontWeight: "600", color: "#fff" }}
+                  style={{ fontSize: wp(6), fontWeight: "600", color: "#fff" }}
                 >
                   Withdraw
                 </ThemedText>
@@ -730,7 +738,7 @@ export default function WinGoScreen() {
                 ]}
               >
                 <ThemedText
-                  style={{ fontSize: wp(4.8), fontWeight: "600", color: "#fff" }}
+                  style={{ fontSize: wp(6), fontWeight: "600", color: "#fff" }}
                 >
                   Deposit
                 </ThemedText>
@@ -744,7 +752,7 @@ export default function WinGoScreen() {
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={{
-              height: hp(5.2),
+              height: hp(7.2),
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
@@ -802,9 +810,9 @@ export default function WinGoScreen() {
                     numberOfLines={2}
                     style={{
                       color: "#fff",
-                      fontSize: wp(3.7),
+                      fontSize: wp(4.4),
                       fontWeight: "400",
-                      lineHeight: wp(4.3),
+                      lineHeight: wp(5),
                     }}
                   >
                     {item}
@@ -819,14 +827,14 @@ export default function WinGoScreen() {
               end={{ x: 0.5, y: 1 }}
               style={{
                 borderRadius: 100,
-                width: wp(23),
-                height: hp(3.4),
+                width: wp(27),
+                height: hp(4.4),
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
               <ThemedText
-                style={{ color: "#05012B", fontSize: wp(4.3), fontWeight: "400" }}
+                style={{ color: "#05012B", fontSize: wp(4.7), fontWeight: "400" }}
               >
                 Detail
               </ThemedText>
@@ -860,7 +868,7 @@ export default function WinGoScreen() {
                   <ThemedText
                     style={{
                       width: wp(18.7),
-                      fontSize: wp(4),
+                      fontSize: wp(4.6),
                       fontWeight: "400",
                       color: isActive ? "black" : "#92A8E3",
                       lineHeight: wp(4.5),
@@ -963,13 +971,17 @@ export default function WinGoScreen() {
                   { opacity: pressed ? 0.7 : 1 }
                 ]}
               >
-                <Ionicons name="bar-chart-outline" size={wp(4.3)} color="#05012B" />
-                <ThemedText style={{ fontSize: wp(3.7), color: "#05012B" }}>
+                <Image
+                  source={require("@/assets/ededed.png")}
+                  style={{ width: wp(5.3), height: wp(5.3) }}
+                  contentFit="cover"
+                />
+                <ThemedText style={{ fontSize: wp(4.4), color: "#05012B" }}>
                   How to play
                 </ThemedText>
               </Pressable>
               <ThemedText
-                style={{ fontSize: wp(4), fontWeight: "500", color: "#05012B" }}
+                style={{ fontSize: wp(4), fontWeight: "400", color: "#05012B" }}
               >
                 {selectedGame?.name}
               </ThemedText>
@@ -994,7 +1006,7 @@ export default function WinGoScreen() {
               }}
             >
               <ThemedText
-                style={{ fontSize: wp(3.5), color: "#05012B", fontWeight: "800" }}
+                style={{ fontSize: wp(4), color: "#05012B", fontWeight: "800" }}
               >
                 Time remaining
               </ThemedText>
@@ -1077,7 +1089,7 @@ export default function WinGoScreen() {
               </View>
 
               <ThemedText
-                style={{ fontSize: wp(4.3), fontWeight: "800", color: "#05012B" }}
+                style={{ fontSize: wp(4.7), fontWeight: "800", color: "#05012B" }}
               >
                 {displayPeriod}
               </ThemedText>
@@ -1254,9 +1266,9 @@ export default function WinGoScreen() {
               const tabContent = (
                 <ThemedText
                   style={{
-                    fontSize: wp(4.3),
+                    fontSize: wp(5),
                     color: isSelected ? "#05012B" : "#929292",
-                    fontWeight: "600",
+                    fontWeight: "400",
                   }}
                 >
                   {tab}
@@ -1279,7 +1291,7 @@ export default function WinGoScreen() {
                 >
                   {isSelected ? (
                     <LinearGradient
-                      colors={["#14B8A6", "#10B981"]}
+                      colors={["#75FBC3", "#04B0B6"]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 0, y: 1 }}
                       style={{
@@ -2264,15 +2276,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   chartPeriod: {
-    fontSize: wp(3.7),
+    fontSize: wp(4),
     color: "#fff",
-    fontWeight: "600",
-    width: wp(38.7),
+    fontWeight: "400",
+    width: wp(40),
   },
   chartNumbersRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: wp(1.1),
+    gap: wp(1.2),
+    marginLeft: wp(1.7),
   },
   chartNumberCircle: {
     width: wp(4.8),
@@ -2413,11 +2426,11 @@ const styles = StyleSheet.create({
   },
   tableHeaderText: {
     color: "#fff",
-    fontSize: wp(3.5),
-    fontWeight: "600",
+    fontSize: wp(4.5),
+    fontWeight: "400",
   },
   periodHeader: {
-    flex: 2,
+    flex: 1.5,
     textAlign: "left",
   },
   numberHeader: {
@@ -2440,7 +2453,7 @@ const styles = StyleSheet.create({
   },
   periodCell: {
     flex: 2,
-    fontSize: wp(3.2),
+    fontSize: wp(4.3),
     color: "#fff",
   },
   numberCell: {
@@ -2449,7 +2462,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   numberText: {
-    fontSize: wp(4.8),
+    fontSize: wp(7.4),
     fontWeight: "bold",
   },
   gradientNumberMask: {
@@ -2464,7 +2477,7 @@ const styles = StyleSheet.create({
   },
   bigSmallCell: {
     flex: 1,
-    fontSize: wp(3.2),
+    fontSize: wp(4.3),
     color: "#fff",
     textAlign: "center",
   },

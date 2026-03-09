@@ -1,9 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { WINGO_ANNOUNCEMENT_MESSAGES } from "@/constants/Wingo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -17,6 +19,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import {
+  heightPercentageToDP as hpBase,
+  widthPercentageToDP as wpBase,
+} from "react-native-responsive-screen";
+
+const ANNOUNCE_SCALE = 0.8;
+const wp = (p: number) => wpBase(p * ANNOUNCE_SCALE);
+const hp = (p: number) => hpBase(p * ANNOUNCE_SCALE);
 
 const WINNER_ITEM_HEIGHT = 78;
 
@@ -31,18 +41,25 @@ export default function HomeScreen() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
   const [showGameErrorModal, setShowGameErrorModal] = useState(false);
+  const gameErrorPlayer = useAudioPlayer(
+    require("@/assets/only wingo game hack audio .mp3"),
+  );
   const carouselRef = useRef<ScrollView>(null);
   const winnersScrollRef = useRef<ScrollView>(null);
   const winnersScrollY = useRef(0);
+  const announcementScrollRef = useRef<ScrollView>(null);
+  const announcementIndexRef = useRef(0);
+  const infiniteAnnouncementData = [
+    ...WINGO_ANNOUNCEMENT_MESSAGES,
+    WINGO_ANNOUNCEMENT_MESSAGES[0],
+  ];
   const screenWidth = Dimensions.get("window").width;
   const carouselWidth = screenWidth - 32; // accounting for padding
   const sectionPadding = 16;
   const categoryGridGap = 12;
   const categoryContentWidth = screenWidth - sectionPadding * 2;
   const categoryCardWidth2 = (categoryContentWidth - categoryGridGap) / 2; // Lottery: 2 per row
-  const categoryCardWidth3 =
-    Math.floor((categoryContentWidth - categoryGridGap * 2) / 3) - 1;
-  // Others: 3 per row
+  const categoryCardWidth3 = (categoryContentWidth - categoryGridGap * 2) / 3; // Others: 3 per row
 
   const carouselImages = [
     require("@/assets/Banner_20250319132416d7h9.jpg"),
@@ -76,6 +93,42 @@ export default function HomeScreen() {
 
     return () => clearInterval(interval);
   }, [carouselImages.length, carouselWidth]);
+
+  useEffect(() => {
+    if (showGameErrorModal) {
+      gameErrorPlayer.seekTo(0);
+      gameErrorPlayer.play();
+      setShowGameErrorModal(false);
+      router.push("/wingo");
+    }
+  }, [showGameErrorModal, gameErrorPlayer, router]);
+
+  useEffect(() => {
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const current = announcementIndexRef.current;
+      const nextIndex = (current + 1) % infiniteAnnouncementData.length;
+      announcementIndexRef.current = nextIndex;
+      if (nextIndex === 0) {
+        announcementScrollRef.current?.scrollTo({
+          y: 0,
+          animated: false,
+        });
+      } else {
+        announcementScrollRef.current?.scrollTo({
+          y: nextIndex * hp(5.2),
+          animated: true,
+        });
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [infiniteAnnouncementData.length]);
 
   const handleScroll = useCallback(
     (event: any) => {
@@ -433,19 +486,63 @@ export default function HomeScreen() {
           style={styles.logoImage}
           contentFit="contain"
         />
-        <View style={styles.headerIcons}>
-          {/* <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="arrow-down" size={20} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="cloud-outline" size={20} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <View style={styles.languageButton}>
-              <Ionicons name="flag" size={14} color="#fff" />
-              <ThemedText style={styles.languageText}>EN</ThemedText>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+          {isAuthenticated && (
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+            >
+              <TouchableOpacity>
+                <Image
+                  source={require("@/assets/update.png")}
+                  style={{ width: 26, height: 26 }}
+                  contentFit="cover"
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-start",
+                    gap: 8,
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+                    borderRadius: 20,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderRadius: 12,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <ThemedText
+                      style={{
+                        fontSize: 18,
+                        transform: [{ scale: 1.9 }],
+                        color: "#fff",
+                      }}
+                    >
+                      🇺🇸
+                    </ThemedText>
+                  </View>
+                  <ThemedText
+                    style={{
+                      fontSize: 15.8,
+                      color: "#00ecbe",
+                      fontWeight: "500",
+                    }}
+                  >
+                    EN
+                  </ThemedText>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity> */}
+          )}
 
           {!isAuthenticated && (
             <>
@@ -540,81 +637,159 @@ export default function HomeScreen() {
 
         {/* Announcement Bar */}
         <LinearGradient
-          colors={["#072766", "#000b2e"]}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.alertBanner}
+          colors={["#001C54", "#000C33"]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={{
+            height: hp(7.2),
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderRadius: wp(2.9),
+            marginBottom: hp(2),
+            marginHorizontal: 16,
+            overflow: "hidden",
+            borderColor: "#224ba2",
+            borderWidth: 1,
+            paddingHorizontal: wp(2.7),
+          }}
         >
-          <Ionicons name="megaphone-outline" size={20} color="#10B981" />
-          <ThemedText style={styles.alertText}>
-            हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी – यदि
-            आपको कोई लिंक किसी
-          </ThemedText>
-          <LinearGradient
-            colors={["#75FBC3", "#0CB6B7"]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.detailButtonContainer}
+          <Ionicons
+            name="volume-medium-sharp"
+            size={wp(6.4)}
+            color="rgb(122, 254, 195)"
+          />
+          <ScrollView
+            ref={announcementScrollRef}
+            scrollEventThrottle={16}
+            onMomentumScrollEnd={(e) => {
+              const itemHeight = hp(5.2);
+              const idx = Math.round(
+                e.nativeEvent.contentOffset.y / itemHeight,
+              );
+              if (idx >= WINGO_ANNOUNCEMENT_MESSAGES.length) {
+                announcementIndexRef.current = 0;
+                setTimeout(() => {
+                  announcementScrollRef.current?.scrollTo({
+                    y: 0,
+                    animated: false,
+                  });
+                }, 0);
+              } else {
+                announcementIndexRef.current = idx;
+              }
+            }}
+            style={{ width: wp(72), height: hp(5.2) }}
+            showsVerticalScrollIndicator={false}
+            snapToInterval={hp(5.2)}
+            snapToAlignment="start"
+            decelerationRate="fast"
           >
-            <ThemedText style={styles.detailButton}>Detail</ThemedText>
+            {infiniteAnnouncementData.map((item, i) => (
+              <View
+                key={`announcement-${i}`}
+                style={{
+                  height: hp(5.2),
+                  justifyContent: "center",
+                  paddingHorizontal: wp(2.7),
+                  paddingVertical: hp(0.25),
+                }}
+              >
+                <ThemedText
+                  numberOfLines={2}
+                  style={{
+                    color: "#fff",
+                    fontSize: wp(4.4),
+                    fontWeight: "400",
+                    lineHeight: wp(5),
+                  }}
+                >
+                  {item}
+                </ThemedText>
+              </View>
+            ))}
+          </ScrollView>
+          <LinearGradient
+            colors={["rgb(122, 254, 195)", "rgb(2, 175, 182)"]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={{
+              borderRadius: 100,
+              width: wp(27),
+              height: hp(4.4),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ThemedText
+              style={{ color: "#05012B", fontSize: wp(4.7), fontWeight: "400" }}
+            >
+              Detail
+            </ThemedText>
           </LinearGradient>
         </LinearGradient>
 
         {/* Wallet Balance Section */}
-        <View style={styles.walletSection}>
-          <View style={[styles.walletBalance, { width: "40%" }]}>
-            <View style={styles.walletHeader}>
-              <Image
-                source={require("@/assets/coin.png")}
-                style={styles.coinImage}
-                contentFit="contain"
-              />
-              <ThemedText style={styles.walletLabel}>Wallet balance</ThemedText>
+        {isAuthenticated && (
+          <View style={styles.walletSection}>
+            <View style={[styles.walletBalance, { width: "52%" }]}>
+              <View style={styles.walletHeader}>
+                <Image
+                  source={require("@/assets/coin.png")}
+                  style={styles.coinImage}
+                  contentFit="contain"
+                />
+                <ThemedText style={styles.walletLabel}>
+                  Wallet balance
+                </ThemedText>
+              </View>
+              <View style={styles.balanceRow}>
+                <ThemedText style={styles.balanceAmount}>
+                  {formatBalance(walletBalance)}
+                </ThemedText>
+                <TouchableOpacity onPress={refreshWallet}>
+                  <Feather name="refresh-cw" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.balanceRow}>
-              <ThemedText style={styles.balanceAmount}>
-                {formatBalance(walletBalance)}
-              </ThemedText>
-              <TouchableOpacity onPress={refreshWallet}>
-                <Ionicons name="refresh" size={20} color="#fff" />
+            <View style={[styles.walletButtons, { width: "48%" }]}>
+              <TouchableOpacity style={styles.walletButton}>
+                <Image
+                  source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
+                  style={styles.walletButtonBackground}
+                  contentFit="cover"
+                />
+                <View style={styles.walletButtonContent}>
+                  <Ionicons name="arrow-up" size={17} color="#fff" />
+                  <ThemedText style={styles.walletButtonText} numberOfLines={1}>
+                    Withdraw
+                  </ThemedText>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.walletButton}
+                onPress={() => openDepositModal()}
+              >
+                <Image
+                  source={require("@/assets/91-recharge_btn-ff2482b8.svg")}
+                  style={styles.walletButtonBackground}
+                  contentFit="cover"
+                />
+                <View style={styles.walletButtonContent}>
+                  <Ionicons name="arrow-down" size={17} color="#fff" />
+                  <ThemedText style={styles.walletButtonText} numberOfLines={1}>
+                    Deposit
+                  </ThemedText>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={[styles.walletButtons, { width: "60%" }]}>
-            <TouchableOpacity style={styles.walletButton}>
-              <Image
-                source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
-                style={styles.walletButtonBackground}
-                contentFit="cover"
-              />
-              <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-up" size={20} color="#fff" />
-                <ThemedText style={styles.walletButtonText} numberOfLines={1}>
-                  Withdraw
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.walletButton}
-              onPress={() => openDepositModal()}
-            >
-              <Image
-                source={require("@/assets/91-recharge_btn-ff2482b8.svg")}
-                style={styles.walletButtonBackground}
-                contentFit="cover"
-              />
-              <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-down" size={20} color="#fff" />
-                <ThemedText style={styles.walletButtonText} numberOfLines={1}>
-                  Deposit
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+        )}
 
         {/* Game Category Grid */}
-        <View style={styles.gameGrid}>
+        <View
+          style={[styles.gameGrid, { marginTop: !isAuthenticated ? hp(2) : 0 }]}
+        >
           {gameCategories.map((category, index) => {
             const isActive = selectedCategory === category.name;
             return (
@@ -687,9 +862,6 @@ export default function HomeScreen() {
                     );
                   }
                   const isLottery = selectedCategory === "Lottery";
-                  const cardWidth = isLottery
-                    ? categoryCardWidth2
-                    : categoryCardWidth3;
                   const cardHeight = isLottery ? 100 : 140;
                   return (
                     <View
@@ -703,7 +875,11 @@ export default function HomeScreen() {
                           key={game.name}
                           style={[
                             styles.categoryGameCardBase,
-                            { width: cardWidth, height: cardHeight },
+                            {
+                              width: "31%",
+                              minWidth: "31%",
+                              height: cardHeight,
+                            },
                           ]}
                           onPress={() => {
                             if (game.name === "WIN GO") {
@@ -1210,7 +1386,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconButton: {
-    padding: 4,
+    padding: 0,
   },
   loginButton: {
     paddingHorizontal: 10,
@@ -1244,19 +1420,47 @@ const styles = StyleSheet.create({
   languageButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 12,
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  languageText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+  flagContainer: {
+    width: 22,
+    height: 22,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  flagEmoji: {
+    fontSize: 18,
+    transform: [{ scale: 1.9 }],
+  },
+  languageTextMask: {
+    height: 20,
+    justifyContent: "center",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+  },
+  languageTextMaskContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  languageTextMaskText: {
+    fontSize: 16,
+    fontWeight: "400",
+    letterSpacing: 0.5,
+    color: "#00ECBE",
+  },
+  languageTextGradient: {
+    flex: 1,
+    width: 30,
+    height: 20,
   },
   promoBanners: {
-    // backgroundColor: 'red',
     flexDirection: "row",
     gap: 7,
     paddingHorizontal: 16,
@@ -1294,7 +1498,7 @@ const styles = StyleSheet.create({
     padding: 1,
   },
   mainCarouselImage: {
-    width: "100%", // 👈 smaller than 100%
+    width: "100%",
     height: "95%",
     padding: 10,
     alignSelf: "center",
@@ -1460,14 +1664,15 @@ const styles = StyleSheet.create({
   walletButtons: {
     flex: 1,
     flexDirection: "row",
-    gap: 8,
+    gap: 12,
+    paddingVertical: 5,
   },
   walletButton: {
     flex: 1,
     position: "relative",
     overflow: "hidden",
-    borderRadius: 8,
-    minHeight: 48,
+    borderRadius: 6,
+    minHeight: 40,
   },
   walletButtonBackground: {
     position: "absolute",
@@ -1480,8 +1685,9 @@ const styles = StyleSheet.create({
   },
   walletButtonContent: {
     alignItems: "center",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 3,
+    paddingTop: 7,
+    paddingHorizontal: 8,
     gap: 0,
     zIndex: 1,
   },
@@ -1493,10 +1699,13 @@ const styles = StyleSheet.create({
   },
   walletButtonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: 12,
+    fontWeight: "500",
     textAlign: "center",
+    alignItems: "center",
+    justifyContent: "center",
     flexShrink: 0,
+    lineHeight: 15,
   },
   gameGrid: {
     flexDirection: "row",
@@ -1831,7 +2040,6 @@ const styles = StyleSheet.create({
     top: -35,
     left: "50%",
     marginLeft: -32,
-    // backgroundColor: 'red',
     alignItems: "center",
     justifyContent: "center",
   },

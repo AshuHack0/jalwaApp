@@ -1,9 +1,9 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { useRouter } from "expo-router";
+import { Image } from "expo-image";
+import { type Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
@@ -16,7 +16,11 @@ export default function ActivityScreen() {
   const [totalBonus] = useState("₹0.00");
   const router = useRouter();
 
-  const activityCategories = [
+  const activityCategories: Array<{
+    name: string;
+    image: number;
+    route: Href;
+  }> = [
     {
       name: "Activity Award",
       image: require("@/assets/activityReward-66772619.webp"),
@@ -42,18 +46,66 @@ export default function ActivityScreen() {
   const promotionalBanners = [
     {
       id: 1,
+      title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
+    },
+    {
+      id: 2,
+      title: "CHICKEN ROAD 2",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20250812180341sv9g.jpg"),
+    },
+    {
+      id: 3,
+      title: "Cummulative 10Days Recharge Bonus",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20250728144118et9j.jpg"),
+    },
+    {
+      id: 4,
+      title: "Tutorial AR Wallet How To Buy & Sell ARB Coins",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_202508190055411etn.png"),
+    },
+    {
+      id: 5,
+      title: "Member First Deposit Bonus",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20250324130803du5l.jpg"),
+    },
+    {
+      id: 6,
+      title: "AGENT REFFERAL BONUS",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_2025031913463468d9.jpg"),
+    },
+    {
+      id: 7,
+      title: "REFFERAL BONUS",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20250319134140rpj6.jpg"),
+    },
+    {
+      id: 8,
+      title: "RECHARGE BONUS FOR NEW PLAYERS",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20250324130748d4lf.jpg"),
+    },
+    {
+      id: 9,
       title: "7-DAYS CUMULATIVE BETTING REWARDS",
       icon: "airplane" as const,
       bannerImage: require("@/assets/Banner_202505051626178ysv.png"),
     },
     {
-      id: 2,
-      title: "MINI GAMES DAILY MISSION REWARDS!",
+      id: 10,
+      title: "MINI GAMES DAILY MISSION REWARDS",
       icon: "baseball" as const,
       bannerImage: require("@/assets/Banner_20250505174559l35y.jpg"),
     },
     {
-      id: 3,
+      id: 11,
       title: "Benefits of Using AR WALLET",
       icon: "wallet" as const,
       bannerImage: require("@/assets/Banner_20250509160039hucu.jpg"),
@@ -73,7 +125,7 @@ export default function ActivityScreen() {
           <Image
             source={require("@/assets/h5setting_20250315140925tbe6.png")}
             style={styles.logoImage}
-            resizeMode="contain"
+            contentFit="contain"
           />
         </View>
 
@@ -109,10 +161,10 @@ export default function ActivityScreen() {
                 <Image
                   source={category.image}
                   style={styles.categoryImage}
-                  resizeMode="contain"
+                  contentFit="contain"
                 />
               </View>
-              <ThemedText style={styles.categoryLabel}>
+              <ThemedText numberOfLines={2} style={styles.categoryLabel}>
                 {category.name}
               </ThemedText>
             </TouchableOpacity>
@@ -165,14 +217,17 @@ export default function ActivityScreen() {
                 <Image
                   source={require("@/assets/h5setting_20250315141734j61m.png")}
                   style={styles.bannerLogo}
-                  resizeMode="contain"
+                  contentFit="contain"
                 />
               </View>
-              <ImageBackground
-                source={banner.bannerImage}
-                style={styles.bannerImagePlaceholder}
-                imageStyle={styles.bannerImageStyle}
-              ></ImageBackground>
+              <View style={styles.bannerImagePlaceholder}>
+                <Image
+                  source={banner.bannerImage}
+                  style={StyleSheet.absoluteFillObject}
+                  contentFit="cover"
+                  contentPosition="top"
+                />
+              </View>
               <View style={styles.bannerContent}>
                 <ThemedText style={styles.bannerTitle}>
                   {banner.title}
@@ -245,7 +300,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   bonusDetailsButton: {
-    width: "50%",
+    paddingHorizontal: 24,
     backgroundColor: "#001C54",
     borderRadius: 32,
     paddingVertical: 12,
@@ -255,36 +310,38 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   bonusDetailsText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
-    color: "#00ECBE",
+    color: "#00ecbe",
   },
   categoriesGrid: {
     flexDirection: "row",
-    paddingHorizontal: 16,
+    paddingHorizontal: 30,
     marginBottom: 24,
-    gap: 12,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   categoryCard: {
-    flex: 1,
+    width: "20%",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
   },
   categoryIconContainer: {
-    width: 52,
-    height: 52,
+    width: 45,
+    height: 45,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
   categoryImage: {
-    width: 52,
-    height: 52,
+    width: 45,
+    height: 45,
   },
   categoryLabel: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#92a8e3",
     textAlign: "center",
+    lineHeight: 14,
   },
   mainCards: {
     flexDirection: "row",
@@ -314,20 +371,21 @@ const styles = StyleSheet.create({
   },
   cardTextContainer: {
     height: 100,
-    gap: 8,
+    gap: 3,
     backgroundColor: "#011341",
-    paddingVertical: 6,
+    paddingVertical: 3,
     paddingHorizontal: 16,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#fff",
+    lineHeight: 18,
   },
   cardDescription: {
     fontSize: 12,
     lineHeight: 18,
-    color: "#fff",
+    color: "#92A8E3",
     opacity: 0.9,
   },
   bannersSection: {
@@ -361,22 +419,25 @@ const styles = StyleSheet.create({
     height: 20,
   },
   bannerImagePlaceholder: {
-    height: 160,
+    height: 150,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     position: "relative",
+    // width to be full and stretch to the width of the container
+    width: "100%",
   },
   bannerImageStyle: {
-    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
   },
   bannerContent: {
-    padding: 16,
+    padding: 12,
     paddingVertical: 10,
     gap: 8,
   },
   bannerTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#e3efff",
   },
   noMoreContainer: {
     alignItems: "center",
