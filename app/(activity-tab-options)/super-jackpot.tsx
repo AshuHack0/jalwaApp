@@ -13,10 +13,6 @@ import {
   View,
 } from "react-native";
 
-/**
- * SuperJackpot Screen - Final High Fidelity Version
- * Logic: Standard UI with Navigation Hooks for Rules and Winning Star
- */
 const SuperJackpot = () => {
   const navigation = useNavigation<any>(); // Hook to handle redirection
 
@@ -84,7 +80,11 @@ const SuperJackpot = () => {
         <View style={styles.navRow}>
           <TouchableOpacity
             style={styles.navCard}
-            onPress={() => navigation.navigate("super-jackpot-rules")} // Redirects to Rules
+            onPress={() =>
+              navigation.navigate(
+                "(super-jackpot-page-options)/super-jackpot-rules",
+              )
+            } // Redirects to Rules
           >
             <MaterialCommunityIcons
               name="clipboard-text"
@@ -96,7 +96,9 @@ const SuperJackpot = () => {
 
           <TouchableOpacity
             style={styles.navCard}
-            onPress={() => navigation.navigate("winning-star")} // Redirects to Winning Star
+            onPress={() =>
+              navigation.navigate("(super-jackpot-page-options)/winning-star")
+            } // Redirects to Winning Star
           >
             <MaterialCommunityIcons name="crown" size={22} color="#00ffd5" />
             <Text style={styles.navCardText}>Winning star</Text>
