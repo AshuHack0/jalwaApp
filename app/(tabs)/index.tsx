@@ -1,10 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { WINGO_ANNOUNCEMENT_MESSAGES } from "@/constants/Wingo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
-import { WINGO_ANNOUNCEMENT_MESSAGES } from "@/constants/Wingo";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,11 +20,9 @@ import {
   View,
 } from "react-native";
 import {
-  widthPercentageToDP as wpBase,
   heightPercentageToDP as hpBase,
+  widthPercentageToDP as wpBase,
 } from "react-native-responsive-screen";
-import { Feather } from "@expo/vector-icons";
-import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 
 const ANNOUNCE_SCALE = 0.8;
 const wp = (p: number) => wpBase(p * ANNOUNCE_SCALE);
@@ -41,9 +40,10 @@ export default function HomeScreen() {
   const { openDepositModal } = useDepositModal();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
   const [showGameErrorModal, setShowGameErrorModal] = useState(false);
-  const gameErrorPlayer = useAudioPlayer(require("@/assets/only wingo game hack audio .mp3"));
+  const gameErrorPlayer = useAudioPlayer(
+    require("@/assets/only wingo game hack audio .mp3"),
+  );
   const carouselRef = useRef<ScrollView>(null);
   const winnersScrollRef = useRef<ScrollView>(null);
   const winnersScrollY = useRef(0);
@@ -59,25 +59,9 @@ export default function HomeScreen() {
   const categoryGridGap = 12;
   const categoryContentWidth = screenWidth - sectionPadding * 2;
   const categoryCardWidth2 = (categoryContentWidth - categoryGridGap) / 2; // Lottery: 2 per row
-  const categoryCardWidth3 =
-    Math.floor((categoryContentWidth - categoryGridGap * 2) / 3) - 1;
-  // Others: 3 per row
+  const categoryCardWidth3 = (categoryContentWidth - categoryGridGap * 2) / 3; // Others: 3 per row
 
   const carouselImages = [
-    require("@/assets/Banner_20250319132416d7h9.jpg"),
-    require("@/assets/Banner_202503191331431vwd.jpg"),
-    require("@/assets/Banner_20250319134711g6c7.jpg"),
-    require("@/assets/Banner_202504141354389bes.jpg"),
-    require("@/assets/Banner_20250430183534nx9g.jpg"),
-    require("@/assets/Banner_202505051626178ysv.png"),
-    require("@/assets/Banner_20250505174559l35y.jpg"),
-    require("@/assets/Banner_20250509160039hucu.jpg"),
-    require("@/assets/Banner_20250728143957ji78.jpg"),
-    require("@/assets/Banner_20250812180120amou.jpg"),
-    require("@/assets/Banner_20250819005455jgmi.png"),
-    require("@/assets/Banner_20250825134813th74.jpg"),
-    require("@/assets/Banner_20250925125457tlhn.jpg"),
-    require("@/assets/Banner_20251209170621lke3.jpg"),
     require("@/assets/Banner_20250319132416d7h9.jpg"),
     require("@/assets/Banner_202503191331431vwd.jpg"),
     require("@/assets/Banner_20250319134711g6c7.jpg"),
@@ -157,40 +141,15 @@ export default function HomeScreen() {
 
   const activeBg = require("@/assets/icon_bg_select-cc5606e6.webp");
   const inactiveBg = require("@/assets/icon_bg-f97e2540.webp");
-  const activeBg = require("@/assets/icon_bg_select-cc5606e6.webp");
-  const inactiveBg = require("@/assets/icon_bg-f97e2540.webp");
 
   const gameCategories = [
     {
       name: "Lottery",
       image: require("@/assets/gamecategory_202503131718208r77.png"),
       icon: require("@/assets/icon_lottery-d44718d5.svg"), // section header icon - replace with your icon
-      name: "Lottery",
-      image: require("@/assets/gamecategory_202503131718208r77.png"),
-      icon: require("@/assets/icon_lottery-d44718d5.svg"), // section header icon - replace with your icon
       backgroundImage: activeBg,
       inactiveBackgroundImage: inactiveBg,
       games: [
-        {
-          name: "WIN GO",
-          image: require("@/assets/lotterycategory_20250311104257c812.png"),
-        },
-        {
-          name: "MOTO RACING",
-          image: require("@/assets/lotterycategory_20250311104327ptke.png"),
-        },
-        {
-          name: "K3",
-          image: require("@/assets/lotterycategory_202503241646119i36.png"),
-        },
-        {
-          name: "5D",
-          image: require("@/assets/lotterycategory_20250430143859y2i2.png"),
-        },
-        {
-          name: "TRX WINGO",
-          image: require("@/assets/lotterycategory_2025031110434143p3.png"),
-        },
         {
           name: "WIN GO",
           image: require("@/assets/lotterycategory_20250311104257c812.png"),
@@ -217,9 +176,6 @@ export default function HomeScreen() {
       name: "Mini games",
       image: require("@/assets/gamecategory_20250313171619xdvp.png"),
       icon: require("@/assets/icon_mini-9bd4090f.svg"), // TODO: replace with your icon
-      name: "Mini games",
-      image: require("@/assets/gamecategory_20250313171619xdvp.png"),
-      icon: require("@/assets/icon_mini-9bd4090f.svg"), // TODO: replace with your icon
       backgroundImage: activeBg,
       inactiveBackgroundImage: inactiveBg,
       games: [
@@ -233,18 +189,7 @@ export default function HomeScreen() {
         }, // TODO: replace image
         { name: "Game 3", image: require("@/assets/804.png") }, // TODO: replace image
         { name: "Game 4", image: require("@/assets/804.png") },
-        {
-          name: "Game 1",
-          image: require("@/assets/800_20250324182314304.png"),
-        }, // TODO: replace image
-        {
-          name: "Game 2",
-          image: require("@/assets/810_20250324182331029.png"),
-        }, // TODO: replace image
-        { name: "Game 3", image: require("@/assets/804.png") }, // TODO: replace image
-        { name: "Game 4", image: require("@/assets/804.png") },
         { name: "Game 5", image: require("@/assets/812.png") },
-        { name: "Game 6", image: require("@/assets/813.png") },
         { name: "Game 6", image: require("@/assets/813.png") },
         { name: "Game 7", image: require("@/assets/814.png") },
         { name: "Game 8", image: require("@/assets/903.png") },
@@ -258,21 +203,9 @@ export default function HomeScreen() {
       name: "Hot Slots",
       image: require("@/assets/gamecategory_20250313171546obyl.png"),
       icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
-      name: "Hot Slots",
-      image: require("@/assets/gamecategory_20250313171546obyl.png"),
-      icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
       backgroundImage: activeBg,
       inactiveBackgroundImage: inactiveBg,
       games: [
-        {
-          name: "Slot 1",
-          image: require("@/assets/800_20250324182314304.png"),
-        }, // TODO: replace image
-        {
-          name: "Slot 2",
-          image: require("@/assets/810_20250324182331029.png"),
-        }, // TODO: replace image
-        { name: "Slot 3", image: require("@/assets/804.png") }, // TODO: replace image
         {
           name: "Slot 1",
           image: require("@/assets/800_20250324182314304.png"),
@@ -284,14 +217,10 @@ export default function HomeScreen() {
         { name: "Slot 3", image: require("@/assets/804.png") }, // TODO: replace image
         { name: "Slot 4", image: require("@/assets/7003.png") }, // TODO: replace image
         { name: "Slot 5", image: require("@/assets/49.png") }, // TODO: replace image
-        { name: "Slot 5", image: require("@/assets/49.png") }, // TODO: replace image
         { name: "Slot 6", image: require("@/assets/289.png") }, // TODO: replace image
       ],
     },
     {
-      name: "Slots",
-      image: require("@/assets/gamecategory_202503131718274ean.png"),
-      icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
       name: "Slots",
       image: require("@/assets/gamecategory_202503131718274ean.png"),
       icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
@@ -300,22 +229,17 @@ export default function HomeScreen() {
       games: [
         { name: "Slot 1", image: require("@/assets/212.png") }, // TODO: replace image
         { name: "Slot 2", image: require("@/assets/42.png") }, // TODO: replace image
-        { name: "Slot 2", image: require("@/assets/42.png") }, // TODO: replace image
         { name: "Slot 3", image: require("@/assets/7005.png") }, // TODO: replace image\\
         { name: "Slot 4", image: require("@/assets/7006.png") }, // TODO: replace image\\
         { name: "Slot 5", image: require("@/assets/7007.png") }, // TODO: replace image\\
         { name: "Slot 6", image: require("@/assets/AT01.png") }, // TODO: replace image\\
         { name: "Slot 7", image: require("@/assets/7009.png") }, // TODO: replace image\\
         { name: "Slot 8", image: require("@/assets/7010.png") }, // TODO: replace image\\
-        { name: "Slot 8", image: require("@/assets/7010.png") }, // TODO: replace image\\
         { name: "Slot 9", image: require("@/assets/20.png") }, // TODO: replace image\\
         { name: "Slot 10", image: require("@/assets/82.png") }, // TODO: replace image\\
       ],
     },
     {
-      name: "Fishing",
-      image: require("@/assets/gamecategory_202503131716285jqk.png"),
-      icon: require("@/assets/icon_fish-80dac6e1.svg"), // TODO: replace with your icon
       name: "Fishing",
       image: require("@/assets/gamecategory_202503131716285jqk.png"),
       icon: require("@/assets/icon_fish-80dac6e1.svg"), // TODO: replace with your icon
@@ -326,7 +250,6 @@ export default function HomeScreen() {
         { name: "Fishing 1", image: require("@/assets/7001.png") }, // TODO: replace image
         { name: "Fishing 13", image: require("@/assets/464.png") }, // TODO: replace image
         { name: "Fishing 2", image: require("@/assets/7002.png") }, // TODO: replace image
-        { name: "Fishing 2", image: require("@/assets/7002.png") }, // TODO: replace image
         { name: "Fishing 20", image: require("@/assets/1.png") }, // TODO: replace image
         { name: "Fishing 3", image: require("@/assets/7003.png") }, // TODO: replace image
         { name: "Fishing 4", image: require("@/assets/7004.png") }, // TODO: replace image\\
@@ -336,7 +259,6 @@ export default function HomeScreen() {
         { name: "Fishing 8", image: require("@/assets/AT01.png") }, // TODO: replace image\\
         { name: "Fishing 9", image: require("@/assets/7009.png") }, // TODO: replace image\\
         { name: "Fishing 10", image: require("@/assets/7010.png") }, // TODO: replace image\\
-        { name: "Fishing 10", image: require("@/assets/7010.png") }, // TODO: replace image\\
         { name: "Fishing 11", image: require("@/assets/20.png") }, // TODO: replace image\\
         { name: "Fishing 15", image: require("@/assets/82.png") }, // TODO: replace image\\
       ],
@@ -345,9 +267,6 @@ export default function HomeScreen() {
       name: "PVC",
       image: require("@/assets/gamecategory_202503131717268awj.png"),
       icon: require("@/assets/icon_chess-b71f3e88.svg"), // TODO: replace with your icon
-      name: "PVC",
-      image: require("@/assets/gamecategory_202503131717268awj.png"),
-      icon: require("@/assets/icon_chess-b71f3e88.svg"), // TODO: replace with your icon
       backgroundImage: activeBg,
       inactiveBackgroundImage: inactiveBg,
       games: [
@@ -363,25 +282,9 @@ export default function HomeScreen() {
           name: "PVC 3",
           image: require("@/assets/vendorlogo_20250830165501she8.png"),
         }, // TO
-        {
-          name: "PVC 1",
-          image: require("@/assets/vendorlogo_202503111054058v6w.png"),
-        }, // TODO: replace image
-        {
-          name: "PVC 2",
-          image: require("@/assets/vendorlogo_20250311105339pi1y.png"),
-        }, // TODO: replace image
-        {
-          name: "PVC 3",
-          image: require("@/assets/vendorlogo_20250830165501she8.png"),
-        }, // TO
       ],
     },
     {
-      name: "Casino",
-      image: require("@/assets/gamecategory_202503131718032ig4.png"),
-
-      icon: require("@/assets/icon_video-da93a00c.svg"), // TODO: replace with your icon
       name: "Casino",
       image: require("@/assets/gamecategory_202503131718032ig4.png"),
 
@@ -415,52 +318,15 @@ export default function HomeScreen() {
           name: "Casino 1",
           image: require("@/assets/vendorlogo_202503111054516cx3.png"),
         },
-        {
-          name: "Casino 6",
-          image: require("@/assets/vendorlogo_20250311105326ntuv.png"),
-        },
-        {
-          name: "Casino 4",
-          image: require("@/assets/vendorlogo_202503111054418bsk.png"),
-        },
-        {
-          name: "Casino 3",
-          image: require("@/assets/vendorlogo_20250311105152d49l.png"),
-        },
-
-        {
-          name: "Casino 2",
-          image: require("@/assets/vendorlogo_20250607164818rmhc.png"),
-        },
-
-        {
-          name: "Casino 5",
-          image: require("@/assets/vendorlogo_20250311105431knjh.png"),
-        },
-        {
-          name: "Casino 1",
-          image: require("@/assets/vendorlogo_202503111054516cx3.png"),
-        },
       ],
     },
     {
       name: "Sports",
       image: require("@/assets/gamecategory_20250315182024qtyt.png"),
       icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
-      name: "Sports",
-      image: require("@/assets/gamecategory_20250315182024qtyt.png"),
-      icon: require("@/assets/icon_lottery-d44718d5.svg"), // TODO: replace with your icon
       backgroundImage: activeBg,
       inactiveBackgroundImage: inactiveBg,
       games: [
-        {
-          name: "Sport 1",
-          image: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-        }, // TODO: replace image
-        {
-          name: "Sport 2",
-          image: require("@/assets/vendorlogo_2025031116174076n9.png"),
-        }, // TODO: replace image
         {
           name: "Sport 1",
           image: require("@/assets/vendorlogo_20250311105256rbnp.png"),
@@ -474,15 +340,6 @@ export default function HomeScreen() {
   ];
 
   const avatarPool = [
-    require("@/assets/8-ea087ede.webp"),
-    require("@/assets/1-a6662edb.webp"),
-    require("@/assets/6-7c7f5203.webp"),
-    require("@/assets/7003.png"),
-    require("@/assets/7004.png"),
-    require("@/assets/7005.png"),
-    require("@/assets/7006.png"),
-    require("@/assets/7007.png"),
-    require("@/assets/7009.png"),
     require("@/assets/8-ea087ede.webp"),
     require("@/assets/1-a6662edb.webp"),
     require("@/assets/6-7c7f5203.webp"),
@@ -550,71 +407,8 @@ export default function HomeScreen() {
       amount: "₹192.45",
       vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
     },
-    {
-      id: "Mem***LHV",
-      amount: "₹48.02",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***ABC",
-      amount: "₹125.50",
-      vendor: require("@/assets/lotterycategory_20250311104327ptke.png"),
-    },
-    {
-      id: "Mem***XYZ",
-      amount: "₹89.30",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***DEF",
-      amount: "₹256.80",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***GHI",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***JKL",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***MNO",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***PQR",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***STU",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***VWX",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
-    {
-      id: "Mem***YZ",
-      amount: "₹192.45",
-      vendor: require("@/assets/vendorlogo_20250311105256rbnp.png"),
-    },
   ];
 
-  const winners = useMemo(
-    () =>
-      winnersRaw.map((w) => ({
-        ...w,
-        avatar: avatarPool[Math.floor(Math.random() * avatarPool.length)],
-      })),
-    [],
-  );
   const winners = useMemo(
     () =>
       winnersRaw.map((w) => ({
@@ -626,10 +420,6 @@ export default function HomeScreen() {
 
   // Winners list auto-scroll (new winner scrolls to top, old one moves down)
   useEffect(() => {
-    const maxScroll = Math.max(
-      0,
-      winners.length * WINNER_ITEM_HEIGHT - WINNER_ITEM_HEIGHT * 4.5,
-    );
     const maxScroll = Math.max(
       0,
       winners.length * WINNER_ITEM_HEIGHT - WINNER_ITEM_HEIGHT * 4.5,
@@ -685,40 +475,6 @@ export default function HomeScreen() {
       emojis: "⚡💀",
     },
     { rank: 10, username: "Mem***P2K", amount: "26,403,945.96", isTop3: false },
-    {
-      rank: 1,
-      username: "Mem***NLR",
-      amount: "1,832,198,343.08",
-      isTop3: true,
-      medal: "gold",
-    },
-    {
-      rank: 2,
-      username: "SHI***IP",
-      amount: "1,148,305,200.00",
-      isTop3: true,
-      medal: "silver",
-    },
-    {
-      rank: 3,
-      username: "Mem***HWT",
-      amount: "74,132,198.00",
-      isTop3: true,
-      medal: "bronze",
-    },
-    { rank: 4, username: "Mem***00A", amount: "64,860,502.28", isTop3: false },
-    { rank: 5, username: "Mem***TTO", amount: "53,753,751.17", isTop3: false },
-    { rank: 6, username: "Mem***XMI", amount: "50,383,957.96", isTop3: false },
-    { rank: 7, username: "GH***TT", amount: "44,927,396.36", isTop3: false },
-    { rank: 8, username: "Mem***5XB", amount: "43,732,264.80", isTop3: false },
-    {
-      rank: 9,
-      username: "DA***S",
-      amount: "32,751,600.00",
-      isTop3: false,
-      emojis: "⚡💀",
-    },
-    { rank: 10, username: "Mem***P2K", amount: "26,403,945.96", isTop3: false },
   ];
 
   return (
@@ -732,8 +488,9 @@ export default function HomeScreen() {
         />
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           {isAuthenticated && (
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+            >
               <TouchableOpacity>
                 <Image
                   source={require("@/assets/update.png")}
@@ -855,12 +612,8 @@ export default function HomeScreen() {
             {carouselImages.map((image, index) => (
               <TouchableOpacity
                 key={index}
-              <TouchableOpacity
-                key={index}
                 style={[styles.mainCarouselCard, { width: carouselWidth }]}
               >
-                <Image
-                  source={image}
                 <Image
                   source={image}
                   style={styles.mainCarouselImage}
@@ -873,12 +626,7 @@ export default function HomeScreen() {
             {carouselImages.map((_, index) => (
               <View
                 key={index}
-              <View
-                key={index}
                 style={[
-                  styles.indicator,
-                  index === currentSlide && styles.indicatorActive,
-                ]}
                   styles.indicator,
                   index === currentSlide && styles.indicatorActive,
                 ]}
@@ -980,73 +728,68 @@ export default function HomeScreen() {
             </ThemedText>
           </LinearGradient>
         </LinearGradient>
-        </LinearGradient>
 
         {/* Wallet Balance Section */}
-        {isAuthenticated && <View style={styles.walletSection}>
-          <View style={[styles.walletBalance, { width: "52%" }]}>
-            <View style={styles.walletHeader}>
-              <Image
-                source={require("@/assets/coin.png")}
-              <Image
-                source={require("@/assets/coin.png")}
-                style={styles.coinImage}
-                contentFit="contain"
-              />
-              <ThemedText style={styles.walletLabel}>Wallet balance</ThemedText>
+        {isAuthenticated && (
+          <View style={styles.walletSection}>
+            <View style={[styles.walletBalance, { width: "52%" }]}>
+              <View style={styles.walletHeader}>
+                <Image
+                  source={require("@/assets/coin.png")}
+                  style={styles.coinImage}
+                  contentFit="contain"
+                />
+                <ThemedText style={styles.walletLabel}>
+                  Wallet balance
+                </ThemedText>
+              </View>
+              <View style={styles.balanceRow}>
+                <ThemedText style={styles.balanceAmount}>
+                  {formatBalance(walletBalance)}
+                </ThemedText>
+                <TouchableOpacity onPress={refreshWallet}>
+                  <Feather name="refresh-cw" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.balanceRow}>
-              <ThemedText style={styles.balanceAmount}>
-                {formatBalance(walletBalance)}
-              </ThemedText>
-              <TouchableOpacity onPress={refreshWallet}>
-                <Feather name="refresh-cw" size={20} color="#fff" />
+            <View style={[styles.walletButtons, { width: "48%" }]}>
+              <TouchableOpacity style={styles.walletButton}>
+                <Image
+                  source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
+                  style={styles.walletButtonBackground}
+                  contentFit="cover"
+                />
+                <View style={styles.walletButtonContent}>
+                  <Ionicons name="arrow-up" size={17} color="#fff" />
+                  <ThemedText style={styles.walletButtonText} numberOfLines={1}>
+                    Withdraw
+                  </ThemedText>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.walletButton}
+                onPress={() => openDepositModal()}
+              >
+                <Image
+                  source={require("@/assets/91-recharge_btn-ff2482b8.svg")}
+                  style={styles.walletButtonBackground}
+                  contentFit="cover"
+                />
+                <View style={styles.walletButtonContent}>
+                  <Ionicons name="arrow-down" size={17} color="#fff" />
+                  <ThemedText style={styles.walletButtonText} numberOfLines={1}>
+                    Deposit
+                  </ThemedText>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
-          <View style={[styles.walletButtons, { width: "48%" }]}>
-            <TouchableOpacity style={styles.walletButton}>
-              <Image
-                source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
-              <Image
-                source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
-                style={styles.walletButtonBackground}
-                contentFit="cover"
-              />
-              <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-up" size={17} color="#fff" />
-                <ThemedText style={styles.walletButtonText} numberOfLines={1}>
-                  Withdraw
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.walletButton}
-              onPress={() => openDepositModal()}
-            >
-              <Image
-                source={require("@/assets/91-recharge_btn-ff2482b8.svg")}
-            <TouchableOpacity
-              style={styles.walletButton}
-              onPress={() => openDepositModal()}
-            >
-              <Image
-                source={require("@/assets/91-recharge_btn-ff2482b8.svg")}
-                style={styles.walletButtonBackground}
-                contentFit="cover"
-              />
-              <View style={styles.walletButtonContent}>
-                <Ionicons name="arrow-down" size={17} color="#fff" />
-                <ThemedText style={styles.walletButtonText} numberOfLines={1}>
-                  Deposit
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>}
+        )}
 
         {/* Game Category Grid */}
-        <View style={[styles.gameGrid,{marginTop: !isAuthenticated ? hp(2) : 0}]}>
+        <View
+          style={[styles.gameGrid, { marginTop: !isAuthenticated ? hp(2) : 0 }]}
+        >
           {gameCategories.map((category, index) => {
             const isActive = selectedCategory === category.name;
             return (
@@ -1055,15 +798,9 @@ export default function HomeScreen() {
                 style={styles.gameCard}
                 onPress={() => setSelectedCategory(category.name)}
                 activeOpacity={0.8}
-                activeOpacity={0.8}
               >
                 <View style={styles.gameCardBackgroundContainer}>
                   <Image
-                    source={
-                      isActive
-                        ? category.backgroundImage
-                        : category.inactiveBackgroundImage
-                    }
                     source={
                       isActive
                         ? category.backgroundImage
@@ -1087,17 +824,9 @@ export default function HomeScreen() {
                 >
                   {category.name}
                 </ThemedText>
-                <ThemedText
-                  style={[styles.gameName, isActive && styles.gameNameActive]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {category.name}
-                </ThemedText>
               </TouchableOpacity>
             );
           })}
-        </View>
         </View>
 
         {/* Dynamic Category Section */}
@@ -1106,23 +835,8 @@ export default function HomeScreen() {
             const category = gameCategories.find(
               (c) => c.name === selectedCategory,
             );
-            const category = gameCategories.find(
-              (c) => c.name === selectedCategory,
-            );
             return (
               <>
-                <View style={styles.lotteryHeader}>
-                  {category?.icon && (
-                    <Image
-                      source={category.icon}
-                      style={styles.lotteryIcon}
-                      contentFit="contain"
-                    />
-                  )}
-                  <ThemedText style={styles.lotteryTitle}>
-                    {selectedCategory}
-                  </ThemedText>
-                </View>
                 <View style={styles.lotteryHeader}>
                   {category?.icon && (
                     <Image
@@ -1195,20 +909,14 @@ export default function HomeScreen() {
           <View style={styles.lotteryHeader}>
             <Image
               source={require("@/assets/icon_win-91513609.svg")}
-            <Image
-              source={require("@/assets/icon_win-91513609.svg")}
               style={styles.lotteryIcon}
               contentFit="contain"
             />
             <ThemedText style={styles.lotteryTitle}>
               Winning information
             </ThemedText>
-            <ThemedText style={styles.lotteryTitle}>
-              Winning information
-            </ThemedText>
           </View>
           <LinearGradient
-            colors={["#072766", "#000b2e"]}
             colors={["#072766", "#000b2e"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -1260,43 +968,8 @@ export default function HomeScreen() {
                     </View>
                   </View>
                 ))}
-                  <View key={index} style={styles.winnerItem}>
-                    <View style={styles.winnerLeft}>
-                      <View style={styles.winnerIcon}>
-                        <Image
-                          source={winner.vendor}
-                          style={styles.winnerIconImage}
-                          contentFit="contain"
-                        />
-                      </View>
-                    </View>
-                    <View style={styles.winnerIdContainer}>
-                      <View style={styles.winnerAmountContainer}>
-                        <View style={styles.winnerAvatar}>
-                          <Image
-                            source={winner.avatar}
-                            style={styles.winnerIconImage}
-                            contentFit="contain"
-                          />
-                        </View>
-                        <ThemedText style={styles.winnerId}>
-                          {winner.id}
-                        </ThemedText>
-                      </View>
-                      <View style={styles.winnerRight}>
-                        <ThemedText style={styles.winnerLabel}>
-                          Winning amount
-                        </ThemedText>
-                        <ThemedText style={styles.winnerAmount}>
-                          {winner.amount}
-                        </ThemedText>
-                      </View>
-                    </View>
-                  </View>
-                ))}
               </ScrollView>
               <LinearGradient
-                colors={["#072766", "transparent"]}
                 colors={["#072766", "transparent"]}
                 style={styles.winnersFadeTop}
                 pointerEvents="none"
@@ -1310,103 +983,22 @@ export default function HomeScreen() {
           <View style={styles.lotteryHeader}>
             <Image
               source={require("@/assets/icon_rank-432901c9.svg")}
-            <Image
-              source={require("@/assets/icon_rank-432901c9.svg")}
               style={styles.lotteryIcon}
               contentFit="contain"
             />
             <ThemedText style={styles.lotteryTitle}>
               Today Earning Chart
             </ThemedText>
-            <ThemedText style={styles.lotteryTitle}>
-              Today Earning Chart
-            </ThemedText>
           </View>
           <LinearGradient
-            colors={["#212d61", "#000b2e"]}
             colors={["#212d61", "#000b2e"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.winnersList}
           >
-            style={styles.winnersList}
-          >
             {/* Top Three */}
             <View style={styles.topThree}>
               {/* Rank 2 */}
-              <View style={[styles.topThreeCardContent, styles.silverCard]}>
-                <Image
-                  source={require("@/assets/gradient22.png")}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  contentFit="cover"
-                />
-                <MaskedView
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "50%",
-                  }}
-                  maskElement={
-                    <LinearGradient
-                      colors={["transparent", "black"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={{ flex: 1 }}
-                    />
-                  }
-                >
-                  <BlurView
-                    intensity={20}
-                    tint="dark"
-                    style={{
-                      flex: 1,
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </MaskedView>
-                <View style={[styles.topThreeAvatar]}>
-                  <Image
-                    source={require("@/assets/1-a6662edb.webp")}
-                    style={[
-                      styles.topThreeAvatarImage,
-                      { backgroundColor: "#C0C0C0" },
-                    ]}
-                    contentFit="cover"
-                  />
-                  <Image
-                    source={require("@/assets/crown2-c8aced52.webp")}
-                    style={[
-                      styles.crownIcon,
-                      { width: 44, height: 44, top: -22, left: -12 },
-                    ]}
-                    contentFit="contain"
-                  />
-                </View>
-                <ThemedText style={[styles.topThreeRank, { color: "#C7D6F6" }]}>
-                  2
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeUsername, { color: "#C7D6F6" }]}
-                >
-                  {leaderboard[1].username}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeAmount, { color: "#C7D6F6" }]}
-                >
-                  {leaderboard[1].amount}
-                </ThemedText>
-              </View>
               <View style={[styles.topThreeCardContent, styles.silverCard]}>
                 <Image
                   source={require("@/assets/gradient22.png")}
@@ -1560,159 +1152,8 @@ export default function HomeScreen() {
                   {leaderboard[0].amount}
                 </ThemedText>
               </View>
-              <View style={[styles.topThreeCardContent, styles.goldCard]}>
-                <Image
-                  source={require("@/assets/gradient11.png")}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  contentFit="cover"
-                />
-                <MaskedView
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "50%",
-                  }}
-                  maskElement={
-                    <LinearGradient
-                      colors={["transparent", "black"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={{ flex: 1 }}
-                    />
-                  }
-                >
-                  <BlurView
-                    intensity={20}
-                    tint="dark"
-                    style={{
-                      flex: 1,
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </MaskedView>
-                <View style={styles.topThreeAvatar}>
-                  <Image
-                    source={require("@/assets/1-a6662edb.webp")}
-                    style={[
-                      styles.topThreeAvatarImage,
-                      { backgroundColor: "rgba(0, 0, 0, 0.2)" },
-                    ]}
-                    contentFit="cover"
-                  />
-                  <Image
-                    source={require("@/assets/crown1-3912fd85.webp")}
-                    style={[
-                      styles.crownIcon,
-                      { width: 44, height: 44, top: -22, left: -12 },
-                    ]}
-                    contentFit="contain"
-                  />
-                </View>
-                <ThemedText
-                  style={[
-                    styles.topThreeRank,
-                    { color: "#E0BB43", marginTop: 20 },
-                  ]}
-                >
-                  1
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeUsername, { color: "#E0BB43" }]}
-                >
-                  {leaderboard[0].username}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeAmount, { color: "#E0BB43" }]}
-                >
-                  {leaderboard[0].amount}
-                </ThemedText>
-              </View>
 
               {/* Rank 3 */}
-              <View style={[styles.topThreeCardContent, styles.bronzeCard]}>
-                <Image
-                  source={require("@/assets/gradient33.png")}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                  contentFit="cover"
-                />
-                <MaskedView
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "50%",
-                  }}
-                  maskElement={
-                    <LinearGradient
-                      colors={["transparent", "black"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 0, y: 1 }}
-                      style={{ flex: 1 }}
-                    />
-                  }
-                >
-                  <BlurView
-                    intensity={20}
-                    tint="dark"
-                    style={{
-                      flex: 1,
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </MaskedView>
-                <View style={styles.topThreeAvatar}>
-                  <Image
-                    source={require("@/assets/1-a6662edb.webp")}
-                    style={[
-                      styles.topThreeAvatarImage,
-                      { backgroundColor: "#FF9051" },
-                    ]}
-                    contentFit="cover"
-                  />
-                  <Image
-                    source={require("@/assets/crown3-2ca02146.webp")}
-                    style={[
-                      styles.crownIcon,
-                      { width: 44, height: 44, top: -22, left: -12 },
-                    ]}
-                    contentFit="contain"
-                  />
-                </View>
-                <ThemedText style={[styles.topThreeRank, { color: "#FE8423" }]}>
-                  3
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeUsername, { color: "#FE8423" }]}
-                >
-                  {leaderboard[2].username}
-                </ThemedText>
-                <ThemedText
-                  style={[styles.topThreeAmount, { color: "#FE8423" }]}
-                >
-                  {leaderboard[2].amount}
-                </ThemedText>
-              </View>
               <View style={[styles.topThreeCardContent, styles.bronzeCard]}>
                 <Image
                   source={require("@/assets/gradient33.png")}
@@ -1795,12 +1236,7 @@ export default function HomeScreen() {
                   <ThemedText style={styles.leaderboardRank}>
                     {entry.rank}
                   </ThemedText>
-                  <ThemedText style={styles.leaderboardRank}>
-                    {entry.rank}
-                  </ThemedText>
                   <View style={styles.leaderboardAvatar}>
-                    <Image
-                      source={require("@/assets/6-7c7f5203.webp")}
                     <Image
                       source={require("@/assets/6-7c7f5203.webp")}
                       style={{ width: 40, height: 40, borderRadius: 20 }}
@@ -1811,21 +1247,12 @@ export default function HomeScreen() {
                     <ThemedText style={styles.leaderboardUsername}>
                       {entry.username}
                     </ThemedText>
-                    <ThemedText style={styles.leaderboardUsername}>
-                      {entry.username}
-                    </ThemedText>
                     {entry.emojis && (
-                      <ThemedText style={styles.leaderboardEmojis}>
-                        {entry.emojis}
-                      </ThemedText>
                       <ThemedText style={styles.leaderboardEmojis}>
                         {entry.emojis}
                       </ThemedText>
                     )}
                   </View>
-                  <ThemedText style={styles.leaderboardAmount}>
-                    {entry.amount}
-                  </ThemedText>
                   <ThemedText style={styles.leaderboardAmount}>
                     {entry.amount}
                   </ThemedText>
@@ -1838,8 +1265,6 @@ export default function HomeScreen() {
         {/* Information Section */}
         <View style={styles.infoSection}>
           <View style={styles.infoHeader}>
-            <Image
-              source={require("@/assets/logo-e926b199.png")}
             <Image
               source={require("@/assets/logo-e926b199.png")}
               style={styles.infoLogo}
@@ -1920,44 +1345,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
-      {/* Game Error Modal */}
-      <Modal
-        visible={showGameErrorModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowGameErrorModal(false)}
-      >
-        <TouchableOpacity
-          style={styles.gameErrorOverlay}
-          activeOpacity={1}
-          onPress={() => setShowGameErrorModal(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
-            style={styles.gameErrorPopup}
-          >
-            <View style={styles.gameErrorIconRow}>
-              <View style={styles.gameErrorRedCircle}>
-                <Ionicons name="alert-circle" size={20} color="#fff" />
-              </View>
-              <View style={styles.gameErrorYellowTriangle}>
-                <Ionicons name="warning" size={32} color="#000" />
-              </View>
-            </View>
-            <ThemedText style={styles.gameErrorTitle}>Game Error</ThemedText>
-            <ThemedText style={styles.gameErrorMessage}>
-              The Hack Only supports Lottery Games.
-            </ThemedText>
-            <TouchableOpacity
-              style={styles.gameErrorButton}
-              onPress={() => setShowGameErrorModal(false)}
-            >
-              <ThemedText style={styles.gameErrorButtonText}>OK</ThemedText>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
     </ThemedView>
   );
 }
@@ -1968,7 +1355,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#05012B",
   },
   scrollView: {
-    position: "relative",
     position: "relative",
     flex: 1,
   },
@@ -2102,14 +1488,9 @@ const styles = StyleSheet.create({
   },
   carouselContent: {
     alignItems: "center",
-    alignItems: "center",
   },
   mainCarouselCard: {
     borderRadius: 16,
-    overflow: "hidden",
-    height: 160,
-    position: "relative",
-    marginRight: 0,
     overflow: "hidden",
     height: 160,
     position: "relative",
@@ -2197,8 +1578,6 @@ const styles = StyleSheet.create({
   carouselIndicators: {
     flexDirection: "row",
     justifyContent: "center",
-    flexDirection: "row",
-    justifyContent: "center",
     gap: 14,
     marginTop: 0,
   },
@@ -2218,11 +1597,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 12,
     paddingVertical: 1,
-    paddingVertical: 1,
     marginHorizontal: 16,
     borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#1F4293",
     borderWidth: 1,
     borderColor: "#1F4293",
     marginBottom: 16,
@@ -2231,12 +1607,10 @@ const styles = StyleSheet.create({
   alertText: {
     flex: 1,
     color: "#fff",
-    color: "#fff",
     fontSize: 13,
     lineHeight: 17,
   },
   detailButtonContainer: {
-    backgroundColor: "#14B8A6",
     backgroundColor: "#14B8A6",
     paddingVertical: 2,
     paddingHorizontal: 28,
@@ -2244,14 +1618,10 @@ const styles = StyleSheet.create({
   },
   detailButton: {
     color: "#05012B",
-    color: "#05012B",
     fontSize: 14,
-    fontWeight: "400",
     fontWeight: "400",
   },
   walletSection: {
-    width: "100%",
-    flexDirection: "row",
     width: "100%",
     flexDirection: "row",
     paddingHorizontal: 16,
@@ -2267,12 +1637,10 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  },
   yellowDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#FBBF24",
     backgroundColor: "#FBBF24",
   },
   coinImage: {
@@ -2280,7 +1648,6 @@ const styles = StyleSheet.create({
     height: 20,
   },
   walletLabel: {
-    color: "#92A8E3",
     color: "#92A8E3",
     fontSize: 13,
   },
@@ -2291,9 +1658,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     color: "#fff",
-    color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
     fontWeight: "bold",
   },
   walletButtons: {
@@ -2311,13 +1676,10 @@ const styles = StyleSheet.create({
   },
   walletButtonBackground: {
     position: "absolute",
-    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    width: "100%",
-    height: "100%",
     width: "100%",
     height: "100%",
   },
@@ -2350,16 +1712,13 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingHorizontal: 16,
     gap: 12,
-    marginBottom: 24
+    marginBottom: 24,
   },
   gameCard: {
     width: "22%",
     alignItems: "center",
-    width: "22%",
-    alignItems: "center",
     borderRadius: 12,
     gap: 8,
-    position: "relative",
     position: "relative",
     marginBottom: 5,
   },
@@ -2368,12 +1727,8 @@ const styles = StyleSheet.create({
     position: "relative",
     width: "100%",
     height: 75,
-    position: "relative",
-    width: "100%",
-    height: 75,
   },
   gameCardBackground: {
-    position: "absolute",
     position: "absolute",
     top: 0,
     left: 0,
@@ -2381,9 +1736,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   gameIconContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
@@ -2402,13 +1754,10 @@ const styles = StyleSheet.create({
   gameName: {
     marginTop: -10,
     color: "#6F80A4",
-    color: "#6F80A4",
     fontSize: 14,
-    textAlign: "center",
     textAlign: "center",
   },
   gameNameActive: {
-    color: "#fff",
     color: "#fff",
   },
   categoryPlaceholder: {
@@ -2416,13 +1765,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
   },
   categoryPlaceholderText: {
-    color: "#6F80A4",
     color: "#6F80A4",
     fontSize: 16,
   },
@@ -2462,10 +1807,8 @@ const styles = StyleSheet.create({
   },
   categoryGameCardColumn: {
     flexDirection: "column",
-    flexDirection: "column",
   },
   hotSlotsImageContainer: {
-    width: "100%",
     width: "100%",
     height: 100,
   },
@@ -2478,26 +1821,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#14B8A6",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#14B8A6",
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginTop: 3,
   },
   rtpLabel: {
     color: "#fff",
-    color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
     fontWeight: "bold",
   },
   rtpValue: {
     color: "#fff",
-    color: "#fff",
     fontSize: 14,
-    fontWeight: "bold",
     fontWeight: "bold",
   },
   casinoSection: {
@@ -2523,7 +1858,6 @@ const styles = StyleSheet.create({
   },
   casinoGamesContainer: {
     paddingHorizontal: 16,
-    gap: 12,
     gap: 12,
   },
   casinoGameCard: {
@@ -2569,14 +1903,11 @@ const styles = StyleSheet.create({
   winnersList: {
     borderRadius: 12,
     overflow: "hidden",
-    overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#224BA2",
     borderColor: "#224BA2",
     paddingHorizontal: 1,
   },
   winnersScrollWrapper: {
-    position: "relative",
     position: "relative",
     paddingTop: 20,
   },
@@ -2589,18 +1920,13 @@ const styles = StyleSheet.create({
   },
   winnersFadeTop: {
     position: "absolute",
-    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     height: 40,
     pointerEvents: "none",
-    pointerEvents: "none",
   },
   winnerItem: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -2613,15 +1939,10 @@ const styles = StyleSheet.create({
   winnerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    flexDirection: "row",
-    alignItems: "center",
     gap: 12,
   },
   winnerIdContainer: {},
-  winnerIdContainer: {},
   winnerAmountContainer: {
-    flexDirection: "row",
-    alignItems: "center",
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
@@ -2632,13 +1953,8 @@ const styles = StyleSheet.create({
     height: 62,
     alignItems: "center",
     justifyContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
   },
   winnerIconImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 16,
     width: "100%",
     height: "100%",
     borderRadius: 16,
@@ -2654,23 +1970,19 @@ const styles = StyleSheet.create({
   winnerId: {
     fontSize: 15,
     color: "#fff",
-    color: "#fff",
   },
   winnerRight: {
     flex: 1,
-    flexDirection: "row",
     flexDirection: "row",
     gap: 6,
   },
   winnerLabel: {
     fontSize: 15,
     color: "#9BA1A6",
-    color: "#9BA1A6",
     marginBottom: 4,
   },
   winnerAmount: {
     fontSize: 15,
-    color: "#00ecbe",
     color: "#00ecbe",
   },
   leaderboardSection: {
@@ -2681,16 +1993,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
-    fontWeight: "bold",
-    color: "#fff",
     marginBottom: 20,
     textAlign: "center",
   },
   topThree: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end",
     width: "100%",
     flexDirection: "row",
     justifyContent: "center",
@@ -2701,35 +2007,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     overflow: "hidden",
-    alignItems: "center",
-    overflow: "hidden",
     gap: 8,
     maxWidth: 120,
   },
   topThreeCardContent: {
     position: "relative",
-    position: "relative",
     padding: 0,
-    alignItems: "center",
-    justifyContent: "center",
     alignItems: "center",
     justifyContent: "center",
     gap: 0,
   },
   goldCard: {
     width: "40%",
-    width: "40%",
     height: 112,
     marginTop: 76,
   },
   silverCard: {
     width: "30%",
-    width: "30%",
     height: 82,
     marginTop: 26,
   },
   bronzeCard: {
-    width: "30%",
     width: "30%",
     marginTop: 26,
     height: 85,
@@ -2739,9 +2037,7 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     position: "absolute",
-    position: "absolute",
     top: -35,
-    left: "50%",
     left: "50%",
     marginLeft: -32,
     alignItems: "center",
@@ -2750,12 +2046,9 @@ const styles = StyleSheet.create({
   topThreeAvatarImage: {
     width: "95%",
     height: "95%",
-    width: "95%",
-    height: "95%",
     borderRadius: 32,
   },
   crownIcon: {
-    position: "absolute",
     position: "absolute",
     top: -22,
     left: -12,
@@ -2767,21 +2060,15 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     fontWeight: "bold",
     color: "#fff",
-    fontWeight: "bold",
-    color: "#fff",
   },
   topThreeUsername: {
     fontSize: 11,
     lineHeight: 10,
     color: "#fff",
     fontWeight: "500",
-    color: "#fff",
-    fontWeight: "500",
   },
   topThreeAmount: {
     fontSize: 10,
-    color: "#fff",
-    fontWeight: "500",
     color: "#fff",
     fontWeight: "500",
   },
@@ -2796,13 +2083,10 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 0.5,
     borderBottomColor: "#224BA2",
-    borderBottomColor: "#224BA2",
     gap: 12,
   },
   leaderboardRank: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#92A8E3",
     fontWeight: "bold",
     color: "#92A8E3",
     width: 30,
@@ -2832,8 +2116,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "medium",
     color: "#00ecbe",
-    fontWeight: "medium",
-    color: "#00ecbe",
   },
   infoSection: {
     paddingHorizontal: 16,
@@ -2858,15 +2140,10 @@ const styles = StyleSheet.create({
     borderColor: "#00ecbe",
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#00ecbe",
-    alignItems: "center",
-    justifyContent: "center",
     marginLeft: 70,
   },
   ageText: {
     fontSize: 14,
-    fontWeight: "bold",
-    color: "#00ecbe",
     fontWeight: "bold",
     color: "#00ecbe",
   },
@@ -2889,7 +2166,6 @@ const styles = StyleSheet.create({
     color: "#9BA1A6",
     lineHeight: 20,
     fontFamily: "",
-    fontFamily: "",
   },
   responsibleGambling: {
     fontSize: 14,
@@ -2902,7 +2178,6 @@ const styles = StyleSheet.create({
   },
   addToDesktopSection: {
     position: "absolute",
-    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -2913,19 +2188,12 @@ const styles = StyleSheet.create({
   addToDesktopButton: {
     borderRadius: 38,
     overflow: "hidden",
-    overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#224BA2",
-    width: "55%",
-    alignSelf: "center",
     borderColor: "#224BA2",
     width: "55%",
     alignSelf: "center",
   },
   addToDesktopContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -2941,14 +2209,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: "#fff",
-    fontWeight: "600",
-    color: "#fff",
   },
   gameErrorOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
@@ -2956,20 +2219,15 @@ const styles = StyleSheet.create({
   },
   gameErrorPopup: {
     backgroundColor: "#0f1635",
-    backgroundColor: "#0f1635",
     borderRadius: 16,
     padding: 24,
-    alignItems: "center",
-    width: "100%",
     alignItems: "center",
     width: "100%",
     maxWidth: 320,
     borderWidth: 2,
     borderColor: "#E91E63",
-    borderColor: "#E91E63",
   },
   gameErrorIconRow: {
-    alignItems: "center",
     alignItems: "center",
     marginBottom: 16,
     gap: 12,
@@ -2981,9 +2239,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#EF4444",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#EF4444",
-    alignItems: "center",
-    justifyContent: "center",
   },
   gameErrorYellowTriangle: {
     width: 48,
@@ -2992,14 +2247,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FBBF24",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FBBF24",
-    alignItems: "center",
-    justifyContent: "center",
   },
   gameErrorTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#EF4444",
     fontWeight: "bold",
     color: "#EF4444",
     marginBottom: 8,
@@ -3008,12 +2258,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     textAlign: "center",
-    color: "#fff",
-    textAlign: "center",
     marginBottom: 20,
   },
   gameErrorButton: {
-    backgroundColor: "#14B8A6",
     backgroundColor: "#14B8A6",
     paddingVertical: 12,
     paddingHorizontal: 32,
@@ -3021,9 +2268,7 @@ const styles = StyleSheet.create({
   },
   gameErrorButtonText: {
     color: "#05012B",
-    color: "#05012B",
     fontSize: 16,
-    fontWeight: "600",
     fontWeight: "600",
   },
 });

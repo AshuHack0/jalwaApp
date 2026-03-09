@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Image } from "expo-image";
+import { type Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ImageBackground,
@@ -15,7 +16,11 @@ export default function ActivityScreen() {
   const [totalBonus] = useState("₹0.00");
   const router = useRouter();
 
-  const activityCategories = [
+  const activityCategories: Array<{
+    name: string;
+    image: number;
+    route: Href;
+  }> = [
     {
       name: "Activity Award",
       image: require("@/assets/activityReward-66772619.webp"),
