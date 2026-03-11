@@ -42,19 +42,11 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Medium.ttf",
-            "./assets/fonts/Roboto-Bold.ttf",
-            "./assets/fonts/Roboto-Light.ttf"
+            "./assets/fonts/GillSans-Bold.ttf",
+            "./assets/fonts/GillSans-Heavy.ttf",
+            "./assets/fonts/GillSans-Medium.ttf",
+            "./assets/fonts/GillSans-Light.ttf",
+            "./assets/fonts/GillSans.ttf"
           ]
         }
       ]

@@ -179,7 +179,7 @@ export default function AccountScreen() {
 
         {/* Account Settings List */}
         <View style={styles.settingsSection}>
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity style={styles.settingItem}  onPress={() => router.push('/account/notification' as any)}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.notificationIcon]}>
                 <Image 
@@ -198,7 +198,7 @@ export default function AccountScreen() {
            <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/gifts' as any)}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.giftsIcon]}>
                 <Image 
@@ -212,7 +212,7 @@ export default function AccountScreen() {
             <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/game-stats' as any)}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.statsIcon]}>
                 <Image 
@@ -226,7 +226,7 @@ export default function AccountScreen() {
             <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem}>
+          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/language' as any)}>
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.languageIcon]}>
                 <Image 
@@ -248,7 +248,7 @@ export default function AccountScreen() {
         <View style={styles.serviceSection}>
           <ThemedText style={styles.sectionTitle}>Service center</ThemedText>
           <View style={styles.serviceGrid}>
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/settings' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/settings' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr5.png')} 
@@ -259,7 +259,7 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>Settings</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/feedback' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/feedback' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr6.png')} 
@@ -270,7 +270,7 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>Feedback</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/announcement' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/announcement' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr7.png')} 
@@ -281,7 +281,7 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>Announcement</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/customer-service' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/customer-service' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr10.png')} 
@@ -292,7 +292,7 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>Customer Service</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/beginners-guide' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/beginners-guide' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr9.png')} 
@@ -303,7 +303,7 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>Beginner's Guide</ThemedText>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/service-center/about-us' as any)}>
+            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/about-us' as any)}>
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image 
                   source={require('@/assets/eerrr8.png')} 

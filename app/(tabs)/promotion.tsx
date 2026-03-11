@@ -1,9 +1,10 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Clipboard from "expo-clipboard";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -22,20 +23,22 @@ export default function PromotionScreen() {
   };
 
   const agencyFeatures = [
-    { name: "Partner Reward", iconImage: require("@/assets/111.png") },
+    { name: "Partner Reward", iconImage: require("@/assets/111.png") ,url:"/promotion/partner-reward"},
     {
       name: "Copy invitation code",
       iconImage: require("@/assets/222.png"),
       hasCode: true,
+      url:"/promotion/agent-line"
     },
-    { name: "Subordinate data", iconImage: require("@/assets/333.png") },
-    { name: "Commission detail", iconImage: require("@/assets/4444.png") },
-    { name: "Invitation rules", iconImage: require("@/assets/555.png") },
+    { name: "Subordinate data", iconImage: require("@/assets/333.png") ,url:"/promotion/subordinate-data"},
+    { name: "Commission detail", iconImage: require("@/assets/4444.png") ,url:"/promotion/commission-detail"},
+    { name: "Invitation rules", iconImage: require("@/assets/555.png") ,url:"/promotion/invitation-rules"},
     {
       name: "Agent line customer service",
       iconImage: require("@/assets/666.png"),
+      url: "/promotion/agent-line"
     },
-    { name: "Rebate ratio", iconImage: require("@/assets/777.png") },
+    { name: "Rebate ratio", iconImage: require("@/assets/777.png") ,url:"/promotion/rebate-ratio"},
   ];
 
   return (
@@ -49,8 +52,9 @@ export default function PromotionScreen() {
         {/* Header */}
         <View style={styles.header}>
           <ThemedText style={styles.headerTitle}>Agency</ThemedText>
-          <View style={styles.headerRightCorner}>
+          <View style={styles.headerRightCorner} >
             <TouchableOpacity
+            onPress={() => router.push("/promotion/new-subordinate")}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Image
@@ -205,7 +209,7 @@ export default function PromotionScreen() {
         {/* Agency Features List */}
         <View style={styles.featuresSection}>
           {agencyFeatures.map((feature, index) => (
-            <TouchableOpacity key={index} style={styles.featureItem}>
+            <TouchableOpacity key={index} style={styles.featureItem} onPress={() => router.push(feature?.url as any)}>
               <View style={styles.featureLeft}>
                 <View style={styles.featureIconContainer}>
                   <Image
@@ -444,7 +448,7 @@ const styles = StyleSheet.create({
   },
   subordinateTitle: {
     fontSize: 14,
-    fontWeight: "600",
+    // fontWeight: "600",
     color: "#fff",
     lineHeight: 12,
   },
