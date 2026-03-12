@@ -1,16 +1,16 @@
-import { AuthProvider } from "@/contexts/AuthContext";
-import { DepositModalProvider } from "@/contexts/DepositModalContext";
 import { FirstDepositBonusModal } from "@/components/FirstDepositBonusModal";
 import { SplashScreen as AppSplash } from "@/components/SplashScreen";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { DepositModalProvider } from "@/contexts/DepositModalContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
