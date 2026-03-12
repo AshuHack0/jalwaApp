@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
-  Circle,
   Defs,
   LinearGradient,
   Path,
@@ -18,19 +17,6 @@ import Svg, {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-
-// ── Section Number Banner ─────────────────────────────────────────────────────
-function SectionBanner({ number }: { number: string }) {
-  return (
-    <View style={styles.bannerOuter}>
-      <View style={styles.bannerSideLeft} />
-      <View style={styles.bannerCenter}>
-        <Text style={styles.bannerText}>{number}</Text>
-      </View>
-      <View style={styles.bannerSideRight} />
-    </View>
-  );
-}
 
 // ── Section Number Banner ─────────────────────────────────────────────────────
 function SectionHeader({ number }: { number: string }) {
@@ -144,7 +130,8 @@ function RebateTable() {
           ]}
         >
           <View style={{ flex: 1.2, alignItems: "center" }}>
-            <CrownIcon count={row.crowns} />
+            {/* <CrownIcon count={row.crowns} /> */}
+            <LevelBadge level={row.crowns} />
           </View>
           <Text style={[styles.tableCellText, { flex: 1 }]}>
             {row.teamNumber}
@@ -161,51 +148,53 @@ function RebateTable() {
   );
 }
 
-function LevelBadge() {
+// function LevelBadge({ level }: { level: number }) {
+//   return (
+//     <Svg width={80} height={30} viewBox="0 0 180 70">
+//       {/* Crown Emoji */}
+//       <SvgText x="45" y="55" fontSize="52" textAnchor="middle">
+//         👑
+//       </SvgText>
+
+//       {/* Level Badge */}
+//       <Rect x="95" y="25" width="70" height="32" rx="8" fill="url(#gold)" />
+
+//       {/* Level Text */}
+//       <SvgText
+//         x="130"
+//         y="47"
+//         fontSize="20"
+//         fill="white"
+//         fontWeight="600"
+//         textAnchor="middle"
+//       >
+//         L{level}
+//       </SvgText>
+//     </Svg>
+//   );
+// }
+
+function LevelBadge({ level }: { level: number }) {
   return (
-    <Svg width={180} height={70} viewBox="0 0 180 70">
-      <Defs>
-        <LinearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-          <Stop offset="0%" stopColor="#FFD978" />
-          <Stop offset="100%" stopColor="#FF9F1A" />
-        </LinearGradient>
-      </Defs>
-
-      {/* Background */}
-      <Rect x="0" y="0" width="180" height="70" fill="#031A44" />
-
-      {/* Crown Base */}
-      <Rect x="20" y="48" width="60" height="6" rx="3" fill="url(#gold)" />
-
-      {/* Crown Shape */}
-      <Path
-        d="M20 48 
-           L30 25 
-           L50 40 
-           L70 25 
-           L80 48 
-           Z"
-        fill="url(#gold)"
-      />
-
-      {/* Crown Tips */}
-      <Circle cx="30" cy="25" r="4" fill="url(#gold)" />
-      <Circle cx="50" cy="18" r="4" fill="url(#gold)" />
-      <Circle cx="70" cy="25" r="4" fill="url(#gold)" />
-
+    <Svg width={80} height={30} viewBox="0 0 120 60">
       {/* Level Badge */}
-      <Rect x="90" y="25" width="70" height="32" rx="6" fill="url(#gold)" />
+      <Rect x="50" y="20" width="60" height="28" rx="8" fill="#F5A623" />
+
+      {/* Crown */}
+      <SvgText x="30" y="48" fontSize="40" textAnchor="middle">
+        👑
+      </SvgText>
 
       {/* Level Text */}
       <SvgText
-        x="125"
-        y="47"
+        x="80"
+        y="39"
         fontSize="18"
         fill="white"
-        fontWeight="bold"
+        fontWeight="600"
         textAnchor="middle"
       >
-        L1
+        L{level}
       </SvgText>
     </Svg>
   );

@@ -1,15 +1,16 @@
-import { ThemedView } from '@/components/themed-view';
-import { CustomHeader } from '@/components/ui/CustomHeader';
-import { router, Stack } from 'expo-router';
-import { useState } from 'react';
+import { ThemedView } from "@/components/themed-view";
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import { router, Stack } from "expo-router";
+import { useState } from "react";
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Dropdown ──────────────────────────────────────────────────────────────────
 function Dropdown({
@@ -30,7 +31,12 @@ function Dropdown({
         activeOpacity={0.8}
       >
         <Text style={styles.dropdownText}>{value}</Text>
-        <Text style={styles.dropdownArrow}>⌄</Text>
+        <TouchableOpacity activeOpacity={0.7}>
+          <Image
+            source={require("@/assets/Screenshot202603-09p230133-removebg-preview.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
       </TouchableOpacity>
 
       <Modal
@@ -81,15 +87,19 @@ function EmptyState() {
     <View style={styles.emptyWrapper}>
       <View style={styles.illustration}>
         {/* Hills */}
-        <View style={[styles.hill, { width: 90, height: 44, left: 8,  bottom: 0 }]} />
-        <View style={[styles.hill, { width: 65, height: 32, right: 16, bottom: 0 }]} />
+        <View
+          style={[styles.hill, { width: 90, height: 44, left: 8, bottom: 0 }]}
+        />
+        <View
+          style={[styles.hill, { width: 65, height: 32, right: 16, bottom: 0 }]}
+        />
 
         {/* Scroll / tablet */}
         <View style={styles.tablet}>
           <View style={styles.tabletRoll} />
           <View style={styles.tabletBody}>
             <View style={styles.tabletLine} />
-            <View style={[styles.tabletLine, { width: '55%' }]} />
+            <View style={[styles.tabletLine, { width: "55%" }]} />
             <View style={styles.tabletLine} />
           </View>
           <View style={styles.tabletRoll} />
@@ -100,7 +110,12 @@ function EmptyState() {
           <View style={styles.treeTop} />
           <View style={styles.treeTrunk} />
         </View>
-        <View style={[styles.treeWrap, { right: 22, bottom: 8, transform: [{ scale: 0.8 }] }]}>
+        <View
+          style={[
+            styles.treeWrap,
+            { right: 22, bottom: 8, transform: [{ scale: 0.8 }] },
+          ]}
+        >
           <View style={styles.treeTop} />
           <View style={styles.treeTrunk} />
         </View>
@@ -117,14 +132,14 @@ function EmptyState() {
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function CommissionDetailsScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedDate, setSelectedDate] = useState('2026-03-08');
+  const [selectedDate, setSelectedDate] = useState("2026-03-08");
 
   const DATE_OPTIONS = [
-    '2026-03-08',
-    '2026-03-07',
-    '2026-03-06',
-    '2026-03-05',
-    '2026-03-04',
+    "2026-03-08",
+    "2026-03-07",
+    "2026-03-06",
+    "2026-03-05",
+    "2026-03-04",
   ];
 
   return (
@@ -150,9 +165,9 @@ export default function CommissionDetailsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG      = '#060B2E';
-const CARD_BG = '#0A1540';
-const DIVIDER = '#162055';
+const BG = "#060B2E";
+const CARD_BG = "#0A1540";
+const DIVIDER = "#162055";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
@@ -163,29 +178,29 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   dropdown: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: CARD_BG,
-    borderRadius: 10,
+    borderRadius: 5,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 10,
   },
-  dropdownText:  { color: '#fff', fontSize: 14, flex: 1 },
-  dropdownArrow: { color: '#6A85B8', fontSize: 18, marginLeft: 6 },
+  dropdownText: { color: "#6A85B8", fontSize: 16, flex: 1 },
+  dropdownArrow: { color: "#6A85B8", fontSize: 18, marginLeft: 6 },
 
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropdownMenu: {
-    backgroundColor: '#0F1E55',
+    backgroundColor: "#0F1E55",
     borderRadius: 12,
     minWidth: 200,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   dropdownOption: {
     paddingHorizontal: 20,
@@ -193,78 +208,96 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: DIVIDER,
   },
-  dropdownOptionActive:     { backgroundColor: '#162A70' },
-  dropdownOptionText:       { color: '#6A85B8', fontSize: 14 },
-  dropdownOptionTextActive: { color: '#fff', fontWeight: '600' },
+  dropdownOptionActive: { backgroundColor: "#162A70" },
+  dropdownOptionText: { color: "#6A85B8", fontSize: 14 },
+  dropdownOptionTextActive: { color: "#fff", fontWeight: "600" },
 
   // Empty state
   emptyWrapper: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 16,
     marginBottom: 60,
   },
   illustration: {
     width: 170,
     height: 120,
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backIcon: {
+    width: 20,
+    height: 27,
+    resizeMode: "contain",
+    opacity: 0.5,
+    transform: [{ rotate: "-90deg" }],
   },
   hill: {
-    position: 'absolute',
-    backgroundColor: '#1A2A50',
+    position: "absolute",
+    backgroundColor: "#1A2A50",
     borderTopLeftRadius: 60,
     borderTopRightRadius: 60,
   },
-  tablet: { alignItems: 'center', zIndex: 2, marginBottom: 8 },
+  tablet: { alignItems: "center", zIndex: 2, marginBottom: 8 },
   tabletRoll: {
     width: 70,
     height: 14,
-    backgroundColor: '#2A3A62',
+    backgroundColor: "#2A3A62",
     borderRadius: 7,
   },
   tabletBody: {
     width: 70,
-    backgroundColor: '#1E2E52',
+    backgroundColor: "#1E2E52",
     paddingVertical: 10,
     paddingHorizontal: 10,
     gap: 6,
-    alignItems: 'center',
+    alignItems: "center",
   },
   tabletLine: {
-    width: '90%',
+    width: "90%",
     height: 3,
-    backgroundColor: '#2A3A62',
+    backgroundColor: "#2A3A62",
     borderRadius: 2,
   },
-  treeWrap: { position: 'absolute', alignItems: 'center', zIndex: 1 },
+  treeWrap: { position: "absolute", alignItems: "center", zIndex: 1 },
   treeTop: {
-    width: 0, height: 0,
-    borderLeftWidth: 11, borderRightWidth: 11, borderBottomWidth: 24,
-    borderLeftColor: 'transparent', borderRightColor: 'transparent',
-    borderBottomColor: '#1A2A50',
+    width: 0,
+    height: 0,
+    borderLeftWidth: 11,
+    borderRightWidth: 11,
+    borderBottomWidth: 24,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "#1A2A50",
   },
-  treeTrunk: { width: 5, height: 10, backgroundColor: '#1A2A50' },
+  treeTrunk: { width: 5, height: 10, backgroundColor: "#1A2A50" },
   quill: {
-    position: 'absolute',
-    top: 12, right: 34,
-    width: 3, height: 30,
-    backgroundColor: '#2A3A62',
+    position: "absolute",
+    top: 12,
+    right: 34,
+    width: 3,
+    height: 30,
+    backgroundColor: "#2A3A62",
     borderRadius: 2,
-    transform: [{ rotate: '-35deg' }],
+    transform: [{ rotate: "-35deg" }],
     zIndex: 3,
   },
   quillHead: {
-    position: 'absolute',
-    top: 8, right: 30,
-    width: 0, height: 0,
-    borderLeftWidth: 5, borderRightWidth: 5, borderBottomWidth: 10,
-    borderLeftColor: 'transparent', borderRightColor: 'transparent',
-    borderBottomColor: '#2A3A62',
-    transform: [{ rotate: '-35deg' }],
+    position: "absolute",
+    top: 8,
+    right: 30,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderBottomWidth: 10,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "#2A3A62",
+    transform: [{ rotate: "-35deg" }],
     zIndex: 3,
   },
-  noDataText: { color: '#4A6FA5', fontSize: 14 },
+  noDataText: { color: "#4A6FA5", fontSize: 14 },
 });
