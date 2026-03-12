@@ -24,22 +24,22 @@ export default function ActivityScreen() {
     {
       name: "Activity Award",
       image: require("@/assets/activityReward-66772619.webp"),
-      route: "/activity-award",
+      route: "/activity/activity-award",
     },
     {
       name: "Invitation bonus",
       image: require("@/assets/invitationBonus-aa7acbd3.webp"),
-      route: "/invitation-bonus",
+      route: "/activity/invitation-bonus",
     },
     {
       name: "Betting rebate",
       image: require("@/assets/BettingRebate-17d35455.webp"),
-      route: "/betting-rebate",
+      route: "/activity/betting-rebate",
     },
     {
       name: "Super Jackpot",
       image: require("@/assets/superJackpot-ecb648b4.webp"),
-      route: "/super-jackpot",
+      route: "/activity/super-jackpot",
     },
   ];
 
