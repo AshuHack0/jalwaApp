@@ -1,6 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router"; // 1. Router import kiya
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   Dimensions,
@@ -21,10 +21,23 @@ const bonusData = [
 ];
 
 export default function InvitationBanner() {
-  const router = useRouter(); // 2. Router instance
+  const router = useRouter();
 
   return (
     <View style={styles.outerContainer}>
+      {/* --- ADDED HEADER COMPONENT --- */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()} // Back functionality
+        >
+          <Ionicons name="chevron-back" size={28} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Invitation bonus</Text>
+        <View style={{ width: 40 }} /> {/* Spacer to center the title */}
+      </View>
+      {/* ------------------------------ */}
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -49,7 +62,6 @@ export default function InvitationBanner() {
         </ImageBackground>
 
         <View style={styles.navContainer}>
-          {/* 3. Invitation Reward Rules Redirect */}
           <TouchableOpacity
             style={styles.navItem}
             onPress={() => router.push("/invitation-reward-rules")}
@@ -63,7 +75,6 @@ export default function InvitationBanner() {
             <Text style={styles.navText}>Invitation reward rules</Text>
           </TouchableOpacity>
 
-          {/* 4. Invitation Record Redirect */}
           <TouchableOpacity
             style={styles.navItem}
             onPress={() => router.push("/invitation-record")}
@@ -133,13 +144,31 @@ export default function InvitationBanner() {
   );
 }
 
-// Styles remains the same as your previous code
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
     backgroundColor: "#05012B",
-    height: SCREEN_HEIGHT,
   },
+  // --- HEADER STYLES ---
+  header: {
+    height: 100, // Adjusted for status bar padding
+    backgroundColor: "#05012B",
+    flexDirection: "row",
+    alignItems: "flex-end", // Title aur icon ko bottom-align kiya
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingBottom: 15,
+  },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  backButton: {
+    padding: 5,
+  },
+  // ---------------------
   scrollView: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingBottom: 60 },
   banner: { height: 220, paddingHorizontal: 16, flexDirection: "row" },

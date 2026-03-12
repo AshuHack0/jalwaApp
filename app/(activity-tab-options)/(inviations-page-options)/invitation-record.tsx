@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 15,
     // Agar notch area cover karna hai toh paddingTop adjust karein
-    paddingTop: 20,
+    paddingTop: 60,
   },
   backBtn: {
     padding: 8,
