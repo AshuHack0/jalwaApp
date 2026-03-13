@@ -231,7 +231,10 @@ export default function SubordinateDataScreen() {
               keyboardType="number-pad"
             />
             <TouchableOpacity style={styles.searchBtn} activeOpacity={0.85}>
-              <Text style={styles.searchIcon}>🔍</Text>
+              <Image
+                source={require("../../assets/images/searchhhhhh.png")}
+                style={styles.searchIcon}
+              />
             </TouchableOpacity>
           </View>
 
@@ -297,7 +300,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: CARD_BG,
-    borderRadius: 18,
+    borderRadius: 5,
     paddingLeft: 16,
     paddingRight: 4,
     paddingVertical: 4,
