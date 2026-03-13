@@ -7,6 +7,7 @@ export type WinGoRound = {
   outcomeNumber?: number | null;
   outcomeBigSmall?: string | null;
   outcomeColor?: string | null;
+  predictedBigSmall?: "BIG" | "SMALL" | null;
   startsAt: string;
   endsAt: string;
   status: string;
