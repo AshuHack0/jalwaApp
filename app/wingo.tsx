@@ -6,6 +6,7 @@ import {
   Pressable,
   Alert,
   Modal,
+  Linking,
 } from "react-native";
 import {
   widthPercentageToDP as wpBase,
@@ -50,9 +51,10 @@ import {
   useWinGoHistory,
   useWinGoMyHistory,
 } from "@/services/api/hooks";
+import { API_BASE_URL } from "@/services/api";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 
-const SCALE = 0.80;
+const SCALE = 0.8;
 const wp = (p: number) => wpBase(p * SCALE);
 const hp = (p: number) => hpBase(p * SCALE);
 
@@ -68,7 +70,10 @@ const RS = {
 // Module-level guard to prevent double playback (e.g. from React Strict Mode)
 let lastCountdownSecondPlayed: number | null = null;
 
-function formatTimeRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 0): string {
+function formatTimeRemaining(
+  endsAt: string | Date | null,
+  serverTimeOffsetMs = 0,
+): string {
   if (!endsAt) return "00 : 00";
   const end = new Date(endsAt).getTime();
   const now = Date.now() + serverTimeOffsetMs;
@@ -79,7 +84,10 @@ function formatTimeRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 
   return `${String(mins).padStart(2, "0")} : ${String(secs).padStart(2, "0")}`;
 }
 
-function getSecondsRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 0): number {
+function getSecondsRemaining(
+  endsAt: string | Date | null,
+  serverTimeOffsetMs = 0,
+): number {
   if (!endsAt) return 0;
   const end = new Date(endsAt).getTime();
   const now = Date.now() + serverTimeOffsetMs;
@@ -89,7 +97,7 @@ function getSecondsRemaining(endsAt: string | Date | null, serverTimeOffsetMs = 
 function buildBetPayload(
   betSelection: string,
   amount: number,
-  period: string
+  period: string,
 ): PlaceWinGoBetPayload | null {
   const sel = betSelection.trim();
   if (sel === "Big") {
@@ -128,7 +136,7 @@ function AnimatedNumberBall({
     if (isHighlighted) {
       highlightScale.value = withSequence(
         withTiming(1.2, { duration: 80 }),
-        withSpring(1.1, { damping: 12, stiffness: 200 })
+        withSpring(1.1, { damping: 12, stiffness: 200 }),
       );
     } else {
       highlightScale.value = withTiming(1);
@@ -150,10 +158,7 @@ function AnimatedNumberBall({
       }}
     >
       <Animated.View style={[containerStyle, animatedStyle]}>
-        <Image
-          source={WINGO_BALL_IMAGES[number]}
-          style={imageStyle}
-        />
+        <Image source={WINGO_BALL_IMAGES[number]} style={imageStyle} />
       </Animated.View>
     </Pressable>
   );
@@ -161,7 +166,8 @@ function AnimatedNumberBall({
 
 export default function WinGoScreen() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, walletBalance, refreshWallet } = useAuth();
+  const { isAuthenticated, isLoading, walletBalance, refreshWallet } =
+    useAuth();
   const { openDepositModal } = useDepositModal();
 
   useEffect(() => {
@@ -185,20 +191,21 @@ export default function WinGoScreen() {
   const apiPath = WINGO_API_PATH_MAP[selectedGame.durationSeconds];
 
   const placeBetMutation = usePlaceWinGoBet();
-  const { data: currentRoundRaw, refetch: refetchCurrentRound } = useWinGoCurrentRound(apiPath);
+  const { data: currentRoundRaw, refetch: refetchCurrentRound } =
+    useWinGoCurrentRound(apiPath);
   const currentRoundData = currentRoundRaw ?? null;
   const { data: historyDataRaw, refetch: refetchHistory } = useWinGoHistory(
     apiPath,
     pageGameHistory,
     10,
-    { enabled: selectedTab === "Game history" || selectedTab === "Chart" }
+    { enabled: selectedTab === "Game history" || selectedTab === "Chart" },
   );
   const historyData = historyDataRaw ?? null;
   const { data: myHistoryData, refetch: refetchMyHistory } = useWinGoMyHistory(
     apiPath,
     pageMyHistory,
     10,
-    { enabled: selectedTab === "My history" }
+    { enabled: selectedTab === "My history" },
   );
   const [timeRemaining, setTimeRemaining] = useState("00 : 00");
   const [secondsRemaining, setSecondsRemaining] = useState(0);
@@ -210,13 +217,27 @@ export default function WinGoScreen() {
   const [showBetModal, setShowBetModal] = useState(false);
   const [betSelection, setBetSelection] = useState<string>("");
   const [randomPickingInProgress, setRandomPickingInProgress] = useState(false);
-  const [highlightedBallForPicking, setHighlightedBallForPicking] = useState<number | null>(null);
+  const [highlightedBallForPicking, setHighlightedBallForPicking] = useState<
+    number | null
+  >(null);
   const [selectedBalanceAmount, setSelectedBalanceAmount] = useState(1);
   const [betQuantity, setBetQuantity] = useState(1);
   const [selectedModalMultiplier, setSelectedModalMultiplier] = useState("X1");
   const [betModalAgreed, setBetModalAgreed] = useState(true);
   const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [telegramUrl, setTelegramUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/v1/telegram`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success && json.data?.url) {
+          setTelegramUrl(json.data.url);
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [winLossPopupVisible, setWinLossPopupVisible] = useState(false);
   const [settledBet, setSettledBet] = useState<MyHistoryBet | null>(null);
   const lastShownPopupPeriodRef = useRef<string | null>(null);
@@ -264,9 +285,15 @@ export default function WinGoScreen() {
 
   const refetchedForRoundEndRef = useRef<string | null>(null);
   const lastHistoryDataRef = useRef<typeof historyData>(null);
-  const di1Player = useAudioPlayer(require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"));
-  const di2Player = useAudioPlayer(require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"));
-  const minDepositPlayer = useAudioPlayer(require("@/assets/mininum 200 deposit.mp3"));
+  const di1Player = useAudioPlayer(
+    require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"),
+  );
+  const di2Player = useAudioPlayer(
+    require("@/assets/Wingo/sound/di2-ad9aa8fb.mp3"),
+  );
+  const minDepositPlayer = useAudioPlayer(
+    require("@/assets/mininum 200 deposit.mp3"),
+  );
 
   // Compute server time offset when current-round data arrives
   useEffect(() => {
@@ -328,7 +355,13 @@ export default function WinGoScreen() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentRoundData?.currentRound?.endsAt, refetchCurrentRound, refetchHistory, refetchMyHistory, refreshWallet]);
+  }, [
+    currentRoundData?.currentRound?.endsAt,
+    refetchCurrentRound,
+    refetchHistory,
+    refetchMyHistory,
+    refreshWallet,
+  ]);
 
   // Set audio mode for countdown sounds
   useEffect(() => {
@@ -479,18 +512,25 @@ export default function WinGoScreen() {
 
   // Helper: readable label for a bet's selection
   const getBetSelectLabel = (bet: MyHistoryBet): string => {
-    if (bet.betType === "NUMBER" && bet.choiceNumber != null) return String(bet.choiceNumber);
-    if (bet.betType === "COLOR" && bet.choiceColor) return bet.choiceColor.charAt(0) + bet.choiceColor.slice(1).toLowerCase();
-    if (bet.betType === "BIG_SMALL" && bet.choiceBigSmall) return bet.choiceBigSmall === "BIG" ? "Big" : "Small";
+    if (bet.betType === "NUMBER" && bet.choiceNumber != null)
+      return String(bet.choiceNumber);
+    if (bet.betType === "COLOR" && bet.choiceColor)
+      return bet.choiceColor.charAt(0) + bet.choiceColor.slice(1).toLowerCase();
+    if (bet.betType === "BIG_SMALL" && bet.choiceBigSmall)
+      return bet.choiceBigSmall === "BIG" ? "Big" : "Small";
     return "-";
   };
 
-  const getBetResultLabel = (bet: MyHistoryBet): { text: string; color: string } => {
+  const getBetResultLabel = (
+    bet: MyHistoryBet,
+  ): { text: string; color: string } => {
     if (bet.round?.status !== "settled" && bet.round?.status !== "closed") {
       return { text: "Pending", color: "#EAB308" };
     }
-    if (bet.isWin === true) return { text: `+₹${bet.payoutAmount.toFixed(2)}`, color: "#10B981" };
-    if (bet.isWin === false) return { text: `-₹${bet.amount.toFixed(2)}`, color: "#EF4444" };
+    if (bet.isWin === true)
+      return { text: `+₹${bet.payoutAmount.toFixed(2)}`, color: "#10B981" };
+    if (bet.isWin === false)
+      return { text: `-₹${bet.amount.toFixed(2)}`, color: "#EF4444" };
     return { text: "Pending", color: "#EAB308" };
   };
 
@@ -556,6 +596,110 @@ export default function WinGoScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ThemedView style={styles.innerContainer}>
+
+        <View style={{ height: "25%", padding: 12, backgroundColor: "#001E59" }}>
+          {/* Send Feedback button */}
+          <View style={{ marginTop: hp(2), marginBottom: hp(1.5) }}>
+            <Pressable
+              onPress={() => {
+                if (telegramUrl) {
+                  Linking.openURL(telegramUrl);
+                } else {
+                  Alert.alert("Telegram", "Telegram link is not available. Please try again later.");
+                }
+              }}
+              style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  borderRadius: 6,
+                  paddingVertical: hp(1.6),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#00A3FF",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: 4,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontSize: wp(4.2),
+                    fontWeight: "700",
+                    letterSpacing: 1.5,
+                  }}
+                >
+                  Send Feedback
+                </Text>
+              </View>
+            </Pressable>
+          </View>
+
+          {/* current assumed prediction */}
+          {(() => {
+            const pred = currentRoundData?.currentRound?.predictedBigSmall as string | null | undefined;
+            const isBig = pred === "BIG";
+            const bgColor = pred ? (isBig ? "rgb(255, 80, 80)" : "rgb(50, 120, 200)") : "rgb(80, 80, 80)";
+            const badgeBg = pred ? (isBig ? "rgb(125, 56, 50)" : "rgb(30, 70, 140)") : "rgb(50, 50, 50)";
+            const predLabel = pred ? (isBig ? "Big" : "Small") : "—";
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 10,
+                  borderRadius: 16,
+                  borderWidth: 3,
+                  borderColor: "#AABAFF",
+                  backgroundColor: bgColor,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>
+                    Prediction
+                  </Text>
+                  <Text style={{ color: "white", fontSize: 24 }}>{"  |  "}</Text>
+                  <Text style={{ color: "white", fontSize: 18 }}>{displayPeriod}</Text>
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginTop: 10 }}>
+                  <View
+                    style={{
+                      backgroundColor: badgeBg,
+                      paddingHorizontal: 40,
+                      paddingVertical: 8,
+                      borderRadius: 100,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontSize: 16, fontWeight: "700" }}>
+                      {predLabel}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.35)",
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      borderRadius: 100,
+                      minWidth: 90,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={{ color: "white", fontSize: 16, fontWeight: "700", letterSpacing: 1 }}>
+                      {timeRemaining}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })()}
+        </View>
+
         {/* Header */}
         <View
           style={{
@@ -573,7 +717,7 @@ export default function WinGoScreen() {
             onPress={() => router.back()}
             style={({ pressed }) => [
               { flex: 1, justifyContent: "center", height: "100%" },
-              { opacity: pressed ? 0.7 : 1 }
+              { opacity: pressed ? 0.7 : 1 },
             ]}
           >
             <Ionicons name="chevron-back" size={wp(6.4)} color="white" />
@@ -613,7 +757,10 @@ export default function WinGoScreen() {
 
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={{ paddingBottom: hp(2.5), paddingHorizontal: wp(4) }}
+          contentContainerStyle={{
+            paddingBottom: hp(2.5),
+            paddingHorizontal: wp(4),
+          }}
           showsVerticalScrollIndicator={false}
         >
           {/* Wallet Section */}
@@ -714,7 +861,7 @@ export default function WinGoScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                   },
-                  { opacity: pressed ? 0.7 : 1 }
+                  { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
                 <ThemedText
@@ -734,7 +881,7 @@ export default function WinGoScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                   },
-                  { opacity: pressed ? 0.7 : 1 }
+                  { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
                 <ThemedText
@@ -834,7 +981,11 @@ export default function WinGoScreen() {
               }}
             >
               <ThemedText
-                style={{ color: "#05012B", fontSize: wp(4.7), fontWeight: "400" }}
+                style={{
+                  color: "#05012B",
+                  fontSize: wp(4.7),
+                  fontWeight: "400",
+                }}
               >
                 Detail
               </ThemedText>
@@ -890,7 +1041,7 @@ export default function WinGoScreen() {
                       justifyContent: "center",
                       overflow: "hidden",
                     },
-                    { opacity: 1 }
+                    { opacity: 1 },
                   ]}
                   onPress={() => {
                     setSelectedMode(mode.id);
@@ -968,7 +1119,7 @@ export default function WinGoScreen() {
                     borderColor: "#05012B",
                     borderRadius: 50,
                   },
-                  { opacity: pressed ? 0.7 : 1 }
+                  { opacity: pressed ? 0.7 : 1 },
                 ]}
               >
                 <Image
@@ -1012,7 +1163,11 @@ export default function WinGoScreen() {
               </ThemedText>
 
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: wp(0.5) }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(0.5),
+                }}
               >
                 {timeRemaining
                   .replace(/\s/g, "")
@@ -1089,7 +1244,11 @@ export default function WinGoScreen() {
               </View>
 
               <ThemedText
-                style={{ fontSize: wp(4.7), fontWeight: "800", color: "#05012B" }}
+                style={{
+                  fontSize: wp(4.4),
+                  fontWeight: "800",
+                  color: "#05012B",
+                }}
               >
                 {displayPeriod}
               </ThemedText>
@@ -1103,7 +1262,7 @@ export default function WinGoScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.greenColorButton,
-                    { opacity: pressed ? 0.7 : 1 }
+                    { opacity: pressed ? 0.7 : 1 },
                   ]}
                   onPress={() => openBetModal("Green")}
                 >
@@ -1112,7 +1271,7 @@ export default function WinGoScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.violetColorButton,
-                    { opacity: pressed ? 0.7 : 1 }
+                    { opacity: pressed ? 0.7 : 1 },
                   ]}
                   onPress={() => openBetModal("Violet")}
                 >
@@ -1121,7 +1280,7 @@ export default function WinGoScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.redColorButton,
-                    { opacity: pressed ? 0.7 : 1 }
+                    { opacity: pressed ? 0.7 : 1 },
                   ]}
                   onPress={() => openBetModal("Red")}
                 >
@@ -1136,7 +1295,10 @@ export default function WinGoScreen() {
                     <AnimatedNumberBall
                       key={item}
                       number={item}
-                      onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
+                      onPress={() =>
+                        !randomPickingInProgress &&
+                        openBetModal(item.toString())
+                      }
                       containerStyle={styles.numberBall}
                       imageStyle={styles.numberBallImage}
                       isHighlighted={highlightedBallForPicking === item}
@@ -1148,7 +1310,10 @@ export default function WinGoScreen() {
                     <AnimatedNumberBall
                       key={item}
                       number={item}
-                      onPress={() => !randomPickingInProgress && openBetModal(item.toString())}
+                      onPress={() =>
+                        !randomPickingInProgress &&
+                        openBetModal(item.toString())
+                      }
                       containerStyle={styles.numberBall}
                       imageStyle={styles.numberBallImage}
                       isHighlighted={highlightedBallForPicking === item}
@@ -1168,12 +1333,17 @@ export default function WinGoScreen() {
                   onPress={() => {
                     if (randomPickingInProgress) return;
                     setRandomPickingInProgress(true);
-                    const finalBall = numbers[Math.floor(Math.random() * numbers.length)];
-                    const delays = [120, 130, 145, 165, 190, 220, 260, 310, 370];
+                    const finalBall =
+                      numbers[Math.floor(Math.random() * numbers.length)];
+                    const delays = [
+                      120, 130, 145, 165, 190, 220, 260, 310, 370,
+                    ];
                     let step = 0;
                     const runCycle = () => {
                       if (step < 9) {
-                        setHighlightedBallForPicking(numbers[Math.floor(Math.random() * numbers.length)]);
+                        setHighlightedBallForPicking(
+                          numbers[Math.floor(Math.random() * numbers.length)],
+                        );
                         step += 1;
                         setTimeout(runCycle, delays[step - 1]);
                       } else {
@@ -1198,8 +1368,8 @@ export default function WinGoScreen() {
                     style={({ pressed }) => [
                       styles.multiplierItemButton,
                       selectedMultiplier === mult &&
-                      styles.multiplierItemButtonActive,
-                      { opacity: pressed ? 0.7 : 1 }
+                        styles.multiplierItemButtonActive,
+                      { opacity: pressed ? 0.7 : 1 },
                     ]}
                     onPress={() => setSelectedMultiplier(mult)}
                   >
@@ -1207,7 +1377,7 @@ export default function WinGoScreen() {
                       style={[
                         styles.multiplierItemText,
                         selectedMultiplier === mult &&
-                        styles.multiplierItemTextActive,
+                          styles.multiplierItemTextActive,
                       ]}
                     >
                       {mult}
@@ -1219,9 +1389,7 @@ export default function WinGoScreen() {
               {/* Big/Small Toggle */}
               <View style={styles.sizeToggleSection}>
                 <Pressable
-                  style={({ pressed }) => [
-                    styles.bigSizeButton,
-                  ]}
+                  style={({ pressed }) => [styles.bigSizeButton]}
                   onPress={() => {
                     setSelectedSize("Big");
                     openBetModal("Big");
@@ -1230,9 +1398,7 @@ export default function WinGoScreen() {
                   <ThemedText style={styles.bigSizeButtonText}>Big</ThemedText>
                 </Pressable>
                 <Pressable
-                  style={({ pressed }) => [
-                    styles.smallSizeButton,
-                  ]}
+                  style={({ pressed }) => [styles.smallSizeButton]}
                   onPress={() => {
                     setSelectedSize("Small");
                     openBetModal("Small");
@@ -1259,7 +1425,11 @@ export default function WinGoScreen() {
 
           {/* History/Chart Tabs */}
           <View
-            style={{ flexDirection: "row", height: hp(5.9), marginVertical: hp(2) }}
+            style={{
+              flexDirection: "row",
+              height: hp(5.9),
+              marginVertical: hp(2),
+            }}
           >
             {WINGO_TABS.map((tab) => {
               const isSelected = selectedTab === tab;
@@ -1285,7 +1455,7 @@ export default function WinGoScreen() {
                       borderRadius: wp(2.1),
                       overflow: "hidden",
                     },
-                    { opacity: pressed ? 0.8 : 1 }
+                    { opacity: pressed ? 0.8 : 1 },
                   ]}
                   onPress={() => setSelectedTab(tab)}
                 >
@@ -1439,7 +1609,11 @@ export default function WinGoScreen() {
                   style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
+                  style={{
+                    fontSize: wp(4.3),
+                    fontWeight: "600",
+                    color: "black",
+                  }}
                 >
                   No data
                 </ThemedText>
@@ -1453,10 +1627,7 @@ export default function WinGoScreen() {
                 {/* SVG overlay for connecting lines - rendered behind content via position */}
                 <View style={styles.chartContentWrapper}>
                   <Svg
-                    style={[
-                      StyleSheet.absoluteFill,
-                      styles.chartSvgOverlay,
-                    ]}
+                    style={[StyleSheet.absoluteFill, styles.chartSvgOverlay]}
                     pointerEvents="none"
                   >
                     {gameHistory.slice(0, -1).map((_, idx) => {
@@ -1474,9 +1645,13 @@ export default function WinGoScreen() {
                       if (!layout1 || !layout2) return null;
                       const centerOffset = RS.chartCircleSize / 2;
                       const centerX1 =
-                        RS.chartPeriodWidth + centerOffset + curr.number * RS.chartNumSpacing;
+                        RS.chartPeriodWidth +
+                        centerOffset +
+                        curr.number * RS.chartNumSpacing;
                       const centerX2 =
-                        RS.chartPeriodWidth + centerOffset + next.number * RS.chartNumSpacing;
+                        RS.chartPeriodWidth +
+                        centerOffset +
+                        next.number * RS.chartNumSpacing;
                       const centerY1 = layout1.y + layout1.height / 2;
                       const centerY2 = layout2.y + layout2.height / 2;
                       return (
@@ -1500,7 +1675,10 @@ export default function WinGoScreen() {
                         onLayout={(e) => {
                           const { y, height } = e.nativeEvent.layout;
                           setChartRowLayouts((prev) => {
-                            if (prev[index]?.y === y && prev[index]?.height === height)
+                            if (
+                              prev[index]?.y === y &&
+                              prev[index]?.height === height
+                            )
                               return prev;
                             return { ...prev, [index]: { y, height } };
                           });
@@ -1514,11 +1692,13 @@ export default function WinGoScreen() {
                             const isHighlighted = item.number === n;
                             if (!isHighlighted) {
                               return (
-                                <View
-                                  key={n}
-                                  style={styles.chartNumberCircle}
-                                >
-                                  <Text style={[styles.chartNumberText, { color: "#fff" }]}>
+                                <View key={n} style={styles.chartNumberCircle}>
+                                  <Text
+                                    style={[
+                                      styles.chartNumberText,
+                                      { color: "#fff" },
+                                    ]}
+                                  >
                                     {n}
                                   </Text>
                                 </View>
@@ -1529,7 +1709,9 @@ export default function WinGoScreen() {
                               return (
                                 <LinearGradient
                                   key={n}
-                                  colors={[dots[0], dots[1]] as [string, string]}
+                                  colors={
+                                    [dots[0], dots[1]] as [string, string]
+                                  }
                                   start={{ x: 0, y: 1 }}
                                   end={{ x: 0, y: 0 }}
                                   style={[
@@ -1537,7 +1719,12 @@ export default function WinGoScreen() {
                                     styles.chartNumberCircleHighlighted,
                                   ]}
                                 >
-                                  <Text style={[styles.chartNumberText, { color: "#fff" }]}>
+                                  <Text
+                                    style={[
+                                      styles.chartNumberText,
+                                      { color: "#fff" },
+                                    ]}
+                                  >
                                     {n}
                                   </Text>
                                 </LinearGradient>
@@ -1552,7 +1739,12 @@ export default function WinGoScreen() {
                                   { backgroundColor: getResultColor(n) },
                                 ]}
                               >
-                                <Text style={[styles.chartNumberText, { color: "#fff" }]}>
+                                <Text
+                                  style={[
+                                    styles.chartNumberText,
+                                    { color: "#fff" },
+                                  ]}
+                                >
                                   {n}
                                 </Text>
                               </View>
@@ -1592,7 +1784,11 @@ export default function WinGoScreen() {
                   style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
+                  style={{
+                    fontSize: wp(4.3),
+                    fontWeight: "600",
+                    color: "black",
+                  }}
                 >
                   No data
                 </ThemedText>
@@ -1606,7 +1802,10 @@ export default function WinGoScreen() {
                   const result = getBetResultLabel(bet);
                   const selection = getBetSelectLabel(bet);
                   const outcomeNumber = bet.round?.outcomeNumber;
-                  const isPending = outcomeNumber == null || (bet.round?.status !== "settled" && bet.round?.status !== "closed");
+                  const isPending =
+                    outcomeNumber == null ||
+                    (bet.round?.status !== "settled" &&
+                      bet.round?.status !== "closed");
 
                   const formatDateTime = (dateStr: string) => {
                     const d = new Date(dateStr);
@@ -1624,7 +1823,8 @@ export default function WinGoScreen() {
                   const isExpanded = bet._id === expandedBetId;
                   const taxAmount = bet.amount * 0.02;
                   const afterTax = bet.amount - taxAmount;
-                  const orderNumber = `WG${new Date(bet.createdAt).toISOString().replace(/[-:T.Z]/g, "")}${bet._id.slice(-6)}`.toUpperCase();
+                  const orderNumber =
+                    `WG${new Date(bet.createdAt).toISOString().replace(/[-:T.Z]/g, "")}${bet._id.slice(-6)}`.toUpperCase();
 
                   const copyToClipboard = async () => {
                     await Clipboard.setStringAsync(orderNumber);
@@ -1634,10 +1834,12 @@ export default function WinGoScreen() {
                   return (
                     <Pressable
                       key={bet._id}
-                      onPress={() => setExpandedBetId(isExpanded ? null : bet._id)}
+                      onPress={() =>
+                        setExpandedBetId(isExpanded ? null : bet._id)
+                      }
                       style={({ pressed }) => [
                         styles.myHistoryCardContainer,
-                        { opacity: pressed ? 0.9 : 1 }
+                        { opacity: pressed ? 0.9 : 1 },
                       ]}
                     >
                       <View style={styles.myHistoryCard}>
@@ -1645,37 +1847,106 @@ export default function WinGoScreen() {
                           {(() => {
                             let colors: string[] = ["red"];
                             if (bet.choiceColor) {
-                              colors = [BET_SELECTION_MAP[bet.choiceColor.toLowerCase() as keyof typeof BET_SELECTION_MAP] || "red"];
-                            } else if (bet.choiceNumber !== null && bet.choiceNumber !== undefined) {
-                              colors = BET_SELECTION_NUMBER_MAP[bet.choiceNumber.toString() as keyof typeof BET_SELECTION_NUMBER_MAP] || ["red"];
+                              colors = [
+                                BET_SELECTION_MAP[
+                                  bet.choiceColor.toLowerCase() as keyof typeof BET_SELECTION_MAP
+                                ] || "red",
+                              ];
+                            } else if (
+                              bet.choiceNumber !== null &&
+                              bet.choiceNumber !== undefined
+                            ) {
+                              colors = BET_SELECTION_NUMBER_MAP[
+                                bet.choiceNumber.toString() as keyof typeof BET_SELECTION_NUMBER_MAP
+                              ] || ["red"];
                             } else if (bet.choiceBigSmall) {
-                              colors = [BET_SELECTION_MAP[bet.choiceBigSmall.toLowerCase() as keyof typeof BET_SELECTION_MAP] || "red"];
+                              colors = [
+                                BET_SELECTION_MAP[
+                                  bet.choiceBigSmall.toLowerCase() as keyof typeof BET_SELECTION_MAP
+                                ] || "red",
+                              ];
                             }
 
                             if (colors.length > 1) {
                               return (
-                                <View style={{ height: wp(13), width: wp(14), borderRadius: wp(2.5), overflow: "hidden", justifyContent: "center", alignItems: "center" }}>
-                                  <Svg height="100%" width="100%" viewBox="0 0 100 100" style={{ position: "absolute" }}>
-                                    <Rect x="0" y="0" width="100" height="100" fill={colors[0]} />
-                                    <Polygon points="0,100 100,100 100,0" fill={colors[1]} />
+                                <View
+                                  style={{
+                                    height: wp(13),
+                                    width: wp(14),
+                                    borderRadius: wp(2.5),
+                                    overflow: "hidden",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Svg
+                                    height="100%"
+                                    width="100%"
+                                    viewBox="0 0 100 100"
+                                    style={{ position: "absolute" }}
+                                  >
+                                    <Rect
+                                      x="0"
+                                      y="0"
+                                      width="100"
+                                      height="100"
+                                      fill={colors[0]}
+                                    />
+                                    <Polygon
+                                      points="0,100 100,100 100,0"
+                                      fill={colors[1]}
+                                    />
                                   </Svg>
-                                  <Text style={[styles.myHistoryNumberText, bet.betType === "BIG_SMALL" && { fontSize: wp(4) }]}>
+                                  <Text
+                                    style={[
+                                      styles.myHistoryNumberText,
+                                      bet.betType === "BIG_SMALL" && {
+                                        fontSize: wp(4),
+                                      },
+                                    ]}
+                                  >
                                     {bet.betType === "BIG_SMALL"
-                                      ? (bet.round?.outcomeBigSmall
-                                        ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase())
-                                        : "?")
+                                      ? bet.round?.outcomeBigSmall
+                                        ? bet.round.outcomeBigSmall
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                          bet.round.outcomeBigSmall
+                                            .slice(1)
+                                            .toLowerCase()
+                                        : "?"
                                       : outcomeNumber}
                                   </Text>
                                 </View>
                               );
                             }
                             return (
-                              <View style={{ height: wp(13), width: wp(14), borderRadius: wp(2), justifyContent: "center", alignItems: "center", backgroundColor: colors[0] }}>
-                                <Text style={[styles.myHistoryNumberText, bet.betType === "BIG_SMALL" && { fontSize: wp(4) }]}>
+                              <View
+                                style={{
+                                  height: wp(13),
+                                  width: wp(14),
+                                  borderRadius: wp(2),
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  backgroundColor: colors[0],
+                                }}
+                              >
+                                <Text
+                                  style={[
+                                    styles.myHistoryNumberText,
+                                    bet.betType === "BIG_SMALL" && {
+                                      fontSize: wp(4),
+                                    },
+                                  ]}
+                                >
                                   {bet.betType === "BIG_SMALL"
-                                    ? (bet.round?.outcomeBigSmall
-                                      ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase())
-                                      : "?")
+                                    ? bet.round?.outcomeBigSmall
+                                      ? bet.round.outcomeBigSmall
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                        bet.round.outcomeBigSmall
+                                          .slice(1)
+                                          .toLowerCase()
+                                      : "?"
                                     : outcomeNumber}
                                 </Text>
                               </View>
@@ -1684,139 +1955,319 @@ export default function WinGoScreen() {
                         </View>
 
                         <View style={styles.myHistoryMiddle}>
-                          <View style={{ flexDirection: "row", alignItems: "center", gap: wp(1) }}>
-                            <ThemedText style={{ fontSize: wp(5), fontWeight: "600", color: "#E3EFFF" }}>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                              gap: wp(1),
+                            }}
+                          >
+                            <ThemedText
+                              style={{
+                                fontSize: wp(5),
+                                fontWeight: "600",
+                                color: "#E3EFFF",
+                              }}
+                            >
                               {bet.round?.period ?? "-"}
                             </ThemedText>
-                            <Ionicons name={isExpanded ? "caret-up" : "caret-down"} size={wp(3)} color="#3a3a3aff" />
+                            <Ionicons
+                              name={isExpanded ? "caret-up" : "caret-down"}
+                              size={wp(3)}
+                              color="#3a3a3aff"
+                            />
                           </View>
-                          <ThemedText style={{ fontSize: wp(4), fontWeight: "600", color: "#929292" }}>
+                          <ThemedText
+                            style={{
+                              fontSize: wp(4),
+                              fontWeight: "600",
+                              color: "#929292",
+                            }}
+                          >
                             {formatDateTime(bet.createdAt)}
                           </ThemedText>
                         </View>
 
-                        {bet.isWin != null && <View style={styles.myHistoryRight}>
-                          <View style={[
-                            { height: wp(8.5), width: wp(24), borderRadius: wp(2), justifyContent: "center", alignItems: "center", borderWidth: wp(0.2) },
-                            { borderColor: result.color }
-                          ]}>
-                            <Text style={[
-                              { fontSize: wp(4), fontWeight: "400" },
-                              { color: result.color }
-                            ]}>
-                              {bet.isWin == null ? "Unpaid" : bet.isWin ? "Succeed" : "Failed"}
-                            </Text>
+                        {bet.isWin != null && (
+                          <View style={styles.myHistoryRight}>
+                            <View
+                              style={[
+                                {
+                                  height: wp(8.5),
+                                  width: wp(24),
+                                  borderRadius: wp(2),
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  borderWidth: wp(0.2),
+                                },
+                                { borderColor: result.color },
+                              ]}
+                            >
+                              <Text
+                                style={[
+                                  { fontSize: wp(4), fontWeight: "400" },
+                                  { color: result.color },
+                                ]}
+                              >
+                                {bet.isWin == null
+                                  ? "Unpaid"
+                                  : bet.isWin
+                                    ? "Succeed"
+                                    : "Failed"}
+                              </Text>
+                            </View>
+                            <ThemedText
+                              style={[
+                                { fontSize: wp(4), fontWeight: "400" },
+                                { color: result.color },
+                              ]}
+                            >
+                              {result.text.startsWith("+") ||
+                              result.text.startsWith("-")
+                                ? result.text
+                                : `₹${bet.amount.toFixed(2)}`}
+                            </ThemedText>
                           </View>
-                          <ThemedText style={[
-                            { fontSize: wp(4), fontWeight: "400" },
-                            { color: result.color }
-                          ]}>
-                            {result.text.startsWith("+") || result.text.startsWith("-") ? result.text : `₹${bet.amount.toFixed(2)}`}
-                          </ThemedText>
-                        </View>}
+                        )}
                       </View>
 
                       {isExpanded && (
                         <View style={styles.myHistoryDetails}>
-                          <ThemedText style={styles.detailsTitle}>Details</ThemedText>
+                          <ThemedText style={styles.detailsTitle}>
+                            Details
+                          </ThemedText>
 
                           <View style={styles.detailsContent}>
                             {/* Order number */}
-                            <View style={{ flex: 1, justifyContent: "flex-start", alignItems: "flex-start", backgroundColor: "#001C54", borderRadius: 4, padding: 2 }}>
-                              <ThemedText style={{ fontSize: wp(5), fontWeight: "400", color: "#E3EFFF" }}>Order number</ThemedText>
-                              <View style={{ flexDirection: "row", alignItems: "center", flex: 1, justifyContent: "flex-end" }}>
-                                <ThemedText style={{ fontSize: wp(5), fontWeight: "400", color: "#92A8E3" }} numberOfLines={1}>{orderNumber}</ThemedText>
+                            <View
+                              style={{
+                                flex: 1,
+                                justifyContent: "flex-start",
+                                alignItems: "flex-start",
+                                backgroundColor: "#001C54",
+                                borderRadius: 4,
+                                padding: 2,
+                              }}
+                            >
+                              <ThemedText
+                                style={{
+                                  fontSize: wp(5),
+                                  fontWeight: "400",
+                                  color: "#E3EFFF",
+                                }}
+                              >
+                                Order number
+                              </ThemedText>
+                              <View
+                                style={{
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  flex: 1,
+                                  justifyContent: "flex-end",
+                                }}
+                              >
+                                <ThemedText
+                                  style={{
+                                    fontSize: wp(5),
+                                    fontWeight: "400",
+                                    color: "#92A8E3",
+                                  }}
+                                  numberOfLines={1}
+                                >
+                                  {orderNumber}
+                                </ThemedText>
                                 <Pressable
                                   onPress={copyToClipboard}
-                                  style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+                                  style={({ pressed }) => ({
+                                    opacity: pressed ? 0.7 : 1,
+                                  })}
                                 >
-                                  <Ionicons name="copy-outline" size={wp(4)} color="#3b3b3bff" />
+                                  <Ionicons
+                                    name="copy-outline"
+                                    size={wp(4)}
+                                    color="#3b3b3bff"
+                                  />
                                 </Pressable>
                               </View>
                             </View>
 
                             <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Period</ThemedText>
-                              <ThemedText style={styles.detailsValue}>{bet.round?.period}</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Purchase amount</ThemedText>
-                              <ThemedText style={styles.detailsValue}>₹{bet.amount.toFixed(2)}</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Quantity</ThemedText>
-                              <ThemedText style={styles.detailsValue}>1</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Amount after tax</ThemedText>
-                              <ThemedText style={[styles.detailsValue, { color: "#EF4444" }]}>₹{afterTax.toFixed(2)}</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Tax</ThemedText>
-                              <ThemedText style={styles.detailsValue}>₹{taxAmount.toFixed(2)}</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Result</ThemedText>
-                              <View style={{ flexDirection: "row", gap: wp(2) }}>
-                                {
-                                  bet?.isWin != null ? (
-                                    <>
-                                      <ThemedText style={[styles.detailsValue, { color: "#92a8e3" }]}>{outcomeNumber ?? "?"}</ThemedText>
-                                      <View style={{ flexDirection: "row", gap: wp(1) }}>
-                                        {bet.round?.outcomeColor?.split("_").map((c, i) => {
-                                          const colorKey = c.toLowerCase() as keyof typeof BET_SELECTION_MAP;
-                                          const displayColor = BET_SELECTION_MAP[colorKey] ?? "#fff";
-                                          return (
-                                            <ThemedText key={i} style={[styles.detailsValue, { color: displayColor }]}>
-                                              {c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()}
-                                            </ThemedText>
-                                          );
-                                        })}
-                                      </View>
-                                      {(() => {
-                                        const sizeKey = bet.round?.outcomeBigSmall?.toLowerCase() as keyof typeof BET_SELECTION_MAP;
-                                        const sizeColor = BET_SELECTION_MAP[sizeKey] ?? "#fff";
-                                        const sizeName = bet.round?.outcomeBigSmall ? (bet.round.outcomeBigSmall.charAt(0).toUpperCase() + bet.round.outcomeBigSmall.slice(1).toLowerCase()) : "";
-                                        return (
-                                          <ThemedText style={[styles.detailsValue, { color: sizeColor }]}>
-                                            {sizeName}
-                                          </ThemedText>
-                                        );
-                                      })()}
-                                    </>
-                                  ) : (
-                                    <ThemedText style={[styles.detailsValue]}>{"--"}</ThemedText>
-                                  )}
-                              </View>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Select</ThemedText>
-                              <ThemedText style={styles.detailsValue}>{selection}</ThemedText>
-                            </View>
-
-                            <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Status</ThemedText>
-                              <ThemedText style={[styles.detailsValue, { color: result.color }]}>
-                                {result.text === "Pending" ? "Pending" : (bet.isWin ? "Succeed" : "Failed")}
+                              <ThemedText style={styles.detailsLabel}>
+                                Period
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                {bet.round?.period}
                               </ThemedText>
                             </View>
 
                             <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Win/lose</ThemedText>
-                              <ThemedText style={[styles.detailsValue, { color: result.color }]}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Purchase amount
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                ₹{bet.amount.toFixed(2)}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Quantity
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                1
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Amount after tax
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.detailsValue,
+                                  { color: "#EF4444" },
+                                ]}
+                              >
+                                ₹{afterTax.toFixed(2)}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Tax
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                ₹{taxAmount.toFixed(2)}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Result
+                              </ThemedText>
+                              <View
+                                style={{ flexDirection: "row", gap: wp(2) }}
+                              >
+                                {bet?.isWin != null ? (
+                                  <>
+                                    <ThemedText
+                                      style={[
+                                        styles.detailsValue,
+                                        { color: "#92a8e3" },
+                                      ]}
+                                    >
+                                      {outcomeNumber ?? "?"}
+                                    </ThemedText>
+                                    <View
+                                      style={{
+                                        flexDirection: "row",
+                                        gap: wp(1),
+                                      }}
+                                    >
+                                      {bet.round?.outcomeColor
+                                        ?.split("_")
+                                        .map((c, i) => {
+                                          const colorKey =
+                                            c.toLowerCase() as keyof typeof BET_SELECTION_MAP;
+                                          const displayColor =
+                                            BET_SELECTION_MAP[colorKey] ??
+                                            "#fff";
+                                          return (
+                                            <ThemedText
+                                              key={i}
+                                              style={[
+                                                styles.detailsValue,
+                                                { color: displayColor },
+                                              ]}
+                                            >
+                                              {c.charAt(0).toUpperCase() +
+                                                c.slice(1).toLowerCase()}
+                                            </ThemedText>
+                                          );
+                                        })}
+                                    </View>
+                                    {(() => {
+                                      const sizeKey =
+                                        bet.round?.outcomeBigSmall?.toLowerCase() as keyof typeof BET_SELECTION_MAP;
+                                      const sizeColor =
+                                        BET_SELECTION_MAP[sizeKey] ?? "#fff";
+                                      const sizeName = bet.round
+                                        ?.outcomeBigSmall
+                                        ? bet.round.outcomeBigSmall
+                                            .charAt(0)
+                                            .toUpperCase() +
+                                          bet.round.outcomeBigSmall
+                                            .slice(1)
+                                            .toLowerCase()
+                                        : "";
+                                      return (
+                                        <ThemedText
+                                          style={[
+                                            styles.detailsValue,
+                                            { color: sizeColor },
+                                          ]}
+                                        >
+                                          {sizeName}
+                                        </ThemedText>
+                                      );
+                                    })()}
+                                  </>
+                                ) : (
+                                  <ThemedText style={[styles.detailsValue]}>
+                                    {"--"}
+                                  </ThemedText>
+                                )}
+                              </View>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Select
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                {selection}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Status
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.detailsValue,
+                                  { color: result.color },
+                                ]}
+                              >
+                                {result.text === "Pending"
+                                  ? "Pending"
+                                  : bet.isWin
+                                    ? "Succeed"
+                                    : "Failed"}
+                              </ThemedText>
+                            </View>
+
+                            <View style={styles.detailsRow}>
+                              <ThemedText style={styles.detailsLabel}>
+                                Win/lose
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.detailsValue,
+                                  { color: result.color },
+                                ]}
+                              >
                                 {result.text}
                               </ThemedText>
                             </View>
 
                             <View style={styles.detailsRow}>
-                              <ThemedText style={styles.detailsLabel}>Order time</ThemedText>
-                              <ThemedText style={styles.detailsValue}>{formatDateTime(bet.createdAt)}</ThemedText>
+                              <ThemedText style={styles.detailsLabel}>
+                                Order time
+                              </ThemedText>
+                              <ThemedText style={styles.detailsValue}>
+                                {formatDateTime(bet.createdAt)}
+                              </ThemedText>
                             </View>
                           </View>
                         </View>
@@ -1841,7 +2292,11 @@ export default function WinGoScreen() {
                   style={{ width: wp(53), height: wp(53) }}
                 />
                 <ThemedText
-                  style={{ fontSize: wp(4.3), fontWeight: "600", color: "black" }}
+                  style={{
+                    fontSize: wp(4.3),
+                    fontWeight: "600",
+                    color: "black",
+                  }}
                 >
                   No data
                 </ThemedText>
@@ -1867,7 +2322,7 @@ export default function WinGoScreen() {
                     backgroundColor: currentPage === 1 ? "#001C54" : "#00ECBE",
                     borderRadius: wp(2.7),
                   },
-                  { opacity: pressed && currentPage !== 1 ? 0.7 : 1 }
+                  { opacity: pressed && currentPage !== 1 ? 0.7 : 1 },
                 ]}
                 onPress={() =>
                   currentPage > 1 && setCurrentPage(currentPage - 1)
@@ -1891,11 +2346,10 @@ export default function WinGoScreen() {
                       currentPage >= totalPages ? "#001C54" : "#00ECBE",
                     borderRadius: wp(2.7),
                   },
-                  { opacity: pressed && currentPage < totalPages ? 0.7 : 1 }
+                  { opacity: pressed && currentPage < totalPages ? 0.7 : 1 },
                 ]}
                 onPress={() =>
-                  currentPage < totalPages &&
-                  setCurrentPage(currentPage + 1)
+                  currentPage < totalPages && setCurrentPage(currentPage + 1)
                 }
                 disabled={currentPage >= totalPages}
               >
@@ -1930,10 +2384,17 @@ export default function WinGoScreen() {
           onConfirm={async () => {
             const period = currentRoundData?.currentRound?.period;
             if (!period) {
-              Alert.alert("Error", "No active round. Please wait for the next round.");
+              Alert.alert(
+                "Error",
+                "No active round. Please wait for the next round.",
+              );
               return;
             }
-            const payload = buildBetPayload(betSelection, totalBetAmount, period);
+            const payload = buildBetPayload(
+              betSelection,
+              totalBetAmount,
+              period,
+            );
             if (!payload) {
               Alert.alert("Error", "Invalid bet selection.");
               return;
@@ -1946,7 +2407,10 @@ export default function WinGoScreen() {
                 setShowSuccessMessage(true);
                 setTimeout(() => setShowSuccessMessage(false), 3000);
               } else {
-                Alert.alert("Bet Failed", res.message ?? "Could not place bet.");
+                Alert.alert(
+                  "Bet Failed",
+                  res.message ?? "Could not place bet.",
+                );
               }
             } catch {
               Alert.alert("Bet Failed", "Could not place bet.");
@@ -1981,17 +2445,41 @@ export default function WinGoScreen() {
               />
 
               <View style={styles.winLossPopupContent}>
-                <Text style={[styles.winLossTitle, { color: settledBet?.isWin ? "white" : "#7190B4" }]}>
+                <Text
+                  style={[
+                    styles.winLossTitle,
+                    { color: settledBet?.isWin ? "white" : "#7190B4" },
+                  ]}
+                >
                   {settledBet?.isWin ? "Congratulations" : "Sorry"}
                 </Text>
 
                 <View style={styles.winLossResultsRow}>
-                  <Text style={[styles.lotteryResultsRowLabel, { color: settledBet?.isWin ? "white" : "#7190B4" }]}>Lottery results</Text>
+                  <Text
+                    style={[
+                      styles.lotteryResultsRowLabel,
+                      { color: settledBet?.isWin ? "white" : "#7190B4" },
+                    ]}
+                  >
+                    Lottery results
+                  </Text>
 
                   {(() => {
-                    const outcomeColors = getColorDots(settledBet?.round?.outcomeNumber ?? 0);
+                    const outcomeColors = getColorDots(
+                      settledBet?.round?.outcomeNumber ?? 0,
+                    );
 
-                    const ResultBox = ({ children, minWidth, alwaysShowBg = false, isCircle = false }: { children: React.ReactNode, minWidth?: number, alwaysShowBg?: boolean, isCircle?: boolean }) => {
+                    const ResultBox = ({
+                      children,
+                      minWidth,
+                      alwaysShowBg = false,
+                      isCircle = false,
+                    }: {
+                      children: React.ReactNode;
+                      minWidth?: number;
+                      alwaysShowBg?: boolean;
+                      isCircle?: boolean;
+                    }) => {
                       const hasMultiColor = outcomeColors.length > 1;
                       const showBg = alwaysShowBg || !hasMultiColor;
 
@@ -1999,27 +2487,50 @@ export default function WinGoScreen() {
                         styles.winLossResultBox,
                         { overflow: "hidden" },
                         minWidth ? { minWidth } : {},
-                        isCircle && { width: minWidth || wp(8.5), height: minWidth || wp(8.5), borderRadius: 999, paddingHorizontal: 0, paddingVertical: 0 }
+                        isCircle && {
+                          width: minWidth || wp(8.5),
+                          height: minWidth || wp(8.5),
+                          borderRadius: 999,
+                          paddingHorizontal: 0,
+                          paddingVertical: 0,
+                        },
                       ] as any;
 
                       if (showBg) {
                         return (
-                          <View style={[boxStyle, !hasMultiColor && { backgroundColor: outcomeColors[0] }]}>
+                          <View
+                            style={[
+                              boxStyle,
+                              !hasMultiColor && {
+                                backgroundColor: outcomeColors[0],
+                              },
+                            ]}
+                          >
                             {hasMultiColor && (
-                              <Svg height="100%" width="100%" viewBox="0 0 100 100" style={StyleSheet.absoluteFill}>
-                                <Rect x="0" y="0" width="100" height="100" fill={outcomeColors[0]} />
-                                <Polygon points="0,100 100,100 100,0" fill={outcomeColors[1]} />
+                              <Svg
+                                height="100%"
+                                width="100%"
+                                viewBox="0 0 100 100"
+                                style={StyleSheet.absoluteFill}
+                              >
+                                <Rect
+                                  x="0"
+                                  y="0"
+                                  width="100"
+                                  height="100"
+                                  fill={outcomeColors[0]}
+                                />
+                                <Polygon
+                                  points="0,100 100,100 100,0"
+                                  fill={outcomeColors[1]}
+                                />
                               </Svg>
                             )}
                             {children}
                           </View>
                         );
                       }
-                      return (
-                        <View style={boxStyle}>
-                          {children}
-                        </View>
-                      );
+                      return <View style={boxStyle}>{children}</View>;
                     };
 
                     return (
@@ -2027,7 +2538,12 @@ export default function WinGoScreen() {
                         {settledBet?.round?.outcomeColor && (
                           <ResultBox alwaysShowBg={true}>
                             <Text style={styles.winLossResultBoxText}>
-                              {settledBet.round.outcomeColor.charAt(0).toUpperCase() + settledBet.round.outcomeColor.slice(1).toLowerCase()}
+                              {settledBet.round.outcomeColor
+                                .charAt(0)
+                                .toUpperCase() +
+                                settledBet.round.outcomeColor
+                                  .slice(1)
+                                  .toLowerCase()}
                             </Text>
                           </ResultBox>
                         )}
@@ -2041,7 +2557,12 @@ export default function WinGoScreen() {
                         {settledBet?.round?.outcomeBigSmall && (
                           <ResultBox>
                             <Text style={styles.winLossResultBoxText}>
-                              {settledBet.round.outcomeBigSmall.charAt(0).toUpperCase() + settledBet.round.outcomeBigSmall.slice(1).toLowerCase()}
+                              {settledBet.round.outcomeBigSmall
+                                .charAt(0)
+                                .toUpperCase() +
+                                settledBet.round.outcomeBigSmall
+                                  .slice(1)
+                                  .toLowerCase()}
                             </Text>
                           </ResultBox>
                         )}
@@ -2053,27 +2574,63 @@ export default function WinGoScreen() {
                 <View style={styles.winLossScrollContent}>
                   {settledBet?.isWin ? (
                     <>
-                      <Text style={[styles.winLossBonusTitle, { fontSize: wp(4), marginBottom: 0, marginTop: wp(1) }]}>Bonus</Text>
-                      <Text style={[styles.winLossBonusAmount, { fontSize: wp(8) }]}>₹{settledBet.payoutAmount.toFixed(2)}</Text>
+                      <Text
+                        style={[
+                          styles.winLossBonusTitle,
+                          {
+                            fontSize: wp(4),
+                            marginBottom: 0,
+                            marginTop: wp(1),
+                          },
+                        ]}
+                      >
+                        Bonus
+                      </Text>
+                      <Text
+                        style={[styles.winLossBonusAmount, { fontSize: wp(8) }]}
+                      >
+                        ₹{settledBet.payoutAmount.toFixed(2)}
+                      </Text>
                       <View style={styles.winLossPeriodInfo}>
-                        <Text style={styles.winLossPeriodText}>Period: {selectedGame.name}</Text>
-                        <Text style={styles.winLossPeriodText}>{settledBet.round?.period}</Text>
+                        <Text style={styles.winLossPeriodText}>
+                          Period: {selectedGame.name}
+                        </Text>
+                        <Text style={styles.winLossPeriodText}>
+                          {settledBet.round?.period}
+                        </Text>
                       </View>
                     </>
                   ) : (
-                    <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flex: 1,
+                      }}
+                    >
                       <Text style={styles.winLossLoseTitle}>Lose</Text>
                       <View style={styles.winLossPeriodInfo}>
-                        <Text style={styles.winLossPeriodText}>Period: {selectedGame.name}</Text>
-                        <Text style={styles.winLossPeriodText}>{settledBet?.round?.period}</Text>
+                        <Text style={styles.winLossPeriodText}>
+                          Period: {selectedGame.name}
+                        </Text>
+                        <Text style={styles.winLossPeriodText}>
+                          {settledBet?.round?.period}
+                        </Text>
                       </View>
                     </View>
                   )}
                 </View>
 
                 <View style={styles.winLossAutoClose}>
-                  <Ionicons style={{ marginTop: -3 }} name="checkmark-circle-outline" size={wp(9)} color="#fff" />
-                  <Text style={styles.winLossAutoCloseText}>3 seconds auto close</Text>
+                  <Ionicons
+                    style={{ marginTop: -3 }}
+                    name="checkmark-circle-outline"
+                    size={wp(9)}
+                    color="#fff"
+                  />
+                  <Text style={styles.winLossAutoCloseText}>
+                    3 seconds auto close
+                  </Text>
                 </View>
               </View>
 
@@ -2081,7 +2638,11 @@ export default function WinGoScreen() {
                 style={styles.winLossCloseButton}
                 onPress={() => setWinLossPopupVisible(false)}
               >
-                <Ionicons name="close-circle-outline" size={wp(15)} color="white" />
+                <Ionicons
+                  name="close-circle-outline"
+                  size={wp(15)}
+                  color="white"
+                />
               </Pressable>
             </View>
           </View>
@@ -2374,7 +2935,7 @@ const styles = StyleSheet.create({
   },
   myHistoryDetails: {
     padding: wp(4),
-    paddingTop: 0
+    paddingTop: 0,
   },
   detailsTitle: {
     fontSize: wp(4.5),
@@ -2392,7 +2953,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#001C54",
     borderRadius: 4,
-    padding: 1
+    padding: 1,
   },
   detailsLabel: {
     fontSize: wp(5),
@@ -2601,7 +3162,7 @@ const styles = StyleSheet.create({
     fontSize: wp(5),
     fontWeight: "900",
     marginHorizontal: wp(1.5),
-    color: "white"
+    color: "white",
   },
   winLossScrollContent: {
     width: wp(55),
@@ -2639,7 +3200,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: hp(6),
     width: "90%",
-    paddingHorizontal: wp(6)
+    paddingHorizontal: wp(6),
   },
   winLossAutoCloseText: {
     color: "#fff",
