@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  searchIcon: { fontSize: 18 },
+  searchIcon: { width: 20, height: 20, resizeMode: "contain" },
 
   // Filter row
   filterRow: {
