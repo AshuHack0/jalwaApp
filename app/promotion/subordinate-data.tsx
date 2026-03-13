@@ -115,43 +115,10 @@ function EmptyState() {
   return (
     <View style={styles.emptyWrapper}>
       <View style={styles.illustration}>
-        {/* Hills */}
-        <View
-          style={[styles.hill, { width: 90, height: 44, left: 8, bottom: 0 }]}
+        <Image
+          source={require("@/assets/EmptyState2.png")}
+          style={styles.emptyIcon}
         />
-        <View
-          style={[styles.hill, { width: 65, height: 32, right: 16, bottom: 0 }]}
-        />
-
-        {/* Stone tablet / scroll */}
-        <View style={styles.tablet}>
-          <View style={styles.tabletRoll} />
-          <View style={styles.tabletBody}>
-            <View style={styles.tabletLine} />
-            <View style={[styles.tabletLine, { width: "55%" }]} />
-            <View style={styles.tabletLine} />
-          </View>
-          <View style={styles.tabletRoll} />
-        </View>
-
-        {/* Trees */}
-        <View style={[styles.treeWrap, { left: 14, bottom: 6 }]}>
-          <View style={styles.treeTop} />
-          <View style={styles.treeTrunk} />
-        </View>
-        <View
-          style={[
-            styles.treeWrap,
-            { right: 22, bottom: 8, transform: [{ scale: 0.8 }] },
-          ]}
-        >
-          <View style={styles.treeTop} />
-          <View style={styles.treeTrunk} />
-        </View>
-
-        {/* Arrow / quill */}
-        <View style={styles.quill} />
-        <View style={styles.quillHead} />
       </View>
       <Text style={styles.noDataText}>No data</Text>
     </View>
@@ -232,7 +199,7 @@ export default function SubordinateDataScreen() {
             />
             <TouchableOpacity style={styles.searchBtn} activeOpacity={0.85}>
               <Image
-                source={require("../../assets/images/searchhhhhh.png")}
+                source={require("@/assets/searchhhhhh.png")}
                 style={styles.searchIcon}
               />
             </TouchableOpacity>
@@ -313,14 +280,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   searchBtn: {
-    width: 44,
-    height: 44,
+    width: 84,
+    height: 40,
     borderRadius: 22,
-    backgroundColor: TEAL,
+    backgroundColor: "#00ECBE",
     alignItems: "center",
     justifyContent: "center",
   },
-  searchIcon: { width: 20, height: 20, resizeMode: "contain" },
+  searchIcon: { width: 30, height: 50, resizeMode: "contain" },
 
   // Filter row
   filterRow: {
@@ -415,6 +382,11 @@ const styles = StyleSheet.create({
     position: "relative",
     alignItems: "center",
     justifyContent: "center",
+  },
+  emptyIcon: {
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
   },
   hill: {
     position: "absolute",
