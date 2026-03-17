@@ -1,132 +1,159 @@
-// import { ThemedText } from '@/components/themed-text';
-// import { ThemedView } from '@/components/themed-view';
-// import { Stack } from 'expo-router';
-// import { StyleSheet, View } from 'react-native';
+import { ThemedView } from "@/components/themed-view";
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import { router, Stack } from "expo-router";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
-// export default function BeginnersGuideScreen() {
-//   return (
-//     <ThemedView style={styles.container}>
-//       <Stack.Screen options={{ title: 'Beginner\'s Guide', headerStyle: { backgroundColor: '#05012B' }, headerTintColor: '#fff' }} />
-//       <View style={styles.content}>
-//         <ThemedText style={styles.title}>Beginner's Guide</ThemedText>
-//         <ThemedText style={styles.subtitle}>This screen is under construction.</ThemedText>
-//       </View>
-//     </ThemedView>
-//   );
-// }
+const guide = [
+  {
+    id: 1,
+    title: "How to Register",
+    points: [
+      "Fill in your phone number",
+      "Set your own password (8 characters with big and small letters and numbers)",
+      "Confirm the password",
+      "Fill in your invite code",
+      "Click 'I have read and agree' [Privacy Agreement]",
+      "Click Register",
+    ],
+    img: require("@/assets/beginnersguide1.png"),
+  },
+  {
+    id: 2,
+    title: "How to Bet on the Wingo Game",
+    points: [
+      "Enter the Wingo game",
+      "Select the duration of the game (1 minute, 3 minutes, 5 minutes, or 10 minutes) \n Green: result shows 1, 3, 7, 9 \n Red: result shows 2, 4, 6, 8 \n Violet: result shows 0 or 5 \n Small: result shows 0, 1, 2, 3, 4 \n Big: result shows 5, 6, 7, 8, 9",
+      "Play according to the rules of the game; you are not allowed to place illegal bets",
+    ],
+    title3:
+      "Ex: betting (big and small together), (red and green together), or (betting more than 7 numbers) at the same time",
+    img: require("@/assets/beginnersguide2.png"),
+  },
+  {
+    id: 3,
+    title: "How to Deposit",
+    points: [
+      "Click the Wallet icon",
+      "Click the Deposit button, and we have two methods to make a deposit (UPIPAY and USDT)",
+      "Choose which method you want to use to make a deposit",
+      "Select a channel",
+      "Insert the deposit amount",
+      "Click Deposit and make payment by scanning the available barcode",
+    ],
+    img: require("@/assets/beginnersguide3.png"),
+  },
+  {
+    id: 4,
+    title: "How to Withdraw",
+    points: [
+      "Click the Wallet icon",
+      "Click the Withdraw button",
+      "Enter the withdrawal amount",
+      "Make sure your total bet is already 0",
+      "Select your bank account or add your bank account",
+      "Input the amount you want to withdraw",
+      "Input your login password",
+    ],
+    img: require("@/assets/beginnersguide4.png"),
+  },
+  {
+    id: 5,
+    title: "Betting History",
+    title2:
+      "When the betting is complete, you can click My History to see your bet record. You can also check the chart trend to help you decide the next bet, and your game history will show the previous result",
+    img: require("@/assets/beginnersguide5.png"),
+  },
+  {
+    id: 6,
+    title: "Transaction",
+    title2:
+      "You can check all the transactions or activities you do inside the account on transaction, which you can find on the Account icon",
+    img: require("@/assets/beginnersguide6.png"),
+  },
+  {
+    id: 7,
+    title: "Promotion",
+    points: [
+      "If you have a downline or referral member, use your own link to register, and if they make a recharge, you can claim a rebate. The agent will get a \n minimum commission of 0.7% (level 1) and 0.75% (level 2) from each transaction that is done by the referral (added every day at 1:00 AM). Each game has a different percentage, which you can check on the Promotion menu to check.",
+      "You can click the sharing invitation poster to see the barcode",
+    ],
+    img: require("@/assets/beginnersguide7.png"),
+  },
+  {
+    id: 8,
+    title: "Change Password",
+    points: [
+      "Follow the guide below to change your password.",
+      "Login to the JALWA.GAME account",
+      "Press Account icon",
+      "Press the Settings button",
+      "Press edit login password",
+      "Fill in your login password",
+      "Fill in a new login password",
+      "Re-fill the new login password",
+      "Press save changes",
+    ],
+    img: require("@/assets/beginnersguide8.png"),
+  },
+  {
+    id: 9,
+    title: "Binding bank account",
+    points: [
+      "Login to the JALWA.GAME account",
+      "Press the Wallet icon",
+      "Press the Withdraw button",
+      "Press Add Bank",
+      "Fill all the columns",
+      "Press Save",
+    ],
+    img: require("@/assets/beginnersguide9.png"),
+  },
+  {
+    id: 10,
+    title: "Forgot Password",
+    title2: "Go to the JALWA.GAME website",
+    points: [
+      "Press the Account icon",
+      "Press Forgot password",
+      "Fill in the phone number you registered",
+      "Fill in a new password",
+      "Refill the new password",
+      "Press Send to receive the OTP",
+      "Fill in the OTP",
+      "Press I have read and agree [Privacy Agreement]",
+      "Press Reset",
+    ],
+    img: require("@/assets/beginnersguide10.png"),
+  },
+  {
+    id: 11,
+    title: "App Download",
+    title2:
+      "To download the apps, you can go to the home page, then on the middle bottom, you will see the button to download the apps",
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#05012B',
-//   },
-//   content: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   title: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: '#fff',
-//     marginBottom: 10,
-//   },
-//   subtitle: {
-//     fontSize: 16,
-//     color: '#92A8E3',
-//     textAlign: 'center',
-//   },
-// });
-
-import { ThemedView } from '@/components/themed-view';
-import { router, Stack } from 'expo-router';
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
-
-import { CustomHeader } from '@/components/ui/CustomHeader';
-
-// ── Section Header ────────────────────────────────────────────────────────────
-function SectionHeader({ title }: { title: string }) {
-  return (
-    <View style={styles.sectionHeader}>
-      <View style={styles.sectionAccent} />
-      <Text style={styles.sectionTitle}>{title}</Text>
-    </View>
-  );
-}
-
-// ── Step Badge ────────────────────────────────────────────────────────────────
-function StepBadge({ number }: { number: number }) {
-  return (
-    <View style={styles.stepBadge}>
-      <Text style={styles.stepNumber}>{number}</Text>
-    </View>
-  );
-}
-
-// ── Guide Step Row ────────────────────────────────────────────────────────────
-function StepRow({
-  number,
-  title,
-  description,
-}: {
-  number: number;
-  title: string;
-  description: string;
-}) {
-  return (
-    <View style={styles.stepRow}>
-      <StepBadge number={number} />
-      <View style={styles.stepContent}>
-        <Text style={styles.stepTitle}>{title}</Text>
-        <Text style={styles.stepDesc}>{description}</Text>
-      </View>
-    </View>
-  );
-}
-
-// ── Info Row (icon + label + value) ──────────────────────────────────────────
-function InfoRow({ emoji, label, value }: { emoji: string; label: string; value: string }) {
-  return (
-    <View style={styles.infoRow}>
-      <View style={styles.iconBox}>
-        <Text style={styles.iconEmoji}>{emoji}</Text>
-      </View>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue}>{value}</Text>
-    </View>
-  );
-}
-
-// ── Tip Card ──────────────────────────────────────────────────────────────────
-function TipCard({ emoji, tip }: { emoji: string; tip: string }) {
-  return (
-    <View style={styles.tipCard}>
-      <Text style={styles.tipEmoji}>{emoji}</Text>
-      <Text style={styles.tipText}>{tip}</Text>
-    </View>
-  );
-}
-
-// ── FAQ Row ───────────────────────────────────────────────────────────────────
-function FaqRow({ question, answer }: { question: string; answer: string }) {
-  return (
-    <View style={styles.faqRow}>
-      <View style={styles.faqDot} />
-      <View style={styles.faqContent}>
-        <Text style={styles.faqQuestion}>{question}</Text>
-        <Text style={styles.faqAnswer}>{answer}</Text>
-      </View>
-    </View>
-  );
-}
-
+    img: require("@/assets/beginnersguide11.png"),
+  },
+  {
+    id: 12,
+    title: "About",
+    title2:
+      "Press about for more details regarding the privacy policy and risk disclosure agreement.",
+    img: require("@/assets/beginnersguide12.png"),
+  },
+  {
+    id: 13,
+    title: "Gift",
+    points: [
+      "Login to the JALWA.GAME account",
+      "Press the Account icon",
+      "Press the Gift button",
+      "Fill in the gift codes",
+      "Press Receive",
+    ],
+    title3: "Notes: To get gift codes, you can ask your superior agent",
+    img: require("@/assets/beginnersguide13.png"),
+  },
+];
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function BeginnersGuideScreen() {
   return (
@@ -140,223 +167,45 @@ export default function BeginnersGuideScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* ── Hero Banner ── */}
-          <View style={styles.heroBanner}>
-            {/* Replace the View below with an <Image> when you have the URL */}
-            <View style={styles.heroImagePlaceholder}>
-              <Text style={styles.heroImageText}>[ Banner Image ]</Text>
-            </View>
-            <View style={styles.heroOverlay}>
-              <Text style={styles.heroTitle}>Welcome to the Game!</Text>
-              <Text style={styles.heroSubtitle}>
-                Everything you need to know to get started and win big.
-              </Text>
-            </View>
-          </View>
-
-          {/* ── Quick Stats ── */}
-          <View style={[styles.card, styles.statsCard]}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>3 min</Text>
-              <Text style={styles.statLabel}>Read time</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>5</Text>
-              <Text style={styles.statLabel}>Easy steps</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>100%</Text>
-              <Text style={styles.statLabel}>Beginner safe</Text>
-            </View>
-          </View>
-
-          {/* ── How to Play ── */}
-          <SectionHeader title="How to Play" />
-          <View style={styles.card}>
-            <StepRow
-              number={1}
-              title="Create your account"
-              description="Register with your email or phone number, set a strong password, and verify your identity to unlock full access."
-            />
-            <View style={styles.rowDivider} />
-            <StepRow
-              number={2}
-              title="Top up your balance"
-              description="Deposit funds using your preferred payment method. Minimum deposit amounts and available channels are listed in the Wallet section."
-            />
-            <View style={styles.rowDivider} />
-            <StepRow
-              number={3}
-              title="Choose a game"
-              description="Browse the lobby and select any lottery or game that interests you. Each game shows the prize pool, odds, and draw schedule."
-            />
-            <View style={styles.rowDivider} />
-            <StepRow
-              number={4}
-              title="Place your bet"
-              description="Pick your numbers or options, set your stake amount, and confirm your ticket before the draw closes."
-            />
-            <View style={styles.rowDivider} />
-            <StepRow
-              number={5}
-              title="Collect your winnings"
-              description="Winnings are credited to your balance automatically after each draw. Withdraw to your bank or e-wallet at any time."
-            />
-          </View>
-
-          {/* ── Game Rules ── */}
-          <SectionHeader title="Game Rules" />
-          <View style={styles.card}>
-            <InfoRow emoji="🎯" label="Minimum bet" value="¥1.00" />
-            <View style={styles.rowDivider} />
-            <InfoRow emoji="🏆" label="Maximum payout" value="×1000" />
-            <View style={styles.rowDivider} />
-            <InfoRow emoji="⏰" label="Draw interval" value="Every 3 min" />
-            <View style={styles.rowDivider} />
-            <InfoRow emoji="🔄" label="Result method" value="Official RNG" />
-            <View style={styles.rowDivider} />
-            <InfoRow emoji="💰" label="Withdrawal time" value="Within 24 hrs" />
-          </View>
-
-          {/* ── Game Types Image Placeholder ── */}
-          <SectionHeader title="Game Types" />
-          <View style={styles.card}>
-            {/* Replace this View with an <Image> when you have the URL */}
-            <View style={styles.gameTypesImagePlaceholder}>
-              <Text style={styles.heroImageText}>[ Game Types Diagram ]</Text>
-            </View>
-            <Text style={styles.gameTypesCaption}>
-              We offer a variety of lottery formats including Fast 3, Big Small, Color Ball, and
-              more. Each game has unique mechanics — tap any game in the lobby to read its
-              individual rules before playing.
-            </Text>
-          </View>
-
-          {/* ── Odds & Payouts ── */}
-          <SectionHeader title="Odds & Payouts" />
-          <View style={styles.card}>
-            <View style={styles.tableHeader}>
-              <Text style={[styles.tableCell, styles.tableCellLeft, styles.tableHeaderText]}>
-                Bet Type
-              </Text>
-              <Text style={[styles.tableCell, styles.tableHeaderText]}>Odds</Text>
-              <Text style={[styles.tableCell, styles.tableHeaderText]}>Payout</Text>
-            </View>
-            <View style={styles.rowDivider} />
-            {[
-              { type: 'Big / Small', odds: '50%', payout: '×1.98' },
-              { type: 'Odd / Even', odds: '50%', payout: '×1.98' },
-              { type: 'Single Number', odds: '10%', payout: '×9.8' },
-              { type: 'Two Numbers', odds: '1%', payout: '×98' },
-              { type: 'Jackpot', odds: '0.1%', payout: '×980' },
-            ].map((row, i, arr) => (
-              <View key={row.type}>
-                <View style={styles.tableRow}>
-                  <Text style={[styles.tableCell, styles.tableCellLeft, styles.tableCellText]}>
-                    {row.type}
-                  </Text>
-                  <Text style={[styles.tableCell, styles.tableCellText]}>{row.odds}</Text>
-                  <Text style={[styles.tableCell, styles.tableCellText, styles.payoutText]}>
-                    {row.payout}
-                  </Text>
-                </View>
-                {i < arr.length - 1 && <View style={styles.rowDivider} />}
+          {guide.map((item, index) => (
+            <View key={item.id} style={styles.stepRow}>
+              <View
+                style={{
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  width: "100%",
+                }}
+              >
+                <Text style={{ color: "#92A8E3" }}>
+                  {item.id}. {item.title}
+                </Text>
+                {item.title2 && (
+                  <Text style={{ color: "#92A8E3" }}>{item.title2}</Text>
+                )}
+                {item.points &&
+                  item.points.map((point, indexx) => (
+                    <Text
+                      key={indexx}
+                      style={{ marginTop: 0, color: "#92A8E3" }}
+                    >
+                      • {point}
+                    </Text>
+                  ))}
+                {item.title3 && (
+                  <Text style={{ color: "#92A8E3" }}>{item.title3}</Text>
+                )}
+                <Image
+                  source={item.img}
+                  style={{
+                    width: "100%",
+                    aspectRatio: 1.5,
+                    resizeMode: "contain",
+                    marginTop: 0,
+                  }}
+                />
               </View>
-            ))}
-          </View>
-
-          {/* ── Pro Tips ── */}
-          <SectionHeader title="Pro Tips for Beginners" />
-          <View style={styles.tipsGrid}>
-            <TipCard
-              emoji="🧠"
-              tip="Start with Big/Small bets. They have the best odds and are the easiest to understand."
-            />
-            <TipCard
-              emoji="💡"
-              tip="Set a daily budget and stick to it. Responsible play keeps the game enjoyable."
-            />
-            <TipCard
-              emoji="📊"
-              tip="Check the draw history to spot trends, but remember — every draw is independent."
-            />
-            <TipCard
-              emoji="🎁"
-              tip="Claim daily bonuses and sign-in rewards to boost your balance for free."
-            />
-          </View>
-
-          {/* ── Wallet Guide ── */}
-          <SectionHeader title="Wallet & Transactions" />
-          <View style={styles.card}>
-            <View style={styles.walletRow}>
-              <View style={[styles.walletTag, { backgroundColor: '#0D4A4A' }]}>
-                <Text style={styles.walletTagEmoji}>💳</Text>
-                <Text style={[styles.walletTagText, { color: TEAL }]}>Deposit</Text>
-              </View>
-              <Text style={styles.walletDesc}>
-                Instant top-up via bank transfer, e-wallet, and crypto. Minimum ¥10 per deposit.
-              </Text>
             </View>
-            <View style={styles.rowDivider} />
-            <View style={styles.walletRow}>
-              <View style={[styles.walletTag, { backgroundColor: '#2A1A4A' }]}>
-                <Text style={styles.walletTagEmoji}>🏦</Text>
-                <Text style={[styles.walletTagText, { color: '#A47BF5' }]}>Withdraw</Text>
-              </View>
-              <Text style={styles.walletDesc}>
-                Withdraw anytime. Processing takes up to 24 hours. Minimum ¥50 per withdrawal.
-              </Text>
-            </View>
-            <View style={styles.rowDivider} />
-            <View style={styles.walletRow}>
-              <View style={[styles.walletTag, { backgroundColor: '#2A2A10' }]}>
-                <Text style={styles.walletTagEmoji}>🎀</Text>
-                <Text style={[styles.walletTagText, { color: '#E5C040' }]}>Bonuses</Text>
-              </View>
-              <Text style={styles.walletDesc}>
-                Bonus funds are credited separately. Wagering requirements apply before withdrawal.
-              </Text>
-            </View>
-          </View>
-
-          {/* ── FAQ ── */}
-          <SectionHeader title="Frequently Asked Questions" />
-          <View style={styles.card}>
-            <FaqRow
-              question="Is my personal information safe?"
-              answer="Yes. We use bank-level SSL encryption for all data. Your personal details are never shared with third parties."
-            />
-            <View style={styles.rowDivider} />
-            <FaqRow
-              question="What do I do if my deposit doesn't arrive?"
-              answer="Contact our 24/7 live support with your transaction reference number. Most issues are resolved within 30 minutes."
-            />
-            <View style={styles.rowDivider} />
-            <FaqRow
-              question="Can I play on multiple devices?"
-              answer="Absolutely. Your account syncs across all devices. Log in from any phone, tablet, or browser."
-            />
-            <View style={styles.rowDivider} />
-            <FaqRow
-              question="How are draws verified as fair?"
-              answer="All draws use a certified Random Number Generator (RNG) that is audited monthly by an independent third party."
-            />
-          </View>
-
-          {/* ── Support CTA ── */}
-          <View style={styles.supportCard}>
-            <Text style={styles.supportEmoji}>🎧</Text>
-            <Text style={styles.supportTitle}>Still have questions?</Text>
-            <Text style={styles.supportSubtitle}>
-              Our support team is available 24 / 7 to help you.
-            </Text>
-            <TouchableOpacity style={styles.supportBtn} activeOpacity={0.8}>
-              <Text style={styles.supportBtnText}>Contact Support</Text>
-            </TouchableOpacity>
-          </View>
+          ))}
         </ScrollView>
       </ThemedView>
     </>
@@ -364,232 +213,33 @@ export default function BeginnersGuideScreen() {
 }
 
 // ── Design Tokens ─────────────────────────────────────────────────────────────
-const BG = '#060B2E';
-const CARD_BG = '#0A1540';
-const TEAL = '#2BC4C4';
-const TEAL_DIM = '#4A9EBF';
-const DIVIDER = '#0F1D55';
-const ICON_BG = '#0D4A4A';
+const BG = "#060B2E";
+const CARD_BG = "#0A1540";
+const TEAL = "#2BC4C4";
+const TEAL_DIM = "#4A9EBF";
+const DIVIDER = "#0F1D55";
+const ICON_BG = "#0D4A4A";
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BG },
-
-
-  // ── Scroll ──
-  scroll: { flex: 1 },
-  scrollContent: { padding: 16, paddingBottom: 48 },
-
-  // ── Card ──
-  card: {
-    backgroundColor: CARD_BG,
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    marginBottom: 28,
-  },
-
-  // ── Section Header ──
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    marginTop: -12,
-  },
-  sectionAccent: { width: 4, height: 20, backgroundColor: TEAL, borderRadius: 2, marginRight: 10 },
-  sectionTitle: { color: '#fff', fontSize: 16, fontWeight: '600' },
-
-  // ── Row Divider ──
-  rowDivider: { height: 1, backgroundColor: DIVIDER, marginLeft: 52 },
-
-  // ── Hero Banner ──
-  heroBanner: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 20,
-    height: 160,
-  },
-  heroImagePlaceholder: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#0D1E55',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: DIVIDER,
-    borderStyle: 'dashed',
-  },
-  heroImageText: { color: '#4A6FA5', fontSize: 13 },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(6,11,46,0.55)',
-    justifyContent: 'flex-end',
-    padding: 16,
-  },
-  heroTitle: { color: '#fff', fontSize: 20, fontWeight: '700', marginBottom: 4 },
-  heroSubtitle: { color: TEAL_DIM, fontSize: 13, lineHeight: 18 },
-
-  // ── Quick Stats ──
-  statsCard: {
-    flexDirection: 'row',
-    paddingHorizontal: 0,
-    paddingVertical: 18,
-    marginBottom: 28,
-  },
-  statItem: { flex: 1, alignItems: 'center' },
-  statValue: { color: TEAL, fontSize: 20, fontWeight: '700' },
-  statLabel: { color: TEAL_DIM, fontSize: 12, marginTop: 2 },
-  statDivider: { width: 1, backgroundColor: DIVIDER },
-
-  // ── Step Row ──
-  stepRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 16,
-    gap: 14,
-  },
-  stepBadge: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: TEAL,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 1,
-    flexShrink: 0,
-  },
-  stepNumber: { color: BG, fontSize: 14, fontWeight: '700' },
-  stepContent: { flex: 1 },
-  stepTitle: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 4 },
-  stepDesc: { color: TEAL_DIM, fontSize: 13, lineHeight: 19 },
-
-  // ── Info Row ──
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  iconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: ICON_BG,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  },
-  iconEmoji: { fontSize: 17 },
-  infoLabel: { flex: 1, color: '#fff', fontSize: 15 },
-  infoValue: { color: TEAL_DIM, fontSize: 14 },
-
-  // ── Game Types Image ──
-  gameTypesImagePlaceholder: {
-    height: 120,
-    backgroundColor: '#0D1E55',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 14,
-    borderWidth: 1,
-    borderColor: DIVIDER,
-    borderStyle: 'dashed',
-  },
-  gameTypesCaption: {
-    color: TEAL_DIM,
-    fontSize: 13,
-    lineHeight: 19,
-    paddingBottom: 16,
-  },
-
-  // ── Odds Table ──
-  tableHeader: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 13,
-  },
-  tableCell: { flex: 1, textAlign: 'center' },
-  tableCellLeft: { textAlign: 'left' },
-  tableHeaderText: { color: TEAL, fontSize: 13, fontWeight: '600' },
-  tableCellText: { color: '#fff', fontSize: 14 },
-  payoutText: { color: TEAL, fontWeight: '600' },
-
-  // ── Tips Grid ──
-  tipsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 28,
-  },
-  tipCard: {
+  container: {
     flex: 1,
-    minWidth: '45%',
-    backgroundColor: CARD_BG,
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: DIVIDER,
+    backgroundColor: "#060B2E",
   },
-  tipEmoji: { fontSize: 24, marginBottom: 8 },
-  tipText: { color: TEAL_DIM, fontSize: 13, lineHeight: 18 },
 
-  // ── Wallet ──
-  walletRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    gap: 14,
+  // Scroll
+  scroll: {
+    flex: 1,
   },
-  walletTag: {
-    width: 72,
-    height: 46,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  walletTagEmoji: { fontSize: 16 },
-  walletTagText: { fontSize: 11, fontWeight: '600', marginTop: 2 },
-  walletDesc: { flex: 1, color: TEAL_DIM, fontSize: 13, lineHeight: 18 },
 
-  // ── FAQ ──
-  faqRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 16,
-    gap: 12,
+  scrollContent: {
+    padding: 16,
+    // paddingBottom: 48,
   },
-  faqDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: TEAL,
-    marginTop: 5,
-    flexShrink: 0,
-  },
-  faqContent: { flex: 1 },
-  faqQuestion: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 5 },
-  faqAnswer: { color: TEAL_DIM, fontSize: 13, lineHeight: 18 },
 
-  // ── Support CTA ──
-  supportCard: {
-    backgroundColor: CARD_BG,
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
+  // Step Row (used for images)
+  stepRow: {
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: TEAL,
+    backgroundColor: "green",
   },
-  supportEmoji: { fontSize: 36, marginBottom: 10 },
-  supportTitle: { color: '#fff', fontSize: 17, fontWeight: '700', marginBottom: 6 },
-  supportSubtitle: { color: TEAL_DIM, fontSize: 13, marginBottom: 20, textAlign: 'center' },
-  supportBtn: {
-    backgroundColor: TEAL,
-    borderRadius: 24,
-    paddingVertical: 12,
-    paddingHorizontal: 36,
-  },
-  supportBtnText: { color: BG, fontSize: 15, fontWeight: '700' },
 });

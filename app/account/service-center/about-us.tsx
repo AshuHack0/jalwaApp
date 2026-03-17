@@ -1,49 +1,15 @@
-// import { ThemedText } from '@/components/themed-text';
-// import { ThemedView } from '@/components/themed-view';
-// import { Stack } from 'expo-router';
-// import { StyleSheet, View } from 'react-native';
+import { ThemedView } from "@/components/themed-view";
+import { router, Stack } from "expo-router";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-// export default function AboutUsScreen() {
-//   return (
-//     <ThemedView style={styles.container}>
-//       <Stack.Screen options={{ title: 'About Us', headerStyle: { backgroundColor: '#05012B' }, headerTintColor: '#fff' }} />
-//       <View style={styles.content}>
-//         <ThemedText style={styles.title}>About Us</ThemedText>
-//         <ThemedText style={styles.subtitle}>This screen is under construction.</ThemedText>
-//       </View>
-//     </ThemedView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#05012B',
-//   },
-//   content: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//   },
-//   title: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: '#fff',
-//     marginBottom: 10,
-//   },
-//   subtitle: {
-//     fontSize: 16,
-//     color: '#92A8E3',
-//     textAlign: 'center',
-//   },
-// });
-
-import { ThemedView } from '@/components/themed-view';
-import { router, Stack } from 'expo-router';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { CustomHeader } from '@/components/ui/CustomHeader';
+import { CustomHeader } from "@/components/ui/CustomHeader";
 
 // ── Menu Row ──────────────────────────────────────────────────────────────────
 function MenuRow({
@@ -51,17 +17,23 @@ function MenuRow({
   label,
   onPress,
 }: {
-  icon: string;
+  icon: any;
   label: string;
   onPress?: () => void;
 }) {
   return (
-    <TouchableOpacity style={styles.menuRow} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.iconBox}>
-        <Text style={styles.iconEmoji}>{icon}</Text>
-      </View>
+    <TouchableOpacity
+      style={styles.menuRow}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Image source={icon} style={styles.ImageIcon} resizeMode="cover" />
       <Text style={styles.menuLabel}>{label}</Text>
-      <Text style={styles.chevron}>{'>'}</Text>
+      <Image
+        source={require("@/assets/Screenshot202603-09p230133-removebg-preview.png")}
+        style={styles.ImageArrow}
+        resizeMode="cover"
+      />
     </TouchableOpacity>
   );
 }
@@ -82,7 +54,7 @@ export default function AboutUsScreen() {
           {/* ── Banner Image ── */}
           <View style={styles.bannerWrapper}>
             <Image
-              source={{ uri: '' /* TODO: add banner image URL here */ }}
+              source={require("@/assets/aboutBg-2e4b25ca.webp")}
               style={styles.bannerImage}
               resizeMode="cover"
             />
@@ -90,9 +62,15 @@ export default function AboutUsScreen() {
 
           {/* ── Menu List ── */}
           <View style={styles.menuCard}>
-            <MenuRow icon="📋" label="Confidentiality Agreement" />
-            <View style={styles.divider} />
-            <MenuRow icon="🔖" label="Risk Disclosure Agreement" />
+            <MenuRow
+              icon={require("@/assets/ConfidentialityAgreement.png")}
+              label="Confidentiality Agreement"
+            />
+            {/* <View style={styles.divider} /> */}
+            <MenuRow
+              icon={require("@/assets/RiskDisclosureAgreement.png")}
+              label="Risk Disclosure Agreement"
+            />
           </View>
         </ScrollView>
       </ThemedView>
@@ -101,12 +79,11 @@ export default function AboutUsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = '#060B2E';
-const DIVIDER = '#0F1D55';
+const BG = "#060B2E";
+const DIVIDER = "#0F1D55";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
-
 
   // Scroll
   scroll: { flex: 1 },
@@ -114,40 +91,54 @@ const styles = StyleSheet.create({
 
   // Banner
   bannerWrapper: {
-    width: '100%',
-    height: 200,
-    backgroundColor: '#0D1A4A',
+    width: "100%",
+    height: 160,
+    backgroundColor: "#0D1A4A",
     marginBottom: 0,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   bannerImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   // Menu
   menuCard: {
     marginHorizontal: 0,
-    backgroundColor: '#080F38',
     paddingHorizontal: 16,
   },
   menuRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: DIVIDER,
+  },
+  ImageIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: "cover",
+    marginRight: 14,
   },
   iconBox: {
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: '#0D4A4A',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#0D4A4A",
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 14,
   },
   iconEmoji: { fontSize: 17 },
-  menuLabel: { flex: 1, color: '#fff', fontSize: 15 },
-  chevron: { color: '#4A6FA5', fontSize: 16 },
+  menuLabel: { flex: 1, color: "#fff", fontSize: 15 },
+  ImageArrow: {
+    width: 20,
+    height: 20,
+    resizeMode: "cover",
+    transform: [{ rotate: "180deg" }],
+    opacity: 0.8,
+  },
+  chevron: { color: "#4A6FA5", fontSize: 16 },
   divider: {
     height: 1,
     backgroundColor: DIVIDER,

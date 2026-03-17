@@ -1,9 +1,9 @@
-import { ThemedView } from '@/components/themed-view';
-import { router, Stack } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemedView } from "@/components/themed-view";
+import { router, Stack } from "expo-router";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CustomHeader } from '@/components/ui/CustomHeader';
+import { CustomHeader } from "@/components/ui/CustomHeader";
 
 // ── Announcement Card ─────────────────────────────────────────────────────────
 function AnnouncementCard({
@@ -21,15 +21,21 @@ function AnnouncementCard({
     <View style={styles.card}>
       {/* Card Header */}
       <View style={styles.cardHeader}>
-        <Text style={styles.megaphone}>📢</Text>
+        <Image
+          source={require("@/assets/speakicon.png")}
+          style={[
+            {
+              width: 35,
+              height: 35,
+              resizeMode: "cover",
+            },
+          ]}
+        />
         {showLock && <Text style={styles.lock}>🔒</Text>}
         <Text style={styles.cardTitle} numberOfLines={2}>
           {title}
         </Text>
       </View>
-
-      {/* Divider */}
-      <View style={styles.cardDivider} />
 
       {/* Body */}
       <Text style={styles.cardBody}>{body}</Text>
@@ -43,24 +49,24 @@ function AnnouncementCard({
 // ── Data ──────────────────────────────────────────────────────────────────────
 const ANNOUNCEMENTS = [
   {
-    id: '1',
-    title: 'Official Security Notice',
-    body: 'Our customer service will never send any links to members—if you receive a link from someone claiming to be JALWA.GAME customer service, please do not click it, as it may lead to hacking or data loss; always verify through our official website.',
-    timestamp: '2025-04-12 18:53:12',
+    id: "1",
+    title: "Official Security Notice",
+    body: "Our customer service will never send any links to members—if you receive a link from someone claiming to be JALWA.GAME customer service, please do not click it, as it may lead to hacking or data loss; always verify through our official website.",
+    timestamp: "2025-04-12 18:53:12",
     showLock: true,
   },
   {
-    id: '2',
-    title: 'आधिकारिक सुरक्षा सूचना',
-    body: 'हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी — यदि आपको कोई लिंक किसी ऐसे व्यक्ति से प्राप्त होता है जो खुद को JALWA कस्टमर सर्विस बता रहा है, तो कृपया उस पर क्लिक न करें, क्योंकि यह हैकिंग या डेटा चोरी का कारण बन सकता है। कृपया हमेशा हमारी आधिकारिक वेबसाइट के माध्यम से ही सत्यापित करें।',
-    timestamp: '2025-04-12 18:53:03',
+    id: "2",
+    title: "आधिकारिक सुरक्षा सूचना",
+    body: "हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी — यदि आपको कोई लिंक किसी ऐसे व्यक्ति से प्राप्त होता है जो खुद को JALWA कस्टमर सर्विस बता रहा है, तो कृपया उस पर क्लिक न करें, क्योंकि यह हैकिंग या डेटा चोरी का कारण बन सकता है। कृपया हमेशा हमारी आधिकारिक वेबसाइट के माध्यम से ही सत्यापित करें।",
+    timestamp: "2025-04-12 18:53:03",
     showLock: true,
   },
   {
-    id: '3',
-    title: 'WELCOMME TO JALWA',
-    body: '🎉 🎉 🎉 Welcome to join the JALWA platform. We provide a brand new gaming experience and a comprehensive range of popular games. 🍎 🍎 🍎 You are welcome to register at JALWA and participate in the game. Thank you.',
-    timestamp: '2025-03-24 14:46:29',
+    id: "3",
+    title: "WELCOMME TO JALWA",
+    body: "🎉 🎉 🎉 Welcome to join the JALWA platform. We provide a brand new gaming experience and a comprehensive range of popular games. ❤️‍🔥 ❤️‍🔥 ❤️‍🔥 You are welcome to register at JALWA and participate in the game. Thank you.",
+    timestamp: "2025-03-24 14:46:29",
     showLock: false,
   },
 ];
@@ -77,7 +83,10 @@ export default function AnnouncementScreen() {
 
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 32 },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {ANNOUNCEMENTS.map((item) => (
@@ -99,13 +108,12 @@ export default function AnnouncementScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = '#060B2E';
-const CARD_BG = '#0A1540';
-const DIVIDER = '#0F1D55';
+const BG = "#060B2E";
+const CARD_BG = "#0A1540";
+const DIVIDER = "#0F1D55";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
-
 
   // Scroll
   scroll: { flex: 1 },
@@ -113,23 +121,22 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: CARD_BG,
-    borderRadius: 16,
+    backgroundColor: "#011341",
+    borderRadius: 10,
     padding: 16,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
-    marginBottom: 12,
+    marginBottom: 5,
   },
   megaphone: { fontSize: 22 },
   lock: { fontSize: 16 },
   cardTitle: {
     flex: 1,
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
+    color: "#fff",
+    fontSize: 18,
     letterSpacing: 0.2,
   },
   cardDivider: {
@@ -138,21 +145,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardBody: {
-    color: '#C8D4F0',
-    fontSize: 13.5,
-    lineHeight: 22,
+    color: "#738ac0ff",
+    fontSize: 12.5,
+    lineHeight: 16,
     marginBottom: 14,
   },
   timestamp: {
-    color: '#4A6FA5',
+    color: "#6d7480ff",
     fontSize: 12.5,
   },
 
   // No more
   noMore: {
-    color: '#4A6FA5',
+    color: "#ffffff",
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 8,
   },
 });
