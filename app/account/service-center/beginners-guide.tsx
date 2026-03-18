@@ -174,6 +174,7 @@ export default function BeginnersGuideScreen() {
                   flexDirection: "column",
                   alignItems: "flex-start",
                   width: "100%",
+                  // backgroundColor: "red",
                 }}
               >
                 <Text style={{ color: "#92A8E3" }}>
@@ -194,15 +195,27 @@ export default function BeginnersGuideScreen() {
                 {item.title3 && (
                   <Text style={{ color: "#92A8E3" }}>{item.title3}</Text>
                 )}
+                {/* <View
+                  style={{
+                    backgroundColor: "blue",
+                    width: "100%",
+                    height: 1000,
+                  }}
+                > */}
                 <Image
                   source={item.img}
                   style={{
-                    width: "100%",
-                    aspectRatio: 1.5,
+                    alignSelf: "flex-start",
+                    maxWidth: "100%",
+                    maxHeight: "100%",
                     resizeMode: "contain",
                     marginTop: 0,
+                    padding: 0,
+                    // backgroundColor: "green",
+                    overflow: "hidden",
                   }}
                 />
+                {/* </View> */}
               </View>
             </View>
           ))}
@@ -239,7 +252,7 @@ const styles = StyleSheet.create({
 
   // Step Row (used for images)
   stepRow: {
-    marginBottom: 16,
-    backgroundColor: "green",
+    marginVertical: 16,
+    // backgroundColor: "green",
   },
 });

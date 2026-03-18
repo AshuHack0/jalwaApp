@@ -1,28 +1,61 @@
-import { ThemedView } from '@/components/themed-view';
-import { router, Stack } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemedView } from "@/components/themed-view";
+import { LinearGradient } from "expo-linear-gradient";
+import { router, Stack } from "expo-router";
+import { useState } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { CustomHeader } from '@/components/ui/CustomHeader';
+import { CustomHeader } from "@/components/ui/CustomHeader";
 
 // ── Tab Filter ────────────────────────────────────────────────────────────────
-const TABS = ['Today', 'Yesterday', 'This week', 'This month'] as const;
+const TABS = ["Today", "Yesterday", "This week", "This month"] as const;
 type Tab = (typeof TABS)[number];
 
-function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
+function TabBar({
+  active,
+  onChange,
+}: {
+  active: Tab;
+  onChange: (t: Tab) => void;
+}) {
   return (
     <View style={styles.tabBar}>
-      {TABS.map((tab) => (
-        <TouchableOpacity
-          key={tab}
-          onPress={() => onChange(tab)}
-          activeOpacity={0.8}
-          style={[styles.tabItem, active === tab && styles.tabItemActive]}
-        >
-          <Text style={[styles.tabText, active === tab && styles.tabTextActive]}>{tab}</Text>
-        </TouchableOpacity>
-      ))}
+      {TABS.map((tab) => {
+        const isActive = active === tab;
+        return (
+          <TouchableOpacity
+            key={tab}
+            onPress={() => onChange(tab)}
+            activeOpacity={0.8}
+            style={styles.tabItem}
+          >
+            {isActive ? (
+              <LinearGradient
+                colors={["#05b1b6", "#78fcc3"]}
+                start={{ x: 1, y: 1 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.tabItemGradient}
+              >
+                <Text style={[styles.tabText, styles.tabTextActive]}>
+                  {tab}
+                </Text>
+              </LinearGradient>
+            ) : (
+              <View style={styles.tabItemInactive}>
+                <Text style={styles.tabText}>{tab}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -39,26 +72,50 @@ function TotalBetCard({ amount }: { amount: string }) {
 
 // ── Game Section ──────────────────────────────────────────────────────────────
 type GameData = {
-  icon: string;
+  icon: ImageSourcePropType;
   name: string;
   totalBet: string;
   numberOfBets: number;
   winningAmount: string;
 };
 
-function GameSection({ icon, name, totalBet, numberOfBets, winningAmount }: GameData) {
+function GameSection({
+  icon,
+  name,
+  totalBet,
+  numberOfBets,
+  winningAmount,
+}: GameData) {
   return (
     <View style={styles.gameSection}>
       {/* Category header */}
       <View style={styles.gameHeader}>
-        <Text style={styles.gameIcon}>{icon}</Text>
+        <Image source={icon} style={styles.gameIcon} resizeMode="contain" />
         <Text style={styles.gameName}>{name}</Text>
       </View>
 
       {/* Rows */}
-      <GameRow label="Total bet" value={`₹${totalBet}`} valueColor="#fff" />
-      <GameRow label="Number of bets" value={String(numberOfBets)} valueColor="#fff" />
-      <GameRow label="Winning amount" value={`₹${winningAmount}`} valueColor="#2BC4C4" isLast />
+      <View style={styles.gameRowContainer}>
+        <Image
+          source={require("@/assets/gameStatsSteps-d5fb8354.webp")}
+          style={{ width: 28, height: 82 }}
+          resizeMode="contain"
+        />
+        <View style={styles.gameRowContent}>
+          <GameRow label="Total bet" value={`₹${totalBet}`} valueColor="#fff" />
+          <GameRow
+            label="Number of bets"
+            value={String(numberOfBets)}
+            valueColor="#fff"
+          />
+          <GameRow
+            label="Winning amount"
+            value={`₹${winningAmount}`}
+            valueColor="#00eca3"
+            isLast
+          />
+        </View>
+      </View>
     </View>
   );
 }
@@ -76,10 +133,6 @@ function GameRow({
 }) {
   return (
     <View style={[styles.gameRow, isLast && { marginBottom: 0 }]}>
-      <View style={styles.dotCol}>
-        <View style={styles.dot} />
-        {!isLast && <View style={styles.dotLine} />}
-      </View>
       <Text style={styles.gameRowLabel}>{label}</Text>
       <Text style={[styles.gameRowValue, { color: valueColor }]}>{value}</Text>
     </View>
@@ -88,17 +141,53 @@ function GameRow({
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const GAME_DATA: GameData[] = [
-  { icon: '🎱', name: 'lottery',   totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
-  { icon: '📺', name: 'video',     totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
-  { icon: '🎰', name: 'Slot',      totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
-  { icon: '🐟', name: 'Fish',      totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
-  { icon: '⚽', name: 'sport',     totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
-  { icon: '♠️', name: 'ChessCard', totalBet: '0.00', numberOfBets: 0, winningAmount: '0.00' },
+  {
+    icon: require("@/assets/iconLottery-e1521a51.webp"),
+    name: "lottery",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
+  {
+    icon: require("@/assets/iconRealPerson-31a7139d.webp"),
+    name: "video",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
+  {
+    icon: require("@/assets/iconSlots-fc9b3a8c.webp"),
+    name: "Slot",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
+  {
+    icon: require("@/assets/iconFishing-c0078712.webp"),
+    name: "Fish",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
+  {
+    icon: require("@/assets/iconPhysics-0095b0ff.webp"),
+    name: "sport",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
+  {
+    icon: require("@/assets/iconChess-c1aaee6c.webp"),
+    name: "ChessCard",
+    totalBet: "0.00",
+    numberOfBets: 0,
+    winningAmount: "0.00",
+  },
 ];
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function GameStatsScreen() {
-  const [activeTab, setActiveTab] = useState<Tab>('Today');
+  const [activeTab, setActiveTab] = useState<Tab>("Today");
   const insets = useSafeAreaInsets();
 
   return (
@@ -114,7 +203,10 @@ export default function GameStatsScreen() {
 
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 32 }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 32 },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {/* Total Bet Summary */}
@@ -133,14 +225,13 @@ export default function GameStatsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG       = '#060B2E';
-const CARD_BG  = '#0A1540';
-const TEAL     = '#2BC4C4';
-const DIVIDER  = '#0F1D55';
+const BG = "#060B2E";
+const CARD_BG = "#0A1540";
+const TEAL = "#2BC4C4";
+const DIVIDER = "#0F1D55";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: BG },
-
 
   // Tab bar
   tabBarWrapper: {
@@ -149,29 +240,36 @@ const styles = StyleSheet.create({
     backgroundColor: BG,
   },
   tabBar: {
-    flexDirection: 'row',
-    backgroundColor: CARD_BG,
+    flexDirection: "row",
+    // backgroundColor: CARD_BG,
     borderRadius: 24,
     padding: 4,
-    gap: 2,
+    gap: 6,
   },
   tabItem: {
     flex: 1,
-    paddingVertical: 8,
     borderRadius: 20,
-    alignItems: 'center',
+    overflow: "hidden",
   },
-  tabItemActive: {
-    backgroundColor: TEAL,
+  tabItemGradient: {
+    paddingVertical: 8,
+    alignItems: "center",
+    borderRadius: 20,
+  },
+  tabItemInactive: {
+    paddingVertical: 8,
+    alignItems: "center",
+    backgroundColor: "#011341",
+    borderRadius: 20,
   },
   tabText: {
-    color: '#6A85B8',
-    fontSize: 13,
-    fontWeight: '500',
+    color: "#6A85B8",
+    fontSize: 14,
+    fontWeight: "500",
   },
   tabTextActive: {
-    color: '#fff',
-    fontWeight: '700',
+    color: "#fff",
+    fontWeight: "700",
   },
 
   // Scroll
@@ -180,27 +278,27 @@ const styles = StyleSheet.create({
 
   // Total bet card
   totalCard: {
-    backgroundColor: CARD_BG,
+    backgroundColor: "#011341",
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 28,
     marginBottom: 18,
   },
   totalAmount: {
-    color: '#F5A623',
+    color: "#dd9138",
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "500",
     letterSpacing: 0.5,
   },
   totalLabel: {
-    color: '#6A85B8',
-    fontSize: 14,
+    color: "#6A85B8",
+    fontSize: 20,
     marginTop: 6,
   },
 
   // Game list
   gameList: {
-    backgroundColor: CARD_BG,
+    backgroundColor: "#011341",
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -211,33 +309,40 @@ const styles = StyleSheet.create({
   // Game section
   gameSection: {
     paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: DIVIDER,
     marginTop: 4,
   },
   gameHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     marginBottom: 10,
   },
-  gameIcon: { fontSize: 22 },
-  gameName: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
+  gameRowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
   },
-
+  gameIcon: { width: 32, height: 32 },
+  gameName: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  gameRowContent: {
+    flex: 1,
+    // backgroundColor: "red",
+  },
   // Game row
   gameRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 0,
     minHeight: 28,
   },
   dotCol: {
     width: 24,
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 6,
   },
   dot: {
@@ -256,14 +361,14 @@ const styles = StyleSheet.create({
   },
   gameRowLabel: {
     flex: 1,
-    color: '#6A85B8',
-    fontSize: 13.5,
+    color: "#92a8e3",
+    fontSize: 16,
     paddingTop: 2,
     paddingBottom: 8,
   },
   gameRowValue: {
-    fontSize: 13.5,
-    fontWeight: '500',
+    fontSize: 17,
+    // fontWeight: "500",
     paddingTop: 2,
     paddingBottom: 8,
   },
