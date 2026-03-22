@@ -1,31 +1,43 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useMyDeposits } from "@/services/api/hooks/useDeposit";
+import type { DepositRecord } from "@/services/api/deposit";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+
+function statusColor(status: DepositRecord["status"]) {
+  if (status === "completed") return "#7AFEC3";
+  if (status === "failed") return "#FF4D4D";
+  return "#FFD700";
+}
+
+function statusLabel(status: DepositRecord["status"]) {
+  if (status === "completed") return "Success";
+  if (status === "failed") return "Failed";
+  return "Pending";
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default function DepositHistoryScreen() {
   const router = useRouter();
-  const [selectedFilter, setSelectedFilter] = useState<string>("All");
-  const [selectedStatus, setSelectedStatus] = useState<string>("All");
-  const [selectedDate, setSelectedDate] = useState<string>("Choose a date");
+  const { data, isLoading, refetch, isRefetching } = useMyDeposits();
 
-  const paymentMethods = [
-    { id: "All", label: "All", icon: "grid" },
-    { id: "ArUpi Pay", label: "ArUpi Pay", icon: "logo-venmo" },
-    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "qr-code" },
-    { id: "Other", label: "Other", icon: "ellipsis-horizontal" },
-  ];
+  const deposits = data?.deposits ?? [];
 
   return (
     <ThemedView style={styles.container}>
-      {/* Top Navigation Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
@@ -36,64 +48,57 @@ export default function DepositHistoryScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor="#7AFEC3"
+          />
+        }
       >
-        {/* Filter Tabs */}
-        <View style={styles.filterTabs}>
-          {paymentMethods.map((method) => (
-            <TouchableOpacity
-              key={method.id}
-              style={[
-                styles.filterTab,
-                selectedFilter === method.id && styles.filterTabActive,
-              ]}
-              onPress={() => setSelectedFilter(method.id)}
-            >
-              <Ionicons
-                name={method.icon as any}
-                size={18}
-                color={selectedFilter === method.id ? "#fff" : "#92A8E3"}
-              />
-              <ThemedText
-                style={[
-                  styles.filterTabText,
-                  selectedFilter === method.id && styles.filterTabTextActive,
-                ]}
-              >
-                {method.label}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Status and Date Filters */}
-        <View style={styles.filterRow}>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>
-              {selectedStatus}
-            </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>
-              {selectedDate}
-            </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-          </TouchableOpacity>
-        </View>
-
-        {/* No Data Display */}
-        <View style={styles.noDataContainer}>
-          <View style={styles.noDataIllustration}>
-            {/* Scroll illustration */}
-            <View style={styles.scrollShape} />
-            {/* Paper airplane */}
-            <View style={styles.airplane} />
-            {/* Trees */}
-            <View style={[styles.tree, { left: 40, bottom: 20 }]} />
-            <View style={[styles.tree, { right: 40, bottom: 20 }]} />
+        {isLoading ? (
+          <View style={styles.centered}>
+            <ActivityIndicator color="#7AFEC3" size="large" />
           </View>
-          <ThemedText style={styles.noDataText}>No data</ThemedText>
-        </View>
+        ) : deposits.length === 0 ? (
+          <View style={styles.noDataContainer}>
+            <Ionicons name="document-text-outline" size={64} color="#1F4293" />
+            <ThemedText style={styles.noDataText}>No deposits yet</ThemedText>
+          </View>
+        ) : (
+          <View style={styles.list}>
+            {deposits.map((item) => (
+              <View key={item._id} style={styles.card}>
+                <View style={styles.cardRow}>
+                  <View style={styles.cardLeft}>
+                    <ThemedText style={styles.amount}>₹{item.amount.toLocaleString("en-IN")}</ThemedText>
+                    {item.fee > 0 && (
+                      <ThemedText style={styles.fee}>Fee: ₹{item.fee}</ThemedText>
+                    )}
+                    <ThemedText style={styles.date}>{formatDate(item.createdAt)}</ThemedText>
+                  </View>
+                  <View style={styles.cardRight}>
+                    <View style={[styles.statusBadge, { borderColor: statusColor(item.status) }]}>
+                      <ThemedText style={[styles.statusText, { color: statusColor(item.status) }]}>
+                        {statusLabel(item.status)}
+                      </ThemedText>
+                    </View>
+                    {item.proof && (
+                      <ThemedText style={styles.proof} numberOfLines={1}>
+                        UTR: {item.proof}
+                      </ThemedText>
+                    )}
+                  </View>
+                </View>
+                {item.merchantOrderNo && (
+                  <ThemedText style={styles.orderId} numberOfLines={1}>
+                    Order: {item.merchantOrderNo}
+                  </ThemedText>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </ThemedView>
   );
@@ -136,102 +141,77 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 32,
   },
-  filterTabs: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    marginTop: 20,
-    gap: 8,
-    marginBottom: 16,
-  },
-  filterTab: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: "#011341",
-  },
-  filterTabActive: {
-    backgroundColor: "#7AFEC3",
-  },
-  filterTabText: {
-    fontSize: 14,
-    color: "#92A8E3",
-    fontWeight: "500",
-  },
-  filterTabTextActive: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  filterRow: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    gap: 12,
-    marginBottom: 24,
-  },
-  filterDropdown: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  filterDropdownText: {
-    fontSize: 14,
-    color: "#fff",
-  },
-  noDataContainer: {
+  centered: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 60,
+    paddingTop: 80,
   },
-  noDataIllustration: {
-    width: 200,
-    height: 200,
-    position: "relative",
-    marginBottom: 24,
-  },
-  scrollShape: {
-    position: "absolute",
-    top: 20,
-    left: 30,
-    width: 120,
-    height: 140,
-    backgroundColor: "#1a1a2e",
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "#2a2a3e",
-    transform: [{ rotate: "-5deg" }],
-  },
-  airplane: {
-    position: "absolute",
-    top: 40,
-    right: 20,
-    width: 0,
-    height: 0,
-    borderLeftWidth: 15,
-    borderRightWidth: 15,
-    borderBottomWidth: 20,
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "#2a2a3e",
-    transform: [{ rotate: "45deg" }],
-  },
-  tree: {
-    position: "absolute",
-    width: 20,
-    height: 30,
-    backgroundColor: "#1a1a2e",
-    borderRadius: 4,
+  noDataContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 80,
+    gap: 16,
   },
   noDataText: {
     fontSize: 18,
     color: "#7AFEC3",
     fontWeight: "500",
+  },
+  list: {
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  card: {
+    backgroundColor: "#011341",
+    borderRadius: 14,
+    padding: 16,
+    gap: 8,
+  },
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  cardLeft: {
+    gap: 4,
+    flex: 1,
+  },
+  cardRight: {
+    alignItems: "flex-end",
+    gap: 6,
+  },
+  amount: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  fee: {
+    fontSize: 12,
+    color: "#92A8E3",
+  },
+  date: {
+    fontSize: 12,
+    color: "#92A8E3",
+    marginTop: 4,
+  },
+  statusBadge: {
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  statusText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  proof: {
+    fontSize: 11,
+    color: "#92A8E3",
+    maxWidth: 140,
+  },
+  orderId: {
+    fontSize: 11,
+    color: "#4A5A7A",
   },
 });

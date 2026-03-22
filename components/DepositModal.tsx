@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useQueryClient } from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
@@ -11,9 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { deposit } from "@/services/api/promotion";
-import { authKeys } from "@/services/api/hooks/useAuth";
-import { promotionKeys } from "@/services/api/hooks/useFirstDepositBonus";
+import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
 import { ThemedText } from "./themed-text";
 
 const QUICK_AMOUNTS = [100, 300, 500, 1000, 5000];
@@ -30,8 +27,7 @@ export function DepositModal({
   preselectedAmount,
 }: Props) {
   const [amount, setAmount] = useState("");
-  const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
+  const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
 
   useEffect(() => {
     if (visible) {
@@ -45,22 +41,22 @@ export function DepositModal({
 
   const handleDeposit = async () => {
     const num = parseInt(amount.replace(/[^0-9]/g, ""), 10);
-    if (num <= 0) return;
+    if (!num || num < 100) {
+      Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
+      return;
+    }
 
-    setLoading(true);
     try {
-      const res = await deposit(num);
-      if (res.success && res.data) {
-        await queryClient.invalidateQueries({ queryKey: authKeys.all });
-        await queryClient.invalidateQueries({ queryKey: promotionKeys.firstDepositBonus() });
+      const res = await initiateDeposit(num);
+      if (res.success && res.data?.payUrl) {
+        const { Linking } = await import("react-native");
+        await Linking.openURL(res.data.payUrl);
         onClose();
       } else {
         Alert.alert("Deposit failed", res.message ?? "Please try again.");
       }
     } catch {
       Alert.alert("Deposit failed", "Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -135,7 +131,7 @@ export function DepositModal({
             onPress={handleDeposit}
             activeOpacity={0.8}
             style={styles.depositButtonWrap}
-            disabled={loading || numAmount <= 0}
+            disabled={isPending || numAmount <= 0}
           >
             <LinearGradient
               colors={["#7AFEC3", "#02AFB6"]}
@@ -143,7 +139,7 @@ export function DepositModal({
               end={{ x: 1, y: 0 }}
               style={styles.depositButton}
             >
-              {loading ? (
+              {isPending ? (
                 <ActivityIndicator color="#05012B" />
               ) : (
                 <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>

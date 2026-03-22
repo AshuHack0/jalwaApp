@@ -7,17 +7,17 @@ export const API_DEBUG = __DEV__;
  * Environment: "local" | "staging" | "production"
  * Change this to switch API targets for debugging.
  */
-export const API_ENV = "production" as const;
+export const API_ENV = "local" as const;
 
 const BASE_URLS = {
-  // local:
-  //   Platform.OS === "android"
-  //     ? "http://192.168.29.131:3000"
-  //     : "http://192.168.29.131:3000",
   local:
     Platform.OS === "android"
-      ? "http://185.219.83.167:3000"
-      : "http://185.219.83.167:3000",
+      ? "http://192.168.29.106:3000"
+      : "http://192.168.29.106:3000",
+  // local:
+  //   Platform.OS === "android"
+  //     ? "http://185.219.83.167:3000"
+  //     : "http://185.219.83.167:3000",
   staging: "http://185.219.83.167:3000",
   production: "http://185.219.83.167:3000",
 } as const;

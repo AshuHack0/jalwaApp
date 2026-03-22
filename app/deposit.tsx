@@ -1,11 +1,15 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
+import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -20,6 +24,7 @@ function formatBalance(amount: number): string {
 export default function DepositScreen() {
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
+  const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
   const [selectedMethod, setSelectedMethod] = useState<string>("UPI-QR");
   const [selectedChannel, setSelectedChannel] = useState<string>("Phonepe_QR");
   const [depositAmount, setDepositAmount] = useState<string>("");
@@ -52,9 +57,24 @@ export default function DepositScreen() {
     setDepositAmount(numericAmount);
   };
 
-  const handleDeposit = () => {
-    // Handle deposit logic here
-    console.log("Deposit:", { selectedMethod, selectedChannel, depositAmount });
+  const handleDeposit = async () => {
+    const num = parseInt(depositAmount.replace(/[^0-9]/g, ""), 10);
+    if (!num || num < 100) {
+      Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
+      return;
+    }
+
+    try {
+      const res = await initiateDeposit(num);
+      if (res.success && res.data?.payUrl) {
+        await Linking.openURL(res.data.payUrl);
+        refreshWallet();
+      } else {
+        Alert.alert("Deposit failed", res.message ?? "Please try again.");
+      }
+    } catch {
+      Alert.alert("Deposit failed", "Please try again.");
+    }
   };
 
   return (
@@ -266,8 +286,16 @@ export default function DepositScreen() {
         </View>
 
         {/* Deposit Button */}
-        <TouchableOpacity style={styles.depositButton} onPress={handleDeposit}>
-          <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
+        <TouchableOpacity
+          style={styles.depositButton}
+          onPress={handleDeposit}
+          disabled={isPending}
+        >
+          {isPending ? (
+            <ActivityIndicator color="#7AFEC3" />
+          ) : (
+            <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </ThemedView>
