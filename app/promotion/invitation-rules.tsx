@@ -24,8 +24,8 @@ function SectionHeader({ number }: { number: string }) {
     <Svg width="290" height="50" viewBox="0 0 295 50">
       <Defs>
         <LinearGradient id="bannerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <Stop offset="0%" stopColor="#011341" stopOpacity="1" />
-          <Stop offset="100%" stopColor="#011341" stopOpacity="1" />
+          <Stop offset="0%" stopColor="#1e293b" stopOpacity="1" />
+          <Stop offset="100%" stopColor="#1e293b" stopOpacity="1" />
         </LinearGradient>
       </Defs>
 
@@ -306,7 +306,7 @@ export default function RulesScreen() {
           {/* ── Rule 08 ── */}
           <RuleCard number="08">
             <Text style={styles.ruleText}>
-              The final interpretation of this activity belongs to Jalwa
+              The final interpretation of this activity belongs to 71club
             </Text>
           </RuleCard>
         </ScrollView>
@@ -316,7 +316,7 @@ export default function RulesScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#162055";
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
 
   // Rule card
   ruleCard: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     overflow: "hidden",
   },

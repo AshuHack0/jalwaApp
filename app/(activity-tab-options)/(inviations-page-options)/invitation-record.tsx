@@ -37,7 +37,7 @@ export default function InvitationRecord() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B", // Dark blue background matching the image
+    backgroundColor: "#0f1117", // Dark blue background matching the image
   },
   header: {
     flexDirection: "row",

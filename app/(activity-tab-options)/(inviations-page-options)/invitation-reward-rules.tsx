@@ -119,7 +119,7 @@ export default function InvitationRewardRules() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   header: {
     flexDirection: "row",

@@ -214,7 +214,7 @@ export default function DepositScreen() {
             <TextInput
               style={styles.amountInput}
               placeholder="₹100.00 - ₹50,000.00"
-              placeholderTextColor="#92A8E3"
+              placeholderTextColor="#94a3b8"
               value={depositAmount}
               onChangeText={setDepositAmount}
               keyboardType="numeric"
@@ -226,7 +226,7 @@ export default function DepositScreen() {
                   setSelectedAmount("");
                 }}
               >
-                <Ionicons name="close-circle" size={20} color="#92A8E3" />
+                <Ionicons name="close-circle" size={20} color="#94a3b8" />
               </TouchableOpacity>
             )}
           </View>
@@ -305,7 +305,7 @@ export default function DepositScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   backButton: {
     padding: 4,
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   methodButton: {
     width: "30%",
     aspectRatio: 1,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   channelButton: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
   },
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   channelBalance: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   amountGrid: {
     flexDirection: "row",
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   amountButton: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 20,
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -522,24 +522,24 @@ const styles = StyleSheet.create({
   instructionText: {
     flex: 1,
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
     lineHeight: 20,
   },
   historyPlaceholder: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
   },
   historyText: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   depositButton: {
     marginHorizontal: 16,
     marginTop: 24,
     marginBottom: 40,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: "center",

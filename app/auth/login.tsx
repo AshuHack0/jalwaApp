@@ -81,13 +81,7 @@ export default function LoginScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerLogoWrap}>
-          <Image
-            source={
-              "https://jalwaimg.jalwa-jalwa.com/Jalwa/other/h5setting_20250315140925tbe6.png"
-            }
-            style={{ width: 128, height: 32 }}
-            contentFit="cover"
-          />
+          <ThemedText style={styles.headerBrandText}>71club</ThemedText>
         </View>
         <View style={styles.headerRight}>
           <Image
@@ -147,7 +141,7 @@ export default function LoginScreen() {
                 />
                 <ThemedText
                   style={{
-                    color: activeTab === "phone" ? "#00ECBE" : "#92A8E3",
+                    color: activeTab === "phone" ? "#d4af37" : "#94a3b8",
                     fontSize: 17,
                     fontWeight: "600",
                   }}
@@ -159,7 +153,7 @@ export default function LoginScreen() {
                     height: activeTab === "phone" ? 1.5 : 1.5,
                     width: "100%",
                     backgroundColor:
-                      activeTab === "phone" ? "#00ECBE" : "#92A8E3",
+                      activeTab === "phone" ? "#d4af37" : "#94a3b8",
                     marginTop: 1,
                   }}
                 />
@@ -188,7 +182,7 @@ export default function LoginScreen() {
                 </View>
                 <ThemedText
                   style={{
-                    color: activeTab === "email" ? "#00ECBE" : "#92A8E3",
+                    color: activeTab === "email" ? "#d4af37" : "#94a3b8",
                     fontSize: 17,
                     fontWeight: "600",
                   }}
@@ -200,7 +194,7 @@ export default function LoginScreen() {
                     height: activeTab === "email" ? 1.5 : 1,
                     width: "100%",
                     backgroundColor:
-                      activeTab === "email" ? "#00ECBE" : "#92A8E3",
+                      activeTab === "email" ? "#d4af37" : "#94a3b8",
                     marginTop: 1,
                   }}
                 />
@@ -365,7 +359,7 @@ export default function LoginScreen() {
                 disabled={activeTab === "email" || loading}
               >
                 <LinearGradient
-                  colors={["#05B1B7", "#76FBC3"]}
+                  colors={["#f59e0b", "#d4af37"]}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 0, y: 0 }}
                   style={{
@@ -399,7 +393,7 @@ export default function LoginScreen() {
                   justifyContent: "center",
                   borderRadius: 9999,
                   borderWidth: 1,
-                  borderColor: "#00ECBE",
+                  borderColor: "#d4af37",
                   backgroundColor: "transparent",
                 }}
                 onPress={() => router.replace("/auth/register")}
@@ -407,7 +401,7 @@ export default function LoginScreen() {
               >
                 <ThemedText
                   style={{
-                    color: "#00ECBE",
+                    color: "#d4af37",
                     fontSize: 20,
                     fontWeight: "700",
                     letterSpacing: 2,
@@ -453,7 +447,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   flex: {
     flex: 1,
@@ -482,6 +476,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  headerBrandText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#fff",
+    letterSpacing: 0.5,
+  },
   headerRight: {
     flexDirection: "row",
     alignItems: "center",
@@ -489,11 +489,11 @@ const styles = StyleSheet.create({
   },
   headerLang: {
     fontSize: 17,
-    color: "#00ECBE",
+    color: "#d4af37",
     fontWeight: "600",
   },
   infoSection: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     padding: 20,
   },
   title: {
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   },
   phoneInput: {
     flex: 1,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -575,17 +575,17 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#00ECBE",
+    borderColor: "#d4af37",
     alignItems: "center",
     justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: "#00ECBE",
-    borderColor: "#00ECBE",
+    backgroundColor: "#d4af37",
+    borderColor: "#d4af37",
   },
   checkLabel: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   errorText: {
     fontSize: 13,

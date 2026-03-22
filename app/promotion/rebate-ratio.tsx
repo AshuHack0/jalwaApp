@@ -240,7 +240,7 @@ export default function RebateRatioScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#0F1D55";
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     minWidth: 72,
     gap: 2,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
   },
   tabItemActive: {
     backgroundColor: TEAL,

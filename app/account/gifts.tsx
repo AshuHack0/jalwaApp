@@ -119,7 +119,7 @@ export default function GiftScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   bannerWrapper: {
     width: "100%",
     height: 165,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     overflow: "hidden",
   },
   bannerImage: {
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
 
   // Gift code card
   card: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 10,
     marginHorizontal: 12,
     padding: 20,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   input: {
-    backgroundColor: "#060B2E",
+    backgroundColor: "#1a1d26",
     borderRadius: 24,
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -201,13 +201,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   receiveBtnText: {
-    color: "#05012B",
+    color: "#0f1117",
     fontSize: 17,
   },
 
   // History card
   historyCard: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 10,
     marginHorizontal: 12,
     padding: 20,

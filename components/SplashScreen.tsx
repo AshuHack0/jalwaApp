@@ -1,7 +1,9 @@
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 
-const APP_BACKGROUND = "#05012B";
+import { AppTheme } from "@/constants/appTheme";
+
+const APP_BACKGROUND = AppTheme.background;
 const SPLASH_IMAGE = require("@/assets/start-15844f4f.webp");
 
 export function SplashScreen() {
@@ -16,8 +18,7 @@ export function SplashScreen() {
         <Text style={styles.text}>Withdraw fast ,safe and stable
         </Text> 
 
-        {/*  place logo here  */}
-          <Image source={require("@/assets/logo-e926b199.png")} style={styles.logo} contentFit="contain" />
+        <Text style={styles.brandText}>71club</Text>
        </View>
     </View>
   );
@@ -49,9 +50,11 @@ const styles = StyleSheet.create({
     textAlign: "center", 
     fontWeight: "bold",
   },
-  logo: {
+  brandText: {
     marginTop: 20,
-    width: 200,
-    height: 100,
+    color: AppTheme.accent,
+    fontSize: 32,
+    fontWeight: "700",
+    letterSpacing: 1,
   },
 });

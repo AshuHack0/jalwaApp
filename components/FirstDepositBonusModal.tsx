@@ -98,19 +98,19 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
             onPress={(e) => e.stopPropagation()}
             style={{
               overflow: "hidden",
-              backgroundColor: "#021341",
+              backgroundColor: "#1e293b",
               borderRadius: 10,
               width: "100%",
               maxWidth: 360,
               maxHeight: Dimensions.get("window").height * 0.85,
             }}
           >
-            <View style={{ padding: 10, backgroundColor: "#001C54" }}>
+            <View style={{ padding: 10, backgroundColor: "#334155" }}>
               <Text
                 style={{
                   fontSize: 16,
                   fontWeight: "bold",
-                  color: "#e3efff",
+                  color: "#f1f5f9",
                   marginBottom: 8,
                   textAlign: "center",
                 }}
@@ -120,7 +120,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
               <Text
                 style={{
                   fontSize: 12,
-                  color: "#e3efff",
+                  color: "#f1f5f9",
                   textAlign: "center",
                   fontWeight: "500",
                 }}
@@ -142,15 +142,15 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
             >
               {isLoading ? (
                 <View style={{ padding: 40, alignItems: "center" }}>
-                  <ActivityIndicator size="large" color="#14B8A6" />
-                  <Text style={{ color: "#92a8e3", marginTop: 12 }}>Loading...</Text>
+                  <ActivityIndicator size="large" color="#d4af37" />
+                  <Text style={{ color: "#94a3b8", marginTop: 12 }}>Loading...</Text>
                 </View>
               ) : (
               sortedOffers.map((offer) => (
                 <View
                   key={offer.id}
                   style={{
-                    backgroundColor: "#001C54",
+                    backgroundColor: "#334155",
                     borderRadius: 12,
                     padding: 14,
                     marginBottom: 12,
@@ -168,7 +168,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                       style={{
                         fontSize: 15,
                         fontWeight: "500",
-                        color: "#e3efff",
+                        color: "#f1f5f9",
                       }}
                     >
                       First deposit
@@ -195,7 +195,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                   <Text
                     style={{
                       fontSize: 12,
-                      color: "#92a8e3",
+                      color: "#94a3b8",
                       marginBottom: 10,
                       lineHeight: 18,
                     }}
@@ -214,13 +214,13 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                     <View
                       style={{
                         flex: 1,
-                        backgroundColor: "#05012B",
+                        backgroundColor: "#0f1117",
                         borderRadius: 100,
                         alignItems: "center",
                         justifyContent: "center",
                       }}
                     >
-                      <Text style={{ fontSize: 16, color: "#e3efff" }}>
+                      <Text style={{ fontSize: 16, color: "#f1f5f9" }}>
                         {offer.currentProgress ?? 0}/{offer.rechargeAmount}
                       </Text>
                     </View>
@@ -248,7 +248,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                               style={{
                                 fontSize: 13,
                                 fontWeight: "600",
-                                color: "#05012B",
+                                color: "#0f1117",
                               }}
                             >
                               Receive
@@ -285,7 +285,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                 alignItems: "center",
                 paddingHorizontal: 10,
                 paddingVertical: 10,
-                backgroundColor: "#001C54",
+                backgroundColor: "#334155",
               }}
             >
               <TouchableOpacity
@@ -303,7 +303,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                     height: 20,
                     borderRadius: 10,
                     borderWidth: 2,
-                    borderColor: noReminderToday ? "#14B8A6" : "#6F80A4",
+                    borderColor: noReminderToday ? "#d4af37" : "#6F80A4",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
@@ -314,12 +314,12 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                         width: 10,
                         height: 10,
                         borderRadius: 5,
-                        backgroundColor: "#14B8A6",
+                        backgroundColor: "#d4af37",
                       }}
                     />
                   )}
                 </View>
-                <Text style={{ fontSize: 14, color: "#92a8e3" }}>
+                <Text style={{ fontSize: 14, color: "#94a3b8" }}>
                   No more reminders today
                 </Text>
               </TouchableOpacity>
@@ -344,7 +344,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                     style={{
                       fontSize: 15,
                       fontWeight: "500",
-                      color: "#05012B",
+                      color: "#0f1117",
                     }}
                   >
                     Activity

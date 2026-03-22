@@ -70,7 +70,7 @@ function StatsSection() {
 // ── Invitation Link Section ───────────────────────────────────────────────────
 function InvitationLinkSection() {
   const [copied, setCopied] = useState(false);
-  const inviteLink = "https://jalwaclub3.com/#/register...";
+  const inviteLink = "https://71club.com/#/register...";
 
   const handleCopy = () => {
     Clipboard.setString(inviteLink);
@@ -86,7 +86,7 @@ function InvitationLinkSection() {
       </View>
 
       <LinkCopyBanner
-        link="https://www.jalwagame.com/#/register?code=ABC123"
+        link="https://71club.com/#/register?code=ABC123"
         onCopy={() => console.log("Link copied!")}
       />
     </View>
@@ -334,8 +334,8 @@ export default function PartnerRewardScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
-const CARD_BG = "#05012B";
+const BG = "#1a1d26";
+const CARD_BG = "#0f1117";
 const TEAL = "#00D9C5";
 const ORANGE = "#F5A623";
 const NAVY = "#0A1540";
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     right: -8,
     width: 110,
     height: 44,
-    backgroundColor: "#00ECBE",
+    backgroundColor: "#d4af37",
     borderTopRightRadius: 22,
     borderBottomRightRadius: 22,
     transform: [{ skewX: "-20deg" }],
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 12,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     padding: 12,
     marginBottom: 8,
     borderRadius: 8,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   linkIconSquare: {
     width: 2,
     height: 16,
-    backgroundColor: "#00ECBE",
+    backgroundColor: "#d4af37",
     marginRight: 8,
     // borderRadius: 2,
   },
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   linkRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 38,
     padding: 12,
     paddingVertical: 3,

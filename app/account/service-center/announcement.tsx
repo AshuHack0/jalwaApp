@@ -51,21 +51,21 @@ const ANNOUNCEMENTS = [
   {
     id: "1",
     title: "Official Security Notice",
-    body: "Our customer service will never send any links to members—if you receive a link from someone claiming to be JALWA.GAME customer service, please do not click it, as it may lead to hacking or data loss; always verify through our official website.",
+    body: "Our customer service will never send any links to members—if you receive a link from someone claiming to be 71club customer service, please do not click it, as it may lead to hacking or data loss; always verify through our official website.",
     timestamp: "2025-04-12 18:53:12",
     showLock: true,
   },
   {
     id: "2",
     title: "आधिकारिक सुरक्षा सूचना",
-    body: "हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी — यदि आपको कोई लिंक किसी ऐसे व्यक्ति से प्राप्त होता है जो खुद को JALWA कस्टमर सर्विस बता रहा है, तो कृपया उस पर क्लिक न करें, क्योंकि यह हैकिंग या डेटा चोरी का कारण बन सकता है। कृपया हमेशा हमारी आधिकारिक वेबसाइट के माध्यम से ही सत्यापित करें।",
+    body: "हमारी कस्टमर सर्विस कभी भी सदस्यों को कोई लिंक नहीं भेजेगी — यदि आपको कोई लिंक किसी ऐसे व्यक्ति से प्राप्त होता है जो खुद को 71club कस्टमर सर्विस बता रहा है, तो कृपया उस पर क्लिक न करें, क्योंकि यह हैकिंग या डेटा चोरी का कारण बन सकता है। कृपया हमेशा हमारी आधिकारिक वेबसाइट के माध्यम से ही सत्यापित करें।",
     timestamp: "2025-04-12 18:53:03",
     showLock: true,
   },
   {
     id: "3",
-    title: "WELCOMME TO JALWA",
-    body: "🎉 🎉 🎉 Welcome to join the JALWA platform. We provide a brand new gaming experience and a comprehensive range of popular games. ❤️‍🔥 ❤️‍🔥 ❤️‍🔥 You are welcome to register at JALWA and participate in the game. Thank you.",
+    title: "WELCOME TO 71CLUB",
+    body: "🎉 🎉 🎉 Welcome to join the 71club platform. We provide a brand new gaming experience and a comprehensive range of popular games. ❤️‍🔥 ❤️‍🔥 ❤️‍🔥 You are welcome to register at 71club and participate in the game. Thank you.",
     timestamp: "2025-03-24 14:46:29",
     showLock: false,
   },
@@ -108,7 +108,7 @@ export default function AnnouncementScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const DIVIDER = "#0F1D55";
 
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 10,
     padding: 16,
   },

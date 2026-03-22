@@ -137,7 +137,7 @@ export default function InvitationBanner() {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     height: SCREEN_HEIGHT,
   },
   scrollView: { flex: 1 },

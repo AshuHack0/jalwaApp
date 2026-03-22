@@ -79,7 +79,7 @@ export default function AboutUsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const DIVIDER = "#0F1D55";
 
 const styles = StyleSheet.create({

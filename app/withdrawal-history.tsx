@@ -52,13 +52,13 @@ export default function WithdrawalHistoryScreen() {
                 <Ionicons
                   name="triangle"
                   size={18}
-                  color={selectedFilter === method.id ? "#FFD700" : "#92A8E3"}
+                  color={selectedFilter === method.id ? "#FFD700" : "#94a3b8"}
                 />
               ) : (
                 <Ionicons
                   name={method.icon as any}
                   size={18}
-                  color={selectedFilter === method.id ? "#fff" : "#92A8E3"}
+                  color={selectedFilter === method.id ? "#fff" : "#94a3b8"}
                 />
               )}
               <ThemedText
@@ -79,13 +79,13 @@ export default function WithdrawalHistoryScreen() {
             <ThemedText style={styles.filterDropdownText}>
               {selectedStatus}
             </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            <Ionicons name="chevron-down" size={18} color="#94a3b8" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.filterDropdown}>
             <ThemedText style={styles.filterDropdownText}>
               {selectedDate}
             </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            <Ionicons name="chevron-down" size={18} color="#94a3b8" />
           </TouchableOpacity>
         </View>
 
@@ -110,7 +110,7 @@ export default function WithdrawalHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   backButton: {
     padding: 4,
@@ -158,14 +158,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
   },
   filterTabActive: {
     backgroundColor: "#7AFEC3",
   },
   filterTabText: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
     fontWeight: "500",
   },
   filterTabTextActive: {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,

@@ -1,24 +1,25 @@
 {
   "expo": {
-    "name": "Jalwa",
-    "slug": "jalwaApp",
+    "name": "71club",
+    "slug": "71club",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/appIcon.png",
-    "scheme": "jalwaapp",
+    "scheme": "71club",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ashutosh_sehgal_nit.club71"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#05012B",
+        "backgroundColor": "#0f1117",
         "foregroundImage": "./assets/appIcon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.ashutosh_sehgal_nit.jalwaApp"
+      "package": "com.ashutosh_sehgal_nit.club71"
     },
     "web": {
       "output": "static",
@@ -29,12 +30,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/logo-e926b199.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#05012B",
+          "backgroundColor": "#0f1117",
           "dark": {
-            "backgroundColor": "#05012B"
+            "backgroundColor": "#0f1117"
           }
         }
       ],

@@ -165,7 +165,7 @@ export default function CommissionDetailsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const DIVIDER = "#162055";
 

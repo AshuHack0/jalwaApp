@@ -150,7 +150,7 @@ export default function NotificationScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#0F1D55";
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 3,
     paddingHorizontal: 14,
     paddingTop: 12,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardMessage: {
-    color: "#92a8e3",
+    color: "#94a3b8",
     fontSize: 13.5,
     lineHeight: 20,
   },

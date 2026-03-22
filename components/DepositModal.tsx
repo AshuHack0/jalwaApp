@@ -140,7 +140,7 @@ export function DepositModal({
               style={styles.depositButton}
             >
               {isPending ? (
-                <ActivityIndicator color="#05012B" />
+                <ActivityIndicator color="#0f1117" />
               ) : (
                 <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
               )}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
     marginBottom: 8,
   },
   input: {
@@ -201,12 +201,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#fff",
     borderWidth: 1,
-    borderColor: "#224BA2",
+    borderColor: "#334155",
     marginBottom: 20,
   },
   quickLabel: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
     marginBottom: 12,
   },
   quickAmounts: {
@@ -220,20 +220,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#224BA2",
+    borderColor: "#334155",
     backgroundColor: "rgba(31, 66, 147, 0.3)",
   },
   quickButtonActive: {
-    borderColor: "#14B8A6",
+    borderColor: "#d4af37",
     backgroundColor: "rgba(20, 184, 166, 0.2)",
   },
   quickButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   quickButtonTextActive: {
-    color: "#14B8A6",
+    color: "#d4af37",
   },
   depositButtonWrap: {
     borderRadius: 12,
@@ -247,6 +247,6 @@ const styles = StyleSheet.create({
   depositButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#05012B",
+    color: "#0f1117",
   },
 });

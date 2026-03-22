@@ -318,7 +318,7 @@ export default function AccountScreen() {
 
         {/* Log Out Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="power" size={25} color="#00ECBE" />
+          <Ionicons name="power" size={25} color="#d4af37" />
           <ThemedText style={styles.logoutText}>Log out</ThemedText>
         </TouchableOpacity>
       </ScrollView>
@@ -329,7 +329,7 @@ export default function AccountScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
+    backgroundColor: '#0f1117',
   },
   scrollView: {
     flex: 1,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   balanceSectionContainer: {
-    backgroundColor: '#001C54',
+    backgroundColor: '#334155',
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   },
   balanceTitle: {
     fontSize: 16,
-    color: '#92A8E3',
+    color: '#94a3b8',
   },
   balanceAmount: {
     fontSize: 20,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   },
   historyCard: {
     width: '47%',
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
     borderRadius: 9,
     padding: 10,
     gap: 12,
@@ -490,16 +490,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   gameHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
   },
   transactionCard: {
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
   },
   depositHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
   },
   withdrawHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
   },
   historyIconContainer: {
     alignItems: 'center',
@@ -518,11 +518,11 @@ const styles = StyleSheet.create({
   historySubtitle: {
     fontSize: 12,
     lineHeight: 14,
-    color: '#92A8E3',
+    color: '#94a3b8',
     flexShrink: 1,
   },
   settingsSection: {
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   serviceSection: {
     paddingHorizontal: 16,
     marginBottom: 24,
-    backgroundColor: '#011341',
+    backgroundColor: '#1e293b',
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   },
   serviceLabel: {
     fontSize: 12,
-    color: '#92A8E3',
+    color: '#94a3b8',
     textAlign: 'center',
     lineHeight: 14, 
   },
@@ -641,12 +641,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 32,
     borderWidth: 1,
-    borderColor: '#00ECBE',
+    borderColor: '#d4af37',
     gap: 8,
   },
   logoutText: {
     fontSize: 17,
     fontWeight: '400',
-    color: '#00ECBE',
+    color: '#d4af37',
   },
 });

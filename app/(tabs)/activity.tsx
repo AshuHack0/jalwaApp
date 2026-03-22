@@ -122,11 +122,7 @@ export default function ActivityScreen() {
       >
         {/* Top Header */}
         <View style={styles.header}>
-          <Image
-            source={require("@/assets/h5setting_20250315140925tbe6.png")}
-            style={styles.logoImage}
-            contentFit="contain"
-          />
+          <ThemedText style={styles.headerBrandText}>71club</ThemedText>
         </View>
 
         {/* Bonus Information Section */}
@@ -249,7 +245,7 @@ export default function ActivityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -259,16 +255,18 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   header: {
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     alignItems: "center",
     paddingTop: 40,
     paddingBottom: 10,
     zIndex: 1000,
     elevation: 1000,
   },
-  logoImage: {
-    width: 150,
-    height: 40,
+  headerBrandText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#f1f5f9",
+    letterSpacing: 0.5,
   },
   bonusSection: {
     paddingHorizontal: 16,
@@ -301,7 +299,7 @@ const styles = StyleSheet.create({
   },
   bonusDetailsButton: {
     paddingHorizontal: 24,
-    backgroundColor: "#001C54",
+    backgroundColor: "#334155",
     borderRadius: 32,
     paddingVertical: 12,
     alignItems: "center",
@@ -312,7 +310,7 @@ const styles = StyleSheet.create({
   bonusDetailsText: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#00ecbe",
+    color: "#d4af37",
   },
   categoriesGrid: {
     flexDirection: "row",
@@ -339,7 +337,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     fontSize: 12,
-    color: "#92a8e3",
+    color: "#94a3b8",
     textAlign: "center",
     lineHeight: 14,
   },
@@ -372,7 +370,7 @@ const styles = StyleSheet.create({
   cardTextContainer: {
     height: 100,
     gap: 3,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     paddingVertical: 3,
     paddingHorizontal: 16,
   },
@@ -385,7 +383,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 12,
     lineHeight: 18,
-    color: "#92A8E3",
+    color: "#94a3b8",
     opacity: 0.9,
   },
   bannersSection: {
@@ -395,7 +393,7 @@ const styles = StyleSheet.create({
   },
   bannerCard: {
     position: "relative",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 16,
     overflow: "hidden",
     marginBottom: 2,
@@ -437,7 +435,7 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#e3efff",
+    color: "#f1f5f9",
   },
   noMoreContainer: {
     alignItems: "center",

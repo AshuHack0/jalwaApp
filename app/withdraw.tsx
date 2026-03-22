@@ -123,7 +123,7 @@ export default function WithdrawScreen() {
                 <Ionicons
                   name={method.icon as any}
                   size={24}
-                  color={selectedMethod === method.id ? "#05012B" : "#fff"}
+                  color={selectedMethod === method.id ? "#0f1117" : "#fff"}
                 />
                 <ThemedText
                   style={[
@@ -151,7 +151,7 @@ export default function WithdrawScreen() {
             <TextInput
               style={styles.amountInput}
               placeholder="Please enter the amount"
-              placeholderTextColor="#92A8E3"
+              placeholderTextColor="#94a3b8"
               value={withdrawAmount}
               onChangeText={setWithdrawAmount}
               keyboardType="numeric"
@@ -280,7 +280,7 @@ export default function WithdrawScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   backButton: {
     padding: 4,
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   paymentMethodSubtext: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   methodsRow: {
     flexDirection: "row",
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   },
   methodButton: {
     flex: 1,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
@@ -417,14 +417,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   methodLabelActive: {
-    color: "#05012B",
+    color: "#0f1117",
   },
   addUPIButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   amountInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -461,19 +461,19 @@ const styles = StyleSheet.create({
   },
   balanceInfoText: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   amountReceivedRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
   },
   amountReceivedLabel: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   amountReceivedRight: {
     flexDirection: "row",
@@ -494,7 +494,7 @@ const styles = StyleSheet.create({
   allButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#05012B",
+    color: "#0f1117",
   },
   withdrawButton: {
     marginHorizontal: 16,
@@ -505,16 +505,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   withdrawButtonDisabled: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     opacity: 0.5,
   },
   withdrawButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#05012B",
+    color: "#0f1117",
   },
   withdrawButtonTextDisabled: {
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   rulesList: {
     gap: 12,
@@ -532,11 +532,11 @@ const styles = StyleSheet.create({
   ruleText: {
     flex: 1,
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
     lineHeight: 20,
   },
   historyPlaceholder: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 40,
     alignItems: "center",
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   allHistoryButton: {
     backgroundColor: "transparent",

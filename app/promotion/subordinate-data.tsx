@@ -247,7 +247,7 @@ export default function SubordinateDataScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#162055";
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     width: 84,
     height: 40,
     borderRadius: 22,
-    backgroundColor: "#00ECBE",
+    backgroundColor: "#d4af37",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -87,7 +87,7 @@ export default function AgentLineScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 
 const styles = StyleSheet.create({
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   telegramRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     marginHorizontal: 0,
     paddingHorizontal: 16,
     paddingVertical: 16,

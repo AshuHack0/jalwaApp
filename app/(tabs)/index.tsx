@@ -481,11 +481,7 @@ export default function HomeScreen() {
     <ThemedView style={styles.container}>
       {/* Fixed Header */}
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/logo-e926b199.png")}
-          style={styles.logoImage}
-          contentFit="contain"
-        />
+        <ThemedText style={styles.headerBrandText}>71club</ThemedText>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           {isAuthenticated && (
             <View
@@ -533,7 +529,7 @@ export default function HomeScreen() {
                   <ThemedText
                     style={{
                       fontSize: 15.8,
-                      color: "#00ecbe",
+                      color: "#d4af37",
                       fontWeight: "500",
                     }}
                   >
@@ -559,7 +555,7 @@ export default function HomeScreen() {
                 onPress={() => router.push("/auth/register")}
               >
                 <LinearGradient
-                  colors={["#00D4FF", "#00E5A8"]}
+                  colors={["#f59e0b", "#d4af37"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.registerButton}
@@ -637,7 +633,7 @@ export default function HomeScreen() {
 
         {/* Announcement Bar */}
         <LinearGradient
-          colors={["#001C54", "#000C33"]}
+          colors={["#334155", "#000C33"]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
           style={{
@@ -649,7 +645,7 @@ export default function HomeScreen() {
             marginBottom: hp(2),
             marginHorizontal: 16,
             overflow: "hidden",
-            borderColor: "#224ba2",
+            borderColor: "#334155",
             borderWidth: 1,
             paddingHorizontal: wp(2.7),
           }}
@@ -722,7 +718,7 @@ export default function HomeScreen() {
             }}
           >
             <ThemedText
-              style={{ color: "#05012B", fontSize: wp(4.7), fontWeight: "400" }}
+              style={{ color: "#0f1117", fontSize: wp(4.7), fontWeight: "400" }}
             >
               Detail
             </ThemedText>
@@ -1265,11 +1261,7 @@ export default function HomeScreen() {
         {/* Information Section */}
         <View style={styles.infoSection}>
           <View style={styles.infoHeader}>
-            <Image
-              source={require("@/assets/logo-e926b199.png")}
-              style={styles.infoLogo}
-              contentFit="contain"
-            />
+            <ThemedText style={styles.infoBrandText}>71club</ThemedText>
             <View style={styles.ageBadge}>
               <ThemedText style={styles.ageText}>+18</ThemedText>
             </View>
@@ -1286,14 +1278,14 @@ export default function HomeScreen() {
             <View style={styles.bulletItem}>
               <ThemedText style={styles.bulletIcon}>◆</ThemedText>
               <ThemedText style={styles.bulletText}>
-                Jalwa works with more than 10,000 online live game dealers and
+                71club works with more than 10,000 online live game dealers and
                 slot games, all of which are verified fair games.
               </ThemedText>
             </View>
             <View style={styles.bulletItem}>
               <ThemedText style={styles.bulletIcon}>◆</ThemedText>
               <ThemedText style={styles.bulletText}>
-                Jalwa supports fast deposit and withdrawal, and looks forward to
+                71club supports fast deposit and withdrawal, and looks forward to
                 your visit.
               </ThemedText>
             </View>
@@ -1302,7 +1294,7 @@ export default function HomeScreen() {
             <ThemedText style={styles.boldText}>
               Gambling can be addictive, please play rationally.
             </ThemedText>{" "}
-            Jalwa only accepts customers above the age of 18.
+            71club only accepts customers above the age of 18.
           </ThemedText>
         </View>
       </ScrollView>
@@ -1352,7 +1344,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     position: "relative",
@@ -1369,16 +1361,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 40,
     paddingBottom: 6,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1000,
   },
-  logoImage: {
-    width: 120,
-    height: 32,
+  headerBrandText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#f1f5f9",
+    letterSpacing: 0.5,
   },
   headerIcons: {
     flexDirection: "row",
@@ -1394,10 +1388,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: "rgba(10, 20, 45, 0.9)",
     borderWidth: 1,
-    borderColor: "#00D4FF",
+    borderColor: "#f59e0b",
   },
   loginButtonText: {
-    color: "#00D4FF",
+    color: "#f59e0b",
     fontSize: 14,
     fontWeight: "600",
   },
@@ -1453,7 +1447,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     letterSpacing: 0.5,
-    color: "#00ECBE",
+    color: "#d4af37",
   },
   languageTextGradient: {
     flex: 1,
@@ -1589,7 +1583,7 @@ const styles = StyleSheet.create({
   },
   indicatorActive: {
     width: 24,
-    backgroundColor: "#14B8A6",
+    backgroundColor: "#d4af37",
   },
   alertBanner: {
     flexDirection: "row",
@@ -1611,13 +1605,13 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   detailButtonContainer: {
-    backgroundColor: "#14B8A6",
+    backgroundColor: "#d4af37",
     paddingVertical: 2,
     paddingHorizontal: 28,
     borderRadius: 16,
   },
   detailButton: {
-    color: "#05012B",
+    color: "#0f1117",
     fontSize: 14,
     fontWeight: "400",
   },
@@ -1648,7 +1642,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   walletLabel: {
-    color: "#92A8E3",
+    color: "#94a3b8",
     fontSize: 13,
   },
   balanceRow: {
@@ -1753,7 +1747,7 @@ const styles = StyleSheet.create({
   },
   gameName: {
     marginTop: -10,
-    color: "#6F80A4",
+    color: "#64748b",
     fontSize: 14,
     textAlign: "center",
   },
@@ -1768,7 +1762,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   categoryPlaceholderText: {
-    color: "#6F80A4",
+    color: "#64748b",
     fontSize: 16,
   },
   lotterySection: {
@@ -1820,7 +1814,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#14B8A6",
+    backgroundColor: "#d4af37",
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginTop: 3,
@@ -1904,7 +1898,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#224BA2",
+    borderColor: "#334155",
     paddingHorizontal: 1,
   },
   winnersScrollWrapper: {
@@ -1983,7 +1977,7 @@ const styles = StyleSheet.create({
   },
   winnerAmount: {
     fontSize: 15,
-    color: "#00ecbe",
+    color: "#d4af37",
   },
   leaderboardSection: {
     paddingHorizontal: 16,
@@ -2082,13 +2076,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#224BA2",
+    borderBottomColor: "#334155",
     gap: 12,
   },
   leaderboardRank: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#92A8E3",
+    color: "#94a3b8",
     width: 30,
   },
   leaderboardAvatar: {
@@ -2115,7 +2109,7 @@ const styles = StyleSheet.create({
   leaderboardAmount: {
     fontSize: 14,
     fontWeight: "medium",
-    color: "#00ecbe",
+    color: "#d4af37",
   },
   infoSection: {
     paddingHorizontal: 16,
@@ -2128,24 +2122,26 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     // backgroundColor: 'blue',
   },
-  infoLogo: {
-    width: 165,
-    height: 30,
+  infoBrandText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#fff",
+    letterSpacing: 0.5,
   },
   ageBadge: {
     width: 40,
     height: 40,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#00ecbe",
+    borderColor: "#d4af37",
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 70,
+    marginLeft: 12,
   },
   ageText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#00ecbe",
+    color: "#d4af37",
   },
   bulletPoints: {
     gap: 12,
@@ -2189,7 +2185,7 @@ const styles = StyleSheet.create({
     borderRadius: 38,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#224BA2",
+    borderColor: "#334155",
     width: "55%",
     alignSelf: "center",
   },
@@ -2261,13 +2257,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   gameErrorButton: {
-    backgroundColor: "#14B8A6",
+    backgroundColor: "#d4af37",
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 12,
   },
   gameErrorButtonText: {
-    color: "#05012B",
+    color: "#0f1117",
     fontSize: 16,
     fontWeight: "600",
   },

@@ -26,7 +26,7 @@ function getBetSelectionColors(selection: string): string[] {
   if (colorMapEntry) return [colorMapEntry];
   const numberColors = BET_SELECTION_NUMBER_MAP[key as keyof typeof BET_SELECTION_NUMBER_MAP];
   if (numberColors) return numberColors;
-  return ["#14B8A6"];
+  return ["#d4af37"];
 }
 const MULTIPLIERS = WINGO_MULTIPLIERS.map((value) => `X${value}`);
 
@@ -140,14 +140,14 @@ export function BetModal({
                   <TouchableOpacity
                     key={amt}
                     style={[
-                      {paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#05012B", alignItems: "center", justifyContent: "center", borderRadius: 6 },
+                      {paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#0f1117", alignItems: "center", justifyContent: "center", borderRadius: 6 },
                       selectedBalanceAmount === amt && { backgroundColor: headerColors[0], borderRadius: 0 },
                     ]}
                     onPress={() => onBalanceAmountChange(amt)}
                   >
                     <ThemedText
                       style={[
-                        { fontSize: 15, fontWeight: "500", color: "#92A8E3" },
+                        { fontSize: 15, fontWeight: "500", color: "#94a3b8" },
                         selectedBalanceAmount === amt &&
                           { color: "white" },
                       ]}
@@ -189,14 +189,14 @@ export function BetModal({
                 <TouchableOpacity
                   key={mult}
                   style={[
-                    {paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#05012B" },
+                    {paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#0f1117" },
                     selectedMultiplier === mult && { backgroundColor: headerColors[0], borderRadius: 0 },
                   ]}
                   onPress={() => handleMultiplierPress(mult)}
                 >
                   <ThemedText
                     style={[
-                      { fontSize: 14, fontWeight: "600", color: "#92A8E3" },
+                      { fontSize: 14, fontWeight: "600", color: "#94a3b8" },
                       selectedMultiplier === mult &&
                         { color: "white" },
                     ]}
@@ -214,15 +214,15 @@ export function BetModal({
             >
               <View
                 style={[
-                  { width: 20, height: 20, borderRadius: 50, borderWidth: 1, borderColor: "#92A8E3", alignItems: "center", justifyContent: "center", marginRight: 8 },
-                  agreed && { backgroundColor: "#00ECBE", borderWidth:0},
+                  { width: 20, height: 20, borderRadius: 50, borderWidth: 1, borderColor: "#94a3b8", alignItems: "center", justifyContent: "center", marginRight: 8 },
+                  agreed && { backgroundColor: "#d4af37", borderWidth:0},
                 ]}
               >
                 {agreed && (
                   <Ionicons name="checkmark" size={16} color="#fff" />
                 )}
               </View>
-              <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
+              <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#94a3b8", marginRight: 2 }}>I agree </ThemedText>
               <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
             </TouchableOpacity>
           </View>
@@ -230,10 +230,10 @@ export function BetModal({
           {/* Modal Footer */}
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
             <TouchableOpacity
-              style={{ flex: 1, paddingVertical: 10, backgroundColor: "#05012B", alignItems: "center" }}
+              style={{ flex: 1, paddingVertical: 10, backgroundColor: "#0f1117", alignItems: "center" }}
               onPress={onClose}
             >
-              <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#92A8E3" }}>Cancel</ThemedText>
+              <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#94a3b8" }}>Cancel</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   content: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#14B8A6",
+    backgroundColor: "#d4af37",
   },
   headerContent: {
     paddingTop: 20,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     alignItems: "center",
   },
   amountButtonActive: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   amountTextActive: {
     color: "#fff",
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   quantityValue: {
     width:90,
     height:33,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 8,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   multiplierBtnActive: {
     backgroundColor: "#17B15E",
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   multiplierText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   multiplierTextActive: {
     color: "#fff",
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#92A8E3",
+    borderColor: "#94a3b8",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 8,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     alignItems: "center",
   },
   cancelText: {

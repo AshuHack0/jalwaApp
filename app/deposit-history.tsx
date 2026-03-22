@@ -107,7 +107,7 @@ export default function DepositHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 30,
     paddingBottom: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   backButton: {
     padding: 4,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 14,
     padding: 16,
     gap: 8,
@@ -188,11 +188,11 @@ const styles = StyleSheet.create({
   },
   fee: {
     fontSize: 12,
-    color: "#92A8E3",
+    color: "#94a3b8",
   },
   date: {
     fontSize: 12,
-    color: "#92A8E3",
+    color: "#94a3b8",
     marginTop: 4,
   },
   statusBadge: {
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   proof: {
     fontSize: 11,
-    color: "#92A8E3",
+    color: "#94a3b8",
     maxWidth: 140,
   },
   orderId: {

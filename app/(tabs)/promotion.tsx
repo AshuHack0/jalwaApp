@@ -230,7 +230,7 @@ export default function PromotionScreen() {
                       <Ionicons
                         name="copy-outline"
                         size={16}
-                        color="#92a8e3"
+                        color="#94a3b8"
                         style={{ transform: [{ scaleX: -1 }] }}
                       />
                     </TouchableOpacity>
@@ -274,7 +274,7 @@ export default function PromotionScreen() {
                   This Week
                 </ThemedText>
               </View>
-              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
+              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#94a3b8', height: "100%"}} />
 
               <View style={styles.promotionDataItem}>
                 <ThemedText style={styles.promotionDataValue}>0</ThemedText>
@@ -299,7 +299,7 @@ export default function PromotionScreen() {
                 </ThemedText>
               </View>
 
-              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
+              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#94a3b8', height: "100%"}} />
               
               <View style={styles.promotionDataItem}>
                 <ThemedText style={styles.promotionDataValue}>0</ThemedText>
@@ -318,7 +318,7 @@ export default function PromotionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     position: "relative",
   },
   scrollView: {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 14,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     position: "relative",
     zIndex: 10000,
     elevation: 10000, // For Android
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   commissionLabel: {
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   commissionLabelText: {
     fontSize: 16,
     lineHeight: 18,
-    color: "#00ECBE",
+    color: "#d4af37",
     fontWeight: "500",
   },
   upgradeText: {
@@ -414,14 +414,14 @@ const styles = StyleSheet.create({
   subordinateCardContainer: {
     display: "flex",
     flexDirection: "row",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     overflow: "hidden",
   },
   subordinateCard: {
     width: "50%",
-    backgroundColor: "#011341",
-    borderTopColor: "#14B8A6",
+    backgroundColor: "#1e293b",
+    borderTopColor: "#d4af37",
     borderTopWidth: 1,
   },
   subordinateHeader1: {
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 18,
     fontWeight: "600",
-    color: "#05012B",
+    color: "#0f1117",
   },
   featuresSection: {
     marginHorizontal: 16,
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     alignItems: "center",
     padding: 16,
     marginBottom: 10,
@@ -542,11 +542,11 @@ const styles = StyleSheet.create({
   },
   codeText: {
     fontSize: 13,
-    color: "#92a8e3",
+    color: "#94a3b8",
     fontWeight: "500",
   },
   promotionDataSection: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     marginHorizontal: 16,
     borderRadius: 12,
     padding: 16,
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   },
   promotionDataLabel: {
     fontSize: 13,
-    color: "#92a8e3",
+    color: "#94a3b8",
     textAlign: "center",
     fontWeight: "500",
     lineHeight: 14,

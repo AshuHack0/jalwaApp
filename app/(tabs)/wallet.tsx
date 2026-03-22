@@ -210,7 +210,7 @@ export default function WalletScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   scrollView: {
     flex: 1,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 12,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   backButton: {
     padding: 4,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
   },
   walletIconContainer: {
     marginVertical: 14,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   walletTypeSection: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     marginHorizontal: 16,
     borderRadius: 16,
     padding: 10,
@@ -308,12 +308,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 140,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
     borderWidth: 10,
-    borderColor: "#001C54",
+    borderColor: "#334155",
   },
   progressText: {
     fontSize: 18,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 18,
     fontWeight: "800",
-    color: "#05012B",
+    color: "#0f1117",
   },
   transactionGrid: {
     width: "100%",
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#10B981',
   },
   transactionLabel: {
-    color: "#92A8E3",
+    color: "#94a3b8",
     fontSize: 13,
     fontWeight: "500",
     textAlign: "center",
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
   },
   gameBalanceCard: {
     flex: 1,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",

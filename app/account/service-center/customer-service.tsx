@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native';
 export default function CustomerServiceScreen() {
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: 'Customer Service', headerStyle: { backgroundColor: '#05012B' }, headerTintColor: '#fff' }} />
+      <Stack.Screen options={{ title: 'Customer Service', headerStyle: { backgroundColor: '#0f1117' }, headerTintColor: '#fff' }} />
       <View style={styles.content}>
         <ThemedText style={styles.title}>Customer Service</ThemedText>
         <ThemedText style={styles.subtitle}>This screen is under construction.</ThemedText>
@@ -18,7 +18,7 @@ export default function CustomerServiceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
+    backgroundColor: '#0f1117',
   },
   content: {
     flex: 1,
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#92A8E3',
+    color: '#94a3b8',
     textAlign: 'center',
   },
 });

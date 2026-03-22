@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-const AUTH_BACKGROUND = "#05012B";
+const AUTH_BACKGROUND = "#0f1117";
 
 export default function AuthLayout() {
   return (

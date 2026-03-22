@@ -84,7 +84,7 @@ const guide = [
     title: "Change Password",
     points: [
       "Follow the guide below to change your password.",
-      "Login to the JALWA.GAME account",
+      "Login to the 71club account",
       "Press Account icon",
       "Press the Settings button",
       "Press edit login password",
@@ -99,7 +99,7 @@ const guide = [
     id: 9,
     title: "Binding bank account",
     points: [
-      "Login to the JALWA.GAME account",
+      "Login to the 71club account",
       "Press the Wallet icon",
       "Press the Withdraw button",
       "Press Add Bank",
@@ -111,7 +111,7 @@ const guide = [
   {
     id: 10,
     title: "Forgot Password",
-    title2: "Go to the JALWA.GAME website",
+    title2: "Go to the 71club website",
     points: [
       "Press the Account icon",
       "Press Forgot password",
@@ -144,7 +144,7 @@ const guide = [
     id: 13,
     title: "Gift",
     points: [
-      "Login to the JALWA.GAME account",
+      "Login to the 71club account",
       "Press the Account icon",
       "Press the Gift button",
       "Fill in the gift codes",
@@ -177,23 +177,23 @@ export default function BeginnersGuideScreen() {
                   // backgroundColor: "red",
                 }}
               >
-                <Text style={{ color: "#92A8E3" }}>
+                <Text style={{ color: "#94a3b8" }}>
                   {item.id}. {item.title}
                 </Text>
                 {item.title2 && (
-                  <Text style={{ color: "#92A8E3" }}>{item.title2}</Text>
+                  <Text style={{ color: "#94a3b8" }}>{item.title2}</Text>
                 )}
                 {item.points &&
                   item.points.map((point, indexx) => (
                     <Text
                       key={indexx}
-                      style={{ marginTop: 0, color: "#92A8E3" }}
+                      style={{ marginTop: 0, color: "#94a3b8" }}
                     >
                       • {point}
                     </Text>
                   ))}
                 {item.title3 && (
-                  <Text style={{ color: "#92A8E3" }}>{item.title3}</Text>
+                  <Text style={{ color: "#94a3b8" }}>{item.title3}</Text>
                 )}
                 {/* <View
                   style={{
@@ -226,7 +226,7 @@ export default function BeginnersGuideScreen() {
 }
 
 // ── Design Tokens ─────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const TEAL_DIM = "#4A9EBF";
@@ -237,7 +237,7 @@ const ICON_BG = "#0D4A4A";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#060B2E",
+    backgroundColor: "#1a1d26",
   },
 
   // Scroll

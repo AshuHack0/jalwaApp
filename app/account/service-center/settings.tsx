@@ -82,7 +82,7 @@ export default function SettingsScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
-        {/* <StatusBar barStyle="light-content" backgroundColor="#060B2E" /> */}
+        {/* <StatusBar barStyle="light-content" backgroundColor="#1a1d26" /> */}
 
         <CustomHeader title="Settings Center" onBack={() => router.back()} />
         <ScrollView
@@ -92,7 +92,7 @@ export default function SettingsScreen() {
         >
           <View
             style={{
-              backgroundColor: "#011341",
+              backgroundColor: "#1e293b",
               flex: 1,
               height: 200,
               borderBottomLeftRadius: 50,
@@ -232,7 +232,7 @@ export default function SettingsScreen() {
 }
 
 // ── Styles ───────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const TEAL_DIM = "#4A9EBF";
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   // Scroll
   scroll: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
     zIndex: 2,
     width: "100%",
   },
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: "#001C54",
+    backgroundColor: "#334155",
     borderRadius: 10,
     paddingHorizontal: 16,
     marginBottom: 28,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 16,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 10,
     marginBottom: 16,
     paddingHorizontal: 10,

@@ -111,7 +111,7 @@ function GameSection({
           <GameRow
             label="Winning amount"
             value={`₹${winningAmount}`}
-            valueColor="#00eca3"
+            valueColor="#34d399"
             isLast
           />
         </View>
@@ -225,7 +225,7 @@ export default function GameStatsScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#0F1D55";
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   tabItemInactive: {
     paddingVertical: 8,
     alignItems: "center",
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 20,
   },
   tabText: {
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
 
   // Total bet card
   totalCard: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 16,
     alignItems: "center",
     paddingVertical: 28,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
 
   // Game list
   gameList: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   },
   gameRowLabel: {
     flex: 1,
-    color: "#92a8e3",
+    color: "#94a3b8",
     fontSize: 16,
     paddingTop: 2,
     paddingBottom: 8,

@@ -164,7 +164,7 @@ export default function ActivityAward() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
 
   header: {

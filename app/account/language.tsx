@@ -97,7 +97,7 @@ export default function LanguageScreen() {
 }
 
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 const CARD_BG = "#0C1647";
 const TEAL = "#2BC4C4";
 const DIVIDER = "#0F1D55";
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   rowSelected: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 14,
   },
   flag: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: "#00ecbe",
+    backgroundColor: "#d4af37",
     alignItems: "center",
     justifyContent: "center",
   },

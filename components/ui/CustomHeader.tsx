@@ -28,7 +28,7 @@ export function CustomHeader({
   );
 }
 // ── Styles ────────────────────────────────────────────────────────────────────
-const BG = "#060B2E";
+const BG = "#1a1d26";
 
 const styles = StyleSheet.create({
   // Header
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   backIcon: { width: 27, height: 32, resizeMode: "contain" },
   headerTitle: {
-    color: "#e3efff",
+    color: "#f1f5f9",
     fontSize: 20,
     letterSpacing: 0.2,
   },

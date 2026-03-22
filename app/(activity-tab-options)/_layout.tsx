@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { StatusBar, View } from "react-native";
 
-const ACTIVITY_CATEGORIES_BACKGROUND = "#05012B";
+const ACTIVITY_CATEGORIES_BACKGROUND = "#0f1117";
 
 export default function ActivityCategoriesLayout() {
   return (

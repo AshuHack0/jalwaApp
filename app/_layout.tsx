@@ -13,9 +13,10 @@ import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import "react-native-reanimated";
 
+import { AppTheme } from "@/constants/appTheme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
-const NO_REMINDER_KEY = "@jalwa_no_deposit_reminder_until";
+const NO_REMINDER_KEY = "@71club_no_deposit_reminder_until";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +38,11 @@ const customDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    background: '#05012B',
+    background: AppTheme.background,
+    primary: AppTheme.accent,
+    card: AppTheme.surface,
+    border: AppTheme.border,
+    text: AppTheme.textPrimary,
   },
 };
 
@@ -120,7 +125,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
+    backgroundColor: AppTheme.background,
   },
   splashOverlay: {
     zIndex: 9999,

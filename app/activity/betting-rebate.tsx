@@ -177,7 +177,7 @@ export default function BettingRebate() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#05012B" },
+  container: { flex: 1, backgroundColor: "#0f1117" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

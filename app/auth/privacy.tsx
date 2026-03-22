@@ -50,7 +50,7 @@ export default function PrivacyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   header: {
     flexDirection: "row",
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 52,
     paddingBottom: 16,
-    backgroundColor: "#05012B",
+    backgroundColor: "#0f1117",
   },
   headerIcon: {
     width: 40,

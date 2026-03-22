@@ -134,8 +134,8 @@ function TabItem({
 }
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const activeColor = '#14B8A6'; // Light blue-green
-  const inactiveColor = '#5C6283'; // Grey
+  const activeColor = '#d4af37';
+  const inactiveColor = '#64748b';
 
   const icons = {
     promotion: 'heart-outline',
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     height: 80,
-    backgroundColor: '#05012B',
+    backgroundColor: '#0f1117',
     // backgroundColor: 'red',
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.1)',

@@ -95,11 +95,7 @@ export default function RegisterScreen() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerLogoWrap}>
-          <Image
-            source="https://jalwaimg.jalwa-jalwa.com/Jalwa/other/h5setting_20250315140925tbe6.png"
-            style={{ width: 128, height: 32 }}
-            contentFit="cover"
-          />
+          <ThemedText style={styles.headerBrandText}>71club</ThemedText>
         </View>
         <View style={styles.headerRight}>
           <Image
@@ -125,7 +121,7 @@ export default function RegisterScreen() {
             style={{
               height: 114,
               width: "100%",
-              backgroundColor: "#021341",
+              backgroundColor: "#1e293b",
               padding: 20,
             }}
           >
@@ -154,7 +150,7 @@ export default function RegisterScreen() {
             <View
               style={{
                 height: 2,
-                backgroundColor: "#00ECBE",
+                backgroundColor: "#d4af37",
                 marginBottom: 24,
               }}
             />
@@ -275,7 +271,7 @@ export default function RegisterScreen() {
                   ]}
                 >
                   {agreePrivacy && (
-                    <Ionicons name="checkmark" size={14} color="#05012B" />
+                    <Ionicons name="checkmark" size={14} color="#0f1117" />
                   )}
                 </View>
                 <ThemedText style={styles.checkLabel}>
@@ -301,7 +297,7 @@ export default function RegisterScreen() {
                 disabled={loading}
               >
                 <LinearGradient
-                  colors={["#7AFEC3", "#02AFB6"]}
+                  colors={["#f59e0b", "#d4af37"]}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 0, y: 0 }}
                   style={styles.gradientButton}
@@ -335,7 +331,7 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#05012B" },
+  container: { flex: 1, backgroundColor: "#0f1117" },
   flex: { flex: 1 },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 40 },
@@ -354,9 +350,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerLogoWrap: { flexDirection: "row", alignItems: "center" },
+  headerBrandText: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#fff",
+    letterSpacing: 0.5,
+  },
   headerRight: { flexDirection: "row", alignItems: "center", gap: 6 },
-  headerLang: { fontSize: 17, color: "#00ECBE", fontWeight: "600" },
-  registerPhoneLabel: { fontSize: 17, color: "#00ECBE", fontWeight: "600" },
+  headerLang: { fontSize: 17, color: "#d4af37", fontWeight: "600" },
+  registerPhoneLabel: { fontSize: 17, color: "#d4af37", fontWeight: "600" },
   form: { marginBottom: 32 },
   field: { marginBottom: 20 },
   labelRow: {
@@ -367,7 +369,7 @@ const styles = StyleSheet.create({
   },
   label: { fontSize: 17, color: "white", fontWeight: "500" },
   input: {
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -379,7 +381,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 14,
@@ -387,7 +389,7 @@ const styles = StyleSheet.create({
   countryCodeText: { color: "#fff", fontSize: 16, fontWeight: "500" },
   phoneInput: {
     flex: 1,
-    backgroundColor: "#011341",
+    backgroundColor: "#1e293b",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -415,13 +417,13 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "#00ECBE",
+    borderColor: "#d4af37",
     alignItems: "center",
     justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: "#00ECBE",
-    borderColor: "#00ECBE",
+    backgroundColor: "#d4af37",
+    borderColor: "#d4af37",
   },
   checkLabel: { fontSize: 14, color: "rgba(255,255,255,0.9)" },
   privacyLink: { fontSize: 14, color: "#E53935", fontWeight: "600" },
@@ -451,9 +453,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 9999,
     borderWidth: 1,
-    borderColor: "#00ECBE",
+    borderColor: "#d4af37",
     backgroundColor: "transparent",
   },
   loginRowText: { fontSize: 17, color: "white", fontWeight: "600" },
-  loginLink: { fontSize: 17, color: "#00ECBE", fontWeight: "900" },
+  loginLink: { fontSize: 17, color: "#d4af37", fontWeight: "900" },
 });
