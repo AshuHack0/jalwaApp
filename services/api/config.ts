@@ -12,14 +12,14 @@ export const API_ENV = "local" as const;
 const BASE_URLS = {
   local:
     Platform.OS === "android"
-      ? "http://192.168.29.106:3000"
-      : "http://192.168.29.106:3000",
+      ? "https://api.indgames.online"
+      : "https://api.indgames.online",
   // local:
   //   Platform.OS === "android"
   //     ? "http://185.219.83.167:3000"
   //     : "http://185.219.83.167:3000",
-  staging: "http://185.219.83.167:3000",
-  production: "http://185.219.83.167:3000",
+  staging: "https://api.indgames.online",
+  production: "https://api.indgames.online",
 } as const;
 
 export const API_BASE_URL = BASE_URLS[API_ENV];
