@@ -3,42 +3,59 @@ import { ThemedView } from "@/components/themed-view";
 import { useMyDeposits } from "@/services/api/hooks/useDeposit";
 import type { DepositRecord } from "@/services/api/deposit";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 function statusColor(status: DepositRecord["status"]) {
-  if (status === "completed") return "#7AFEC3";
+  if (status === "completed") return "#04D900"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
   return "#FFD700";
 }
 
 function statusLabel(status: DepositRecord["status"]) {
-  if (status === "completed") return "Success";
+  if (status === "completed") return "Complete";
   if (status === "failed") return "Failed";
   return "Pending";
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const date = new Date(iso);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 export default function DepositHistoryScreen() {
   const router = useRouter();
   const { data, isLoading, refetch, isRefetching } = useMyDeposits();
+  
+  const [selectedFilter, setSelectedFilter] = useState<string>("All");
+  const [selectedStatus, setSelectedStatus] = useState<string>("All");
+  const [selectedDate, setSelectedDate] = useState<string>("Choose a date");
 
   const deposits = data?.deposits ?? [];
 
+  const paymentMethods = [
+    { id: "All", label: "All", icon: "grid" },
+    { id: "ArUpi Pay", label: "ArUpi Pay", icon: "qr-code" },
+    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "qr-code-outline" },
+    { id: "Paytm", label: "Paytm", icon: "wallet" },
+  ];
+
   return (
+    <>
+    <Stack.Screen options={{ headerShown: false }} />
     <ThemedView style={styles.container}>
+      {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
         <View style={styles.placeholder} />
@@ -56,6 +73,51 @@ export default function DepositHistoryScreen() {
           />
         }
       >
+        {/* Filter Tabs - Horizontal Scroll */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.filterTabsContainer} 
+          contentContainerStyle={styles.filterTabsContent}
+        >
+          {paymentMethods.map((method) => (
+            <TouchableOpacity
+              key={method.id}
+              style={[
+                styles.filterTab,
+                selectedFilter === method.id && styles.filterTabActive,
+              ]}
+              onPress={() => setSelectedFilter(method.id)}
+            >
+              <Ionicons
+                name={method.icon as any}
+                size={18}
+                color={selectedFilter === method.id ? "#000" : "#92A8E3"}
+              />
+              <ThemedText
+                style={[
+                  styles.filterTabText,
+                  selectedFilter === method.id && styles.filterTabTextActive,
+                ]}
+              >
+                {method.label}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Dropdowns */}
+        <View style={styles.filterRow}>
+          <TouchableOpacity style={styles.filterDropdown}>
+            <ThemedText style={styles.filterDropdownText}>{selectedStatus}</ThemedText>
+            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterDropdown}>
+            <ThemedText style={styles.filterDropdownText}>{selectedDate}</ThemedText>
+            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+          </TouchableOpacity>
+        </View>
+
         {isLoading ? (
           <View style={styles.centered}>
             <ActivityIndicator color="#7AFEC3" size="large" />
@@ -69,52 +131,84 @@ export default function DepositHistoryScreen() {
           <View style={styles.list}>
             {deposits.map((item) => (
               <View key={item._id} style={styles.card}>
-                <View style={styles.cardRow}>
-                  <View style={styles.cardLeft}>
-                    <ThemedText style={styles.amount}>₹{item.amount.toLocaleString("en-IN")}</ThemedText>
-                    {item.fee > 0 && (
-                      <ThemedText style={styles.fee}>Fee: ₹{item.fee}</ThemedText>
-                    )}
-                    <ThemedText style={styles.date}>{formatDate(item.createdAt)}</ThemedText>
+                {/* Header */}
+                <View style={styles.cardHeader}>
+                  <View style={styles.depositBadge}>
+                    <ThemedText style={styles.depositBadgeText}>Deposit</ThemedText>
                   </View>
-                  <View style={styles.cardRight}>
-                    <View style={[styles.statusBadge, { borderColor: statusColor(item.status) }]}>
-                      <ThemedText style={[styles.statusText, { color: statusColor(item.status) }]}>
-                        {statusLabel(item.status)}
-                      </ThemedText>
+                  <ThemedText style={[styles.statusText, { color: statusColor(item.status) }]}>
+                    {statusLabel(item.status)}
+                  </ThemedText>
+                </View>
+                
+                {/* Divider */}
+                <View style={styles.divider} />
+
+                {/* Details */}
+                <View style={styles.detailsContainer}>
+                  <View style={styles.cardDetailsRow}>
+                    <ThemedText style={styles.detailLabel}>Balance</ThemedText>
+                    <ThemedText style={styles.balanceValue}>
+                      ₹{item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </ThemedText>
+                  </View>
+
+                  {item.fee > 0 && (
+                    <View style={styles.cardDetailsRow}>
+                      <ThemedText style={styles.detailLabel}>Fee</ThemedText>
+                      <ThemedText style={styles.detailValue}>₹{item.fee}</ThemedText>
                     </View>
-                    {item.proof && (
-                      <ThemedText style={styles.proof} numberOfLines={1}>
-                        UTR: {item.proof}
+                  )}
+
+                  <View style={styles.cardDetailsRow}>
+                    <ThemedText style={styles.detailLabel}>Type</ThemedText>
+                    <ThemedText style={styles.detailValue}>UPay13USDT</ThemedText>
+                  </View>
+
+                  <View style={styles.cardDetailsRow}>
+                    <ThemedText style={styles.detailLabel}>Time</ThemedText>
+                    <View style={styles.timeValueContainer}>
+                      <ThemedText style={styles.detailValue}>{formatDate(item.createdAt)}</ThemedText>
+                    </View>
+                  </View>
+
+                  <View style={styles.cardDetailsRow}>
+                    <ThemedText style={styles.detailLabel}>Order number</ThemedText>
+                    <View style={styles.orderNumberContainer}>
+                      <ThemedText style={styles.detailValue} numberOfLines={1}>
+                        {item.merchantOrderNo || item._id}
                       </ThemedText>
-                    )}
+                      <TouchableOpacity style={styles.copyIconContainer}>
+                        <Ionicons name="copy-outline" size={14} color="#92A8E3" />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-                {item.merchantOrderNo && (
-                  <ThemedText style={styles.orderId} numberOfLines={1}>
-                    Order: {item.merchantOrderNo}
-                  </ThemedText>
-                )}
               </View>
             ))}
+            
+            <View style={styles.footerContainer}>
+              <ThemedText style={styles.footerText}>No more</ThemedText>
+            </View>
           </View>
         )}
       </ScrollView>
     </ThemedView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#05012B", // Matches overall app background
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
-    paddingTop: 90,
+    paddingBottom: 40,
+    paddingTop: 100, // Adjusted for top bar height
   },
   topBar: {
     position: "absolute",
@@ -126,8 +220,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 30,
-    paddingBottom: 12,
+    paddingTop: 50,
+    paddingBottom: 16,
     backgroundColor: "#05012B",
   },
   backButton: {
@@ -140,6 +234,57 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     width: 32,
+  },
+  filterTabsContainer: {
+    maxHeight: 50,
+    marginBottom: 16,
+  },
+  filterTabsContent: {
+    paddingHorizontal: 16,
+    gap: 8,
+    alignItems: "center",
+  },
+  filterTab: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: "#011341", // Default tab background
+  },
+  filterTabActive: {
+    backgroundColor: "#7AFEC3", // Green active tab
+  },
+  filterTabText: {
+    fontSize: 14,
+    color: "#92A8E3",
+    fontWeight: "600",
+  },
+  filterTabTextActive: {
+    color: "#000",
+    fontWeight: "bold",
+  },
+  filterRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 12,
+    marginBottom: 20,
+  },
+  filterDropdown: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#011341",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  filterDropdownText: {
+    fontSize: 14,
+    color: "#92A8E3",
+    fontWeight: "500",
   },
   centered: {
     flex: 1,
@@ -160,58 +305,89 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 16,
-    gap: 12,
+    gap: 16,
   },
   card: {
     backgroundColor: "#011341",
-    borderRadius: 14,
-    padding: 16,
-    gap: 8,
+    borderRadius: 8,
+    padding: 0,
+    overflow: "hidden",
   },
-  cardRow: {
+  cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
   },
-  cardLeft: {
-    gap: 4,
-    flex: 1,
+  depositBadge: {
+    backgroundColor: "#31C268", // Deposit badge green
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 6,
   },
-  cardRight: {
-    alignItems: "flex-end",
-    gap: 6,
-  },
-  amount: {
-    fontSize: 20,
-    fontWeight: "bold",
+  depositBadgeText: {
     color: "#fff",
-  },
-  fee: {
-    fontSize: 12,
-    color: "#92A8E3",
-  },
-  date: {
-    fontSize: 12,
-    color: "#92A8E3",
-    marginTop: 4,
-  },
-  statusBadge: {
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    fontSize: 14,
+    fontWeight: "bold",
   },
   statusText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "600",
   },
-  proof: {
-    fontSize: 11,
-    color: "#92A8E3",
-    maxWidth: 140,
+  divider: {
+    height: 1,
+    backgroundColor: "#2E3A59",
+    marginHorizontal: 16,
+    marginBottom: 16,
   },
-  orderId: {
-    fontSize: 11,
-    color: "#4A5A7A",
+  detailsContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  cardDetailsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: "#92A8E3",
+    fontWeight: "500",
+  },
+  detailValue: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "500",
+  },
+  balanceValue: {
+    fontSize: 14,
+    color: "#F39C12", // Bright orange
+    fontWeight: "bold",
+  },
+  timeValueContainer: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  orderNumberContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  copyIconContainer: {
+    padding: 2,
+  },
+  footerContainer: {
+    alignItems: "center",
+    paddingVertical: 24,
+  },
+  footerText: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

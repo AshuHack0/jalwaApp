@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -78,234 +78,237 @@ export default function DepositScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Top Navigation Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <ThemedText style={styles.screenTitle}>Deposit</ThemedText>
-        <TouchableOpacity
-          onPress={() => router.push("/deposit-history")}
-          style={styles.historyButton}
-        >
-          <ThemedText style={styles.historyButtonText}>
-            Deposit history
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Balance Card */}
-        <LinearGradient
-          colors={["#7AFEC3", "#02AFB6"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.balanceCard}
-        >
-          <View style={styles.balanceCardContent}>
-            <View style={styles.balanceHeader}>
-              <View style={styles.balanceHeaderLeft}>
-                <Ionicons name="wallet" size={20} color="#FFD700" />
-                <ThemedText style={styles.balanceLabel}>Balance</ThemedText>
-              </View>
-              <TouchableOpacity onPress={refreshWallet}>
-                <Ionicons name="refresh" size={20} color="#fff" />
-              </TouchableOpacity>
-            </View>
-            <ThemedText style={styles.balanceAmount}>
-              {formatBalance(walletBalance)}
-            </ThemedText>
-            <View style={styles.cardFooter}>
-              <Ionicons
-                name="card"
-                size={24}
-                color="#fff"
-                style={styles.cardIcon}
-              />
-              <ThemedText style={styles.cardNumber}>**** ****</ThemedText>
-            </View>
-          </View>
-        </LinearGradient>
-
-        {/* Deposit Methods */}
-        <View style={styles.section}>
-          <View style={styles.methodsGrid}>
-            {depositMethods.map((method) => (
-              <TouchableOpacity
-                key={method.id}
-                style={[
-                  styles.methodButton,
-                  selectedMethod === method.id && styles.methodButtonActive,
-                ]}
-                onPress={() => setSelectedMethod(method.id)}
-              >
-                <View style={styles.methodIconContainer}>
-                  <ThemedText style={styles.methodIconText}>
-                    {method.icon}
-                  </ThemedText>
-                </View>
-                <ThemedText style={styles.methodLabel}>
-                  {method.label}
-                </ThemedText>
-                {method.bonus && (
-                  <View style={styles.bonusBadge}>
-                    <ThemedText style={styles.bonusText}>
-                      {method.bonus}
-                    </ThemedText>
-                  </View>
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Select Channel */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="wallet" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>Select channel</ThemedText>
-          </View>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <ThemedView style={styles.container}>
+        {/* Top Navigation Bar */}
+        <View style={styles.topBar}>
           <TouchableOpacity
-            style={[
-              styles.channelButton,
-              selectedChannel === "Phonepe_QR" && styles.channelButtonActive,
-            ]}
-            onPress={() => setSelectedChannel("Phonepe_QR")}
+            onPress={() => router.back()}
+            style={styles.backButton}
           >
-            <ThemedText style={styles.channelLabel}>Phonepe_QR</ThemedText>
-            <ThemedText style={styles.channelBalance}>
-              Balance: 100 - 50K
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <ThemedText style={styles.screenTitle}>Deposit</ThemedText>
+          <TouchableOpacity
+            onPress={() => router.push("/deposit-history")}
+            style={styles.historyButton}
+          >
+            <ThemedText style={styles.historyButtonText}>
+              Deposit history
             </ThemedText>
           </TouchableOpacity>
         </View>
 
-        {/* Deposit Amount */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="wallet" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>Deposit amount</ThemedText>
-          </View>
-          <View style={styles.amountGrid}>
-            {quickAmounts.map((amount) => (
-              <TouchableOpacity
-                key={amount}
-                style={[
-                  styles.amountButton,
-                  selectedAmount === amount && styles.amountButtonActive,
-                ]}
-                onPress={() => handleAmountSelect(amount)}
-              >
-                <ThemedText style={styles.amountButtonText}>
-                  ₹ {amount}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.amountInputContainer}>
-            <ThemedText style={styles.currencySymbol}>₹</ThemedText>
-            <TextInput
-              style={styles.amountInput}
-              placeholder="₹100.00 - ₹50,000.00"
-              placeholderTextColor="#92A8E3"
-              value={depositAmount}
-              onChangeText={setDepositAmount}
-              keyboardType="numeric"
-            />
-            {depositAmount.length > 0 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setDepositAmount("");
-                  setSelectedAmount("");
-                }}
-              >
-                <Ionicons name="close-circle" size={20} color="#92A8E3" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-
-        {/* Recharge Instructions */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="document-text" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>
-              Recharge instructions
-            </ThemedText>
-          </View>
-          <View style={styles.instructionsList}>
-            <View style={styles.instructionItem}>
-              <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-              <ThemedText style={styles.instructionText}>
-                If the transfer time is up, please fill out the deposit form
-                again.
-              </ThemedText>
-            </View>
-            <View style={styles.instructionItem}>
-              <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-              <ThemedText style={styles.instructionText}>
-                The transfer amount must match the order you created, otherwise
-                the money cannot be credited successfully.
-              </ThemedText>
-            </View>
-            <View style={styles.instructionItem}>
-              <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-              <ThemedText style={styles.instructionText}>
-                If you transfer the wrong amount, our company will not be
-                responsible for the lost amount!
-              </ThemedText>
-            </View>
-            <View style={styles.instructionItem}>
-              <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-              <ThemedText style={styles.instructionText}>
-                Note: do not cancel the deposit order after the money has been
-                transferred.
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-
-        {/* Deposit History Preview */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="document-text" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>Deposit history</ThemedText>
-          </View>
-          <View style={styles.historyPlaceholder}>
-            <ThemedText style={styles.historyText}>
-              Recharge Method: Phonepe_QR
-            </ThemedText>
-          </View>
-        </View>
-
-        {/* Deposit Button */}
-        <TouchableOpacity
-          style={styles.depositButton}
-          onPress={handleDeposit}
-          disabled={isPending}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          {isPending ? (
-            <ActivityIndicator color="#7AFEC3" />
-          ) : (
-            <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
-    </ThemedView>
+          {/* Balance Card */}
+          <LinearGradient
+            colors={["#7AFEC3", "#02AFB6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.balanceCard}
+          >
+            <View style={styles.balanceCardContent}>
+              <View style={styles.balanceHeader}>
+                <View style={styles.balanceHeaderLeft}>
+                  <Ionicons name="wallet" size={20} color="#FFD700" />
+                  <ThemedText style={styles.balanceLabel}>Balance</ThemedText>
+                </View>
+                <TouchableOpacity onPress={refreshWallet}>
+                  <Ionicons name="refresh" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              <ThemedText style={styles.balanceAmount}>
+                {formatBalance(walletBalance)}
+              </ThemedText>
+              <View style={styles.cardFooter}>
+                <Ionicons
+                  name="card"
+                  size={24}
+                  color="#fff"
+                  style={styles.cardIcon}
+                />
+                <ThemedText style={styles.cardNumber}>**** ****</ThemedText>
+              </View>
+            </View>
+          </LinearGradient>
+
+          {/* Deposit Methods */}
+          <View style={styles.section}>
+            <View style={styles.methodsGrid}>
+              {depositMethods.map((method) => (
+                <TouchableOpacity
+                  key={method.id}
+                  style={[
+                    styles.methodButton,
+                    selectedMethod === method.id && styles.methodButtonActive,
+                  ]}
+                  onPress={() => setSelectedMethod(method.id)}
+                >
+                  <View style={styles.methodIconContainer}>
+                    <ThemedText style={styles.methodIconText}>
+                      {method.icon}
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.methodLabel}>
+                    {method.label}
+                  </ThemedText>
+                  {method.bonus && (
+                    <View style={styles.bonusBadge}>
+                      <ThemedText style={styles.bonusText}>
+                        {method.bonus}
+                      </ThemedText>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Select Channel */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="wallet" size={18} color="#7AFEC3" />
+              <ThemedText style={styles.sectionTitle}>Select channel</ThemedText>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.channelButton,
+                selectedChannel === "Phonepe_QR" && styles.channelButtonActive,
+              ]}
+              onPress={() => setSelectedChannel("Phonepe_QR")}
+            >
+              <ThemedText style={styles.channelLabel}>Phonepe_QR</ThemedText>
+              <ThemedText style={styles.channelBalance}>
+                Balance: 100 - 50K
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+
+          {/* Deposit Amount */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="wallet" size={18} color="#7AFEC3" />
+              <ThemedText style={styles.sectionTitle}>Deposit amount</ThemedText>
+            </View>
+            <View style={styles.amountGrid}>
+              {quickAmounts.map((amount) => (
+                <TouchableOpacity
+                  key={amount}
+                  style={[
+                    styles.amountButton,
+                    selectedAmount === amount && styles.amountButtonActive,
+                  ]}
+                  onPress={() => handleAmountSelect(amount)}
+                >
+                  <ThemedText style={styles.amountButtonText}>
+                    ₹ {amount}
+                  </ThemedText>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.amountInputContainer}>
+              <ThemedText style={styles.currencySymbol}>₹</ThemedText>
+              <TextInput
+                style={styles.amountInput}
+                placeholder="₹100.00 - ₹50,000.00"
+                placeholderTextColor="#92A8E3"
+                value={depositAmount}
+                onChangeText={setDepositAmount}
+                keyboardType="numeric"
+              />
+              {depositAmount.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    setDepositAmount("");
+                    setSelectedAmount("");
+                  }}
+                >
+                  <Ionicons name="close-circle" size={20} color="#92A8E3" />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+
+          {/* Recharge Instructions */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="document-text" size={18} color="#7AFEC3" />
+              <ThemedText style={styles.sectionTitle}>
+                Recharge instructions
+              </ThemedText>
+            </View>
+            <View style={styles.instructionsList}>
+              <View style={styles.instructionItem}>
+                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
+                <ThemedText style={styles.instructionText}>
+                  If the transfer time is up, please fill out the deposit form
+                  again.
+                </ThemedText>
+              </View>
+              <View style={styles.instructionItem}>
+                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
+                <ThemedText style={styles.instructionText}>
+                  The transfer amount must match the order you created, otherwise
+                  the money cannot be credited successfully.
+                </ThemedText>
+              </View>
+              <View style={styles.instructionItem}>
+                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
+                <ThemedText style={styles.instructionText}>
+                  If you transfer the wrong amount, our company will not be
+                  responsible for the lost amount!
+                </ThemedText>
+              </View>
+              <View style={styles.instructionItem}>
+                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
+                <ThemedText style={styles.instructionText}>
+                  Note: do not cancel the deposit order after the money has been
+                  transferred.
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          {/* Deposit History Preview */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="document-text" size={18} color="#7AFEC3" />
+              <ThemedText style={styles.sectionTitle}>Deposit history</ThemedText>
+            </View>
+            <View style={styles.historyPlaceholder}>
+              <ThemedText style={styles.historyText}>
+                Recharge Method: Phonepe_QR
+              </ThemedText>
+            </View>
+          </View>
+
+          {/* Deposit Button */}
+          <TouchableOpacity
+            style={styles.depositButton}
+            onPress={handleDeposit}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <ActivityIndicator color="#7AFEC3" />
+            ) : (
+              <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </ThemedView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B",
+    backgroundColor: "#05012B"
   },
   scrollView: {
     flex: 1,
@@ -319,12 +322,12 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
+    paddingTop:50,
     zIndex: 1000,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 10,
     paddingBottom: 12,
     backgroundColor: "#05012B",
   },

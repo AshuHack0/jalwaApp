@@ -753,7 +753,7 @@ export default function HomeScreen() {
               </View>
             </View>
             <View style={[styles.walletButtons, { width: "48%" }]}>
-              <TouchableOpacity style={styles.walletButton}>
+              <TouchableOpacity style={styles.walletButton} onPress={() => router.push("/withdraw")}>
                 <Image
                   source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
                   style={styles.walletButtonBackground}

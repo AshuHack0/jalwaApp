@@ -82,7 +82,7 @@ export default function AccountScreen() {
             </View>
             <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.quickActionButton} onPress={() => openDepositModal()}>
+          <TouchableOpacity onPress={() => router.push("/deposit")} style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.depositIcon]}>
               <Image 
                 source={require('@/assets/gfg3.png')} 
@@ -92,7 +92,7 @@ export default function AccountScreen() {
             </View>
             <ThemedText style={styles.quickActionLabel}>Deposit</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.quickActionButton}>
+          <TouchableOpacity onPress={() => router.push("/withdraw")} style={styles.quickActionButton}>
             <View style={[styles.quickActionIcon, styles.withdrawIcon]}>
               <Image 
                 source={require('@/assets/gfg2.png')} 
@@ -118,7 +118,7 @@ export default function AccountScreen() {
         {/* History Sections */}
         <View style={styles.historySection}>
           <View style={styles.historyCardContainer}>
-            <TouchableOpacity style={[styles.historyCard, styles.gameHistoryCard]}>
+            <TouchableOpacity  style={[styles.historyCard, styles.gameHistoryCard]}>
               <View style={styles.historyIconContainer}>
                 <Image 
                   source={require('@/assets/ugi4.png')} 
@@ -147,7 +147,7 @@ export default function AccountScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.historyCardContainer}>   
-            <TouchableOpacity style={[styles.historyCard, styles.depositHistoryCard]}>
+            <TouchableOpacity onPress={() => router.push("/deposit-history")} style={[styles.historyCard, styles.depositHistoryCard]}>
               <View style={styles.historyIconContainer}>
                 <Image 
                   source={require('@/assets/ugi3.png')} 
@@ -161,7 +161,7 @@ export default function AccountScreen() {
               </View>
             </TouchableOpacity>
             
-            <TouchableOpacity style={[styles.historyCard, styles.withdrawHistoryCard]}>
+            <TouchableOpacity onPress={() => router.push("/withdrawal-history")} style={[styles.historyCard, styles.withdrawHistoryCard]}>
               <View style={styles.historyIconContainer}>
                 <Image 
                   source={require('@/assets/ugi2.png')} 

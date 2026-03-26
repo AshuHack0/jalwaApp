@@ -1,6 +1,6 @@
 import { FirstDepositBonusModal } from "@/components/FirstDepositBonusModal";
 import { SplashScreen as AppSplash } from "@/components/SplashScreen";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DepositModalProvider } from "@/contexts/DepositModalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
@@ -16,6 +16,33 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 const NO_REMINDER_KEY = "@jalwa_no_deposit_reminder_until";
+
+function BonusModalController({ appReady }: { appReady: boolean }) {
+  const { isAuthenticated } = useAuth();
+  const [showBonusModal, setShowBonusModal] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated || !appReady) return;
+    AsyncStorage.getItem(NO_REMINDER_KEY).then((stored) => {
+      if (!stored) {
+        setShowBonusModal(true);
+        return;
+      }
+      const until = new Date(stored);
+      if (until <= new Date()) {
+        setShowBonusModal(true);
+        AsyncStorage.removeItem(NO_REMINDER_KEY);
+      }
+    });
+  }, [isAuthenticated, appReady]);
+
+  return (
+    <FirstDepositBonusModal
+      visible={showBonusModal}
+      onClose={() => setShowBonusModal(false)}
+    />
+  );
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +71,6 @@ const customDarkTheme = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [appReady, setAppReady] = useState(false);
-  const [showBonusModal, setShowBonusModal] = useState(false);
   const registerPlayer = useAudioPlayer(require("@/assets/register.mp3"));
 
   useEffect(() => {
@@ -72,21 +98,6 @@ export default function RootLayout() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!appReady) return;
-    AsyncStorage.getItem(NO_REMINDER_KEY).then((stored) => {
-      if (!stored) {
-        setShowBonusModal(true);
-        return;
-      }
-      const until = new Date(stored);
-      if (until <= new Date()) {
-        setShowBonusModal(true);
-        AsyncStorage.removeItem(NO_REMINDER_KEY);
-      }
-    });
-  }, [appReady]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -97,15 +108,15 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="auth" options={{ headerShown: false }} />
           <Stack.Screen name="wingo" options={{ headerShown: false }} />
+          <Stack.Screen name="withdraw" options={{ headerShown: false }} />
+          <Stack.Screen name="deposit-history" options={{ headerShown: false }} />
+          <Stack.Screen name="withdrawal-history" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
         <StatusBar style="light" />
-        <FirstDepositBonusModal
-          visible={showBonusModal}
-          onClose={() => setShowBonusModal(false)}
-        />
         </ThemeProvider>
       </View>
+      <BonusModalController appReady={appReady} />
       {!appReady && (
         <View style={[StyleSheet.absoluteFill, styles.splashOverlay]} pointerEvents="box-only">
           <AppSplash />

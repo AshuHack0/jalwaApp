@@ -3,7 +3,7 @@ import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ScrollView,
@@ -40,6 +40,8 @@ export default function WithdrawScreen() {
   };
 
   return (
+    <>
+    <Stack.Screen options={{ headerShown: false }} />
     <ThemedView style={styles.container}>
       {/* Top Navigation Bar */}
       <View style={styles.topBar}>
@@ -274,6 +276,7 @@ export default function WithdrawScreen() {
         </View>
       </ScrollView>
     </ThemedView>
+    </>
   );
 }
 
@@ -299,7 +302,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 50,
     paddingBottom: 12,
     backgroundColor: "#05012B",
   },

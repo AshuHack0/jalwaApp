@@ -1,7 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -19,91 +19,94 @@ export default function WithdrawalHistoryScreen() {
   ];
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Top Navigation Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <ThemedView style={styles.container}>
+        {/* Top Navigation Bar */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <ThemedText style={styles.screenTitle}>Withdrawal history</ThemedText>
+          <View style={styles.placeholder} />
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <ThemedText style={styles.screenTitle}>Withdrawal history</ThemedText>
-        <View style={styles.placeholder} />
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Filter Tabs */}
-        <View style={styles.filterTabs}>
-          {paymentMethods.map((method) => (
-            <TouchableOpacity
-              key={method.id}
-              style={[
-                styles.filterTab,
-                selectedFilter === method.id && styles.filterTabActive,
-              ]}
-              onPress={() => setSelectedFilter(method.id)}
-            >
-              {method.id === "ARPay" ? (
-                <Ionicons
-                  name="triangle"
-                  size={18}
-                  color={selectedFilter === method.id ? "#FFD700" : "#92A8E3"}
-                />
-              ) : (
-                <Ionicons
-                  name={method.icon as any}
-                  size={18}
-                  color={selectedFilter === method.id ? "#fff" : "#92A8E3"}
-                />
-              )}
-              <ThemedText
+          {/* Filter Tabs */}
+          <View style={styles.filterTabs}>
+            {paymentMethods.map((method) => (
+              <TouchableOpacity
+                key={method.id}
                 style={[
-                  styles.filterTabText,
-                  selectedFilter === method.id && styles.filterTabTextActive,
+                  styles.filterTab,
+                  selectedFilter === method.id && styles.filterTabActive,
                 ]}
+                onPress={() => setSelectedFilter(method.id)}
               >
-                {method.label}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Status and Date Filters */}
-        <View style={styles.filterRow}>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>
-              {selectedStatus}
-            </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>
-              {selectedDate}
-            </ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-          </TouchableOpacity>
-        </View>
-
-        {/* No Data Display */}
-        <View style={styles.noDataContainer}>
-          <View style={styles.noDataIllustration}>
-            {/* Scroll illustration */}
-            <View style={styles.scrollShape} />
-            {/* Paper airplane */}
-            <View style={styles.airplane} />
-            {/* Trees */}
-            <View style={[styles.tree, { left: 40, bottom: 20 }]} />
-            <View style={[styles.tree, { right: 40, bottom: 20 }]} />
+                {method.id === "ARPay" ? (
+                  <Ionicons
+                    name="triangle"
+                    size={18}
+                    color={selectedFilter === method.id ? "#FFD700" : "#92A8E3"}
+                  />
+                ) : (
+                  <Ionicons
+                    name={method.icon as any}
+                    size={18}
+                    color={selectedFilter === method.id ? "#fff" : "#92A8E3"}
+                  />
+                )}
+                <ThemedText
+                  style={[
+                    styles.filterTabText,
+                    selectedFilter === method.id && styles.filterTabTextActive,
+                  ]}
+                >
+                  {method.label}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
           </View>
-          <ThemedText style={styles.noDataText}>No data</ThemedText>
-        </View>
-      </ScrollView>
-    </ThemedView>
+
+          {/* Status and Date Filters */}
+          <View style={styles.filterRow}>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <ThemedText style={styles.filterDropdownText}>
+                {selectedStatus}
+              </ThemedText>
+              <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <ThemedText style={styles.filterDropdownText}>
+                {selectedDate}
+              </ThemedText>
+              <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            </TouchableOpacity>
+          </View>
+
+          {/* No Data Display */}
+          <View style={styles.noDataContainer}>
+            <View style={styles.noDataIllustration}>
+              {/* Scroll illustration */}
+              <View style={styles.scrollShape} />
+              {/* Paper airplane */}
+              <View style={styles.airplane} />
+              {/* Trees */}
+              <View style={[styles.tree, { left: 40, bottom: 20 }]} />
+              <View style={[styles.tree, { right: 40, bottom: 20 }]} />
+            </View>
+            <ThemedText style={styles.noDataText}>No data</ThemedText>
+          </View>
+        </ScrollView>
+      </ThemedView>
+    </>
   );
 }
 

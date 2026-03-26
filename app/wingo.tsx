@@ -852,6 +852,7 @@ export default function WinGoScreen() {
               }}
             >
               <Pressable
+                onPress={() => router.push("/withdraw")}
                 style={({ pressed }) => [
                   {
                     width: wp(40),
