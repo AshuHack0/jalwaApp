@@ -1,10 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
+import { type BankAccount, getBankAccount } from "@/services/api/bankAccount";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -22,6 +23,13 @@ export default function WithdrawScreen() {
   const { walletBalance, refreshWallet } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState<string>("UPI");
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
+  const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      getBankAccount().then(setBankAccount);
+    }, [])
+  );
   const withdrawableBalance = walletBalance; // You can adjust this based on your logic
 
   const paymentMethods = [
@@ -146,20 +154,47 @@ export default function WithdrawScreen() {
           )}
           {selectedMethod === "BANK CARD" && (
             <>
-              <TouchableOpacity
-                style={styles.addBankButton}
-                onPress={() => router.push("/add-bank")}
-              >
-                <View style={styles.addBankIconBox}>
-                  <Ionicons name="add" size={28} color="#92A8E3" />
-                </View>
-                <ThemedText style={styles.addBankText}>
-                  Add a bank account number
-                </ThemedText>
-              </TouchableOpacity>
-              <ThemedText style={styles.addBankWarning}>
-                Need to add beneficiary information to be able to withdraw money
-              </ThemedText>
+              {bankAccount && bankAccount.accountNumber ? (
+                <TouchableOpacity
+                  style={styles.savedBankCard}
+                  onPress={() => router.push("/add-bank")}
+                >
+                  <View style={styles.savedBankRow}>
+                    <View style={styles.bankIconCircle}>
+                      <Ionicons name="business" size={20} color="#7AFEC3" />
+                    </View>
+                    <View style={styles.savedBankInfo}>
+                      <ThemedText style={styles.savedBankName}>
+                        {bankAccount.bankName}
+                      </ThemedText>
+                      <ThemedText style={styles.savedBankHolder}>
+                        {bankAccount.accountHolder}
+                      </ThemedText>
+                      <ThemedText style={styles.savedBankNumber}>
+                        {"**** **** " + bankAccount.accountNumber.slice(-4)}
+                      </ThemedText>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color="#92A8E3" />
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    style={styles.addBankButton}
+                    onPress={() => router.push("/add-bank")}
+                  >
+                    <View style={styles.addBankIconBox}>
+                      <Ionicons name="add" size={28} color="#92A8E3" />
+                    </View>
+                    <ThemedText style={styles.addBankText}>
+                      Add a bank account number
+                    </ThemedText>
+                  </TouchableOpacity>
+                  <ThemedText style={styles.addBankWarning}>
+                    Need to add beneficiary information to be able to withdraw money
+                  </ThemedText>
+                </>
+              )}
             </>
           )}
         </View>
@@ -596,5 +631,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#7AFEC3",
+  },
+  savedBankCard: {
+    backgroundColor: "#011341",
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(122, 254, 195, 0.3)",
+  },
+  savedBankRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  bankIconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(122, 254, 195, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  savedBankInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  savedBankName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#7AFEC3",
+  },
+  savedBankHolder: {
+    fontSize: 13,
+    color: "#fff",
+  },
+  savedBankNumber: {
+    fontSize: 13,
+    color: "#92A8E3",
   },
 });

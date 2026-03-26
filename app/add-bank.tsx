@@ -1,9 +1,12 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { getBankAccount, saveBankAccount } from "@/services/api/bankAccount";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   FlatList,
   Modal,
   ScrollView,
@@ -177,6 +180,18 @@ export default function AddBankScreen() {
   const [email, setEmail] = useState("");
   const [ifscCode, setIfscCode] = useState("");
 
+  useEffect(() => {
+    getBankAccount().then((account) => {
+      if (!account) return;
+      if (account.bankName) setSelectedBank(account.bankName);
+      if (account.accountHolder) setRecipientName(account.accountHolder);
+      if (account.accountNumber) setBankAccountNumber(account.accountNumber);
+      if (account.bankPhone) setPhoneNumber(account.bankPhone);
+      if (account.bankEmail) setEmail(account.bankEmail);
+      if (account.ifscCode) setIfscCode(account.ifscCode);
+    });
+  }, []);
+
   const filteredBanks = BANK_LIST.filter((bank) =>
     bank.toLowerCase().includes(bankSearch.toLowerCase())
   );
@@ -187,16 +202,26 @@ export default function AddBankScreen() {
     setBankSearch("");
   };
 
-  const handleSubmit = () => {
-    console.log("Submit bank details:", {
-      selectedBank,
-      recipientName,
-      bankAccountNumber,
-      phoneNumber,
-      email,
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    const res = await saveBankAccount({
+      bankName: selectedBank,
+      accountHolder: recipientName,
+      accountNumber: bankAccountNumber,
       ifscCode,
+      bankPhone: phoneNumber,
+      bankEmail: email,
     });
-    router.back();
+    setSubmitting(false);
+
+    if (res.success) {
+      Alert.alert("Success", "Bank account saved successfully.");
+      router.back();
+    } else {
+      Alert.alert("Error", res.message || "Failed to save bank account.");
+    }
   };
 
   return (
@@ -362,7 +387,8 @@ export default function AddBankScreen() {
                 !recipientName ||
                 !bankAccountNumber ||
                 !phoneNumber ||
-                !ifscCode) &&
+                !ifscCode ||
+                submitting) &&
                 styles.submitButtonDisabled,
             ]}
             onPress={handleSubmit}
@@ -371,22 +397,27 @@ export default function AddBankScreen() {
               !recipientName ||
               !bankAccountNumber ||
               !phoneNumber ||
-              !ifscCode
+              !ifscCode ||
+              submitting
             }
           >
-            <ThemedText
-              style={[
-                styles.submitButtonText,
-                (!selectedBank ||
-                  !recipientName ||
-                  !bankAccountNumber ||
-                  !phoneNumber ||
-                  !ifscCode) &&
-                  styles.submitButtonTextDisabled,
-              ]}
-            >
-              Save
-            </ThemedText>
+            {submitting ? (
+              <ActivityIndicator color="#05012B" />
+            ) : (
+              <ThemedText
+                style={[
+                  styles.submitButtonText,
+                  (!selectedBank ||
+                    !recipientName ||
+                    !bankAccountNumber ||
+                    !phoneNumber ||
+                    !ifscCode) &&
+                    styles.submitButtonTextDisabled,
+                ]}
+              >
+                Save
+              </ThemedText>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </ThemedView>
