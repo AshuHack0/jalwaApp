@@ -68,7 +68,7 @@ export default function DepositScreen() {
       const res = await initiateDeposit(num);
       if (res.success && res.data?.payUrl) {
         await Linking.openURL(res.data.payUrl);
-        refreshWallet();
+        router.push({ pathname: "/deposit/status/[merchantOrderNo]" as any, params: { merchantOrderNo: res.data.merchantOrderNo } });
       } else {
         Alert.alert("Deposit failed", res.message ?? "Please try again.");
       }
