@@ -139,10 +139,28 @@ export default function WithdrawScreen() {
             ))}
           </View>
           {selectedMethod === "UPI" && (
-            <TouchableOpacity style={styles.addUPIButton}>
+            <TouchableOpacity style={styles.addBankButton}>
               <Ionicons name="add-circle-outline" size={24} color="#7AFEC3" />
-              <ThemedText style={styles.addUPIText}>Add UPI</ThemedText>
+              <ThemedText style={styles.addBankText}>Add UPI</ThemedText>
             </TouchableOpacity>
+          )}
+          {selectedMethod === "BANK CARD" && (
+            <>
+              <TouchableOpacity
+                style={styles.addBankButton}
+                onPress={() => router.push("/add-bank")}
+              >
+                <View style={styles.addBankIconBox}>
+                  <Ionicons name="add" size={28} color="#92A8E3" />
+                </View>
+                <ThemedText style={styles.addBankText}>
+                  Add a bank account number
+                </ThemedText>
+              </TouchableOpacity>
+              <ThemedText style={styles.addBankWarning}>
+                Need to add beneficiary information to be able to withdraw money
+              </ThemedText>
+            </>
           )}
         </View>
 
@@ -422,22 +440,39 @@ const styles = StyleSheet.create({
   methodLabelActive: {
     color: "#05012B",
   },
-  addUPIButton: {
-    flexDirection: "row",
+  addBankButton: {
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 10,
     backgroundColor: "#011341",
     borderRadius: 12,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: "#7AFEC3",
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderWidth: 1.5,
+    borderColor: "rgba(146, 168, 227, 0.3)",
     borderStyle: "dashed",
   },
-  addUPIText: {
-    fontSize: 16,
+  addBankIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: "rgba(146, 168, 227, 0.4)",
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addBankText: {
+    fontSize: 15,
     fontWeight: "600",
-    color: "#7AFEC3",
+    color: "#92A8E3",
+  },
+  addBankWarning: {
+    fontSize: 13,
+    color: "#FF6B6B",
+    marginTop: 10,
+    textAlign: "left",
   },
   amountInputContainer: {
     flexDirection: "row",
