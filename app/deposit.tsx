@@ -4,8 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
+import { Stack, useRouter, useLocalSearchParams } from "expo-router";
+import { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -23,6 +23,7 @@ function formatBalance(amount: number): string {
 
 export default function DepositScreen() {
   const router = useRouter();
+  const { amount: amountParam } = useLocalSearchParams<{ amount?: string }>();
   const { walletBalance, refreshWallet } = useAuth();
   const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
   const [selectedMethod, setSelectedMethod] = useState<string>("UPI-QR");
@@ -30,13 +31,19 @@ export default function DepositScreen() {
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<string>("");
 
+  useEffect(() => {
+    if (amountParam) {
+      setDepositAmount(amountParam);
+    }
+  }, [amountParam]);
+
   const depositMethods = [
-    { id: "UPI-QR", label: "UPI-QR", icon: "UPI" },
-    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI" },
-    { id: "PAYTM", label: "PAYTM", icon: "PAYTM" },
-    { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI" },
-    { id: "USDT", label: "USDT", icon: "USDT" },
-    { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%" },
+    { id: "UPI-QR", label: "UPI-QR", icon: "UPI", enabled: true },
+    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI", enabled: false },
+    { id: "PAYTM", label: "PAYTM", icon: "PAYTM", enabled: false },
+    { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI", enabled: false },
+    { id: "USDT", label: "USDT", icon: "USDT", enabled: false },
+    { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%", enabled: false },
   ];
 
   const quickAmounts = [
@@ -146,15 +153,17 @@ export default function DepositScreen() {
                   style={[
                     styles.methodButton,
                     selectedMethod === method.id && styles.methodButtonActive,
+                    !method.enabled && styles.methodButtonDisabled,
                   ]}
-                  onPress={() => setSelectedMethod(method.id)}
+                  onPress={() => method.enabled && setSelectedMethod(method.id)}
+                  activeOpacity={method.enabled ? 0.7 : 1}
                 >
                   <View style={styles.methodIconContainer}>
-                    <ThemedText style={styles.methodIconText}>
+                    <ThemedText style={[styles.methodIconText, !method.enabled && styles.methodTextDisabled]}>
                       {method.icon}
                     </ThemedText>
                   </View>
-                  <ThemedText style={styles.methodLabel}>
+                  <ThemedText style={[styles.methodLabel, !method.enabled && styles.methodTextDisabled]}>
                     {method.label}
                   </ThemedText>
                   {method.bonus && (
@@ -162,6 +171,11 @@ export default function DepositScreen() {
                       <ThemedText style={styles.bonusText}>
                         {method.bonus}
                       </ThemedText>
+                    </View>
+                  )}
+                  {!method.enabled && (
+                    <View style={styles.comingSoonBadge}>
+                      <ThemedText style={styles.comingSoonText}>Soon</ThemedText>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -205,9 +219,7 @@ export default function DepositScreen() {
                   ]}
                   onPress={() => handleAmountSelect(amount)}
                 >
-                  <ThemedText style={styles.amountButtonText}>
-                    ₹ {amount}
-                  </ThemedText>
+                  <ThemedText style={styles.amountButtonText} numberOfLines={1}>{`₹ ${amount}`}</ThemedText>
                 </TouchableOpacity>
               ))}
             </View>
@@ -436,6 +448,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
+  methodButtonDisabled: {
+    opacity: 0.45,
+  },
+  methodTextDisabled: {
+    color: "#5a6a8a",
+  },
   bonusBadge: {
     position: "absolute",
     top: 4,
@@ -449,6 +467,19 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#fff",
     fontWeight: "bold",
+  },
+  comingSoonBadge: {
+    position: "absolute",
+    bottom: 4,
+    right: 4,
+    backgroundColor: "#334",
+    borderRadius: 6,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  comingSoonText: {
+    fontSize: 9,
+    color: "#92A8E3",
   },
   channelButton: {
     backgroundColor: "#011341",

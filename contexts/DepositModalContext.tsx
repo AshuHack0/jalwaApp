@@ -1,5 +1,5 @@
-import { DepositModal } from "@/components/DepositModal";
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext } from "react";
+import { useRouter } from "expo-router";
 
 type DepositModalContextType = {
   openDepositModal: (preselectedAmount?: number) => void;
@@ -13,30 +13,21 @@ export function DepositModalProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [visible, setVisible] = useState(false);
-  const [preselectedAmount, setPreselectedAmount] = useState<
-    number | undefined
-  >();
+  const router = useRouter();
 
   const openDepositModal = useCallback((amount?: number) => {
-    setPreselectedAmount(amount);
-    setVisible(true);
-  }, []);
+    router.push({ pathname: "/deposit" as any, params: amount ? { amount: String(amount) } : {} });
+  }, [router]);
 
   const closeDepositModal = useCallback(() => {
-    setVisible(false);
-  }, []);
+    router.back();
+  }, [router]);
 
   return (
     <DepositModalContext.Provider
       value={{ openDepositModal, closeDepositModal }}
     >
       {children}
-      <DepositModal
-        visible={visible}
-        onClose={closeDepositModal}
-        preselectedAmount={preselectedAmount}
-      />
     </DepositModalContext.Provider>
   );
 }
