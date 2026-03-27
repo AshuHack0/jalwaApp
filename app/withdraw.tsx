@@ -2,11 +2,13 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { type BankAccount, getBankAccount } from "@/services/api/bankAccount";
+import { initiateWithdrawal } from "@/services/api/withdrawal";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -21,26 +23,39 @@ function formatBalance(amount: number): string {
 export default function WithdrawScreen() {
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
-  const [selectedMethod, setSelectedMethod] = useState<string>("UPI");
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       getBankAccount().then(setBankAccount);
     }, [])
   );
-  const withdrawableBalance = walletBalance; // You can adjust this based on your logic
+  const withdrawableBalance = walletBalance;
 
-  const paymentMethods = [
-    { id: "BANK CARD", label: "BANK CARD", icon: "card" },
-    { id: "UPI", label: "UPI", icon: "phone-portrait" },
-    { id: "USDT", label: "USDT", icon: "logo-bitcoin" },
-  ];
-
-  const handleWithdraw = () => {
-    // Handle withdraw logic here
-    console.log("Withdraw:", { selectedMethod, withdrawAmount });
+  const handleWithdraw = async () => {
+    const amount = parseFloat(withdrawAmount);
+    if (!bankAccount?.accountNumber) {
+      Alert.alert("No Bank Account", "Please add your bank account before withdrawing.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await initiateWithdrawal(amount);
+      if (result.success) {
+        await refreshWallet();
+        setWithdrawAmount("");
+        Alert.alert("Success", "Withdrawal request submitted successfully.");
+        router.push("/withdrawal-history");
+      } else {
+        Alert.alert("Failed", result.message || "Withdrawal failed. Please try again.");
+      }
+    } catch {
+      Alert.alert("Error", "Network error. Please check your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAllAmount = () => {
@@ -109,7 +124,7 @@ export default function WithdrawScreen() {
           </View>
         </LinearGradient>
 
-        {/* Payment Method Selection */}
+        {/* Payment Method — Bank Card only */}
         <View style={styles.section}>
           <View style={styles.paymentMethodHeader}>
             <View style={styles.arPayLogo}>
@@ -117,84 +132,56 @@ export default function WithdrawScreen() {
               <ThemedText style={styles.arPayText}>ARPay</ThemedText>
             </View>
             <ThemedText style={styles.paymentMethodSubtext}>
-              Supports UPI for fast payment
+              Bank card withdrawal
             </ThemedText>
           </View>
           <View style={styles.methodsRow}>
-            {paymentMethods.map((method) => (
+            <TouchableOpacity style={[styles.methodButton, styles.methodButtonActive]}>
+              <Ionicons name="card" size={24} color="#05012B" />
+              <ThemedText style={[styles.methodLabel, styles.methodLabelActive]}>
+                BANK CARD
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+          {bankAccount && bankAccount.accountNumber ? (
+            <TouchableOpacity
+              style={styles.savedBankCard}
+              onPress={() => router.push("/add-bank")}
+            >
+              <View style={styles.savedBankRow}>
+                <View style={styles.bankIconCircle}>
+                  <Ionicons name="business" size={20} color="#7AFEC3" />
+                </View>
+                <View style={styles.savedBankInfo}>
+                  <ThemedText style={styles.savedBankName}>
+                    {bankAccount.bankName}
+                  </ThemedText>
+                  <ThemedText style={styles.savedBankHolder}>
+                    {bankAccount.accountHolder}
+                  </ThemedText>
+                  <ThemedText style={styles.savedBankNumber}>
+                    {"**** **** " + bankAccount.accountNumber.slice(-4)}
+                  </ThemedText>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#92A8E3" />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <>
               <TouchableOpacity
-                key={method.id}
-                style={[
-                  styles.methodButton,
-                  selectedMethod === method.id && styles.methodButtonActive,
-                ]}
-                onPress={() => setSelectedMethod(method.id)}
+                style={styles.addBankButton}
+                onPress={() => router.push("/add-bank")}
               >
-                <Ionicons
-                  name={method.icon as any}
-                  size={24}
-                  color={selectedMethod === method.id ? "#05012B" : "#fff"}
-                />
-                <ThemedText
-                  style={[
-                    styles.methodLabel,
-                    selectedMethod === method.id && styles.methodLabelActive,
-                  ]}
-                >
-                  {method.label}
+                <View style={styles.addBankIconBox}>
+                  <Ionicons name="add" size={28} color="#92A8E3" />
+                </View>
+                <ThemedText style={styles.addBankText}>
+                  Add a bank account number
                 </ThemedText>
               </TouchableOpacity>
-            ))}
-          </View>
-          {selectedMethod === "UPI" && (
-            <TouchableOpacity style={styles.addBankButton}>
-              <Ionicons name="add-circle-outline" size={24} color="#7AFEC3" />
-              <ThemedText style={styles.addBankText}>Add UPI</ThemedText>
-            </TouchableOpacity>
-          )}
-          {selectedMethod === "BANK CARD" && (
-            <>
-              {bankAccount && bankAccount.accountNumber ? (
-                <TouchableOpacity
-                  style={styles.savedBankCard}
-                  onPress={() => router.push("/add-bank")}
-                >
-                  <View style={styles.savedBankRow}>
-                    <View style={styles.bankIconCircle}>
-                      <Ionicons name="business" size={20} color="#7AFEC3" />
-                    </View>
-                    <View style={styles.savedBankInfo}>
-                      <ThemedText style={styles.savedBankName}>
-                        {bankAccount.bankName}
-                      </ThemedText>
-                      <ThemedText style={styles.savedBankHolder}>
-                        {bankAccount.accountHolder}
-                      </ThemedText>
-                      <ThemedText style={styles.savedBankNumber}>
-                        {"**** **** " + bankAccount.accountNumber.slice(-4)}
-                      </ThemedText>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color="#92A8E3" />
-                  </View>
-                </TouchableOpacity>
-              ) : (
-                <>
-                  <TouchableOpacity
-                    style={styles.addBankButton}
-                    onPress={() => router.push("/add-bank")}
-                  >
-                    <View style={styles.addBankIconBox}>
-                      <Ionicons name="add" size={28} color="#92A8E3" />
-                    </View>
-                    <ThemedText style={styles.addBankText}>
-                      Add a bank account number
-                    </ThemedText>
-                  </TouchableOpacity>
-                  <ThemedText style={styles.addBankWarning}>
-                    Need to add beneficiary information to be able to withdraw money
-                  </ThemedText>
-                </>
-              )}
+              <ThemedText style={styles.addBankWarning}>
+                Need to add beneficiary information to be able to withdraw money
+              </ThemedText>
             </>
           )}
         </View>
@@ -239,20 +226,20 @@ export default function WithdrawScreen() {
         <TouchableOpacity
           style={[
             styles.withdrawButton,
-            (!withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
+            (loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
               styles.withdrawButtonDisabled,
           ]}
           onPress={handleWithdraw}
-          disabled={!withdrawAmount || parseFloat(withdrawAmount) <= 0}
+          disabled={loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0}
         >
           <ThemedText
             style={[
               styles.withdrawButtonText,
-              (!withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
+              (loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
                 styles.withdrawButtonTextDisabled,
             ]}
           >
-            Withdraw
+            {loading ? "Processing..." : "Withdraw"}
           </ThemedText>
         </TouchableOpacity>
 
