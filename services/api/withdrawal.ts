@@ -24,9 +24,7 @@ export type InitiateWithdrawalResponse = {
   data?: {
     withdrawalId: string;
     merchantOrderNo: string;
-    gatewayOrderNo: string;
     amount: number;
-    fee: number;
     status: string;
   };
 };
