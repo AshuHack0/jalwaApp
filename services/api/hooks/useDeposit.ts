@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { initiateDeposit, getMyDeposits, getDepositStatus } from "@/services/api/deposit";
+import { initiateUsdtDeposit, getUsdtDepositStatus, type UsdtNetwork } from "@/services/api/usdtDeposit";
 import { authKeys } from "./useAuth";
 import { promotionKeys } from "./useFirstDepositBonus";
 
@@ -55,6 +56,42 @@ export function useInitiateDeposit() {
         queryClient.invalidateQueries({ queryKey: authKeys.all });
         queryClient.invalidateQueries({ queryKey: promotionKeys.firstDepositBonus() });
       }
+    },
+  });
+}
+
+/** Initiate a USDT deposit. Returns wallet address for the user to send USDT to. */
+export function useInitiateUsdtDeposit() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ amount, network }: { amount: number; network: UsdtNetwork }) =>
+      initiateUsdtDeposit(amount, network),
+    onSuccess: (res) => {
+      if (res.success) {
+        queryClient.invalidateQueries({ queryKey: depositKeys.all });
+        queryClient.invalidateQueries({ queryKey: authKeys.all });
+        queryClient.invalidateQueries({ queryKey: promotionKeys.firstDepositBonus() });
+      }
+    },
+  });
+}
+
+/** Poll a USDT deposit's status */
+export function useUsdtDepositStatus(merchantOrderNo: string | null) {
+  return useQuery({
+    queryKey: depositKeys.status(`usdt-${merchantOrderNo ?? ""}`),
+    queryFn: async () => {
+      if (!merchantOrderNo) return null;
+      const res = await getUsdtDepositStatus(merchantOrderNo);
+      if (!res.success || !res.data) return null;
+      return res.data;
+    },
+    enabled: !!merchantOrderNo,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (!data) return false;
+      return data.status === "pending" ? 5000 : false;
     },
   });
 }

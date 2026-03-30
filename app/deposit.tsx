@@ -1,8 +1,9 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
-import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
+import { useInitiateDeposit, useInitiateUsdtDeposit } from "@/services/api/hooks/useDeposit";
 import { initiateOxoxmgDeposit } from "@/services/api/oxoxmgDeposit";
+import type { UsdtNetwork } from "@/services/api/usdtDeposit";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
@@ -27,8 +28,10 @@ export default function DepositScreen() {
   const { amount: amountParam } = useLocalSearchParams<{ amount?: string }>();
   const { walletBalance, refreshWallet } = useAuth();
   const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
+  const { mutateAsync: initiateUsdtDeposit, isPending: isUsdtPending } = useInitiateUsdtDeposit();
   const [selectedMethod, setSelectedMethod] = useState<string>("UPI-QR");
   const [selectedChannel, setSelectedChannel] = useState<string>("Phonepe_QR");
+  const [selectedNetwork, setSelectedNetwork] = useState<UsdtNetwork>("TRC20");
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<string>("");
 
@@ -38,6 +41,8 @@ export default function DepositScreen() {
     }
   }, [amountParam]);
 
+  const isUsdt = selectedMethod === "USDT";
+
   const depositMethods = [
     { id: "UPI-QR", label: "UPI-QR", icon: "UPI", enabled: true },
     { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI", enabled: false },
@@ -45,6 +50,13 @@ export default function DepositScreen() {
     { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI", enabled: false },
     { id: "MCGINDIAMC", label: "MCGINDIAMC", icon: "MCGINDIAMC", enabled: false },
     { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%", enabled: true },
+    { id: "USDT", label: "USDT", icon: "USDT", enabled: true },
+  ];
+
+  const usdtNetworks: { id: UsdtNetwork; label: string; desc: string }[] = [
+    { id: "TRC20", label: "TRC20", desc: "TRON · Low fee" },
+    { id: "ERC20", label: "ERC20", desc: "Ethereum · High fee" },
+    { id: "BEP20", label: "BEP20", desc: "BSC · Low fee" },
   ];
 
   const quickAmounts = [
@@ -66,13 +78,30 @@ export default function DepositScreen() {
   };
 
   const handleDeposit = async () => {
-    const num = parseInt(depositAmount.replace(/[^0-9]/g, ""), 10);
-    if (!num || num < 100) {
+    const num = parseFloat(depositAmount.replace(/[^0-9.]/g, ""));
+    if (!num || num <= 0) {
+      Alert.alert("Invalid amount", isUsdt ? "Enter a USDT amount." : "Minimum deposit is ₹100.");
+      return;
+    }
+    if (!isUsdt && num < 100) {
       Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
       return;
     }
 
     try {
+      if (isUsdt) {
+        const res = await initiateUsdtDeposit({ amount: num, network: selectedNetwork });
+        if (res.success && res.data) {
+          router.push({
+            pathname: "/deposit/usdt-status/[merchantOrderNo]" as any,
+            params: { merchantOrderNo: res.data.merchantOrderNo },
+          });
+        } else {
+          Alert.alert("Deposit failed", res.message ?? "Please try again.");
+        }
+        return;
+      }
+
       const res = selectedMethod === "ARPay"
         ? await initiateOxoxmgDeposit(num)
         : await initiateDeposit(num);
@@ -187,24 +216,41 @@ export default function DepositScreen() {
             </View>
           </View>
 
-          {/* Select Channel */}
+          {/* Select Channel / USDT Network */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Ionicons name="wallet" size={18} color="#7AFEC3" />
-              <ThemedText style={styles.sectionTitle}>Select channel</ThemedText>
-            </View>
-            <TouchableOpacity
-              style={[
-                styles.channelButton,
-                selectedChannel === "Phonepe_QR" && styles.channelButtonActive,
-              ]}
-              onPress={() => setSelectedChannel("Phonepe_QR")}
-            >
-              <ThemedText style={styles.channelLabel}>Phonepe_QR</ThemedText>
-              <ThemedText style={styles.channelBalance}>
-                Balance: 100 - 50K
+              <ThemedText style={styles.sectionTitle}>
+                {isUsdt ? "Select network" : "Select channel"}
               </ThemedText>
-            </TouchableOpacity>
+            </View>
+            {isUsdt ? (
+              usdtNetworks.map((net) => (
+                <TouchableOpacity
+                  key={net.id}
+                  style={[
+                    styles.channelButton,
+                    { marginBottom: 8 },
+                    selectedNetwork === net.id && styles.channelButtonActive,
+                  ]}
+                  onPress={() => setSelectedNetwork(net.id)}
+                >
+                  <ThemedText style={styles.channelLabel}>{net.label}</ThemedText>
+                  <ThemedText style={styles.channelBalance}>{net.desc}</ThemedText>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.channelButton,
+                  selectedChannel === "Phonepe_QR" && styles.channelButtonActive,
+                ]}
+                onPress={() => setSelectedChannel("Phonepe_QR")}
+              >
+                <ThemedText style={styles.channelLabel}>Phonepe_QR</ThemedText>
+                <ThemedText style={styles.channelBalance}>Balance: 100 - 50K</ThemedText>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Deposit Amount */}
@@ -213,25 +259,29 @@ export default function DepositScreen() {
               <Ionicons name="wallet" size={18} color="#7AFEC3" />
               <ThemedText style={styles.sectionTitle}>Deposit amount</ThemedText>
             </View>
-            <View style={styles.amountGrid}>
-              {quickAmounts.map((amount) => (
-                <TouchableOpacity
-                  key={amount}
-                  style={[
-                    styles.amountButton,
-                    selectedAmount === amount && styles.amountButtonActive,
-                  ]}
-                  onPress={() => handleAmountSelect(amount)}
-                >
-                  <ThemedText style={styles.amountButtonText} numberOfLines={1}>{`₹ ${amount}`}</ThemedText>
-                </TouchableOpacity>
-              ))}
-            </View>
+            {!isUsdt && (
+              <View style={styles.amountGrid}>
+                {quickAmounts.map((amount) => (
+                  <TouchableOpacity
+                    key={amount}
+                    style={[
+                      styles.amountButton,
+                      selectedAmount === amount && styles.amountButtonActive,
+                    ]}
+                    onPress={() => handleAmountSelect(amount)}
+                  >
+                    <ThemedText style={styles.amountButtonText} numberOfLines={1}>{`₹ ${amount}`}</ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
             <View style={styles.amountInputContainer}>
-              <ThemedText style={styles.currencySymbol}>₹</ThemedText>
+              <ThemedText style={styles.currencySymbol}>
+                {isUsdt ? "₮" : "₹"}
+              </ThemedText>
               <TextInput
                 style={styles.amountInput}
-                placeholder="₹100.00 - ₹50,000.00"
+                placeholder={isUsdt ? "Min 1 USDT" : "₹100.00 - ₹50,000.00"}
                 placeholderTextColor="#92A8E3"
                 value={depositAmount}
                 onChangeText={setDepositAmount}
@@ -307,9 +357,9 @@ export default function DepositScreen() {
           <TouchableOpacity
             style={styles.depositButton}
             onPress={handleDeposit}
-            disabled={isPending}
+            disabled={isPending || isUsdtPending}
           >
-            {isPending ? (
+            {isPending || isUsdtPending ? (
               <ActivityIndicator color="#7AFEC3" />
             ) : (
               <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
