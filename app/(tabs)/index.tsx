@@ -96,12 +96,14 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (showGameErrorModal) {
-      gameErrorPlayer.seekTo(0);
-      gameErrorPlayer.play();
+      if (isAuthenticated) {
+        gameErrorPlayer.seekTo(0);
+        gameErrorPlayer.play();
+      }
       setShowGameErrorModal(false);
       router.push("/wingo");
     }
-  }, [showGameErrorModal, gameErrorPlayer, router]);
+  }, [showGameErrorModal, gameErrorPlayer, router, isAuthenticated]);
 
   useEffect(() => {
     setAudioModeAsync({

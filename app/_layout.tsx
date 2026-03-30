@@ -5,7 +5,7 @@ import { DepositModalProvider } from "@/contexts/DepositModalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
+import { setAudioModeAsync } from "expo-audio";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -71,8 +71,6 @@ const customDarkTheme = {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [appReady, setAppReady] = useState(false);
-  const registerPlayer = useAudioPlayer(require("@/assets/register.mp3"));
-
   useEffect(() => {
     if (appReady) {
       SplashScreen.hideAsync();
@@ -82,10 +80,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (appReady) {
       setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false });
-      registerPlayer.seekTo(0);
-      registerPlayer.play();
     }
-  }, [appReady, registerPlayer]);
+  }, [appReady]);
 
   useEffect(() => {
     // Hide native splash soon so our custom splash overlay is visible

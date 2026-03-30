@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
+import { initiateOxoxmgDeposit } from "@/services/api/oxoxmgDeposit";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
@@ -42,8 +43,8 @@ export default function DepositScreen() {
     { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI", enabled: false },
     { id: "PAYTM", label: "PAYTM", icon: "PAYTM", enabled: false },
     { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI", enabled: false },
-    { id: "USDT", label: "USDT", icon: "USDT", enabled: false },
-    { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%", enabled: false },
+    { id: "MCGINDIAMC", label: "MCGINDIAMC", icon: "MCGINDIAMC", enabled: false },
+    { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%", enabled: true },
   ];
 
   const quickAmounts = [
@@ -72,7 +73,10 @@ export default function DepositScreen() {
     }
 
     try {
-      const res = await initiateDeposit(num);
+      const res = selectedMethod === "ARPay"
+        ? await initiateOxoxmgDeposit(num)
+        : await initiateDeposit(num);
+
       if (res.success && res.data?.payUrl) {
         await Linking.openURL(res.data.payUrl);
         router.push({ pathname: "/deposit/status/[merchantOrderNo]" as any, params: { merchantOrderNo: res.data.merchantOrderNo } });

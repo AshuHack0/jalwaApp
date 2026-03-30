@@ -24,8 +24,8 @@ import { BetModal } from "@/components/BetModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useRouter } from "expo-router";
-import { useState, useRef, useEffect } from "react";
+import { useRouter, useFocusEffect } from "expo-router";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Polygon, Rect, Line } from "react-native-svg";
@@ -285,6 +285,7 @@ export default function WinGoScreen() {
 
   const refetchedForRoundEndRef = useRef<string | null>(null);
   const lastHistoryDataRef = useRef<typeof historyData>(null);
+  const [isScreenFocused, setIsScreenFocused] = useState(true);
   const di1Player = useAudioPlayer(
     require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"),
   );
@@ -293,6 +294,19 @@ export default function WinGoScreen() {
   );
   const minDepositPlayer = useAudioPlayer(
     require("@/assets/mininum 200 deposit.mp3"),
+  );
+
+  // Track screen focus; pause audio when leaving screen
+  useFocusEffect(
+    useCallback(() => {
+      setIsScreenFocused(true);
+      return () => {
+        setIsScreenFocused(false);
+        try { di1Player.pause(); } catch {}
+        try { di2Player.pause(); } catch {}
+        try { minDepositPlayer.pause(); } catch {}
+      };
+    }, [di1Player, di2Player, minDepositPlayer])
   );
 
   // Compute server time offset when current-round data arrives
@@ -373,7 +387,7 @@ export default function WinGoScreen() {
 
   // Play countdown sounds when overlay is showing (6,5,4,3,2,1 -> di1; 0 -> di2)
   useEffect(() => {
-    if (!showCountdownModal || secondsRemaining > 6) {
+    if (!isScreenFocused || !showCountdownModal || secondsRemaining > 6) {
       lastCountdownSecondPlayed = null;
       return;
     }
@@ -387,7 +401,7 @@ export default function WinGoScreen() {
       di1Player.seekTo(0);
       di1Player.play();
     }
-  }, [showCountdownModal, secondsRemaining, di1Player, di2Player]);
+  }, [isScreenFocused, showCountdownModal, secondsRemaining, di1Player, di2Player]);
 
   // Close bet modal when countdown starts
   useEffect(() => {

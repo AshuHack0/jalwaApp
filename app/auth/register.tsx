@@ -39,11 +39,6 @@ export default function RegisterScreen() {
     });
   }, []);
 
-  useEffect(() => {
-    registerPlayer.seekTo(0);
-    registerPlayer.play();
-  }, [registerPlayer]);
-
   const handleRegister = async () => {
     setError("");
     if (!phone.trim()) {
@@ -70,6 +65,8 @@ export default function RegisterScreen() {
     try {
       const res = await registerApi(phone.trim(), password, inviteCode.trim());
       if (res.success && res.token) {
+        registerPlayer.seekTo(0);
+        registerPlayer.play();
         await authLogin(res.token);
         router.replace("/(tabs)");
       } else {
