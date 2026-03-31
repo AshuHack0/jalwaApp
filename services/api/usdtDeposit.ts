@@ -3,7 +3,7 @@ import { getToken } from "@/services/auth-storage";
 
 const USDT_DEPOSIT_BASE = `${API_BASE_URL}/api/v1/usdt/deposits`;
 
-export type UsdtNetwork = "TRC20" | "ERC20" | "BEP20";
+export type UsdtNetwork = "TRC20";
 
 export type InitiateUsdtDepositResponse = {
   success: boolean;
