@@ -1,27 +1,80 @@
-import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { ArPayTab } from "@/components/deposit/ar-pay-tab";
+import { DepositAmountSelector } from "@/components/deposit/deposit-amount-selector";
+import { DepositBalanceCard } from "@/components/deposit/deposit-balance-card";
+import { DepositBottomBar } from "@/components/deposit/deposit-bottom-bar";
+import { DepositChannelSelector } from "@/components/deposit/deposit-channel-selector";
+import { DepositHistoryPreview } from "@/components/deposit/deposit-history-preview";
+import { DepositInstructions } from "@/components/deposit/deposit-instructions";
+import { DepositMethodTabs } from "@/components/deposit/deposit-method-tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInitiateDeposit, useInitiateUsdtDeposit } from "@/services/api/hooks/useDeposit";
 import { initiateOxoxmgDeposit } from "@/services/api/oxoxmgDeposit";
 import type { UsdtNetwork } from "@/services/api/usdtDeposit";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image, Linking, ScrollView, StyleSheet, View } from "react-native";
+import { ThemedText } from "@/components/themed-text";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-function formatBalance(amount: number): string {
-  return `₹${amount.toFixed(2)}`;
-}
+type Channel = { id: string; label: string; balance: string; quickAmounts: string[]; placeholder: string };
+
+type MethodConfig = {
+  channels: Channel[];
+};
+
+const METHOD_CONFIG: Record<string, MethodConfig> = {
+  "UPI-QR": {
+    channels: [
+      { id: "Phonepe_QR", label: "Phonepe_QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+    ],
+  },
+  "Innate UPI-QR": {
+    channels: [
+      { id: "UPI-QR", label: "UPI-QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "YayaPay-QR", label: "YayaPay-QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "WePay-QR", label: "WePay-QR", balance: "Balance:100 - 10K", quickAmounts: ["100", "200", "300", "500", "1K", "2K", "3K", "5K", "8K", "10K"], placeholder: "₹100.00 - ₹10,000.00" },
+      { id: "MagicPay-QR", label: "MagicPay-QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "WPay-QR", label: "WPay-QR", balance: "Balance:200 - 50K", quickAmounts: ["200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹200.00 - ₹50,000.00" },
+      { id: "Super-QR", label: "Super-QR", balance: "Balance:200 - 50K", quickAmounts: ["200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹200.00 - ₹50,000.00" },
+      { id: "UpiPayINR", label: "UpiPayINR", balance: "Balance:100 - 10K", quickAmounts: ["100", "200", "300", "500", "1K", "2K", "3K", "5K", "8K", "10K"], placeholder: "₹100.00 - ₹10,000.00" },
+      { id: "MovPay-QR", label: "MovPay-QR", balance: "Balance:200 - 20K", quickAmounts: ["200", "300", "500", "1K", "2K", "5K", "10K", "20K"], placeholder: "₹200.00 - ₹20,000.00" },
+      { id: "VstarPay-QR", label: "VstarPay-QR", balance: "Balance:200 - 10K", quickAmounts: ["200", "300", "500", "1K", "2K", "3K", "5K", "10K"], placeholder: "₹200.00 - ₹10,000.00" },
+      { id: "Rspay-QR", label: "Rspay-QR", balance: "Balance:200 - 50K", quickAmounts: ["200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹200.00 - ₹50,000.00" },
+      { id: "DiDiPayINR-Wake", label: "DiDiPayINR-Wake", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "NinePay-QR", label: "NinePay-QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "Cloudspay-QR", label: "Cloudspay-QR", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+    ],
+  },
+  "PAYTM": {
+    channels: [
+      { id: "PAYTM-WePay", label: "PAYTM-WePay", balance: "Balance:100 - 10K", quickAmounts: ["100", "300", "500", "800", "1K", "2K", "3K", "5K", "6K", "8K", "9K", "10K"], placeholder: "₹100.00 - ₹10,000.00" },
+    ],
+  },
+  "Expert UPI-QR": {
+    channels: [
+      { id: "Expert_QR1", label: "Expert_QR1", balance: "Balance:100 - 50K", quickAmounts: ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹100.00 - ₹50,000.00" },
+      { id: "Expert_QR2", label: "Expert_QR2", balance: "Balance:200 - 50K", quickAmounts: ["200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"], placeholder: "₹200.00 - ₹50,000.00" },
+      { id: "Expert_QR3", label: "Expert_QR3", balance: "Balance:100 - 30K", quickAmounts: ["100", "200", "300", "500", "1K", "2K", "5K", "10K", "20K", "30K"], placeholder: "₹100.00 - ₹30,000.00" },
+    ],
+  },
+};
+
+const DEPOSIT_METHODS = [
+  { id: "UPI-QR", label: "UPI-QR", icon: "UPI", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon2_20250715163245arvw.png", enabled: true },
+  { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon2_20250715163255fvu3.png", enabled: true },
+  { id: "PAYTM", label: "PAYTM", icon: "PAYTM", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon_202507151825149rk6.png", enabled: true },
+  { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon_20250715163305bo2u.png", enabled: true },
+  { id: "USDT", label: "USDT", icon: "USDT", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon_20250317165636a3yk.png", enabled: true },
+  { id: "ARPay", label: "ARPay", icon: "ARPay", image: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/payNameIcon_202503171657306civ.png", bonus: "+2%", enabled: true },
+];
+
+const USDT_NETWORKS: { id: UsdtNetwork; label: string; balance: string }[] = [
+  { id: "TRC20", label: "USDT-4", balance: "Balance:10 - 100K" },
+];
+
+const USDT_QUICK_AMOUNTS = ["10", "50", "100", "500", "1K", "5K", "8K", "10K", "30K", "50K", "80K", "100K"];
 
 export default function DepositScreen() {
   const router = useRouter();
@@ -29,52 +82,43 @@ export default function DepositScreen() {
   const { walletBalance, refreshWallet } = useAuth();
   const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
   const { mutateAsync: initiateUsdtDeposit, isPending: isUsdtPending } = useInitiateUsdtDeposit();
+
   const [selectedMethod, setSelectedMethod] = useState<string>("UPI-QR");
   const [selectedChannel, setSelectedChannel] = useState<string>("Phonepe_QR");
   const [selectedNetwork, setSelectedNetwork] = useState<UsdtNetwork>("TRC20");
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<string>("");
+  const [usdtInrAmount, setUsdtInrAmount] = useState<string>("");
 
   useEffect(() => {
-    if (amountParam) {
-      setDepositAmount(amountParam);
-    }
+    if (amountParam) setDepositAmount(amountParam);
   }, [amountParam]);
 
   const isUsdt = selectedMethod === "USDT";
+  const isArPay = selectedMethod === "ARPay";
 
-  const depositMethods = [
-    { id: "UPI-QR", label: "UPI-QR", icon: "UPI", enabled: true },
-    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "UPI", enabled: false },
-    { id: "PAYTM", label: "PAYTM", icon: "PAYTM", enabled: false },
-    { id: "Expert UPI-QR", label: "Expert UPI-QR", icon: "UPI", enabled: false },
-    { id: "MCGINDIAMC", label: "MCGINDIAMC", icon: "MCGINDIAMC", enabled: false },
-    { id: "ARPay", label: "ARPay", icon: "ARPay", bonus: "+2%", enabled: true },
-    { id: "USDT", label: "USDT", icon: "USDT", enabled: true },
-  ];
+  const currentConfig = METHOD_CONFIG[selectedMethod];
+  const currentChannels: Channel[] = currentConfig?.channels ?? [];
+  const currentChannelConfig = currentChannels.find((c) => c.id === selectedChannel);
+  const quickAmounts: string[] = currentChannelConfig?.quickAmounts ?? ["100", "200", "300", "500", "1K", "1.1K", "1.5K", "3K", "5K"];
+  const amountPlaceholder: string = currentChannelConfig?.placeholder ?? "₹100.00 - ₹50,000.00";
 
-  const usdtNetworks: { id: UsdtNetwork; label: string; desc: string }[] = [
-    { id: "TRC20", label: "TRC20", desc: "TRON · Low fee" },
-    { id: "ERC20", label: "ERC20", desc: "Ethereum · High fee" },
-    { id: "BEP20", label: "BEP20", desc: "BSC · Low fee" },
-  ];
-
-  const quickAmounts = [
-    "100",
-    "200",
-    "400",
-    "500",
-    "1K",
-    "1.1K",
-    "2K",
-    "3K",
-    "5K",
-  ];
+  const handleMethodChange = (methodId: string) => {
+    setSelectedMethod(methodId);
+    const firstChannel = METHOD_CONFIG[methodId]?.channels?.[0]?.id ?? "";
+    setSelectedChannel(firstChannel);
+    setSelectedAmount("");
+    setDepositAmount("");
+  };
 
   const handleAmountSelect = (amount: string) => {
     setSelectedAmount(amount);
-    const numericAmount = amount.replace("K", "000");
-    setDepositAmount(numericAmount);
+    let numeric = amount;
+    if (amount === "1K") numeric = "1000";
+    else if (amount === "1.1K") numeric = "1100";
+    else if (amount === "1.5K") numeric = "1500";
+    else if (amount.endsWith("K")) numeric = String(parseFloat(amount) * 1000);
+    setDepositAmount(numeric);
   };
 
   const handleDeposit = async () => {
@@ -87,7 +131,6 @@ export default function DepositScreen() {
       Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
       return;
     }
-
     try {
       if (isUsdt) {
         const res = await initiateUsdtDeposit({ amount: num, network: selectedNetwork });
@@ -101,11 +144,9 @@ export default function DepositScreen() {
         }
         return;
       }
-
-      const res = selectedMethod === "ARPay"
+      const res = (selectedMethod === "PAYTM" || selectedMethod === "Expert UPI-QR")
         ? await initiateOxoxmgDeposit(num)
         : await initiateDeposit(num);
-
       if (res.success && res.data?.payUrl) {
         await Linking.openURL(res.data.payUrl);
         router.push({ pathname: "/deposit/status/[merchantOrderNo]" as any, params: { merchantOrderNo: res.data.merchantOrderNo } });
@@ -117,26 +158,21 @@ export default function DepositScreen() {
     }
   };
 
+  const rechargeMethod = isArPay ? "ArbPayINR" : isUsdt ? "USDT-4" : selectedChannel;
+  const isDepositDisabled = isPending || isUsdtPending || isArPay;
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
           <ThemedText style={styles.screenTitle}>Deposit</ThemedText>
-          <TouchableOpacity
-            onPress={() => router.push("/deposit-history")}
-            style={styles.historyButton}
-          >
-            <ThemedText style={styles.historyButtonText}>
-              Deposit history
-            </ThemedText>
+          <TouchableOpacity onPress={() => router.push("/deposit-history")} style={styles.historyButton}>
+            <ThemedText style={styles.historyButtonText}>Deposit history</ThemedText>
           </TouchableOpacity>
         </View>
 
@@ -145,227 +181,57 @@ export default function DepositScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Balance Card */}
-          <LinearGradient
-            colors={["#7AFEC3", "#02AFB6"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.balanceCard}
-          >
-            <View style={styles.balanceCardContent}>
-              <View style={styles.balanceHeader}>
-                <View style={styles.balanceHeaderLeft}>
-                  <Ionicons name="wallet" size={20} color="#FFD700" />
-                  <ThemedText style={styles.balanceLabel}>Balance</ThemedText>
-                </View>
-                <TouchableOpacity onPress={refreshWallet}>
-                  <Ionicons name="refresh" size={20} color="#fff" />
-                </TouchableOpacity>
-              </View>
-              <ThemedText style={styles.balanceAmount}>
-                {formatBalance(walletBalance)}
-              </ThemedText>
-              <View style={styles.cardFooter}>
-                <Ionicons
-                  name="card"
-                  size={24}
-                  color="#fff"
-                  style={styles.cardIcon}
-                />
-                <ThemedText style={styles.cardNumber}>**** ****</ThemedText>
-              </View>
-            </View>
-          </LinearGradient>
+          <DepositBalanceCard walletBalance={walletBalance} onRefresh={refreshWallet} />
 
-          {/* Deposit Methods */}
-          <View style={styles.section}>
-            <View style={styles.methodsGrid}>
-              {depositMethods.map((method) => (
-                <TouchableOpacity
-                  key={method.id}
-                  style={[
-                    styles.methodButton,
-                    selectedMethod === method.id && styles.methodButtonActive,
-                    !method.enabled && styles.methodButtonDisabled,
-                  ]}
-                  onPress={() => method.enabled && setSelectedMethod(method.id)}
-                  activeOpacity={method.enabled ? 0.7 : 1}
-                >
-                  <View style={styles.methodIconContainer}>
-                    <ThemedText style={[styles.methodIconText, !method.enabled && styles.methodTextDisabled]}>
-                      {method.icon}
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={[styles.methodLabel, !method.enabled && styles.methodTextDisabled]}>
-                    {method.label}
-                  </ThemedText>
-                  {method.bonus && (
-                    <View style={styles.bonusBadge}>
-                      <ThemedText style={styles.bonusText}>
-                        {method.bonus}
-                      </ThemedText>
-                    </View>
-                  )}
-                  {!method.enabled && (
-                    <View style={styles.comingSoonBadge}>
-                      <ThemedText style={styles.comingSoonText}>Soon</ThemedText>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
+          <DepositMethodTabs
+            methods={DEPOSIT_METHODS}
+            selectedMethod={selectedMethod}
+            onSelect={handleMethodChange}
+          />
 
-          {/* Select Channel / USDT Network */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="wallet" size={18} color="#7AFEC3" />
-              <ThemedText style={styles.sectionTitle}>
-                {isUsdt ? "Select network" : "Select channel"}
-              </ThemedText>
-            </View>
-            {isUsdt ? (
-              usdtNetworks.map((net) => (
-                <TouchableOpacity
-                  key={net.id}
-                  style={[
-                    styles.channelButton,
-                    { marginBottom: 8 },
-                    selectedNetwork === net.id && styles.channelButtonActive,
-                  ]}
-                  onPress={() => setSelectedNetwork(net.id)}
-                >
-                  <ThemedText style={styles.channelLabel}>{net.label}</ThemedText>
-                  <ThemedText style={styles.channelBalance}>{net.desc}</ThemedText>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <TouchableOpacity
-                style={[
-                  styles.channelButton,
-                  selectedChannel === "Phonepe_QR" && styles.channelButtonActive,
-                ]}
-                onPress={() => setSelectedChannel("Phonepe_QR")}
-              >
-                <ThemedText style={styles.channelLabel}>Phonepe_QR</ThemedText>
-                <ThemedText style={styles.channelBalance}>Balance: 100 - 50K</ThemedText>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {/* Deposit Amount */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="wallet" size={18} color="#7AFEC3" />
-              <ThemedText style={styles.sectionTitle}>Deposit amount</ThemedText>
-            </View>
-            {!isUsdt && (
-              <View style={styles.amountGrid}>
-                {quickAmounts.map((amount) => (
-                  <TouchableOpacity
-                    key={amount}
-                    style={[
-                      styles.amountButton,
-                      selectedAmount === amount && styles.amountButtonActive,
-                    ]}
-                    onPress={() => handleAmountSelect(amount)}
-                  >
-                    <ThemedText style={styles.amountButtonText} numberOfLines={1}>{`₹ ${amount}`}</ThemedText>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-            <View style={styles.amountInputContainer}>
-              <ThemedText style={styles.currencySymbol}>
-                {isUsdt ? "₮" : "₹"}
-              </ThemedText>
-              <TextInput
-                style={styles.amountInput}
-                placeholder={isUsdt ? "Min 1 USDT" : "₹100.00 - ₹50,000.00"}
-                placeholderTextColor="#92A8E3"
-                value={depositAmount}
-                onChangeText={setDepositAmount}
-                keyboardType="numeric"
+          {isArPay ? (
+            <ArPayTab />
+          ) : (
+            <>
+              <DepositChannelSelector
+                isUsdt={isUsdt}
+                channels={currentChannels}
+                selectedChannel={selectedChannel}
+                onSelectChannel={setSelectedChannel}
+                usdtChannels={USDT_NETWORKS}
+                selectedNetwork={selectedNetwork}
+                onSelectNetwork={setSelectedNetwork}
               />
-              {depositAmount.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => {
-                    setDepositAmount("");
-                    setSelectedAmount("");
-                  }}
-                >
-                  <Ionicons name="close-circle" size={20} color="#92A8E3" />
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
 
-          {/* Recharge Instructions */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="document-text" size={18} color="#7AFEC3" />
-              <ThemedText style={styles.sectionTitle}>
-                Recharge instructions
-              </ThemedText>
-            </View>
-            <View style={styles.instructionsList}>
-              <View style={styles.instructionItem}>
-                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-                <ThemedText style={styles.instructionText}>
-                  If the transfer time is up, please fill out the deposit form
-                  again.
-                </ThemedText>
-              </View>
-              <View style={styles.instructionItem}>
-                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-                <ThemedText style={styles.instructionText}>
-                  The transfer amount must match the order you created, otherwise
-                  the money cannot be credited successfully.
-                </ThemedText>
-              </View>
-              <View style={styles.instructionItem}>
-                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-                <ThemedText style={styles.instructionText}>
-                  If you transfer the wrong amount, our company will not be
-                  responsible for the lost amount!
-                </ThemedText>
-              </View>
-              <View style={styles.instructionItem}>
-                <ThemedText style={styles.instructionBullet}>◆</ThemedText>
-                <ThemedText style={styles.instructionText}>
-                  Note: do not cancel the deposit order after the money has been
-                  transferred.
-                </ThemedText>
-              </View>
-            </View>
-          </View>
+              <DepositAmountSelector
+                isUsdt={isUsdt}
+                quickAmounts={quickAmounts}
+                usdtQuickAmounts={USDT_QUICK_AMOUNTS}
+                selectedAmount={selectedAmount}
+                depositAmount={depositAmount}
+                usdtInrAmount={usdtInrAmount}
+                placeholder={amountPlaceholder}
+                onSelectAmount={handleAmountSelect}
+                onChangeDeposit={setDepositAmount}
+                onClearDeposit={() => { setDepositAmount(""); setSelectedAmount(""); }}
+                onChangeInr={setUsdtInrAmount}
+              />
 
-          {/* Deposit History Preview */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="document-text" size={18} color="#7AFEC3" />
-              <ThemedText style={styles.sectionTitle}>Deposit history</ThemedText>
-            </View>
-            <View style={styles.historyPlaceholder}>
-              <ThemedText style={styles.historyText}>
-                Recharge Method: Phonepe_QR
-              </ThemedText>
-            </View>
-          </View>
+              <DepositInstructions isUsdt={isUsdt} />
 
-          {/* Deposit Button */}
-          <TouchableOpacity
-            style={styles.depositButton}
-            onPress={handleDeposit}
-            disabled={isPending || isUsdtPending}
-          >
-            {isPending || isUsdtPending ? (
-              <ActivityIndicator color="#7AFEC3" />
-            ) : (
-              <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
-            )}
-          </TouchableOpacity>
+              <DepositHistoryPreview />
+            </>
+          )}
+
+          <View style={{ height: 20 }} />
         </ScrollView>
+
+        <DepositBottomBar
+          rechargeMethod={rechargeMethod}
+          isPending={isPending || isUsdtPending}
+          isDisabled={isDepositDisabled}
+          onDeposit={handleDeposit}
+        />
       </ThemedView>
     </>
   );
@@ -374,21 +240,21 @@ export default function DepositScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05012B"
+    backgroundColor: "#05012B",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
-    paddingTop: 90,
+    paddingBottom: 20,
+    paddingTop: 100,
   },
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    paddingTop:50,
+    paddingTop: 50,
     zIndex: 1000,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -397,246 +263,15 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: "#05012B",
   },
-  backButton: {
-    padding: 4,
-  },
+  backButton: { padding: 4 },
   screenTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
   },
-  historyButton: {
-    padding: 4,
-  },
+  historyButton: { padding: 4 },
   historyButtonText: {
     fontSize: 14,
     color: "#7AFEC3",
-  },
-  balanceCard: {
-    marginHorizontal: 16,
-    marginTop: 20,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
-  balanceCardContent: {
-    padding: 20,
-  },
-  balanceHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  balanceHeaderLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  balanceLabel: {
-    fontSize: 14,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  balanceAmount: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 16,
-  },
-  cardFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  cardIcon: {
-    opacity: 0.8,
-  },
-  cardNumber: {
-    fontSize: 16,
-    color: "#fff",
-    letterSpacing: 2,
-  },
-  section: {
-    marginHorizontal: 16,
-    marginTop: 24,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  methodsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  methodButton: {
-    width: "30%",
-    aspectRatio: 1,
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
-    position: "relative",
-  },
-  methodButtonActive: {
-    backgroundColor: "#7AFEC3",
-  },
-  methodIconContainer: {
-    marginBottom: 8,
-  },
-  methodIconText: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  methodLabel: {
-    fontSize: 12,
-    color: "#fff",
-    textAlign: "center",
-  },
-  methodButtonDisabled: {
-    opacity: 0.45,
-  },
-  methodTextDisabled: {
-    color: "#5a6a8a",
-  },
-  bonusBadge: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    backgroundColor: "#FF0000",
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
-  bonusText: {
-    fontSize: 10,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  comingSoonBadge: {
-    position: "absolute",
-    bottom: 4,
-    right: 4,
-    backgroundColor: "#334",
-    borderRadius: 6,
-    paddingHorizontal: 4,
-    paddingVertical: 2,
-  },
-  comingSoonText: {
-    fontSize: 9,
-    color: "#92A8E3",
-  },
-  channelButton: {
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 16,
-  },
-  channelButtonActive: {
-    backgroundColor: "#7AFEC3",
-  },
-  channelLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-    marginBottom: 4,
-  },
-  channelBalance: {
-    fontSize: 14,
-    color: "#92A8E3",
-  },
-  amountGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    marginBottom: 16,
-  },
-  amountButton: {
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    minWidth: 80,
-    alignItems: "center",
-  },
-  amountButtonActive: {
-    backgroundColor: "#7AFEC3",
-  },
-  amountButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  amountInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
-  },
-  currencySymbol: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  amountInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#fff",
-  },
-  instructionsList: {
-    gap: 12,
-  },
-  instructionItem: {
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "flex-start",
-  },
-  instructionBullet: {
-    fontSize: 12,
-    color: "#7AFEC3",
-    marginTop: 2,
-  },
-  instructionText: {
-    flex: 1,
-    fontSize: 14,
-    color: "#92A8E3",
-    lineHeight: 20,
-  },
-  historyPlaceholder: {
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-  },
-  historyText: {
-    fontSize: 14,
-    color: "#92A8E3",
-  },
-  depositButton: {
-    marginHorizontal: 16,
-    marginTop: 24,
-    marginBottom: 40,
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#7AFEC3",
-  },
-  depositButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#7AFEC3",
-  },
+  }
 });
