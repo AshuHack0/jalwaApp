@@ -268,10 +268,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
+    textAlign: "center",
+    marginLeft: 70
   },
   historyButton: { padding: 4 },
   historyButtonText: {
     fontSize: 14,
-    color: "#7AFEC3",
+    color: "white",
   }
 });

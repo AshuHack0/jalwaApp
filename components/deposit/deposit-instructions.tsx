@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
-import { Image, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
+import { StyleSheet, View } from "react-native";
 
 const UPI_INSTRUCTIONS = [
   "If the transfer time is up, please fill out the deposit form again.",
@@ -25,10 +26,7 @@ export function DepositInstructions({ isUsdt }: Props) {
     <View style={styles.section}>
       <View style={styles.instructionsBox}>
         <View style={styles.sectionHeader}>
-          <Image
-            source={require("../../assets/rechargeHistory-28b45ebe.webp")}
-            style={styles.sectionIconImg}
-          />
+          <Image source={require("@/assets/icon-shuoming.svg")} style={{ width: 24, height: 24 }} />
           <ThemedText style={styles.sectionTitle}>Recharge instructions</ThemedText>
         </View>
         <View style={styles.instructionsList}>
@@ -61,18 +59,23 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#E3EFFF",
   },
   instructionsBox: {
-    backgroundColor: "#0D1B4B",
-    borderRadius: 14,
-    padding: 16,
+    backgroundColor: "#011341",
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 14
   },
   instructionsList: {
     gap: 14,
     marginTop: 4,
+    borderWidth: 1,
+    borderColor: "#022c68",
+    borderRadius: 10,
+    padding: 10
   },
   instructionItem: {
     flexDirection: "row",

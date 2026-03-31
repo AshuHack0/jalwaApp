@@ -1,12 +1,12 @@
 import { ThemedText } from "@/components/themed-text";
-import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
+import { StyleSheet, View } from "react-native";
 
 export function DepositHistoryPreview() {
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="document-text-outline" size={20} color="#7AFEC3" />
+        <Image source={require("@/assets/icon-historyHead.svg")} style={{ width: 24, height: 24 }} />
         <ThemedText style={styles.sectionTitle}>Deposit history</ThemedText>
       </View>
       <View style={styles.emptyState}>
@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#E3EFFF",
   },
   emptyState: {
     alignItems: "center",

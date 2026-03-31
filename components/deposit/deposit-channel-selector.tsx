@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import type { UsdtNetwork } from "@/services/api/usdtDeposit";
-import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 type Channel = { id: string; label: string; balance: string };
@@ -28,49 +29,69 @@ export function DepositChannelSelector({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="create-outline" size={20} color="#7AFEC3" />
+        <Image source={require("@/assets/quickPayIcon.svg")} style={{ width: 24, height: 24 }} />
         <ThemedText style={styles.sectionTitle}>
           {isUsdt ? "Select network" : "Select channel"}
         </ThemedText>
       </View>
       {isUsdt ? (
         <View style={styles.channelGrid}>
-          {usdtChannels.map((net) => (
-            <TouchableOpacity
-              key={net.id}
-              style={[styles.usdtChannelCard, selectedNetwork === net.id && styles.channelCardActive]}
-              onPress={() => onSelectNetwork(net.id)}
-            >
-              <View style={styles.usdtChannelIcon}>
-                <ThemedText style={styles.usdtIconText}>₮</ThemedText>
-              </View>
-              <View>
-                <ThemedText style={[styles.channelLabel, selectedNetwork === net.id && styles.channelLabelActive]}>
-                  {net.label}
-                </ThemedText>
-                <ThemedText style={[styles.channelBalance, selectedNetwork === net.id && styles.channelBalanceActive]}>
-                  {net.balance}
-                </ThemedText>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {usdtChannels.map((net) => {
+            const isActive = selectedNetwork === net.id;
+            return (
+              <TouchableOpacity
+                key={net.id}
+                style={styles.usdtChannelCard}
+                onPress={() => onSelectNetwork(net.id)}
+              >
+                {isActive && (
+                  <LinearGradient
+                    colors={["#7AFEC3", "#02AFB6"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                )}
+                <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 42, height: 42 }} />
+                <View>
+                  <ThemedText style={[styles.channelLabel, isActive && styles.channelLabelActive]}>
+                    {net.label}
+                  </ThemedText>
+                  <ThemedText style={[styles.channelBalance, isActive && styles.channelBalanceActive]}>
+                    {net.balance}
+                  </ThemedText>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       ) : (
         <View style={styles.channelGrid}>
-          {channels.map((ch) => (
-            <TouchableOpacity
-              key={ch.id}
-              style={[styles.channelCard, selectedChannel === ch.id && styles.channelCardActive]}
-              onPress={() => onSelectChannel(ch.id)}
-            >
-              <ThemedText style={[styles.channelLabel, selectedChannel === ch.id && styles.channelLabelActive]}>
-                {ch.label}
-              </ThemedText>
-              <ThemedText style={[styles.channelBalance, selectedChannel === ch.id && styles.channelBalanceActive]}>
-                {ch.balance}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
+          {channels.map((ch) => {
+            const isActive = selectedChannel === ch.id;
+            return (
+              <TouchableOpacity
+                key={ch.id}
+                style={styles.channelCard}
+                onPress={() => onSelectChannel(ch.id)}
+              >
+                {isActive && (
+                  <LinearGradient
+                    colors={["#7AFEC3", "#02AFB6"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={StyleSheet.absoluteFillObject}
+                  />
+                )}
+                <ThemedText style={[styles.channelLabel, isActive && styles.channelLabelActive]}>
+                  {ch.label}
+                </ThemedText>
+                <ThemedText style={[styles.channelBalance, isActive && styles.channelBalanceActive]}>
+                  {ch.balance}
+                </ThemedText>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
     </View>
@@ -81,6 +102,10 @@ const styles = StyleSheet.create({
   section: {
     marginHorizontal: 16,
     marginTop: 20,
+    backgroundColor: "#011341",
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 14
   },
   sectionHeader: {
     flexDirection: "row",
@@ -89,9 +114,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#E3EFFF",
   },
   channelGrid: {
     flexDirection: "row",
@@ -100,31 +125,31 @@ const styles = StyleSheet.create({
   },
   channelCard: {
     width: "47.5%",
-    backgroundColor: "#0D1B4B",
+    backgroundColor: "#001c54",
     borderRadius: 12,
     padding: 14,
+    overflow: "hidden",
   },
-  channelCardActive: { backgroundColor: "#7AFEC3" },
   channelLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#92a8e3"
   },
   channelLabelActive: { color: "#05012B" },
   channelBalance: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#92A8E3",
   },
   channelBalanceActive: { color: "#05012B" },
   usdtChannelCard: {
     width: "100%",
-    backgroundColor: "#7AFEC3",
+    backgroundColor: "#0D1B4B",
     borderRadius: 12,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    overflow: "hidden",
   },
   usdtChannelIcon: {
     width: 44,

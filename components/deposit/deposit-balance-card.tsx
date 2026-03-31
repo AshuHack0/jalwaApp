@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -14,48 +15,42 @@ type Props = {
 
 export function DepositBalanceCard({ walletBalance, onRefresh }: Props) {
   return (
-    <LinearGradient
-      colors={["#7AFEC3", "#02AFB6"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.balanceCard}
-    >
+    <View style={{ flex: 1, paddingHorizontal: 16 }}>
       <View style={styles.balanceCardContent}>
-        <View style={styles.balanceHeader}>
-          <View style={styles.balanceHeaderLeft}>
-            <ThemedText style={styles.walletEmoji}>🏅</ThemedText>
-            <ThemedText style={styles.balanceLabel}>Balance</ThemedText>
+        <Image style={{ position: "absolute", height: "100%", width: "100%" }} source={{ uri: "https://www.jalwagame.win/assets/png/TotalAssetsBg-ad5afbbb.webp" }} />
+        <View style={{ padding: 14 }}>
+          <View style={styles.balanceHeader}>
+            <View style={styles.balanceHeaderLeft}>
+              <Image source={{ uri: "https://www.jalwagame.win/assets/png/balance-b2c8faab.webp" }} style={{ width: 16, aspectRatio: 1 }} />
+              <ThemedText style={styles.balanceLabel}>Balance</ThemedText>
+            </View>
           </View>
-          <TouchableOpacity onPress={onRefresh}>
-            <Ionicons name="refresh" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText>
-        <View style={styles.cardFooter}>
-          <Ionicons name="card-outline" size={28} color="rgba(255,255,255,0.7)" />
-          <ThemedText style={styles.cardNumber}>**** &nbsp;&nbsp; ****</ThemedText>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 10 }}>
+            <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText>
+            <TouchableOpacity style={{ marginBottom: 20 }} onPress={onRefresh}>
+              <Image source={{ uri: "https://www.jalwagame.win/assets/png/refresh-8e0efe26.webp" }} style={{ width: 23, height: 15 }} />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  balanceCard: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    borderRadius: 16,
-    overflow: "hidden",
-  },
   balanceCardContent: {
-    padding: 20,
-    paddingBottom: 16,
+    height: 138,
+    width: "100%",
+    position: "relative",
+    borderRadius: 10,
+    overflow: "hidden"
   },
   balanceHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 8,
+    zIndex: 100
   },
   balanceHeaderLeft: {
     flexDirection: "row",
@@ -64,14 +59,14 @@ const styles = StyleSheet.create({
   },
   walletEmoji: { fontSize: 18 },
   balanceLabel: {
-    fontSize: 15,
-    color: "#fff",
-    fontWeight: "600",
+    fontSize: 13,
+    color: "black",
+    fontWeight: "500",
   },
   balanceAmount: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: 25,
+    fontWeight: "600",
+    color: "black",
     marginBottom: 20,
   },
   cardFooter: {

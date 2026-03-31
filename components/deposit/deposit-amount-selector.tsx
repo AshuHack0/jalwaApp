@@ -1,6 +1,8 @@
 import { ThemedText } from "@/components/themed-text";
 import { Ionicons } from "@expo/vector-icons";
-import { Image, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 
 type Props = {
   isUsdt: boolean;
@@ -35,45 +37,78 @@ export function DepositAmountSelector({
     <View style={styles.section}>
       <View style={styles.depositAmountInner}>
         <View style={styles.sectionHeader}>
-          <Image
-            source={require("../../assets/rechargeIcon-efb79f43.webp")}
-            style={styles.sectionIconImg}
-          />
+
+
+
+
+          {!isUsdt ? (
+            <Image source={require("@/assets/icon-saveWallet.svg")} style={{ width: 24, height: 24 }} />
+          ) : (
+            <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 24, height: 24 }} />
+          )}
+
           <ThemedText style={styles.sectionTitle}>
             {isUsdt ? "Select amount of USDT" : "Deposit amount"}
           </ThemedText>
         </View>
 
         <View style={styles.amountGrid}>
-          {amounts.map((amount) => (
-            <TouchableOpacity
-              key={amount}
-              style={[styles.amountButton, selectedAmount === amount && styles.amountButtonActive]}
-              onPress={() => onSelectAmount(amount)}
-            >
-              {isUsdt ? (
-                <View style={styles.usdtAmountIcon}>
-                  <ThemedText style={styles.usdtAmountIconText}>₮</ThemedText>
-                </View>
-              ) : (
-                <ThemedText style={styles.amountRupee}>₹</ThemedText>
-              )}
-              <ThemedText style={styles.amountValue}>{amount}</ThemedText>
-            </TouchableOpacity>
-          ))}
+          {amounts.map((amount) => {
+            const isActive = selectedAmount === amount;
+            return (
+              <TouchableOpacity
+                key={amount}
+                style={[styles.amountButton, isActive && styles.amountButtonActive]}
+                onPress={() => onSelectAmount(amount)}
+              >
+                {isActive ? (
+                  <LinearGradient
+                    colors={["#7AFEC3", "#02AFB6"]}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.amountButtonGradient}
+                  >
+                    {isUsdt ? (
+                      <View style={styles.usdtAmountIcon}>
+                        <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
+                      </View>
+                    ) : (
+                      <ThemedText style={[styles.amountRupee, { color: "white" }]}>₹</ThemedText>
+                    )}
+                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                      <ThemedText style={[styles.amountValue, { color: "#000" }]}>{amount}</ThemedText>
+                    </View>
+                  </LinearGradient>
+                ) : (
+                  <>
+                    {isUsdt ? (
+                      <View style={styles.usdtAmountIcon}>
+                        <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
+                      </View>
+                    ) : (
+                      <ThemedText style={styles.amountRupee}>₹</ThemedText>
+                    )}
+                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                      <ThemedText style={styles.amountValue}>{amount}</ThemedText>
+                    </View>
+                  </>
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <View style={styles.amountInputContainer}>
           {isUsdt ? (
             <View style={styles.usdtInputIcon}>
-              <ThemedText style={styles.usdtInputIconText}>₮</ThemedText>
+              <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
             </View>
           ) : (
             <ThemedText style={styles.currencySymbol}>₹</ThemedText>
           )}
           <View style={styles.inputDivider} />
           <TextInput
-            style={styles.amountInput}
+            style={[styles.amountInput, { fontWeight: depositAmount.length > 0 ? "bold" : "normal" }]}
             placeholder={isUsdt ? "Please enter UDST amount" : placeholder}
             placeholderTextColor="#92A8E3"
             value={depositAmount}
@@ -82,7 +117,7 @@ export function DepositAmountSelector({
           />
           {depositAmount.length > 0 && (
             <TouchableOpacity onPress={onClearDeposit}>
-              <Ionicons name="close-circle-outline" size={22} color="#92A8E3" />
+              <Ionicons name="close-circle-outline" size={22} color="#606062" />
             </TouchableOpacity>
           )}
         </View>
@@ -123,14 +158,15 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#fff",
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#E3EFFF",
   },
   depositAmountInner: {
-    backgroundColor: "#0D1B4B",
-    borderRadius: 14,
-    padding: 16,
+    backgroundColor: "#011341",
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 14
   },
   amountGrid: {
     flexDirection: "row",
@@ -140,27 +176,36 @@ const styles = StyleSheet.create({
   },
   amountButton: {
     width: "30.5%",
-    backgroundColor: "#05012B",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: "#022c68",
+    borderRadius: 4,
+    padding: 4,
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
   },
   amountButtonActive: {
-    borderWidth: 1,
-    borderColor: "#7AFEC3",
+    borderWidth: 0,
+    borderColor: "transparent",
+  },
+  amountButtonGradient: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    margin: -4,
+    padding: 4,
+    borderRadius: 4,
   },
   amountRupee: {
-    fontSize: 13,
-    color: "#7AFEC3",
+    fontSize: 17,
+    color: "#6f80a4",
     fontWeight: "600",
   },
   amountValue: {
-    fontSize: 13,
+    fontSize: 17,
     color: "#7AFEC3",
-    fontWeight: "600",
+    fontWeight: "500",
   },
   usdtAmountIcon: {
     width: 20,
@@ -179,9 +224,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#05012B",
-    borderRadius: 24,
+    borderRadius: 100,
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 2,
     gap: 10,
   },
   inputDivider: {
@@ -191,13 +236,16 @@ const styles = StyleSheet.create({
   },
   currencySymbol: {
     fontSize: 18,
+    width: 28,
+    textAlign:"center",
     fontWeight: "700",
     color: "#7AFEC3",
   },
   amountInput: {
     flex: 1,
     fontSize: 15,
-    color: "#92A8E3",
+    fontWeight: "bold",
+    color: "#00ECBE",
   },
   usdtInputIcon: {
     width: 30,
