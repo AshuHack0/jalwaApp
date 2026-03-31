@@ -60,8 +60,8 @@ const hp = (p: number) => hpBase(p * SCALE);
 
 const RS = {
   chartCircleSize: wp(4.8),
-  chartGap: wp(1.1),
-  chartPeriodWidth: wp(38.7),
+  chartGap: wp(1.2),
+  chartPeriodWidth: wp(44.9), // row paddingLeft(3.2) + period width(40) + numbersRow marginLeft(1.7)
   get chartNumSpacing() {
     return this.chartCircleSize + this.chartGap;
   },
@@ -236,7 +236,7 @@ export default function WinGoScreen() {
           setTelegramUrl(json.data.url);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
   const [winLossPopupVisible, setWinLossPopupVisible] = useState(false);
   const [settledBet, setSettledBet] = useState<MyHistoryBet | null>(null);
@@ -285,6 +285,8 @@ export default function WinGoScreen() {
 
   const refetchedForRoundEndRef = useRef<string | null>(null);
   const lastHistoryDataRef = useRef<typeof historyData>(null);
+  const lastSecondsRemainingRef = useRef<number>(0);
+  const lastSecondsChangedAtRef = useRef<number>(Date.now());
   const [isScreenFocused, setIsScreenFocused] = useState(true);
   const di1Player = useAudioPlayer(
     require("@/assets/Wingo/sound/di1-0f3d86cb.mp3"),
@@ -302,9 +304,9 @@ export default function WinGoScreen() {
       setIsScreenFocused(true);
       return () => {
         setIsScreenFocused(false);
-        try { di1Player.pause(); } catch {}
-        try { di2Player.pause(); } catch {}
-        try { minDepositPlayer.pause(); } catch {}
+        try { di1Player.pause(); } catch { }
+        try { di2Player.pause(); } catch { }
+        try { minDepositPlayer.pause(); } catch { }
       };
     }, [di1Player, di2Player, minDepositPlayer])
   );
@@ -366,6 +368,17 @@ export default function WinGoScreen() {
         setTimeRemaining(formatted);
         setSecondsRemaining(remaining);
         setShowCountdownModal(remaining <= 6);
+
+        // Watchdog: if secondsRemaining hasn't changed for 2s while timer should be running, refetch
+        if (remaining !== lastSecondsRemainingRef.current) {
+          lastSecondsRemainingRef.current = remaining;
+          lastSecondsChangedAtRef.current = Date.now();
+        } else if (remaining > 0 && Date.now() - lastSecondsChangedAtRef.current >= 2000) {
+          lastSecondsChangedAtRef.current = Date.now();
+          refetchCurrentRound();
+          refetchHistory();
+          refetchMyHistory();
+        }
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -1383,7 +1396,7 @@ export default function WinGoScreen() {
                     style={({ pressed }) => [
                       styles.multiplierItemButton,
                       selectedMultiplier === mult &&
-                        styles.multiplierItemButtonActive,
+                      styles.multiplierItemButtonActive,
                       { opacity: pressed ? 0.7 : 1 },
                     ]}
                     onPress={() => setSelectedMultiplier(mult)}
@@ -1392,7 +1405,7 @@ export default function WinGoScreen() {
                       style={[
                         styles.multiplierItemText,
                         selectedMultiplier === mult &&
-                          styles.multiplierItemTextActive,
+                        styles.multiplierItemTextActive,
                       ]}
                     >
                       {mult}
@@ -1639,75 +1652,208 @@ export default function WinGoScreen() {
           {selectedTab === "Chart" &&
             (gameHistory?.length > 0 ? (
               <View style={styles.chartContainer}>
-                {/* SVG overlay for connecting lines - rendered behind content via position */}
-                <View style={styles.chartContentWrapper}>
-                  <Svg
-                    style={[StyleSheet.absoluteFill, styles.chartSvgOverlay]}
-                    pointerEvents="none"
-                  >
-                    {gameHistory.slice(0, -1).map((_, idx) => {
-                      const curr = gameHistory[idx];
-                      const next = gameHistory[idx + 1];
-                      if (
-                        curr == null ||
-                        next == null ||
-                        curr.number == null ||
-                        next.number == null
-                      )
-                        return null;
-                      const layout1 = chartRowLayouts[idx];
-                      const layout2 = chartRowLayouts[idx + 1];
-                      if (!layout1 || !layout2) return null;
-                      const centerOffset = RS.chartCircleSize / 2;
-                      const centerX1 =
-                        RS.chartPeriodWidth +
-                        centerOffset +
-                        curr.number * RS.chartNumSpacing;
-                      const centerX2 =
-                        RS.chartPeriodWidth +
-                        centerOffset +
-                        next.number * RS.chartNumSpacing;
-                      const centerY1 = layout1.y + layout1.height / 2;
-                      const centerY2 = layout2.y + layout2.height / 2;
+                {/* Chart Header */}
+                <View style={styles.chartHeader}>
+                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderPeriod]}>Period</ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderNumber]}>Number</ThemedText>
+                </View>
+                <View style={{
+
+                }}>
+                  <View style={{
+                    paddingHorizontal: wp(3.2),
+                  }}>
+                    {/* Statistics Table */}
+                    {(() => {
+                      const last100 = gameHistory.slice(0, 100);
+                      const nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                      const missing = nums.map((n) => {
+                        let count = 0;
+                        for (const r of last100) {
+                          if (r.number === n) break;
+                          count++;
+                        }
+                        return count;
+                      });
+                      const frequency = nums.map((n) => last100.filter((r) => r.number === n).length);
+                      const avgMissing = nums.map((n) => {
+                        const indices: number[] = [];
+                        last100.forEach((r, i) => { if (r.number === n) indices.push(i); });
+                        if (indices.length === 0) return 0;
+                        if (indices.length === 1) return indices[0];
+                        const gaps = indices.slice(1).map((v, i) => v - indices[i] - 1);
+                        return Math.round(gaps.reduce((a, b) => a + b, 0) / gaps.length);
+                      });
+                      const maxConsec = nums.map((n) => {
+                        let max = 0, cur = 0;
+                        for (const r of last100) {
+                          if (r.number === n) { cur++; max = Math.max(max, cur); } else cur = 0;
+                        }
+                        return max;
+                      });
                       return (
-                        <Line
-                          key={`line-${idx}`}
-                          x1={centerX1}
-                          y1={centerY1}
-                          x2={centerX2}
-                          y2={centerY2}
-                          stroke="#EF4444"
-                          strokeWidth={1.5}
-                        />
+                        <View style={styles.statsTable}>
+                          <View style={styles.statsHeaderRow}>
+                            <Text style={styles.statsHeaderLeft}>Statistic</Text>
+                            <Text style={styles.statsHeaderRight}>(last 100 Periods)</Text>
+                          </View>
+                          <View style={styles.statsRow}>
+                            <Text style={styles.statsLabel}>Winning Numbers</Text>
+                            <View style={styles.statsValuesRow}>
+                              {nums.map((n) => (
+                                <View key={n} style={styles.statsNumCircle}>
+                                  <Text style={styles.statsNumCircleText}>{n}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          </View>
+                          <View style={styles.statsRow}>
+                            <Text style={styles.statsLabel}>Missing</Text>
+                            <View style={styles.statsValuesRow}>
+                              {missing.map((v, i) => <Text key={i} style={styles.statsValue}>{v}</Text>)}
+                            </View>
+                          </View>
+                          <View style={styles.statsRow}>
+                            <Text style={styles.statsLabel}>Avg missing</Text>
+                            <View style={styles.statsValuesRow}>
+                              {avgMissing.map((v, i) => <Text key={i} style={styles.statsValue}>{v}</Text>)}
+                            </View>
+                          </View>
+                          <View style={styles.statsRow}>
+                            <Text style={styles.statsLabel}>Frequency</Text>
+                            <View style={styles.statsValuesRow}>
+                              {frequency.map((v, i) => <Text key={i} style={styles.statsValue}>{v}</Text>)}
+                            </View>
+                          </View>
+                          <View style={styles.statsRow}>
+                            <Text style={styles.statsLabel}>Max consecutive</Text>
+                            <View style={styles.statsValuesRow}>
+                              {maxConsec.map((v, i) => <Text key={i} style={styles.statsValue}>{v}</Text>)}
+                            </View>
+                          </View>
+                        </View>
                       );
-                    })}
-                  </Svg>
-                  <View style={styles.chartRowsWrapper}>
-                    {gameHistory.map((item, index) => (
-                      <View
-                        key={`chart-row-${item.period}-${index}`}
-                        style={styles.chartRow}
-                        onLayout={(e) => {
-                          const { y, height } = e.nativeEvent.layout;
-                          setChartRowLayouts((prev) => {
-                            if (
-                              prev[index]?.y === y &&
-                              prev[index]?.height === height
-                            )
-                              return prev;
-                            return { ...prev, [index]: { y, height } };
-                          });
-                        }}
-                      >
-                        <ThemedText style={styles.chartPeriod}>
-                          {item.period}
-                        </ThemedText>
-                        <View style={styles.chartNumbersRow}>
-                          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
-                            const isHighlighted = item.number === n;
-                            if (!isHighlighted) {
+                    })()}
+                  </View>
+                  {/* SVG overlay for connecting lines - rendered behind content via position */}
+                  <View style={styles.chartContentWrapper}>
+                    <Svg
+                      style={[StyleSheet.absoluteFill, styles.chartSvgOverlay]}
+                      pointerEvents="none"
+                    >
+                      {gameHistory.slice(0, -1).map((_, idx) => {
+                        const curr = gameHistory[idx];
+                        const next = gameHistory[idx + 1];
+                        if (
+                          curr == null ||
+                          next == null ||
+                          curr.number == null ||
+                          next.number == null
+                        )
+                          return null;
+                        const layout1 = chartRowLayouts[idx];
+                        const layout2 = chartRowLayouts[idx + 1];
+                        if (!layout1 || !layout2) return null;
+                        const centerOffset = RS.chartCircleSize / 2;
+                        const centerX1 =
+                          RS.chartPeriodWidth +
+                          centerOffset +
+                          curr.number * RS.chartNumSpacing;
+                        const centerX2 =
+                          RS.chartPeriodWidth +
+                          centerOffset +
+                          next.number * RS.chartNumSpacing;
+                        const centerY1 = layout1.y + layout1.height / 2;
+                        const centerY2 = layout2.y + layout2.height / 2;
+                        return (
+                          <Line
+                            key={`line-${idx}`}
+                            x1={centerX1}
+                            y1={centerY1}
+                            x2={centerX2}
+                            y2={centerY2}
+                            stroke="#EF4444"
+                            strokeWidth={1.5}
+                          />
+                        );
+                      })}
+                    </Svg>
+                    <View style={styles.chartRowsWrapper}>
+                      {gameHistory.map((item, index) => (
+                        <View
+                          key={`chart-row-${item.period}-${index}`}
+                          style={[styles.chartRow, {
+                            paddingHorizontal: wp(3.2),
+                            borderBottomWidth: index === gameHistory.length - 1 ? 0 : 0.7,
+                            borderBottomColor: "#e1e3f2",
+                          }]}
+                          onLayout={(e) => {
+                            const { y, height } = e.nativeEvent.layout;
+                            setChartRowLayouts((prev) => {
+                              if (
+                                prev[index]?.y === y &&
+                                prev[index]?.height === height
+                              )
+                                return prev;
+                              return { ...prev, [index]: { y, height } };
+                            });
+                          }}
+                        >
+                          <ThemedText style={styles.chartPeriod}>
+                            {item.period}
+                          </ThemedText>
+                          <View style={styles.chartNumbersRow}>
+                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
+                              const isHighlighted = item.number === n;
+                              if (!isHighlighted) {
+                                return (
+                                  <View key={n} style={styles.chartNumberCircle}>
+                                    <Text
+                                      style={[
+                                        styles.chartNumberText,
+                                        { color: "#fff" },
+                                      ]}
+                                    >
+                                      {n}
+                                    </Text>
+                                  </View>
+                                );
+                              }
+                              if (isGradientNumber(n)) {
+                                const dots = getColorDots(n);
+                                return (
+                                  <LinearGradient
+                                    key={n}
+                                    colors={
+                                      [dots[0], dots[1]] as [string, string]
+                                    }
+                                    start={{ x: 0, y: 1 }}
+                                    end={{ x: 0, y: 0 }}
+                                    style={[
+                                      styles.chartNumberCircle,
+                                      styles.chartNumberCircleHighlighted,
+                                    ]}
+                                  >
+                                    <Text
+                                      style={[
+                                        styles.chartNumberText,
+                                        { color: "#fff" },
+                                      ]}
+                                    >
+                                      {n}
+                                    </Text>
+                                  </LinearGradient>
+                                );
+                              }
                               return (
-                                <View key={n} style={styles.chartNumberCircle}>
+                                <View
+                                  key={n}
+                                  style={[
+                                    styles.chartNumberCircle,
+                                    styles.chartNumberCircleHighlighted,
+                                    { backgroundColor: getResultColor(n) },
+                                  ]}
+                                >
                                   <Text
                                     style={[
                                       styles.chartNumberText,
@@ -1718,68 +1864,23 @@ export default function WinGoScreen() {
                                   </Text>
                                 </View>
                               );
-                            }
-                            if (isGradientNumber(n)) {
-                              const dots = getColorDots(n);
-                              return (
-                                <LinearGradient
-                                  key={n}
-                                  colors={
-                                    [dots[0], dots[1]] as [string, string]
-                                  }
-                                  start={{ x: 0, y: 1 }}
-                                  end={{ x: 0, y: 0 }}
-                                  style={[
-                                    styles.chartNumberCircle,
-                                    styles.chartNumberCircleHighlighted,
-                                  ]}
-                                >
-                                  <Text
-                                    style={[
-                                      styles.chartNumberText,
-                                      { color: "#fff" },
-                                    ]}
-                                  >
-                                    {n}
-                                  </Text>
-                                </LinearGradient>
-                              );
-                            }
-                            return (
-                              <View
-                                key={n}
-                                style={[
-                                  styles.chartNumberCircle,
-                                  styles.chartNumberCircleHighlighted,
-                                  { backgroundColor: getResultColor(n) },
-                                ]}
-                              >
-                                <Text
-                                  style={[
-                                    styles.chartNumberText,
-                                    { color: "#fff" },
-                                  ]}
-                                >
-                                  {n}
-                                </Text>
-                              </View>
-                            );
-                          })}
+                            })}
+                          </View>
+                          <View
+                            style={[
+                              styles.chartBSBadge,
+                              item.size === "Big"
+                                ? styles.chartBSBadgeBig
+                                : styles.chartBSBadgeSmall,
+                            ]}
+                          >
+                            <Text style={styles.chartBSBadgeText}>
+                              {item.size === "Big" ? "B" : "S"}
+                            </Text>
+                          </View>
                         </View>
-                        <View
-                          style={[
-                            styles.chartBSBadge,
-                            item.size === "Big"
-                              ? styles.chartBSBadgeBig
-                              : styles.chartBSBadgeSmall,
-                          ]}
-                        >
-                          <Text style={styles.chartBSBadgeText}>
-                            {item.size === "Big" ? "B" : "S"}
-                          </Text>
-                        </View>
-                      </View>
-                    ))}
+                      ))}
+                    </View>
                   </View>
                 </View>
               </View>
@@ -1864,7 +1965,7 @@ export default function WinGoScreen() {
                             if (bet.choiceColor) {
                               colors = [
                                 BET_SELECTION_MAP[
-                                  bet.choiceColor.toLowerCase() as keyof typeof BET_SELECTION_MAP
+                                bet.choiceColor.toLowerCase() as keyof typeof BET_SELECTION_MAP
                                 ] || "red",
                               ];
                             } else if (
@@ -1877,7 +1978,7 @@ export default function WinGoScreen() {
                             } else if (bet.choiceBigSmall) {
                               colors = [
                                 BET_SELECTION_MAP[
-                                  bet.choiceBigSmall.toLowerCase() as keyof typeof BET_SELECTION_MAP
+                                bet.choiceBigSmall.toLowerCase() as keyof typeof BET_SELECTION_MAP
                                 ] || "red",
                               ];
                             }
@@ -1923,11 +2024,11 @@ export default function WinGoScreen() {
                                     {bet.betType === "BIG_SMALL"
                                       ? bet.round?.outcomeBigSmall
                                         ? bet.round.outcomeBigSmall
-                                            .charAt(0)
-                                            .toUpperCase() +
-                                          bet.round.outcomeBigSmall
-                                            .slice(1)
-                                            .toLowerCase()
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                        bet.round.outcomeBigSmall
+                                          .slice(1)
+                                          .toLowerCase()
                                         : "?"
                                       : outcomeNumber}
                                   </Text>
@@ -1956,11 +2057,11 @@ export default function WinGoScreen() {
                                   {bet.betType === "BIG_SMALL"
                                     ? bet.round?.outcomeBigSmall
                                       ? bet.round.outcomeBigSmall
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                        bet.round.outcomeBigSmall
-                                          .slice(1)
-                                          .toLowerCase()
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      bet.round.outcomeBigSmall
+                                        .slice(1)
+                                        .toLowerCase()
                                       : "?"
                                     : outcomeNumber}
                                 </Text>
@@ -2038,7 +2139,7 @@ export default function WinGoScreen() {
                               ]}
                             >
                               {result.text.startsWith("+") ||
-                              result.text.startsWith("-")
+                                result.text.startsWith("-")
                                 ? result.text
                                 : `₹${bet.amount.toFixed(2)}`}
                             </ThemedText>
@@ -2209,11 +2310,11 @@ export default function WinGoScreen() {
                                       const sizeName = bet.round
                                         ?.outcomeBigSmall
                                         ? bet.round.outcomeBigSmall
-                                            .charAt(0)
-                                            .toUpperCase() +
-                                          bet.round.outcomeBigSmall
-                                            .slice(1)
-                                            .toLowerCase()
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                        bet.round.outcomeBigSmall
+                                          .slice(1)
+                                          .toLowerCase()
                                         : "";
                                       return (
                                         <ThemedText
@@ -2830,8 +2931,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#021341",
     borderRadius: wp(2.7),
     marginBottom: hp(2),
-    paddingVertical: hp(1.2),
-    paddingHorizontal: wp(3.2),
+    // paddingVertical: hp(1.2),
+    // paddingHorizontal: wp(3.2),
     overflow: "hidden",
   },
   chartContentWrapper: {
@@ -2849,7 +2950,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: hp(1.5),
-    paddingHorizontal: 0,
+    paddingHorizontal: 0
   },
   chartPeriod: {
     fontSize: wp(4),
@@ -2897,6 +2998,77 @@ const styles = StyleSheet.create({
     fontSize: wp(3.7),
     fontWeight: "700",
     color: "#fff",
+  },
+  chartHeader: {
+    flexDirection: "row",
+    backgroundColor: "#2C5ECA",
+    paddingVertical: hp(1.7),
+    paddingHorizontal: wp(3.2),
+    alignItems: "center",
+    // borderRadius: wp(2.7),
+    marginBottom: hp(1.2),
+  },
+  chartHeaderPeriod: {
+    width: wp(40),
+    textAlign: "left",
+  },
+  chartHeaderNumber: {
+    flex: 1,
+    textAlign: "center",
+  },
+  statsTable: {
+    marginBottom: hp(1.5),
+  },
+  statsHeaderRow: {
+    flexDirection: "row",
+    gap: wp(32),
+    alignItems: "center",
+    paddingVertical: hp(0.6),
+    marginBottom: hp(0.2),
+  },
+  statsHeaderLeft: {
+    color: "#e3efff",
+    fontWeight: "700",
+    fontSize: wp(5),
+  },
+  statsHeaderRight: {
+    color: "#e3efff",
+    fontSize: wp(5),
+  },
+  statsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: hp(0.75),
+  },
+  statsLabel: {
+    color: "#e3efff",
+    fontSize: wp(5),
+    flex: 1,
+  },
+  statsNumCircle: {
+    width: wp(5.9),
+    height: wp(5.9),
+    borderRadius: wp(3),
+    borderWidth: 1.5,
+    borderColor: "#e74c3c",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statsNumCircleText: {
+    color: "#e74c3c",
+    fontSize: wp(4),
+    fontWeight: "700",
+  },
+  statsValuesRow: {
+    flexDirection: "row",
+    gap: 0,
+  },
+  statsValue: {
+    color: "#9da7b3",
+    fontSize: wp(4),
+    width: wp(6),
+    textAlign: "center",
   },
   historyTable: {
     overflow: "hidden",
