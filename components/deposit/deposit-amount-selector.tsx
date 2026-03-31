@@ -11,11 +11,12 @@ type Props = {
   selectedAmount: string;
   depositAmount: string;
   usdtInrAmount: string;
+  usdtRate: number;
   placeholder: string;
   onSelectAmount: (amount: string) => void;
   onChangeDeposit: (val: string) => void;
   onClearDeposit: () => void;
-  onChangeInr: (val: string) => void;
+  onChangeInr?: (val: string) => void;
 };
 
 export function DepositAmountSelector({
@@ -25,11 +26,11 @@ export function DepositAmountSelector({
   selectedAmount,
   depositAmount,
   usdtInrAmount,
+  usdtRate,
   placeholder,
   onSelectAmount,
   onChangeDeposit,
   onClearDeposit,
-  onChangeInr,
 }: Props) {
   const amounts = isUsdt ? usdtQuickAmounts : quickAmounts;
 
@@ -123,18 +124,21 @@ export function DepositAmountSelector({
         </View>
 
         {isUsdt && (
-          <View style={[styles.amountInputContainer, { marginTop: 10 }]}>
-            <ThemedText style={styles.currencySymbol}>₹</ThemedText>
-            <View style={styles.inputDivider} />
-            <TextInput
-              style={styles.amountInput}
-              placeholder="Please enter the amount"
-              placeholderTextColor="#92A8E3"
-              value={usdtInrAmount}
-              onChangeText={onChangeInr}
-              keyboardType="numeric"
-            />
-          </View>
+          <>
+            
+            <View style={[styles.amountInputContainer, { marginTop: 6 }]}>
+              <ThemedText style={styles.currencySymbol}>₹</ThemedText>
+              <View style={styles.inputDivider} />
+              <TextInput
+                style={styles.amountInput}
+                placeholder="INR equivalent"
+                placeholderTextColor="#92A8E3"
+                value={usdtInrAmount}
+                editable={false}
+                keyboardType="numeric"
+              />
+            </View>
+          </>
         )}
       </View>
     </View>
@@ -259,5 +263,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: "#fff",
+  },
+  rateLabel: {
+    fontSize: 12,
+    color: "#7AFEC3",
+    marginTop: 8,
+    marginBottom: 2,
+    paddingHorizontal: 4,
   },
 });

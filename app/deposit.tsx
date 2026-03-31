@@ -89,10 +89,37 @@ export default function DepositScreen() {
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [selectedAmount, setSelectedAmount] = useState<string>("");
   const [usdtInrAmount, setUsdtInrAmount] = useState<string>("");
+  const [usdtRate, setUsdtRate] = useState<number>(0);
 
   useEffect(() => {
     if (amountParam) setDepositAmount(amountParam);
   }, [amountParam]);
+
+  useEffect(() => {
+    const fetchUsdtRate = async () => {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=inr");
+        const data = await res.json();
+        if (data?.tether?.inr) setUsdtRate(data.tether.inr);
+      } catch {}
+    };
+    fetchUsdtRate();
+    const interval = setInterval(fetchUsdtRate, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (selectedMethod === "USDT" && depositAmount && usdtRate > 0) {
+      const usdt = parseFloat(depositAmount);
+      if (!isNaN(usdt)) {
+        setUsdtInrAmount((usdt * usdtRate).toFixed(2));
+      } else {
+        setUsdtInrAmount("");
+      }
+    } else if (!depositAmount) {
+      setUsdtInrAmount("");
+    }
+  }, [depositAmount, usdtRate, selectedMethod]);
 
   const isUsdt = selectedMethod === "USDT";
   const isArPay = selectedMethod === "ARPay";
@@ -210,6 +237,7 @@ export default function DepositScreen() {
                 selectedAmount={selectedAmount}
                 depositAmount={depositAmount}
                 usdtInrAmount={usdtInrAmount}
+                usdtRate={usdtRate}
                 placeholder={amountPlaceholder}
                 onSelectAmount={handleAmountSelect}
                 onChangeDeposit={setDepositAmount}
