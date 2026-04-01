@@ -1,5 +1,19 @@
 import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
 import {
   ScrollView,
@@ -17,7 +31,6 @@ import Svg, {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-
 // ── Section Number Banner ─────────────────────────────────────────────────────
 function SectionHeader({ number }: { number: string }) {
   return (
@@ -203,7 +216,24 @@ function LevelBadge({ level }: { level: number }) {
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function RulesScreen() {
   const insets = useSafeAreaInsets();
-
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+  });
+  const paymentMethods = [
+    { id: "All", label: "All", icon: "grid" },
+    { id: "ARPay", label: "ARPay", icon: "triangle" },
+    { id: "BANK CARD", label: "BANK CARD", icon: "card" },
+    { id: "Other", label: "Other", icon: "ellipsis-horizontal" },
+  ];
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -329,17 +359,18 @@ const styles = StyleSheet.create({
   // Hero
   heroBlock: { alignItems: "center", paddingVertical: 10 },
   heroTitle: {
-    color: "#049680",
-    fontSize: 17,
+    color: "#00ECBE",
+    fontSize: 19.2,
     fontWeight: "800",
     textAlign: "center",
     letterSpacing: 0.3,
   },
   heroSubtitle: {
-    color: "#C8D4F0",
-    fontSize: 13,
+    color: "#92A8E3",
+    fontSize: 14.9,
     marginTop: 4,
     textAlign: "center",
+    fontFamily: "BahnschriftRegular",
   },
 
   // Rule card
@@ -380,14 +411,21 @@ const styles = StyleSheet.create({
 
   // =================================
 
-  ruleBody: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 16 },
+  ruleBody: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+    fontSize: 12.8,
+    fontFamily: "BahnschriftRegular",
+  },
   ruleText: {
-    color: "#C8D4F0",
-    fontSize: 13.5,
+    color: "#92A8E3",
     lineHeight: 22,
+    fontSize: 12.8,
+    fontFamily: "BahnschriftRegular",
   },
   linkText: {
-    color: TEAL,
+    color: "#D23838",
     fontSize: 13.5,
     fontWeight: "600",
   },

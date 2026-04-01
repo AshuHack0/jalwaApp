@@ -319,7 +319,12 @@ export default function PartnerRewardScreen() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          <RewardBanner />
+          <View style={styles.banner}>
+            <Image
+              source={require("@/assets/Screenshot 2026-04-02 045833.png")}
+              style={styles.bannerImage}
+            />
+          </View>
           <StatsSection />
 
           <InvitationLinkSection />
@@ -400,10 +405,15 @@ const styles = StyleSheet.create({
   // Banner
   banner: {
     width: "100%",
-    height: 160,
     overflow: "hidden",
-    position: "relative",
     marginBottom: 2,
+  },
+  bannerImage: {
+    width: "100%",
+    // backgroundColor: "red",
+    // aspectRatio: 755 / 528,
+    height: 120,
+    resizeMode: "contain",
   },
   bannerGradient: {
     ...StyleSheet.absoluteFillObject,
@@ -577,7 +587,7 @@ const styles = StyleSheet.create({
   // Table - PIXEL PERFECT ADJUSTMENTS
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#2563EB",
+    backgroundColor: "#2C5ECA",
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     overflow: "hidden",
@@ -595,12 +605,12 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: "row",
-    // marginBottom: 4,
+    backgroundColor: "#011341",
     height: 52,
   },
   depositCell: {
     width: 55,
-    backgroundColor: "#152149",
+    backgroundColor: "#011341",
     borderWidth: 0.5,
     borderLeftWidth: 0.5,
     borderBottomWidth: 0.5,
@@ -618,7 +628,7 @@ const styles = StyleSheet.create({
   },
   conditionCell: {
     flex: 1,
-    backgroundColor: "#152149",
+    backgroundColor: "#011341",
     paddingVertical: 10,
     paddingHorizontal: 12,
     marginLeft: 59,
@@ -636,7 +646,7 @@ const styles = StyleSheet.create({
   },
   bonusCell: {
     width: 65,
-    backgroundColor: "#152149",
+    backgroundColor: "#011341",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 0.5,

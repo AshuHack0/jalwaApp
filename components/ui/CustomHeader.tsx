@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   backIcon: { width: 27, height: 32, resizeMode: "contain" },
   headerTitle: {
     color: "#e3efff",
-    fontSize: 20,
+    fontSize: 19.2,
     letterSpacing: 0.2,
   },
 });

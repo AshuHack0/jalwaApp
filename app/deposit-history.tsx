@@ -2,6 +2,20 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import type { DepositRecord } from "@/services/api/deposit";
 import { useMyDeposits } from "@/services/api/hooks/useDeposit";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
@@ -14,7 +28,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 function statusColor(status: DepositRecord["status"]) {
   if (status === "completed") return "#17B15E"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
@@ -41,6 +54,23 @@ function formatDate(iso: string) {
 
 export default function DepositHistoryScreen() {
   const router = useRouter();
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+  });
   const { data, isLoading, refetch, isRefetching } = useMyDeposits();
 
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
@@ -299,8 +329,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   screenTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 19.2,
+    fontFamily: "BahnschriftRegular",
     color: "#fff",
   },
   placeholder: {
@@ -328,13 +358,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#7AFEC3", // Green active tab
   },
   filterTabText: {
-    fontSize: 14,
+    fontSize: 12.8,
     color: "#92A8E3",
-    fontWeight: "600",
+    fontFamily: "BahnschriftRegular",
   },
   filterTabTextActive: {
     color: "#000",
-    fontWeight: "bold",
+    fontFamily: "BahnschriftRegular",
   },
   filterRow: {
     flexDirection: "row",
@@ -355,7 +385,7 @@ const styles = StyleSheet.create({
   filterDropdownText: {
     fontSize: 14,
     color: "#92A8E3",
-    fontWeight: "500",
+    fontFamily: "BahnschriftRegular",
   },
   centered: {
     flex: 1,
@@ -372,7 +402,7 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 18,
     color: "#7AFEC3",
-    fontWeight: "500",
+    fontFamily: "BahnschriftRegular",
   },
   list: {
     paddingHorizontal: 16,
@@ -393,19 +423,19 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   depositBadge: {
-    backgroundColor: "#31C268", // Deposit badge green
+    backgroundColor: "#17B15E", // Deposit badge green
     paddingHorizontal: 16,
-    paddingVertical: 6,
+    paddingVertical: 3,
     borderRadius: 6,
   },
   depositBadgeText: {
     color: "#fff",
-    fontSize: 14,
-    fontWeight: "bold",
+    fontSize: 14.9,
+    fontFamily: "BahnschriftRegular",
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13.8,
+    fontFamily: "BahnschriftRegular",
   },
   divider: {
     height: 1,
@@ -426,17 +456,17 @@ const styles = StyleSheet.create({
   detailLabel: {
     fontSize: 14,
     color: "#92A8E3",
-    fontWeight: "500",
+    fontFamily: "BahnschriftRegular",
   },
   detailValue: {
     fontSize: 14,
     color: "#fff",
-    fontWeight: "500",
+    fontFamily: "BahnschriftRegular",
   },
   balanceValue: {
     fontSize: 14,
     color: "#F39C12", // Bright orange
-    fontWeight: "bold",
+    fontFamily: "BahnschriftRegular",
   },
   timeValueContainer: {
     flex: 1,
@@ -459,6 +489,6 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "BahnschriftRegular",
   },
 });
