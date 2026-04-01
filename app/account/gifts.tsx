@@ -1,4 +1,20 @@
 import { ThemedView } from "@/components/themed-view";
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
+import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import {
@@ -12,9 +28,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { CustomHeader } from "@/components/ui/CustomHeader";
-import { LinearGradient } from "expo-linear-gradient";
 
 // ── Empty History Illustration ────────────────────────────────────────────────
 function EmptyHistory() {
@@ -34,6 +47,23 @@ function EmptyHistory() {
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function GiftScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const [giftCode, setGiftCode] = useState("");
   const insets = useSafeAreaInsets();
 
@@ -173,17 +203,17 @@ const styles = StyleSheet.create({
   },
   hiText: {
     color: "#6A85B8",
-    fontSize: 15,
+    fontSize: 14.9,
     marginBottom: 0,
   },
   subText: {
     color: "#6A85B8",
-    fontSize: 15,
+    fontSize: 14.9,
     marginBottom: 14,
   },
   inputLabel: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 14.9,
     marginBottom: 12,
   },
   input: {
@@ -192,17 +222,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 16,
   },
   receiveBtn: {
     borderRadius: 28,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: "center",
   },
   receiveBtnText: {
     color: "#05012B",
-    fontSize: 17,
+    fontSize: 16,
   },
 
   // History card

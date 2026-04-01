@@ -1,10 +1,23 @@
 import { ThemedView } from "@/components/themed-view";
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { CustomHeader } from "@/components/ui/CustomHeader";
 
 // ── Language Data ─────────────────────────────────────────────────────────────
 const LANGUAGES = [
@@ -69,6 +82,23 @@ function LanguageRow({
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function LanguageScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const [selected, setSelected] = useState("en");
   const insets = useSafeAreaInsets();
 
@@ -134,7 +164,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#fff",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "400",
   },
 
   // Selected checkmark circle

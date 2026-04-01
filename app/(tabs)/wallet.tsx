@@ -2,6 +2,19 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,6 +26,22 @@ function formatBalance(amount: number): string {
 }
 
 export default function WalletScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
   const { openDepositModal } = useDepositModal();
@@ -237,8 +266,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   screenTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 19.2,
+    fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
   placeholder: {
@@ -257,16 +286,16 @@ const styles = StyleSheet.create({
     marginVertical: 14,
   },
   mainBalance: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 25.6,
+    fontFamily: "Roboto_400Regular",
     color: "#fff",
     marginBottom: 8,
   },
   balanceLabel: {
-    fontSize: 16,
+    fontSize: 12.8,
     color: "#fff",
     marginBottom: 4,
-    fontWeight: "bold",
+    fontFamily: "Inter_Regular_Italic",
   },
   balanceDetails: {
     flexDirection: "row",
@@ -280,13 +309,14 @@ const styles = StyleSheet.create({
   },
   balanceNumber: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Roboto_400Regular",
     color: "#fff",
-    marginBottom: 4,
+    marginBottom: 0,
   },
   balanceText: {
-    fontSize: 16,
+    fontSize: 12,
     color: "#fff",
+    fontFamily: "Roboto_400Regular",
   },
   walletTypeSection: {
     backgroundColor: "#011341",
@@ -316,20 +346,21 @@ const styles = StyleSheet.create({
     borderColor: "#001C54",
   },
   progressText: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontWeight: 800,
+    fontFamily: "BahnschriftBold",
     color: "#fff",
   },
   walletAmount: {
-    fontSize: 14,
-    fontWeight: "bold",
+    fontSize: 16,
+    fontFamily: "Inter_Regular_Italic",
     color: "#fff",
     marginBottom: 0,
   },
   walletTypeLabel: {
-    fontSize: 14,
     color: "#fff",
-    fontFamily: "Inter",
+    fontSize: 12.8,
+    fontFamily: "Inter_Regular_Italic",
   },
   transferButton: {
     borderRadius: 12,
@@ -401,8 +432,8 @@ const styles = StyleSheet.create({
   },
   transactionLabel: {
     color: "#92A8E3",
-    fontSize: 13,
-    fontWeight: "500",
+    fontSize: 12.8,
+    fontFamily: "Inter_Regular_Italic",
     textAlign: "center",
     lineHeight: 18,
     marginTop: 4,
@@ -421,14 +452,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   gameBalanceAmount: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontSize: 12.8,
+    // fontWeight: "bold",
+    fontFamily: "Inter_Bold_Italic",
     color: "#fff",
-    marginBottom: 8,
+    marginBottom: 0,
   },
   gameBalanceLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#9BA1A6",
+    fontFamily: "Roboto_400Regular_Italic",
   },
   lotteryContent: {
     flexDirection: "row",

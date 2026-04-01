@@ -26,8 +26,13 @@ export function DepositInstructions({ isUsdt }: Props) {
     <View style={styles.section}>
       <View style={styles.instructionsBox}>
         <View style={styles.sectionHeader}>
-          <Image source={require("@/assets/icon-shuoming.svg")} style={{ width: 24, height: 24 }} />
-          <ThemedText style={styles.sectionTitle}>Recharge instructions</ThemedText>
+          <Image
+            source={require("@/assets/icon-shuoming.svg")}
+            style={{ width: 24, height: 24 }}
+          />
+          <ThemedText style={styles.sectionTitle}>
+            Recharge instructions
+          </ThemedText>
         </View>
         <View style={styles.instructionsList}>
           {instructions.map((text, i) => (
@@ -59,15 +64,15 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: "500",
+    fontSize: 16,
+    fontFamily: "Inter_SemiBold_Italic",
     color: "#E3EFFF",
   },
   instructionsBox: {
     backgroundColor: "#011341",
     borderRadius: 10,
     padding: 10,
-    paddingVertical: 14
+    paddingVertical: 14,
   },
   instructionsList: {
     gap: 14,
@@ -75,7 +80,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#022c68",
     borderRadius: 10,
-    padding: 10
+    padding: 10,
   },
   instructionItem: {
     flexDirection: "row",
@@ -89,7 +94,8 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 12.8,
+    fontFamily: "Inter_Regular_Italic",
     color: "#92A8E3",
     lineHeight: 20,
   },

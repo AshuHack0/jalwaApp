@@ -2,17 +2,45 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
 
 export default function AccountScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const router = useRouter();
   const { walletBalance, logout } = useAuth();
   const { openDepositModal } = useDepositModal();
@@ -20,7 +48,7 @@ export default function AccountScreen() {
 
   const handleCopyUID = () => {
     // Handle copy UID functionality
-    console.log('Copy UID');
+    console.log("Copy UID");
   };
 
   const handleLogout = async () => {
@@ -30,7 +58,7 @@ export default function AccountScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -38,8 +66,8 @@ export default function AccountScreen() {
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <View style={styles.profileImageContainer}>
-            <Image 
-              source={require('@/assets/1-a6662edb.webp')} 
+            <Image
+              source={require("@/assets/1-a6662edb.webp")}
               style={{ width: 84, height: 84 }}
               contentFit="cover"
             />
@@ -47,131 +75,170 @@ export default function AccountScreen() {
           <View style={styles.profileInfo}>
             <View style={styles.usernameRow}>
               <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
-                 <Image source={require('@/assets/pro.webp')} style={{ width: 40, height: 40 }} contentFit="contain" />
+              <Image
+                source={require("@/assets/pro.webp")}
+                style={{ width: 40, height: 40 }}
+                contentFit="contain"
+              />
             </View>
-            <TouchableOpacity style={styles.uidContainer} onPress={handleCopyUID}>
+            <TouchableOpacity
+              style={styles.uidContainer}
+              onPress={handleCopyUID}
+            >
               <ThemedText style={styles.uidLabel}>UID</ThemedText>
               <ThemedText style={styles.uidValue}>9111383</ThemedText>
               <Ionicons name="copy-outline" size={16} color="#fff" />
             </TouchableOpacity>
-            <ThemedText style={styles.lastLogin}>Last login: 2026-01-25 23:01:42</ThemedText>
+            <ThemedText style={styles.lastLogin}>
+              Last login: 2026-01-25 23:01:42
+            </ThemedText>
           </View>
         </View>
 
         <View style={styles.balanceSectionContainer}>
-        {/* Balance Section */}
-        <View style={styles.balanceSection}>
-          <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
-          <View style={styles.balanceHeader}>
-            <ThemedText style={styles.balanceAmount}>{formatBalance(walletBalance)}</ThemedText> 
-            <Image source={require('@/assets/43.png')} style={{ width: 25, height: 25 }} contentFit="contain" />
+          {/* Balance Section */}
+          <View style={styles.balanceSection}>
+            <ThemedText style={styles.balanceTitle}>Total balance</ThemedText>
+            <View style={styles.balanceHeader}>
+              <ThemedText style={styles.balanceAmount}>
+                {formatBalance(walletBalance)}
+              </ThemedText>
+              <Image
+                source={require("@/assets/43.png")}
+                style={{ width: 25, height: 25 }}
+                contentFit="contain"
+              />
+            </View>
           </View>
-        </View>
- 
- 
 
-        {/* Quick Action Buttons */}
-        <View style={styles.quickActions}>
-          <TouchableOpacity style={styles.quickActionButton}>
-            <View style={[styles.quickActionIcon, styles.walletIcon]}>
-              <Image 
-                source={require('@/assets/gfg4.png')} 
-                style={{ width: '100%', height: '100%' }}
-                contentFit="contain"
-              />
-            </View>
-            <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/deposit")} style={styles.quickActionButton}>
-            <View style={[styles.quickActionIcon, styles.depositIcon]}>
-              <Image 
-                source={require('@/assets/gfg3.png')} 
-                style={{ width: '100%', height: '100%' }}
-                contentFit="contain"
-              />
-            </View>
-            <ThemedText style={styles.quickActionLabel}>Deposit</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/withdraw")} style={styles.quickActionButton}>
-            <View style={[styles.quickActionIcon, styles.withdrawIcon]}>
-              <Image 
-                source={require('@/assets/gfg2.png')} 
-                style={{ width: '100%', height: '100%' }}
-                contentFit="contain"
-              />
-            </View>
-            <ThemedText style={styles.quickActionLabel}>Withdraw</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickActionButton}>
-            <View style={[styles.quickActionIcon, styles.vipIcon]}>
-              <Image 
-                source={require('@/assets/gfg1.png')} 
-                style={{ width: '100%', height: '100%' }}
-                contentFit="contain"
-              />
-            </View>
-            <ThemedText style={styles.quickActionLabel}>VIP</ThemedText>
-          </TouchableOpacity>
+          {/* Quick Action Buttons */}
+          <View style={styles.quickActions}>
+            <TouchableOpacity style={styles.quickActionButton}>
+              <View style={[styles.quickActionIcon, styles.walletIcon]}>
+                <Image
+                  source={require("@/assets/gfg4.png")}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="contain"
+                />
+              </View>
+              <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/deposit")}
+              style={styles.quickActionButton}
+            >
+              <View style={[styles.quickActionIcon, styles.depositIcon]}>
+                <Image
+                  source={require("@/assets/gfg3.png")}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="contain"
+                />
+              </View>
+              <ThemedText style={styles.quickActionLabel}>Deposit</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/withdraw")}
+              style={styles.quickActionButton}
+            >
+              <View style={[styles.quickActionIcon, styles.withdrawIcon]}>
+                <Image
+                  source={require("@/assets/gfg2.png")}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="contain"
+                />
+              </View>
+              <ThemedText style={styles.quickActionLabel}>Withdraw</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.quickActionButton}>
+              <View style={[styles.quickActionIcon, styles.vipIcon]}>
+                <Image
+                  source={require("@/assets/gfg1.png")}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="contain"
+                />
+              </View>
+              <ThemedText style={styles.quickActionLabel}>VIP</ThemedText>
+            </TouchableOpacity>
           </View>
         </View>
 
         {/* History Sections */}
         <View style={styles.historySection}>
           <View style={styles.historyCardContainer}>
-            <TouchableOpacity  style={[styles.historyCard, styles.gameHistoryCard]}>
+            <TouchableOpacity
+              style={[styles.historyCard, styles.gameHistoryCard]}
+            >
               <View style={styles.historyIconContainer}>
-                <Image 
-                  source={require('@/assets/ugi4.png')} 
+                <Image
+                  source={require("@/assets/ugi4.png")}
                   style={{ width: 40, height: 40 }}
                   contentFit="contain"
                 />
               </View>
               <View style={styles.historyContent}>
-                <ThemedText style={styles.historyTitle}>Game History</ThemedText>
-                <ThemedText style={styles.historySubtitle}>My game history</ThemedText>
+                <ThemedText style={styles.historyTitle}>
+                  Game History
+                </ThemedText>
+                <ThemedText style={styles.historySubtitle}>
+                  My game history
+                </ThemedText>
               </View>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={[styles.historyCard, styles.transactionCard]}>
+
+            <TouchableOpacity
+              style={[styles.historyCard, styles.transactionCard]}
+            >
               <View style={styles.historyIconContainer}>
-                <Image 
-                  source={require('@/assets/ugi1.png')} 
+                <Image
+                  source={require("@/assets/ugi1.png")}
                   style={{ width: 40, height: 40 }}
                   contentFit="contain"
                 />
               </View>
               <View style={styles.historyContent}>
                 <ThemedText style={styles.historyTitle}>Transaction</ThemedText>
-                <ThemedText style={styles.historySubtitle}>My transaction history</ThemedText>
+                <ThemedText style={styles.historySubtitle}>
+                  My transaction history
+                </ThemedText>
               </View>
             </TouchableOpacity>
           </View>
-          <View style={styles.historyCardContainer}>   
-            <TouchableOpacity onPress={() => router.push("/deposit-history")} style={[styles.historyCard, styles.depositHistoryCard]}>
+          <View style={styles.historyCardContainer}>
+            <TouchableOpacity
+              onPress={() => router.push("/deposit-history")}
+              style={[styles.historyCard, styles.depositHistoryCard]}
+            >
               <View style={styles.historyIconContainer}>
-                <Image 
-                  source={require('@/assets/ugi3.png')} 
+                <Image
+                  source={require("@/assets/ugi3.png")}
                   style={{ width: 40, height: 40 }}
                   contentFit="contain"
                 />
               </View>
               <View style={styles.historyContent}>
                 <ThemedText style={styles.historyTitle}>Deposit</ThemedText>
-                <ThemedText style={styles.historySubtitle}>My deposit history</ThemedText>
+                <ThemedText style={styles.historySubtitle}>
+                  My deposit history
+                </ThemedText>
               </View>
             </TouchableOpacity>
-            
-            <TouchableOpacity onPress={() => router.push("/withdrawal-history")} style={[styles.historyCard, styles.withdrawHistoryCard]}>
+
+            <TouchableOpacity
+              onPress={() => router.push("/withdrawal-history")}
+              style={[styles.historyCard, styles.withdrawHistoryCard]}
+            >
               <View style={styles.historyIconContainer}>
-                <Image 
-                  source={require('@/assets/ugi2.png')} 
+                <Image
+                  source={require("@/assets/ugi2.png")}
                   style={{ width: 40, height: 40 }}
                   contentFit="contain"
                 />
               </View>
               <View style={styles.historyContent}>
                 <ThemedText style={styles.historyTitle}>Withdraw</ThemedText>
-                <ThemedText style={styles.historySubtitle}>My withdraw history</ThemedText>
+                <ThemedText style={styles.historySubtitle}>
+                  My withdraw history
+                </ThemedText>
               </View>
             </TouchableOpacity>
           </View>
@@ -179,59 +246,89 @@ export default function AccountScreen() {
 
         {/* Account Settings List */}
         <View style={styles.settingsSection}>
-          <TouchableOpacity style={styles.settingItem}  onPress={() => router.push('/account/notification' as any)}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push("/account/notification" as any)}
+          >
             <View style={styles.settingLeft}>
-              <View style={[styles.settingIconContainer, styles.notificationIcon]}>
-                <Image 
-                  source={require('@/assets/ss.png')} 
-                  style={{ width: '90%', height: '90%' }}
+              <View
+                style={[styles.settingIconContainer, styles.notificationIcon]}
+              >
+                <Image
+                  source={require("@/assets/ss.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.settingLabel}>Notification</ThemedText>
               {notificationCount > 0 && (
                 <View style={styles.badge}>
-                  <ThemedText style={styles.badgeText}>{notificationCount}</ThemedText>
+                  <ThemedText style={styles.badgeText}>
+                    {notificationCount}
+                  </ThemedText>
                 </View>
               )}
             </View>
-           <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
+            <Image
+              source={require("@/assets/as.png")}
+              style={{ width: 35, height: 35 }}
+              contentFit="contain"
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/gifts' as any)}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push("/account/gifts" as any)}
+          >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.giftsIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr2.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr2.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.settingLabel}>Gifts</ThemedText>
             </View>
-            <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
+            <Image
+              source={require("@/assets/as.png")}
+              style={{ width: 35, height: 35 }}
+              contentFit="contain"
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/game-stats' as any)}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push("/account/game-stats" as any)}
+          >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.statsIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr3.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr3.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
-              <ThemedText style={styles.settingLabel}>Game statistics</ThemedText>
+              <ThemedText style={styles.settingLabel}>
+                Game statistics
+              </ThemedText>
             </View>
-            <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
+            <Image
+              source={require("@/assets/as.png")}
+              style={{ width: 35, height: 35 }}
+              contentFit="contain"
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/account/language' as any)}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push("/account/language" as any)}
+          >
             <View style={styles.settingLeft}>
               <View style={[styles.settingIconContainer, styles.languageIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr4.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr4.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
@@ -239,7 +336,11 @@ export default function AccountScreen() {
             </View>
             <View style={styles.settingRight}>
               <ThemedText style={styles.languageValue}>English</ThemedText>
-              <Image source={require('@/assets/as.png')} style={{ width: 35, height: 35 }} contentFit="contain" />
+              <Image
+                source={require("@/assets/as.png")}
+                style={{ width: 35, height: 35 }}
+                contentFit="contain"
+              />
             </View>
           </TouchableOpacity>
         </View>
@@ -248,66 +349,100 @@ export default function AccountScreen() {
         <View style={styles.serviceSection}>
           <ThemedText style={styles.sectionTitle}>Service center</ThemedText>
           <View style={styles.serviceGrid}>
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/settings' as any)}>
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/settings" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr5.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr5.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Settings</ThemedText>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/feedback' as any)}>
+
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/feedback" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr6.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr6.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Feedback</ThemedText>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/announcement' as any)}>
+
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/announcement" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr7.png')} 
-                  style={{ width: '90%', height: '90%' }}
+                <Image
+                  source={require("@/assets/eerrr7.png")}
+                  style={{ width: "90%", height: "90%" }}
                   contentFit="contain"
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Announcement</ThemedText>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/customer-service' as any)}>
+
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/customer-service" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr10.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                <Image
+                  source={require("@/assets/eerrr10.png")}
+                  style={{ width: "100%", height: "100%" }}
                   contentFit="contain"
                 />
               </View>
-              <ThemedText style={styles.serviceLabel}>Customer Service</ThemedText>
+              <ThemedText style={styles.serviceLabel}>
+                Customer Service
+              </ThemedText>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/beginners-guide' as any)}>
+
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/beginners-guide" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr9.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                <Image
+                  source={require("@/assets/eerrr9.png")}
+                  style={{ width: "100%", height: "100%" }}
                   contentFit="contain"
                 />
               </View>
-              <ThemedText style={styles.serviceLabel}>Beginner's Guide</ThemedText>
+              <ThemedText style={styles.serviceLabel}>
+                Beginner's Guide
+              </ThemedText>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.serviceItem} onPress={() => router.push('/account/service-center/about-us' as any)}>
+
+            <TouchableOpacity
+              style={styles.serviceItem}
+              onPress={() =>
+                router.push("/account/service-center/about-us" as any)
+              }
+            >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
-                <Image 
-                  source={require('@/assets/eerrr8.png')} 
-                  style={{ width: '100%', height: '100%' }}
+                <Image
+                  source={require("@/assets/eerrr8.png")}
+                  style={{ width: "100%", height: "100%" }}
                   contentFit="contain"
                 />
               </View>
@@ -329,7 +464,7 @@ export default function AccountScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#05012B',
+    backgroundColor: "#05012B",
   },
   scrollView: {
     flex: 1,
@@ -338,36 +473,36 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   profileSection: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 24,
     gap: 16,
   },
   profileImageContainer: {
-    width: 84, 
+    width: 84,
     height: 84,
     borderRadius: 82,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   profileInfo: {
     flex: 1,
     gap: 2,
   },
   usernameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   username: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 16,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
   },
   vipBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
@@ -375,88 +510,95 @@ const styles = StyleSheet.create({
   },
   vipText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
+    fontWeight: "600",
+    color: "#fff",
   },
   uidContainer: {
-    width: '60%', 
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: "50%",
+    // maxWidth: "auto",
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
-    backgroundColor: '#DD9138',
+    backgroundColor: "#DD9138",
     borderRadius: 18,
     padding: 8,
     paddingVertical: 0,
   },
   uidTag: {
-    backgroundColor: '#F97316',
+    backgroundColor: "#F97316",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   uidLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#fff',
+    fontSize: 11.7,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
     paddingRight: 8,
     borderRightWidth: 1,
-    borderRightColor: '#fff',
+    borderRightColor: "#fff",
   },
   uidValue: {
-    fontSize: 14,
-    color: '#fff',
-    fontWeight: '500',
+    fontSize: 11.7,
+    color: "#fff",
+    fontFamily: "Roboto_400Regular",
+    letterSpacing: -1,
   },
   lastLogin: {
-    fontSize: 13,
-    color: '#fff',
+    fontSize: 11.7,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
   },
   balanceSectionContainer: {
-    backgroundColor: '#001C54',
+    backgroundColor: "#001C54",
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
-    overflow: 'hidden', 
+    overflow: "hidden",
   },
   balanceSection: {
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
   balanceHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
     paddingVertical: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   balanceTitle: {
-    fontSize: 16,
-    color: '#92A8E3',
+    fontSize: 14.9,
+    fontFamily: "Roboto_400Regular",
+    color: "#92A8E3",
   },
   balanceAmount: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 19.2,
+    fontFamily: "Roboto_700Bold",
+    color: "#fff",
   },
   quickActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 14,
+    paddingTop: 14,
     gap: 12,
+    borderTopWidth: 0.4,
+    borderColor: "rgba(92, 166, 255, 0.15)",
+    marginHorizontal: 10,
   },
   quickActionButton: {
     flex: 1,
-    alignItems: 'center',
-    gap: 8,
+    alignItems: "center",
+    gap: 4,
   },
   quickActionIcon: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  walletIcon: {
-  },
+  walletIcon: {},
   depositIcon: {
     // backgroundColor: '#F97316',
   },
@@ -467,8 +609,9 @@ const styles = StyleSheet.create({
     // backgroundColor: '#10B981',
   },
   quickActionLabel: {
-    fontSize: 14,
-    color: '#fff',
+    fontSize: 14.9,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
   },
   historySection: {
     paddingHorizontal: 16,
@@ -476,78 +619,80 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   historyCardContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     flex: 1,
   },
   historyCard: {
-    width: '47%',
-    backgroundColor: '#011341',
+    width: "47%",
+    backgroundColor: "#011341",
     borderRadius: 9,
     padding: 10,
     gap: 12,
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   gameHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
   },
   transactionCard: {
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
   },
   depositHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
   },
   withdrawHistoryCard: {
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
   },
   historyIconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 0,
   },
   historyContent: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   historyTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: 14.9,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
   },
   historySubtitle: {
-    fontSize: 12,
+    fontSize: 12.8,
+    fontFamily: "Roboto_400Regular",
     lineHeight: 14,
-    color: '#92A8E3',
+    color: "#92A8E3",
     flexShrink: 1,
   },
   settingsSection: {
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
     marginHorizontal: 16,
     borderRadius: 12,
     marginBottom: 24,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     flex: 1,
   },
   settingIconContainer: {
-    width: 38,
-    height: 38,
+    width: 34,
+    height: 34,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   notificationIcon: {
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
@@ -562,91 +707,92 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   settingLabel: {
-    fontSize: 14,
-    color: '#fff',
+    fontSize: 14.9,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
     flex: 1,
   },
   settingRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   languageValue: {
     fontSize: 14,
-    color: '#fff',
+    color: "#fff",
   },
   badge: {
-    backgroundColor: '#EF4444',
+    backgroundColor: "#EF4444",
     borderRadius: 10,
     width: 25,
     height: 20,
     paddingHorizontal: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
- 
+    alignItems: "center",
+    justifyContent: "center",
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: '500',
-    color: '#fff',
-    textAlign: 'center',
+    fontWeight: "500",
+    color: "#fff",
+    textAlign: "center",
     lineHeight: 20,
   },
   serviceSection: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     marginBottom: 24,
-    backgroundColor: '#011341',
+    backgroundColor: "#011341",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#fff',
+    fontSize: 16,
+    fontFamily: "Roboto_400Regular",
+    color: "#fff",
     marginBottom: 16,
   },
   serviceGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
   },
   serviceItem: {
-    width: '30%',
-    alignItems: 'center',
+    width: "30%",
+    alignItems: "center",
     gap: 0,
   },
   serviceIconContainer: {
     width: 40,
     height: 40,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   serviceIcon: {
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   serviceLabel: {
-    fontSize: 12,
-    color: '#92A8E3',
-    textAlign: 'center',
-    lineHeight: 14, 
+    fontSize: 12.8,
+    color: "#92A8E3",
+    textAlign: "center",
+    lineHeight: 14,
+    fontFamily: "Roboto_400Regular",
   },
   logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginHorizontal: 16,
     marginBottom: 24,
     paddingVertical: 8,
     borderRadius: 32,
     borderWidth: 1,
-    borderColor: '#00ECBE',
+    borderColor: "#00ECBE",
     gap: 8,
   },
   logoutText: {
-    fontSize: 17,
-    fontWeight: '400',
-    color: '#00ECBE',
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#00ECBE",
   },
 });

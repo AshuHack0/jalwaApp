@@ -1,4 +1,19 @@
 import { ThemedView } from "@/components/themed-view";
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import {
@@ -10,8 +25,6 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { CustomHeader } from "@/components/ui/CustomHeader";
 
 // ── Notification Card ─────────────────────────────────────────────────────────
 function NotificationCard({
@@ -105,6 +118,23 @@ const INITIAL_NOTIFICATIONS = [
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function NotificationScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const insets = useSafeAreaInsets();
   const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
 
@@ -183,18 +213,18 @@ const styles = StyleSheet.create({
     height: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    marginRight: 0,
   },
   mailIcon: {
-    height: 25,
-    width: 30,
+    height: 20,
+    width: 25,
     resizeMode: "contain",
   },
   cardTitle: {
     flex: 1,
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontFamily: "Inter_SemiBold_Italic",
     letterSpacing: 0.4,
   },
   deleteBtn: {
@@ -208,8 +238,8 @@ const styles = StyleSheet.create({
   },
   cardTimestamp: {
     color: "#65779e",
-    fontSize: 14,
-    // marginLeft: 34,
+    fontSize: 12.8,
+    fontFamily: "Inter_Regular_Italic",
     marginBottom: 15,
   },
   cardDivider: {
@@ -219,8 +249,9 @@ const styles = StyleSheet.create({
   },
   cardMessage: {
     color: "#92a8e3",
-    fontSize: 13.5,
+    fontSize: 12.8,
     lineHeight: 20,
+    fontFamily: "Inter_Regular_Italic",
   },
 
   // Empty state

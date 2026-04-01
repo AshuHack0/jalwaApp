@@ -1,4 +1,18 @@
 import { ThemedView } from "@/components/themed-view";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
@@ -98,7 +112,7 @@ function GameSection({
       <View style={styles.gameRowContainer}>
         <Image
           source={require("@/assets/gameStatsSteps-d5fb8354.webp")}
-          style={{ width: 28, height: 82 }}
+          style={{ width: 28, height: 75 }}
           resizeMode="contain"
         />
         <View style={styles.gameRowContent}>
@@ -187,6 +201,23 @@ const GAME_DATA: GameData[] = [
 
 // ── Main Screen ───────────────────────────────────────────────────────────────
 export default function GameStatsScreen() {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const [activeTab, setActiveTab] = useState<Tab>("Today");
   const insets = useSafeAreaInsets();
 
@@ -265,7 +296,7 @@ const styles = StyleSheet.create({
   tabText: {
     color: "#6A85B8",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "400",
   },
   tabTextActive: {
     color: "#fff",
@@ -286,13 +317,13 @@ const styles = StyleSheet.create({
   },
   totalAmount: {
     color: "#dd9138",
-    fontSize: 28,
-    fontWeight: "500",
+    fontSize: 22.4,
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   totalLabel: {
     color: "#6A85B8",
-    fontSize: 20,
+    fontSize: 16,
     marginTop: 6,
   },
 
@@ -326,12 +357,13 @@ const styles = StyleSheet.create({
   gameIcon: { width: 32, height: 32 },
   gameName: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 16,
+    fontFamily: "Roboto_700Bold",
   },
   gameRowContent: {
     flex: 1,
     // backgroundColor: "red",
+    marginTop: 4,
   },
   // Game row
   gameRow: {
@@ -362,13 +394,14 @@ const styles = StyleSheet.create({
   gameRowLabel: {
     flex: 1,
     color: "#92a8e3",
-    fontSize: 16,
+    fontFamily: "Roboto_400Regular",
+    fontSize: 14.9,
     paddingTop: 2,
     paddingBottom: 8,
   },
   gameRowValue: {
-    fontSize: 17,
-    // fontWeight: "500",
+    fontFamily: "Roboto_400Regular",
+    fontSize: 14.9,
     paddingTop: 2,
     paddingBottom: 8,
   },

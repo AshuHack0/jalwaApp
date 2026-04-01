@@ -1,9 +1,22 @@
 import { ThemedText } from "@/components/themed-text";
 import type { UsdtNetwork } from "@/services/api/usdtDeposit";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-
 type Channel = { id: string; label: string; balance: string };
 type UsdtChannel = { id: UsdtNetwork; label: string; balance: string };
 
@@ -26,10 +39,30 @@ export function DepositChannelSelector({
   selectedNetwork,
   onSelectNetwork,
 }: Props) {
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+  });
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Image source={require("@/assets/quickPayIcon.svg")} style={{ width: 24, height: 24 }} />
+        <Image
+          source={require("@/assets/quickPayIcon.svg")}
+          style={{ width: 24, height: 24 }}
+        />
         <ThemedText style={styles.sectionTitle}>
           {isUsdt ? "Select network" : "Select channel"}
         </ThemedText>
@@ -52,12 +85,27 @@ export function DepositChannelSelector({
                     style={StyleSheet.absoluteFillObject}
                   />
                 )}
-                <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 42, height: 42 }} />
+                <Image
+                  source={{
+                    uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp",
+                  }}
+                  style={{ width: 42, height: 42 }}
+                />
                 <View>
-                  <ThemedText style={[styles.channelLabel, isActive && styles.channelLabelActive]}>
+                  <ThemedText
+                    style={[
+                      styles.channelLabel,
+                      isActive && styles.channelLabelActive,
+                    ]}
+                  >
                     {net.label}
                   </ThemedText>
-                  <ThemedText style={[styles.channelBalance, isActive && styles.channelBalanceActive]}>
+                  <ThemedText
+                    style={[
+                      styles.channelBalance,
+                      isActive && styles.channelBalanceActive,
+                    ]}
+                  >
                     {net.balance}
                   </ThemedText>
                 </View>
@@ -83,10 +131,20 @@ export function DepositChannelSelector({
                     style={StyleSheet.absoluteFillObject}
                   />
                 )}
-                <ThemedText style={[styles.channelLabel, isActive && styles.channelLabelActive]}>
+                <ThemedText
+                  style={[
+                    styles.channelLabel,
+                    isActive && styles.channelLabelActive,
+                  ]}
+                >
                   {ch.label}
                 </ThemedText>
-                <ThemedText style={[styles.channelBalance, isActive && styles.channelBalanceActive]}>
+                <ThemedText
+                  style={[
+                    styles.channelBalance,
+                    isActive && styles.channelBalanceActive,
+                  ]}
+                >
                   {ch.balance}
                 </ThemedText>
               </TouchableOpacity>
@@ -105,7 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#011341",
     borderRadius: 10,
     padding: 10,
-    paddingVertical: 14
+    paddingVertical: 14,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -115,7 +173,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 17,
-    fontWeight: "500",
+    fontFamily: "Inter_Regular_Italic",
     color: "#E3EFFF",
   },
   channelGrid: {
@@ -131,13 +189,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   channelLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#92a8e3"
+    fontSize: 14.9,
+    fontFamily: "Inter_Regular_Italic",
+    color: "#92a8e3",
   },
   channelLabelActive: { color: "#05012B" },
   channelBalance: {
-    fontSize: 14,
+    fontSize: 14.9,
+    fontFamily: "Inter_Regular_Italic",
     color: "#92A8E3",
   },
   channelBalanceActive: { color: "#05012B" },

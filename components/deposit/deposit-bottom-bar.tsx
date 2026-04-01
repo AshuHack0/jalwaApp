@@ -1,5 +1,10 @@
 import { ThemedText } from "@/components/themed-text";
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type Props = {
   rechargeMethod: string;
@@ -8,15 +13,27 @@ type Props = {
   onDeposit: () => void;
 };
 
-export function DepositBottomBar({ rechargeMethod, isPending, isDisabled, onDeposit }: Props) {
+export function DepositBottomBar({
+  rechargeMethod,
+  isPending,
+  isDisabled,
+  onDeposit,
+}: Props) {
   return (
     <View style={styles.bottomBar}>
       <View style={styles.bottomBarLeft}>
-        <ThemedText style={styles.rechargeMethodLabel}>Recharge Method:</ThemedText>
-        <ThemedText style={styles.rechargeMethodValue}>{rechargeMethod}</ThemedText>
+        <ThemedText style={styles.rechargeMethodLabel}>
+          Recharge Method:
+        </ThemedText>
+        <ThemedText style={styles.rechargeMethodValue}>
+          {rechargeMethod}
+        </ThemedText>
       </View>
       <TouchableOpacity
-        style={[styles.depositButton, isDisabled && styles.depositButtonDisabled]}
+        style={[
+          styles.depositButton,
+          isDisabled && styles.depositButtonDisabled,
+        ]}
         onPress={onDeposit}
         disabled={isDisabled}
       >
@@ -44,12 +61,13 @@ const styles = StyleSheet.create({
   },
   bottomBarLeft: { flex: 1 },
   rechargeMethodLabel: {
-    fontSize: 12,
-    color: "#92A8E3",
+    fontSize: 12.8,
+    color: "#ffffff",
+    fontFamily: "Inter_Regular_Italic",
   },
   rechargeMethodValue: {
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 13.8,
+    fontFamily: "Inter_SemiBold_Italic",
     color: "#fff",
     marginTop: 2,
   },
@@ -64,7 +82,7 @@ const styles = StyleSheet.create({
   depositButtonDisabled: { backgroundColor: "#3A4A6B" },
   depositButtonText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Inter_Regular_Italic",
     color: "#05012B",
   },
 });

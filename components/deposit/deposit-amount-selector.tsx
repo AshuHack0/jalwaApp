@@ -1,4 +1,18 @@
 import { ThemedText } from "@/components/themed-text";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  Inter_600SemiBold_Italic,
+  Inter_700Bold_Italic,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Roboto_400Regular,
+  Roboto_400Regular_Italic,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -33,19 +47,39 @@ export function DepositAmountSelector({
   onClearDeposit,
 }: Props) {
   const amounts = isUsdt ? usdtQuickAmounts : quickAmounts;
-
+  const [loaded] = useFonts({
+    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  });
+  const [fontsLoaded] = useFonts({
+    Roboto_400Regular,
+    Roboto_400Regular_Italic,
+    Roboto_700Bold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
+    Inter_Bold_Italic: Inter_700Bold_Italic,
+  });
   return (
     <View style={styles.section}>
       <View style={styles.depositAmountInner}>
         <View style={styles.sectionHeader}>
-
-
-
-
           {!isUsdt ? (
-            <Image source={require("@/assets/icon-saveWallet.svg")} style={{ width: 24, height: 24 }} />
+            <Image
+              source={require("@/assets/icon-saveWallet.svg")}
+              style={{ width: 24, height: 24 }}
+            />
           ) : (
-            <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 24, height: 24 }} />
+            <Image
+              source={{
+                uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp",
+              }}
+              style={{ width: 24, height: 24 }}
+            />
           )}
 
           <ThemedText style={styles.sectionTitle}>
@@ -59,7 +93,10 @@ export function DepositAmountSelector({
             return (
               <TouchableOpacity
                 key={amount}
-                style={[styles.amountButton, isActive && styles.amountButtonActive]}
+                style={[
+                  styles.amountButton,
+                  isActive && styles.amountButtonActive,
+                ]}
                 onPress={() => onSelectAmount(amount)}
               >
                 {isActive ? (
@@ -71,26 +108,67 @@ export function DepositAmountSelector({
                   >
                     {isUsdt ? (
                       <View style={styles.usdtAmountIcon}>
-                        <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
+                        <Image
+                          source={{
+                            uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp",
+                          }}
+                          style={{ width: 19, height: 19 }}
+                        />
                       </View>
                     ) : (
-                      <ThemedText style={[styles.amountRupee, { color: "white" }]}>₹</ThemedText>
+                      <ThemedText
+                        style={[
+                          styles.amountRupee,
+                          { color: "white", fontSize: 22.4 },
+                        ]}
+                      >
+                        ₹
+                      </ThemedText>
                     )}
-                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                      <ThemedText style={[styles.amountValue, { color: "#000" }]}>{amount}</ThemedText>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.amountValue,
+                          {
+                            color: "#000",
+                            fontFamily: "Inter_SemiBold_Italic",
+                          },
+                        ]}
+                      >
+                        {amount}
+                      </ThemedText>
                     </View>
                   </LinearGradient>
                 ) : (
                   <>
                     {isUsdt ? (
                       <View style={styles.usdtAmountIcon}>
-                        <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
+                        <Image
+                          source={{
+                            uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp",
+                          }}
+                          style={{ width: 19, height: 19 }}
+                        />
                       </View>
                     ) : (
                       <ThemedText style={styles.amountRupee}>₹</ThemedText>
                     )}
-                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                      <ThemedText style={styles.amountValue}>{amount}</ThemedText>
+                    <View
+                      style={{
+                        flex: 1,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <ThemedText style={styles.amountValue}>
+                        {amount}
+                      </ThemedText>
                     </View>
                   </>
                 )}
@@ -102,14 +180,22 @@ export function DepositAmountSelector({
         <View style={styles.amountInputContainer}>
           {isUsdt ? (
             <View style={styles.usdtInputIcon}>
-              <Image source={{ uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp" }} style={{ width: 19, height: 19 }} />
+              <Image
+                source={{
+                  uri: "https://www.jalwagame.win/assets/png/usdt-40311708.webp",
+                }}
+                style={{ width: 19, height: 19 }}
+              />
             </View>
           ) : (
             <ThemedText style={styles.currencySymbol}>₹</ThemedText>
           )}
           <View style={styles.inputDivider} />
           <TextInput
-            style={[styles.amountInput, { fontWeight: depositAmount.length > 0 ? "bold" : "normal" }]}
+            style={[
+              styles.amountInput,
+              { fontWeight: depositAmount.length > 0 ? "bold" : "normal" },
+            ]}
             placeholder={isUsdt ? "Please enter UDST amount" : placeholder}
             placeholderTextColor="#92A8E3"
             value={depositAmount}
@@ -125,7 +211,6 @@ export function DepositAmountSelector({
 
         {isUsdt && (
           <>
-            
             <View style={[styles.amountInputContainer, { marginTop: 6 }]}>
               <ThemedText style={styles.currencySymbol}>₹</ThemedText>
               <View style={styles.inputDivider} />
@@ -162,15 +247,15 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: "500",
+    fontSize: 19.2,
+    fontFamily: "Inter_SemiBold_Italic",
     color: "#E3EFFF",
   },
   depositAmountInner: {
     backgroundColor: "#011341",
     borderRadius: 10,
     padding: 10,
-    paddingVertical: 14
+    paddingVertical: 14,
   },
   amountGrid: {
     flexDirection: "row",
@@ -204,12 +289,12 @@ const styles = StyleSheet.create({
   amountRupee: {
     fontSize: 17,
     color: "#6f80a4",
-    fontWeight: "600",
+    fontFamily: "Inter_SemiBold_Italic",
   },
   amountValue: {
     fontSize: 17,
     color: "#7AFEC3",
-    fontWeight: "500",
+    fontFamily: "Inter_Regular_Italic",
   },
   usdtAmountIcon: {
     width: 20,
@@ -241,9 +326,10 @@ const styles = StyleSheet.create({
   currencySymbol: {
     fontSize: 18,
     width: 28,
-    textAlign:"center",
+    textAlign: "center",
     fontWeight: "700",
     color: "#7AFEC3",
+    fontFamily: "Inter_SemiBold_Italic",
   },
   amountInput: {
     flex: 1,
