@@ -3,7 +3,19 @@ import { ThemedView } from "@/components/themed-view";
 import { WINGO_ANNOUNCEMENT_MESSAGES } from "@/constants/Wingo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import {
+  Inter_400Regular,
+  Inter_400Regular_Italic,
+  Inter_600SemiBold,
+  useFonts as useInter,
+} from "@expo-google-fonts/inter";
+import {
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  useFonts,
+} from "@expo-google-fonts/poppins";
+import { Ionicons } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { BlurView } from "expo-blur";
@@ -35,6 +47,16 @@ function formatBalance(amount: number): string {
 }
 
 export default function HomeScreen() {
+  const [fontsLoaded] = useFonts({
+    Poppins_Regular: Poppins_400Regular,
+    Poppins_Bold: Poppins_700Bold,
+    Poppins_SemiBold: Poppins_600SemiBold,
+  });
+  const [interLoaded] = useInter({
+    Inter_Regular: Inter_400Regular,
+    Inter_SemiBold: Inter_600SemiBold,
+    Inter_Regular_Italic: Inter_400Regular_Italic,
+  });
   const router = useRouter();
   const { isAuthenticated, walletBalance, refreshWallet } = useAuth();
   const { openDepositModal } = useDepositModal();
@@ -141,7 +163,7 @@ export default function HomeScreen() {
     [carouselWidth],
   );
 
-  const activeBg = require("@/assets/icon_bg_select-cc5606e6.webp");
+  const activeBg = require("@/assets/icon_bg_select-cc5606e6eeewwwwwwww.png");
   const inactiveBg = require("@/assets/icon_bg-f97e2540.webp");
 
   const gameCategories = [
@@ -750,12 +772,19 @@ export default function HomeScreen() {
                   {formatBalance(walletBalance)}
                 </ThemedText>
                 <TouchableOpacity onPress={refreshWallet}>
-                  <Feather name="refresh-cw" size={20} color="#fff" />
+                  <Image
+                    source={require("@/assets/Screenshot_2026-04-01_041631-removebg-preview.png")}
+                    style={{ height: 20, width: 20 }}
+                    contentFit="cover"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
             <View style={[styles.walletButtons, { width: "48%" }]}>
-              <TouchableOpacity style={styles.walletButton} onPress={() => router.push("/withdraw")}>
+              <TouchableOpacity
+                style={styles.walletButton}
+                onPress={() => router.push("/withdraw")}
+              >
                 <Image
                   source={require("@/assets/91-withdraw_btn-c8a3085c.svg")}
                   style={styles.walletButtonBackground}
@@ -847,7 +876,7 @@ export default function HomeScreen() {
                       contentFit="contain"
                     />
                   )}
-                  <ThemedText style={styles.lotteryTitle}>
+                  <ThemedText style={[styles.lotteryTitle]}>
                     {selectedCategory}
                   </ThemedText>
                 </View>
@@ -878,7 +907,7 @@ export default function HomeScreen() {
                           style={[
                             styles.categoryGameCardBase,
                             {
-                              width: "31%",
+                              width: isLottery ? "47.5%" : "31%",
                               minWidth: "31%",
                               height: cardHeight,
                             },
@@ -989,7 +1018,7 @@ export default function HomeScreen() {
               contentFit="contain"
             />
             <ThemedText style={styles.lotteryTitle}>
-              Today Earning Chart
+              Today's earnings chart
             </ThemedText>
           </View>
           <LinearGradient
@@ -1011,7 +1040,7 @@ export default function HomeScreen() {
                     right: 0,
                     bottom: 0,
                     width: "100%",
-                    height: "100%",
+                    height: "109%",
                   }}
                   contentFit="cover"
                 />
@@ -1064,7 +1093,7 @@ export default function HomeScreen() {
                   2
                 </ThemedText>
                 <ThemedText
-                  style={[styles.topThreeUsername, { color: "#C7D6F6" }]}
+                  style={[styles.topThreeUsername, { color: "#FCDC78" }]}
                 >
                   {leaderboard[1].username}
                 </ThemedText>
@@ -1086,7 +1115,7 @@ export default function HomeScreen() {
                     right: 0,
                     bottom: 0,
                     width: "100%",
-                    height: "100%",
+                    height: "109%",
                   }}
                   contentFit="cover"
                 />
@@ -1144,7 +1173,7 @@ export default function HomeScreen() {
                   1
                 </ThemedText>
                 <ThemedText
-                  style={[styles.topThreeUsername, { color: "#E0BB43" }]}
+                  style={[styles.topThreeUsername, { color: "#FCDC78" }]}
                 >
                   {leaderboard[0].username}
                 </ThemedText>
@@ -1166,7 +1195,7 @@ export default function HomeScreen() {
                     right: 0,
                     bottom: 0,
                     width: "100%",
-                    height: "100%",
+                    height: "109%",
                   }}
                   contentFit="cover"
                 />
@@ -1256,7 +1285,7 @@ export default function HomeScreen() {
                     )}
                   </View>
                   <ThemedText style={styles.leaderboardAmount}>
-                    {entry.amount}
+                    ₹{entry.amount}
                   </ThemedText>
                 </View>
               ))}
@@ -1301,10 +1330,10 @@ export default function HomeScreen() {
             </View>
           </View>
           <ThemedText style={styles.responsibleGambling}>
-            <ThemedText style={styles.boldText}>
-              Gambling can be addictive, please play rationally.
-            </ThemedText>{" "}
-            Jalwa only accepts customers above the age of 18.
+            {/* <ThemedText style={styles.boldText}> */}
+            Gambling can be addictive, please play rationally. Jalwa only
+            accepts customers above the age of 18.
+            {/* </ThemedText>{" "} */}
           </ThemedText>
         </View>
       </ScrollView>
@@ -1646,12 +1675,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FBBF24",
   },
   coinImage: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
   },
   walletLabel: {
     color: "#92A8E3",
-    fontSize: 13,
+    fontSize: 10,
+    letterSpacing: -0.3,
   },
   balanceRow: {
     flexDirection: "row",
@@ -1660,7 +1690,7 @@ const styles = StyleSheet.create({
   },
   balanceAmount: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "bold",
   },
   walletButtons: {
@@ -1701,8 +1731,8 @@ const styles = StyleSheet.create({
   },
   walletButtonText: {
     color: "#fff",
-    fontSize: 12,
-    fontWeight: "500",
+    fontSize: 12.8,
+    fontWeight: "400",
     textAlign: "center",
     alignItems: "center",
     justifyContent: "center",
@@ -1742,7 +1772,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "absolute",
     zIndex: 2,
-    top: -15,
+    top: -7,
     bottom: 0,
     left: 0,
     right: 0,
@@ -1754,13 +1784,14 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   gameName: {
-    marginTop: -10,
+    marginTop: -13,
     color: "#6F80A4",
-    fontSize: 14,
+    fontSize: 12.8,
     textAlign: "center",
+    letterSpacing: -0.5,
   },
   gameNameActive: {
-    color: "#fff",
+    color: "#00ECBE",
   },
   categoryPlaceholder: {
     paddingVertical: 48,
@@ -1788,9 +1819,10 @@ const styles = StyleSheet.create({
     height: 24,
   },
   lotteryTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 14.9,
+    // fontWeight: "bold",
     color: "#fff",
+    fontFamily: "Poppins_SemiBold",
   },
   lotteryGamesGrid: {
     flexDirection: "row",
@@ -1970,7 +2002,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   winnerId: {
-    fontSize: 15,
+    fontSize: 13.8,
     color: "#fff",
   },
   winnerRight: {
@@ -1979,12 +2011,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   winnerLabel: {
-    fontSize: 15,
-    color: "#9BA1A6",
+    fontSize: 12.8,
+    color: "#92A8E3",
     marginBottom: 4,
   },
   winnerAmount: {
-    fontSize: 15,
+    fontSize: 12.8,
     color: "#00ecbe",
   },
   leaderboardSection: {
@@ -2057,11 +2089,16 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   topThreeRank: {
-    marginTop: 45,
-    fontSize: 28,
-    lineHeight: 28,
-    fontWeight: "bold",
+    height: 40,
+    width: 50,
+    marginTop: 65,
+    textAlign: "center",
+    fontSize: 48,
+    lineHeight: 44,
+    fontFamily: "Poppins_Bold",
     color: "#fff",
+    zIndex: 9999,
+    // backgroundColor: "red",
   },
   topThreeUsername: {
     fontSize: 11,
@@ -2088,8 +2125,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   leaderboardRank: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 17,
+    fontWeight: "semibold",
     color: "#92A8E3",
     width: 30,
   },
@@ -2108,14 +2145,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   leaderboardUsername: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#fff",
   },
   leaderboardEmojis: {
-    fontSize: 14,
+    fontSize: 12,
   },
   leaderboardAmount: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "medium",
     color: "#00ecbe",
   },
@@ -2145,9 +2182,10 @@ const styles = StyleSheet.create({
     marginLeft: 70,
   },
   ageText: {
-    fontSize: 14,
-    fontWeight: "bold",
+    fontSize: 16,
+    // fontWeight: "bold",
     color: "#00ecbe",
+    fontFamily: "Poppins_Bold",
   },
   bulletPoints: {
     gap: 12,
@@ -2155,27 +2193,29 @@ const styles = StyleSheet.create({
   },
   bulletItem: {
     flexDirection: "row",
-    gap: 12,
+    gap: 4,
   },
   bulletIcon: {
-    fontSize: 12,
+    fontSize: 17,
     color: "#fff",
-    marginTop: 4,
+    marginTop: 0,
+    paddingTop: 0,
   },
   bulletText: {
     flex: 1,
-    fontSize: 14,
-    color: "#9BA1A6",
+    fontSize: 12.8,
+    color: "#6F80A4",
     lineHeight: 20,
-    fontFamily: "",
+    fontFamily: "Inter_Regular_Italic",
+    marginTop: 3,
   },
   responsibleGambling: {
-    fontSize: 14,
-    color: "#9BA1A6",
+    fontSize: 12.8,
+    color: "#ffffff",
     lineHeight: 20,
+    fontFamily: "Inter_Regular_Italic",
   },
   boldText: {
-    fontWeight: "bold",
     color: "#fff",
   },
   addToDesktopSection: {

@@ -1,14 +1,22 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { useMyDeposits } from "@/services/api/hooks/useDeposit";
 import type { DepositRecord } from "@/services/api/deposit";
+import { useMyDeposits } from "@/services/api/hooks/useDeposit";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 function statusColor(status: DepositRecord["status"]) {
-  if (status === "completed") return "#04D900"; // Bright Green from image
+  if (status === "completed") return "#17B15E"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
   return "#FFD700";
 }
@@ -22,19 +30,19 @@ function statusLabel(status: DepositRecord["status"]) {
 function formatDate(iso: string) {
   const date = new Date(iso);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 export default function DepositHistoryScreen() {
   const router = useRouter();
   const { data, isLoading, refetch, isRefetching } = useMyDeposits();
-  
+
   const [selectedFilter, setSelectedFilter] = useState<string>("All");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
   const [selectedDate, setSelectedDate] = useState<string>("Choose a date");
@@ -42,158 +50,221 @@ export default function DepositHistoryScreen() {
   const deposits = data?.deposits ?? [];
 
   const paymentMethods = [
-    { id: "All", label: "All", icon: "grid" },
-    { id: "ArUpi Pay", label: "ArUpi Pay", icon: "qr-code" },
-    { id: "Innate UPI-QR", label: "Innate UPI-QR", icon: "qr-code-outline" },
-    { id: "Paytm", label: "Paytm", icon: "wallet" },
+    {
+      id: "All",
+      label: "All",
+      icon: "grid",
+      image: require("@/assets/dh1.png"),
+    },
+    {
+      id: "ArUpi Pay",
+      label: "ArUpi Pay",
+      icon: "qr-code",
+      image: require("@/assets/dh3.png"),
+    },
+    {
+      id: "Innate UPI-QR",
+      label: "Innate UPI-QR",
+      icon: "qr-code-outline",
+      image: require("@/assets/dh2.png"),
+    },
+    {
+      id: "Paytm",
+      label: "Paytm",
+      icon: "wallet",
+      image: require("@/assets/dh1.png"),
+    },
   ];
 
   return (
     <>
-    <Stack.Screen options={{ headerShown: false }} />
-    <ThemedView style={styles.container}>
-      {/* Top Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
-        <View style={styles.placeholder} />
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            tintColor="#7AFEC3"
-          />
-        }
-      >
-        {/* Filter Tabs - Horizontal Scroll */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.filterTabsContainer} 
-          contentContainerStyle={styles.filterTabsContent}
-        >
-          {paymentMethods.map((method) => (
-            <TouchableOpacity
-              key={method.id}
-              style={[
-                styles.filterTab,
-                selectedFilter === method.id && styles.filterTabActive,
-              ]}
-              onPress={() => setSelectedFilter(method.id)}
-            >
-              <Ionicons
-                name={method.icon as any}
-                size={18}
-                color={selectedFilter === method.id ? "#000" : "#92A8E3"}
-              />
-              <ThemedText
-                style={[
-                  styles.filterTabText,
-                  selectedFilter === method.id && styles.filterTabTextActive,
-                ]}
-              >
-                {method.label}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Dropdowns */}
-        <View style={styles.filterRow}>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>{selectedStatus}</ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+      <Stack.Screen options={{ headerShown: false }} />
+      <ThemedView style={styles.container}>
+        {/* Top Bar */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.filterDropdown}>
-            <ThemedText style={styles.filterDropdownText}>{selectedDate}</ThemedText>
-            <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-          </TouchableOpacity>
+          <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
+          <View style={styles.placeholder} />
         </View>
 
-        {isLoading ? (
-          <View style={styles.centered}>
-            <ActivityIndicator color="#7AFEC3" size="large" />
-          </View>
-        ) : deposits.length === 0 ? (
-          <View style={styles.noDataContainer}>
-            <Ionicons name="document-text-outline" size={64} color="#1F4293" />
-            <ThemedText style={styles.noDataText}>No deposits yet</ThemedText>
-          </View>
-        ) : (
-          <View style={styles.list}>
-            {deposits.map((item) => (
-              <View key={item._id} style={styles.card}>
-                {/* Header */}
-                <View style={styles.cardHeader}>
-                  <View style={styles.depositBadge}>
-                    <ThemedText style={styles.depositBadgeText}>Deposit</ThemedText>
-                  </View>
-                  <ThemedText style={[styles.statusText, { color: statusColor(item.status) }]}>
-                    {statusLabel(item.status)}
-                  </ThemedText>
-                </View>
-                
-                {/* Divider */}
-                <View style={styles.divider} />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor="#7AFEC3"
+            />
+          }
+        >
+          {/* Filter Tabs - Horizontal Scroll */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.filterTabsContainer}
+            contentContainerStyle={styles.filterTabsContent}
+          >
+            {paymentMethods.map((method) => (
+              <TouchableOpacity
+                key={method.id}
+                style={[
+                  styles.filterTab,
+                  selectedFilter === method.id && styles.filterTabActive,
+                ]}
+                onPress={() => setSelectedFilter(method.id)}
+              >
+                <Image
+                  source={method.image}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    backgroundColor: "transparent",
+                  }}
+                  contentFit="cover"
+                />
+                <ThemedText
+                  style={[
+                    styles.filterTabText,
+                    selectedFilter === method.id && styles.filterTabTextActive,
+                  ]}
+                >
+                  {method.label}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
-                {/* Details */}
-                <View style={styles.detailsContainer}>
-                  <View style={styles.cardDetailsRow}>
-                    <ThemedText style={styles.detailLabel}>Balance</ThemedText>
-                    <ThemedText style={styles.balanceValue}>
-                      ₹{item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {/* Dropdowns */}
+          <View style={styles.filterRow}>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <ThemedText style={styles.filterDropdownText}>
+                {selectedStatus}
+              </ThemedText>
+              <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterDropdown}>
+              <ThemedText style={styles.filterDropdownText}>
+                {selectedDate}
+              </ThemedText>
+              <Ionicons name="chevron-down" size={18} color="#92A8E3" />
+            </TouchableOpacity>
+          </View>
+
+          {isLoading ? (
+            <View style={styles.centered}>
+              <ActivityIndicator color="#7AFEC3" size="large" />
+            </View>
+          ) : deposits.length === 0 ? (
+            <View style={styles.noDataContainer}>
+              <Ionicons
+                name="document-text-outline"
+                size={64}
+                color="#1F4293"
+              />
+              <ThemedText style={styles.noDataText}>No deposits yet</ThemedText>
+            </View>
+          ) : (
+            <View style={styles.list}>
+              {deposits.map((item) => (
+                <View key={item._id} style={styles.card}>
+                  {/* Header */}
+                  <View style={styles.cardHeader}>
+                    <View style={styles.depositBadge}>
+                      <ThemedText style={styles.depositBadgeText}>
+                        Deposit
+                      </ThemedText>
+                    </View>
+                    <ThemedText
+                      style={[
+                        styles.statusText,
+                        { color: statusColor(item.status) },
+                      ]}
+                    >
+                      {statusLabel(item.status)}
                     </ThemedText>
                   </View>
 
-                  {item.fee > 0 && (
+                  {/* Divider */}
+                  <View style={styles.divider} />
+
+                  {/* Details */}
+                  <View style={styles.detailsContainer}>
                     <View style={styles.cardDetailsRow}>
-                      <ThemedText style={styles.detailLabel}>Fee</ThemedText>
-                      <ThemedText style={styles.detailValue}>₹{item.fee}</ThemedText>
-                    </View>
-                  )}
-
-                  <View style={styles.cardDetailsRow}>
-                    <ThemedText style={styles.detailLabel}>Type</ThemedText>
-                    <ThemedText style={styles.detailValue}>UPay13USDT</ThemedText>
-                  </View>
-
-                  <View style={styles.cardDetailsRow}>
-                    <ThemedText style={styles.detailLabel}>Time</ThemedText>
-                    <View style={styles.timeValueContainer}>
-                      <ThemedText style={styles.detailValue}>{formatDate(item.createdAt)}</ThemedText>
-                    </View>
-                  </View>
-
-                  <View style={styles.cardDetailsRow}>
-                    <ThemedText style={styles.detailLabel}>Order number</ThemedText>
-                    <View style={styles.orderNumberContainer}>
-                      <ThemedText style={styles.detailValue} numberOfLines={1}>
-                        {item.merchantOrderNo || item._id}
+                      <ThemedText style={styles.detailLabel}>
+                        Balance
                       </ThemedText>
-                      <TouchableOpacity style={styles.copyIconContainer}>
-                        <Ionicons name="copy-outline" size={14} color="#92A8E3" />
-                      </TouchableOpacity>
+                      <ThemedText style={styles.balanceValue}>
+                        ₹
+                        {item.amount.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </ThemedText>
+                    </View>
+
+                    {item.fee > 0 && (
+                      <View style={styles.cardDetailsRow}>
+                        <ThemedText style={styles.detailLabel}>Fee</ThemedText>
+                        <ThemedText style={styles.detailValue}>
+                          ₹{item.fee}
+                        </ThemedText>
+                      </View>
+                    )}
+
+                    <View style={styles.cardDetailsRow}>
+                      <ThemedText style={styles.detailLabel}>Type</ThemedText>
+                      <ThemedText style={styles.detailValue}>
+                        UPay13USDT
+                      </ThemedText>
+                    </View>
+
+                    <View style={styles.cardDetailsRow}>
+                      <ThemedText style={styles.detailLabel}>Time</ThemedText>
+                      <View style={styles.timeValueContainer}>
+                        <ThemedText style={styles.detailValue}>
+                          {formatDate(item.createdAt)}
+                        </ThemedText>
+                      </View>
+                    </View>
+
+                    <View style={styles.cardDetailsRow}>
+                      <ThemedText style={styles.detailLabel}>
+                        Order number
+                      </ThemedText>
+                      <View style={styles.orderNumberContainer}>
+                        <ThemedText
+                          style={styles.detailValue}
+                          numberOfLines={1}
+                        >
+                          {item.merchantOrderNo || item._id}
+                        </ThemedText>
+                        <TouchableOpacity style={styles.copyIconContainer}>
+                          <Ionicons
+                            name="copy-outline"
+                            size={14}
+                            color="#92A8E3"
+                          />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
+              ))}
+
+              <View style={styles.footerContainer}>
+                <ThemedText style={styles.footerText}>No more</ThemedText>
               </View>
-            ))}
-            
-            <View style={styles.footerContainer}>
-              <ThemedText style={styles.footerText}>No more</ThemedText>
             </View>
-          </View>
-        )}
-      </ScrollView>
-    </ThemedView>
+          )}
+        </ScrollView>
+      </ThemedView>
     </>
   );
 }

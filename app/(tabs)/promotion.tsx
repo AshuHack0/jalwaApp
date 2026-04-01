@@ -23,22 +23,42 @@ export default function PromotionScreen() {
   };
 
   const agencyFeatures = [
-    { name: "Partner Reward", iconImage: require("@/assets/111.png") ,url:"/promotion/partner-reward"},
+    {
+      name: "Partner reward",
+      iconImage: require("@/assets/111.png"),
+      url: "/promotion/partner-reward",
+    },
     {
       name: "Copy invitation code",
       iconImage: require("@/assets/222.png"),
       hasCode: true,
-      url:"/promotion/agent-line"
+      url: "/promotion/agent-line",
     },
-    { name: "Subordinate data", iconImage: require("@/assets/333.png") ,url:"/promotion/subordinate-data"},
-    { name: "Commission detail", iconImage: require("@/assets/4444.png") ,url:"/promotion/commission-detail"},
-    { name: "Invitation rules", iconImage: require("@/assets/555.png") ,url:"/promotion/invitation-rules"},
+    {
+      name: "Subordinate data",
+      iconImage: require("@/assets/333.png"),
+      url: "/promotion/subordinate-data",
+    },
+    {
+      name: "Commission detail",
+      iconImage: require("@/assets/4444.png"),
+      url: "/promotion/commission-detail",
+    },
+    {
+      name: "Invitation rules",
+      iconImage: require("@/assets/555.png"),
+      url: "/promotion/invitation-rules",
+    },
     {
       name: "Agent line customer service",
       iconImage: require("@/assets/666.png"),
-      url: "/promotion/agent-line"
+      url: "/promotion/agent-line",
     },
-    { name: "Rebate ratio", iconImage: require("@/assets/777.png") ,url:"/promotion/rebate-ratio"},
+    {
+      name: "Rebate ratio",
+      iconImage: require("@/assets/777.png"),
+      url: "/promotion/rebate-ratio",
+    },
   ];
 
   return (
@@ -52,9 +72,9 @@ export default function PromotionScreen() {
         {/* Header */}
         <View style={styles.header}>
           <ThemedText style={styles.headerTitle}>Agency</ThemedText>
-          <View style={styles.headerRightCorner} >
+          <View style={styles.headerRightCorner}>
             <TouchableOpacity
-            onPress={() => router.push("/promotion/new-subordinate")}
+              onPress={() => router.push("/promotion/new-subordinate")}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Image
@@ -209,7 +229,11 @@ export default function PromotionScreen() {
         {/* Agency Features List */}
         <View style={styles.featuresSection}>
           {agencyFeatures.map((feature, index) => (
-            <TouchableOpacity key={index} style={styles.featureItem} onPress={() => router.push(feature?.url as any)}>
+            <TouchableOpacity
+              key={index}
+              style={styles.featureItem}
+              onPress={() => router.push(feature?.url as any)}
+            >
               <View style={styles.featureLeft}>
                 <View style={styles.featureIconContainer}>
                   <Image
@@ -239,7 +263,7 @@ export default function PromotionScreen() {
               </View>
 
               {!feature.hasCode ? (
-                <Ionicons name="chevron-forward" size={20} color="#ffffff" />
+                <Ionicons name="chevron-forward" size={30} color="#ffffff" />
               ) : null}
             </TouchableOpacity>
           ))}
@@ -274,7 +298,13 @@ export default function PromotionScreen() {
                   This Week
                 </ThemedText>
               </View>
-              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
+              <View
+                style={{
+                  borderLeftWidth: 0.4,
+                  borderLeftColor: "#92a8e3",
+                  height: "100%",
+                }}
+              />
 
               <View style={styles.promotionDataItem}>
                 <ThemedText style={styles.promotionDataValue}>0</ThemedText>
@@ -299,8 +329,14 @@ export default function PromotionScreen() {
                 </ThemedText>
               </View>
 
-              <View style={{borderLeftWidth: 0.4, borderLeftColor: '#92a8e3', height: "100%"}} />
-              
+              <View
+                style={{
+                  borderLeftWidth: 0.4,
+                  borderLeftColor: "#92a8e3",
+                  height: "100%",
+                }}
+              />
+
               <View style={styles.promotionDataItem}>
                 <ThemedText style={styles.promotionDataValue}>0</ThemedText>
                 <ThemedText style={styles.promotionDataLabel}>
@@ -356,12 +392,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerRightPersonIcon: {
-    width: 15,
-    height: 18,
+    width: 25,
+    height: 28,
   },
   header111Icon: {
-    width: 25,
-    height: 25,
+    width: 35,
+    height: 35,
   },
   headerFilterIcon: {
     width: 28,
@@ -387,10 +423,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   commissionLabelText: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 18,
     color: "#00ECBE",
-    fontWeight: "500",
+    fontWeight: "400",
   },
   upgradeText: {
     fontSize: 12,
@@ -453,8 +489,8 @@ const styles = StyleSheet.create({
     lineHeight: 12,
   },
   header888Icon: {
-    width: 25,
-    height: 25,
+    width: 35,
+    height: 35,
   },
   statisticsList: {
     gap: 12,
@@ -582,16 +618,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   promotionDataValue: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
+    fontStyle: "italic",
   },
   promotionDataLabel: {
-    fontSize: 13,
-    color: "#92a8e3",
+    fontSize: 14,
+    color: "#92A8E3",
     textAlign: "center",
     fontWeight: "500",
     lineHeight: 14,
+    fontStyle: "italic",
   },
   contentContainer: {
     flex: 1,

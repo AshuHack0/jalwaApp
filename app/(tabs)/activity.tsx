@@ -1,5 +1,10 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import {
+  EBGaramond_400Regular,
+  EBGaramond_700Bold,
+  useFonts,
+} from "@expo-google-fonts/eb-garamond";
 import { Image } from "expo-image";
 import { type Href, useRouter } from "expo-router";
 import { useState } from "react";
@@ -12,6 +17,12 @@ import {
 } from "react-native";
 
 export default function ActivityScreen() {
+  // Load the fonts
+  let [fontsLoaded] = useFonts({
+    SerifRegular: EBGaramond_400Regular,
+    SerifBold: EBGaramond_700Bold,
+  });
+
   const [todayBonus] = useState("₹0.00");
   const [totalBonus] = useState("₹0.00");
   const router = useRouter();
@@ -143,7 +154,9 @@ export default function ActivityScreen() {
             </View>
           </View>
           <TouchableOpacity style={styles.bonusDetailsButton}>
-            <ThemedText style={styles.bonusDetailsText}>
+            <ThemedText
+              style={[styles.bonusDetailsText, { fontFamily: "SerifRegular" }]}
+            >
               Bonus details
             </ThemedText>
           </TouchableOpacity>
@@ -298,6 +311,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
+    fontFamily: "sans-serif",
   },
   bonusDetailsButton: {
     paddingHorizontal: 24,
@@ -310,9 +324,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   bonusDetailsText: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "600",
+    paddingHorizontal: 12,
     color: "#00ecbe",
+    fontFamily: "sans-serif",
+    // backgroundColor: "red",
+    textAlign: "auto",
   },
   categoriesGrid: {
     flexDirection: "row",
@@ -370,23 +388,25 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   cardTextContainer: {
-    height: 100,
+    height: 90,
     gap: 3,
     backgroundColor: "#011341",
     paddingVertical: 3,
     paddingHorizontal: 16,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#E3EFFF",
     lineHeight: 18,
+    fontFamily: "sans-serif",
   },
   cardDescription: {
     fontSize: 12,
-    lineHeight: 18,
+    lineHeight: 13,
     color: "#92A8E3",
     opacity: 0.9,
+    marginTop: 12,
   },
   bannersSection: {
     paddingHorizontal: 16,
