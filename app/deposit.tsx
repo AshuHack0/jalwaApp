@@ -511,6 +511,7 @@ export default function DepositScreen() {
           network: selectedNetwork,
         });
         if (res.success && res.data) {
+          await Linking.openURL(res.data.address);
           router.push({
             pathname: "/deposit/usdt-status/[merchantOrderNo]" as any,
             params: { merchantOrderNo: res.data.merchantOrderNo },
@@ -520,16 +521,18 @@ export default function DepositScreen() {
         }
         return;
       }
-      const res =
-        selectedMethod === "PAYTM" || selectedMethod === "Expert UPI-QR"
-          ? await initiateOxoxmgDeposit(num)
-          : await initiateDeposit(num);
+      const isOxoxmg = selectedMethod === "PAYTM" || selectedMethod === "Expert UPI-QR";
+      const res = isOxoxmg
+        ? await initiateOxoxmgDeposit(num)
+        : await initiateDeposit(num);
       if (res.success && res.data?.payUrl) {
         await Linking.openURL(res.data.payUrl);
         router.push({
-          pathname: "/deposit/status/[merchantOrderNo]" as any,
+          pathname: isOxoxmg
+            ? "/deposit/oxoxmg-status/[merchantOrderNo]"
+            : "/deposit/status/[merchantOrderNo]",
           params: { merchantOrderNo: res.data.merchantOrderNo },
-        });
+        } as any);
       } else {
         Alert.alert("Deposit failed", res.message ?? "Please try again.");
       }

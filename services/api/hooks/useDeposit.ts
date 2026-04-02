@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { initiateDeposit, getMyDeposits, getDepositStatus } from "@/services/api/deposit";
 import { initiateUsdtDeposit, getUsdtDepositStatus, type UsdtNetwork } from "@/services/api/usdtDeposit";
+import { getOxoxmgDepositStatus } from "@/services/api/oxoxmgDeposit";
 import { authKeys } from "./useAuth";
 import { promotionKeys } from "./useFirstDepositBonus";
 
@@ -73,6 +74,25 @@ export function useInitiateUsdtDeposit() {
         queryClient.invalidateQueries({ queryKey: authKeys.all });
         queryClient.invalidateQueries({ queryKey: promotionKeys.firstDepositBonus() });
       }
+    },
+  });
+}
+
+/** Poll an Oxoxmg deposit's status */
+export function useOxoxmgDepositStatus(merchantOrderNo: string | null) {
+  return useQuery({
+    queryKey: depositKeys.status(`oxoxmg-${merchantOrderNo ?? ""}`),
+    queryFn: async () => {
+      if (!merchantOrderNo) return null;
+      const res = await getOxoxmgDepositStatus(merchantOrderNo);
+      if (!res.success || !res.data) return null;
+      return res.data;
+    },
+    enabled: !!merchantOrderNo,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (!data) return false;
+      return data.status === "pending" ? 5000 : false;
     },
   });
 }
