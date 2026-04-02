@@ -1,15 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -46,15 +42,11 @@ export function DepositMethodTabs({
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   return (
     <View style={styles.methodsSection}>
@@ -94,7 +86,7 @@ export function DepositMethodTabs({
                         top: 14,
                         left: 10,
                         color: "white",
-                        fontSize: 11,
+                        fontSize: 9,
                         fontWeight: 500,
                       }}
                     >
@@ -126,7 +118,7 @@ export function DepositMethodTabs({
                         top: 14,
                         left: 10,
                         color: "white",
-                        fontSize: 11,
+                        fontSize: 9,
                         fontWeight: 500,
                       }}
                     >
@@ -180,15 +172,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   methodIconText: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#7AFEC3",
     fontWeight: "700",
     textAlign: "center",
   },
   methodIconTextActive: { color: "#05012B" },
   methodLabel: {
-    fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10.8,
+    fontFamily: "Inter_Regular",
     color: "#92a8b0",
     textAlign: "center",
     width: "100%",
@@ -198,8 +190,8 @@ const styles = StyleSheet.create({
   },
   methodLabelActive: {
     color: "#05012B",
-    fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10.8,
+    fontFamily: "Inter_Regular",
   },
   bonusBadge: {
     position: "absolute",

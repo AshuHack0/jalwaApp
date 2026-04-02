@@ -61,13 +61,13 @@ const styles = StyleSheet.create({
   },
   bottomBarLeft: { flex: 1 },
   rechargeMethodLabel: {
-    fontSize: 12.8,
+    fontSize: 10.8,
     color: "#ffffff",
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
   },
   rechargeMethodValue: {
-    fontSize: 13.8,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 11.8,
+    fontFamily: "Inter_SemiBold",
     color: "#fff",
     marginTop: 2,
   },
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
   },
   depositButtonDisabled: { backgroundColor: "#3A4A6B" },
   depositButtonText: {
-    fontSize: 16,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 14,
+    fontFamily: "Inter_Regular",
     color: "#05012B",
   },
 });

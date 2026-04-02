@@ -55,12 +55,12 @@ export default function ActivityScreen() {
   ];
 
   const promotionalBanners = [
-    {
-      id: 1,
-      title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
-    },
+   // {
+    //   id: 1,
+    //   title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
+    //   icon: "airplane" as const,
+    //   bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
+    // },
     {
       id: 2,
       title: "CHICKEN ROAD 2",
@@ -237,7 +237,7 @@ export default function ActivityScreen() {
                 <Image
                   source={banner.bannerImage}
                   style={StyleSheet.absoluteFillObject}
-                  contentFit="cover"
+                  contentFit="contain"
                   contentPosition="top"
                 />
               </View>
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   },
   giftsCardImage: {
     width: "100%",
-    height: 120,
+    height: 100,
   },
   giftsCard: {
     backgroundColor: "#EF4444",
@@ -389,20 +389,20 @@ const styles = StyleSheet.create({
   },
   cardTextContainer: {
     height: 90,
-    gap: 3,
+    gap: 1,
     backgroundColor: "#011341",
     paddingVertical: 3,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
   cardTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "bold",
     color: "#E3EFFF",
     lineHeight: 18,
     fontFamily: "sans-serif",
   },
   cardDescription: {
-    fontSize: 12,
+    fontSize: 10,
     lineHeight: 13,
     color: "#92A8E3",
     opacity: 0.9,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   bannerImagePlaceholder: {
-    height: 150,
+    height: 120,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     position: "relative",
     // width to be full and stretch to the width of the container
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "#e3efff",
   },

@@ -1,15 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -30,15 +26,11 @@ export function ArPayTab() {
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   const handleActivate = () => Alert.alert("Error", ACTIVATE_ERROR);
 
@@ -191,8 +183,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 15,
+    fontFamily: "Inter_SemiBold",
     color: "#fff",
   },
   arRulesRow: {
@@ -206,13 +198,13 @@ const styles = StyleSheet.create({
   },
   arRulesText: {
     flex: 1,
-    fontSize: 12,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10,
+    fontFamily: "Inter_Regular",
     color: "#fff",
   },
   arRulesCheck: {
-    fontSize: 12,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10,
+    fontFamily: "Inter_Regular",
     color: "white",
     marginRight: -10,
   },
@@ -226,14 +218,14 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   arNotActivatedIcon: {
-    fontSize: 22,
+    fontSize: 20,
     color: "#F5A623",
     fontWeight: "bold",
   },
   arNotActivatedText: {
     flex: 1,
-    fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10.8,
+    fontFamily: "Inter_Regular",
     color: "#fff",
     lineHeight: 16,
   },
@@ -243,8 +235,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   arActivateBtnText: {
-    fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10.8,
+    fontFamily: "Inter_Regular",
     color: "#05012B",
   },
   arInfoCard: {
@@ -253,8 +245,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   arInfoText: {
-    fontSize: 14.9,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 12.9,
+    fontFamily: "Inter_Regular",
     color: "#fff",
     lineHeight: 22,
     marginBottom: 14,
@@ -265,13 +257,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   arHowToText: {
-    fontSize: 14,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 12,
+    fontFamily: "Inter_Regular",
     color: "#fff",
   },
   arFeaturesTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 15,
+    fontFamily: "Inter_SemiBold",
     color: "#fff",
     marginBottom: 14,
   },

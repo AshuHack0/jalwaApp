@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 15,
+    fontFamily: "Inter_SemiBold",
     color: "#E3EFFF",
   },
   instructionsBox: {
@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
   },
   instructionText: {
     flex: 1,
-    fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 10.8,
+    fontFamily: "Inter_Regular",
     color: "#92A8E3",
     lineHeight: 20,
   },

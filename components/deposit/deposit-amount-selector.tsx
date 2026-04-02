@@ -1,15 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -54,15 +50,11 @@ export function DepositAmountSelector({
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   return (
     <View style={styles.section}>
@@ -119,7 +111,7 @@ export function DepositAmountSelector({
                       <ThemedText
                         style={[
                           styles.amountRupee,
-                          { color: "white", fontSize: 22.4 },
+                          { color: "white", fontSize: 20.4 },
                         ]}
                       >
                         ₹
@@ -137,7 +129,7 @@ export function DepositAmountSelector({
                           styles.amountValue,
                           {
                             color: "#000",
-                            fontFamily: "Inter_SemiBold_Italic",
+                            fontFamily: "Inter_SemiBold",
                           },
                         ]}
                       >
@@ -247,8 +239,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   sectionTitle: {
-    fontSize: 19.2,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 17.2,
+    fontFamily: "Inter_SemiBold",
     color: "#E3EFFF",
   },
   depositAmountInner: {
@@ -287,14 +279,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   amountRupee: {
-    fontSize: 17,
+    fontSize: 15,
     color: "#6f80a4",
-    fontFamily: "Inter_SemiBold_Italic",
+    fontFamily: "Inter_SemiBold",
   },
   amountValue: {
-    fontSize: 17,
+    fontSize: 15,
     color: "#7AFEC3",
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
   },
   usdtAmountIcon: {
     width: 20,
@@ -305,7 +297,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   usdtAmountIconText: {
-    fontSize: 11,
+    fontSize: 9,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -324,16 +316,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#92A8E3",
   },
   currencySymbol: {
-    fontSize: 18,
+    fontSize: 16,
     width: 28,
     textAlign: "center",
     fontWeight: "700",
     color: "#7AFEC3",
-    fontFamily: "Inter_SemiBold_Italic",
+    fontFamily: "Inter_SemiBold",
   },
   amountInput: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "bold",
     color: "#00ECBE",
   },
@@ -346,12 +338,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   usdtInputIconText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "bold",
     color: "#fff",
   },
   rateLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#7AFEC3",
     marginTop: 8,
     marginBottom: 2,

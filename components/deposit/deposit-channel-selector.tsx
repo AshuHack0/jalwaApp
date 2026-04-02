@@ -2,15 +2,11 @@ import { ThemedText } from "@/components/themed-text";
 import type { UsdtNetwork } from "@/services/api/usdtDeposit";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -46,15 +42,11 @@ export function DepositChannelSelector({
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   return (
     <View style={styles.section}>
@@ -172,8 +164,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 15,
+    fontFamily: "Inter_Regular",
     color: "#E3EFFF",
   },
   channelGrid: {
@@ -189,14 +181,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   channelLabel: {
-    fontSize: 14.9,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 11.9,
+    fontFamily: "Inter_Regular",
     color: "#92a8e3",
   },
   channelLabelActive: { color: "#05012B" },
   channelBalance: {
-    fontSize: 14.9,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 11.9,
+    fontFamily: "Inter_Regular",
     color: "#92A8E3",
   },
   channelBalanceActive: { color: "#05012B" },

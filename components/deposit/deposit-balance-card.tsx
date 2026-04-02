@@ -1,15 +1,11 @@
 import { ThemedText } from "@/components/themed-text";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -32,15 +28,11 @@ export function DepositBalanceCard({ walletBalance, onRefresh }: Props) {
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   return (
     <View style={{ flex: 1, paddingHorizontal: 16 }}>
@@ -50,6 +42,7 @@ export function DepositBalanceCard({ walletBalance, onRefresh }: Props) {
           source={{
             uri: "https://www.jalwagame.win/assets/png/TotalAssetsBg-ad5afbbb.webp",
           }}
+          contentFit="fill"
         />
         <View style={{ padding: 14 }}>
           <View style={styles.balanceHeader}>
@@ -109,15 +102,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-  walletEmoji: { fontSize: 18 },
+  walletEmoji: { fontSize: 16 },
   balanceLabel: {
-    fontSize: 13.8,
+    fontSize: 11.8,
     color: "black",
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
   },
   balanceAmount: {
-    fontSize: 25.6,
-    fontFamily: "Inter_Bold_Italic",
+    fontSize: 23.6,
+    fontFamily: "Inter_SemiBold",
     color: "black",
     marginBottom: 20,
   },
@@ -127,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   cardNumber: {
-    fontSize: 16,
+    fontSize: 14,
     color: "rgba(255,255,255,0.7)",
     letterSpacing: 4,
   },

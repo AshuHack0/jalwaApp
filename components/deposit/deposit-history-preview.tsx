@@ -277,8 +277,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontFamily: "Inter_SemiBold_Italic",
+    fontSize: 15,
+    fontFamily: "Inter_SemiBold",
     color: "#E3EFFF",
   },
   emptyState: {
@@ -290,9 +290,9 @@ const styles = StyleSheet.create({
     height: 120,
   },
   emptyText: {
-    fontSize: 13.8,
+    fontSize: 11.8,
     color: "#92A8E3",
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
     marginTop: 8,
   },
 });

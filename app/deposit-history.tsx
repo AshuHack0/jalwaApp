@@ -349,10 +349,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 1,
+    paddingVertical: 1,
     borderRadius: 8,
-    backgroundColor: "#011341", // Default tab background
+    backgroundColor: "rgba(255,255,255,0.05)", // Default tab background
   },
   filterTabActive: {
     backgroundColor: "#7AFEC3", // Green active tab

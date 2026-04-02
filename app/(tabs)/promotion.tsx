@@ -263,7 +263,7 @@ export default function PromotionScreen() {
               </View>
 
               {!feature.hasCode ? (
-                <Ionicons name="chevron-forward" size={30} color="#ffffff" />
+                <Ionicons name="chevron-forward" size={20} color="#ffffff" />
               ) : null}
             </TouchableOpacity>
           ))}
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   commissionLabelText: {
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 18,
     color: "#00ECBE",
     fontWeight: "400",
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2C5ECA",
   },
   subordinateTitle: {
-    fontSize: 14,
+    fontSize: 12,
     // fontWeight: "600",
     color: "#fff",
     lineHeight: 12,
@@ -494,14 +494,14 @@ const styles = StyleSheet.create({
   },
   statisticsList: {
     gap: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingBottom: 16,
   },
   statisticItem: {
     flex: 1,
     flexDirection: "column-reverse",
     alignItems: "center",
-    gap: 2,
+    gap: 0,
   },
   statisticLabel: {
     fontSize: 12,
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   featureLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 6,
     flex: 1,
   },
   featureIconContainer: {
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   featureLabel: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#fff",
     flex: 1,
   },

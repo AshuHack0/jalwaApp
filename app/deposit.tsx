@@ -17,15 +17,11 @@ import { initiateOxoxmgDeposit } from "@/services/api/oxoxmgDeposit";
 import type { UsdtNetwork } from "@/services/api/usdtDeposit";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_600SemiBold_Italic,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -402,15 +398,11 @@ export default function DepositScreen() {
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_SemiBold_Italic: Inter_600SemiBold_Italic,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   const router = useRouter();
   const { amount: amountParam } = useLocalSearchParams<{ amount?: string }>();
@@ -672,16 +664,16 @@ const styles = StyleSheet.create({
   },
   backButton: { padding: 4 },
   screenTitle: {
-    fontSize: 19.2,
-    fontFamily: "Inter_Regular_Italic",
+    fontSize: 17.2,
+    fontFamily: "Inter_Regular",
     color: "#fff",
     textAlign: "center",
     marginLeft: 70,
   },
   historyButton: { padding: 4 },
   historyButtonText: {
-    fontFamily: "Inter_Regular_Italic",
-    fontSize: 13.8,
+    fontFamily: "Inter_Regular",
+    fontSize: 11.8,
     color: "white",
   },
 });

@@ -117,22 +117,18 @@ export default function HomeScreen() {
   }, [carouselImages.length, carouselWidth]);
 
   useEffect(() => {
-    if (showGameErrorModal) {
-      if (isAuthenticated) {
-        gameErrorPlayer.seekTo(0);
-        gameErrorPlayer.play();
-      }
-      setShowGameErrorModal(false);
-      router.push("/wingo");
-    }
-  }, [showGameErrorModal, gameErrorPlayer, router, isAuthenticated]);
-
-  useEffect(() => {
     setAudioModeAsync({
       playsInSilentMode: true,
       shouldPlayInBackground: false,
     });
   }, []);
+
+  useEffect(() => {
+    if (showGameErrorModal && isAuthenticated) {
+      gameErrorPlayer.seekTo(0);
+      gameErrorPlayer.play();
+    }
+  }, [showGameErrorModal, isAuthenticated, gameErrorPlayer]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -895,21 +891,23 @@ export default function HomeScreen() {
                   const isLottery = selectedCategory === "Lottery";
                   const cardHeight = isLottery ? 100 : 140;
                   return (
-                    <View
-                      style={[
-                        styles.lotteryGamesGrid,
-                        { gap: categoryGridGap },
-                      ]}
-                    >
-                      {games.map((game) => (
+                    <View style={[styles.lotteryGamesGrid, { gap: 0 }]}>
+                      {games.map((game, index) => {
+                        const isLastInRow = isLottery
+                          ? index % 2 === 1
+                          : index % 3 === 2;
+                        return (
                         <TouchableOpacity
                           key={game.name}
                           style={[
                             styles.categoryGameCardBase,
                             {
-                              width: isLottery ? "47.5%" : "31%",
-                              minWidth: "31%",
+                              width: isLottery
+                                ? categoryCardWidth2
+                                : categoryCardWidth3,
                               height: cardHeight,
+                              marginRight: isLastInRow ? 0 : categoryGridGap,
+                              marginBottom: categoryGridGap,
                             },
                           ]}
                           onPress={() => {
@@ -926,7 +924,8 @@ export default function HomeScreen() {
                             contentFit="cover"
                           />
                         </TouchableOpacity>
-                      ))}
+                        );
+                      })}
                     </View>
                   );
                 })()}
@@ -1355,24 +1354,33 @@ export default function HomeScreen() {
             onPress={(e) => e.stopPropagation()}
             style={styles.gameErrorPopup}
           >
-            <View style={styles.gameErrorIconRow}>
-              <View style={styles.gameErrorRedCircle}>
-                <Ionicons name="alert-circle" size={20} color="#fff" />
-              </View>
-              <View style={styles.gameErrorYellowTriangle}>
-                <Ionicons name="warning" size={32} color="#000" />
-              </View>
-            </View>
-            <ThemedText style={styles.gameErrorTitle}>Game Error</ThemedText>
+            <ThemedText style={styles.gameErrorTitle}>Tips</ThemedText>
             <ThemedText style={styles.gameErrorMessage}>
-              The Hack Only supports Lottery Games.
+              Minimum recharge ₹100.00 to enter
             </ThemedText>
-            <TouchableOpacity
-              style={styles.gameErrorButton}
-              onPress={() => setShowGameErrorModal(false)}
-            >
-              <ThemedText style={styles.gameErrorButtonText}>OK</ThemedText>
-            </TouchableOpacity>
+            <View style={styles.gameErrorSeparator} />
+            <View style={styles.gameErrorButtonRow}>
+              <TouchableOpacity
+                style={styles.gameErrorButton}
+                onPress={() => setShowGameErrorModal(false)}
+              >
+                <ThemedText style={styles.gameErrorButtonTextCancel}>
+                  Cancel
+                </ThemedText>
+              </TouchableOpacity>
+              <View style={styles.gameErrorButtonDivider} />
+              <TouchableOpacity
+                style={styles.gameErrorButton}
+                onPress={() => {
+                  setShowGameErrorModal(false);
+                  openDepositModal();
+                }}
+              >
+                <ThemedText style={styles.gameErrorButtonTextConfirm}>
+                  Confirm
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
@@ -1666,7 +1674,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   yellowDot: {
     width: 8,
@@ -2260,57 +2268,53 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   gameErrorPopup: {
-    backgroundColor: "#0f1635",
-    borderRadius: 16,
-    padding: 24,
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    paddingTop: 18,
     alignItems: "center",
     width: "100%",
     maxWidth: 320,
-    borderWidth: 2,
-    borderColor: "#E91E63",
-  },
-  gameErrorIconRow: {
-    alignItems: "center",
-    marginBottom: 16,
-    gap: 12,
-  },
-  gameErrorRedCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#EF4444",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gameErrorYellowTriangle: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    backgroundColor: "#FBBF24",
-    alignItems: "center",
-    justifyContent: "center",
   },
   gameErrorTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#EF4444",
-    marginBottom: 8,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 10,
   },
   gameErrorMessage: {
-    fontSize: 14,
-    color: "#fff",
+    fontSize: 18,
+    color: "#6B7280",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 18,
+    paddingHorizontal: 18,
+  },
+  gameErrorSeparator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+    alignSelf: "stretch",
+  },
+  gameErrorButtonRow: {
+    flexDirection: "row",
+    alignSelf: "stretch",
+    height: 50,
   },
   gameErrorButton: {
-    backgroundColor: "#14B8A6",
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 12,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  gameErrorButtonText: {
-    color: "#05012B",
-    fontSize: 16,
-    fontWeight: "600",
+  gameErrorButtonDivider: {
+    width: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+  },
+  gameErrorButtonTextCancel: {
+    color: "#111827",
+    fontSize: 22,
+    fontWeight: "500",
+  },
+  gameErrorButtonTextConfirm: {
+    color: "#3B82F6",
+    fontSize: 22,
+    fontWeight: "500",
   },
 });

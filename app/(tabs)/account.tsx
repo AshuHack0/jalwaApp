@@ -117,7 +117,7 @@ export default function AccountScreen() {
               <View style={[styles.quickActionIcon, styles.walletIcon]}>
                 <Image
                   source={require("@/assets/gfg4.png")}
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "80%", height: "80%" }}
                   contentFit="contain"
                 />
               </View>
@@ -130,7 +130,7 @@ export default function AccountScreen() {
               <View style={[styles.quickActionIcon, styles.depositIcon]}>
                 <Image
                   source={require("@/assets/gfg3.png")}
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "80%", height: "80%" }}
                   contentFit="contain"
                 />
               </View>
@@ -143,7 +143,7 @@ export default function AccountScreen() {
               <View style={[styles.quickActionIcon, styles.withdrawIcon]}>
                 <Image
                   source={require("@/assets/gfg2.png")}
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "80%", height: "80%" }}
                   contentFit="contain"
                 />
               </View>
@@ -153,7 +153,7 @@ export default function AccountScreen() {
               <View style={[styles.quickActionIcon, styles.vipIcon]}>
                 <Image
                   source={require("@/assets/gfg1.png")}
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "80%", height: "80%" }}
                   contentFit="contain"
                 />
               </View>
@@ -171,7 +171,7 @@ export default function AccountScreen() {
               <View style={styles.historyIconContainer}>
                 <Image
                   source={require("@/assets/ugi4.png")}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 35, height: 35 }}
                   contentFit="contain"
                 />
               </View>
@@ -191,7 +191,7 @@ export default function AccountScreen() {
               <View style={styles.historyIconContainer}>
                 <Image
                   source={require("@/assets/ugi1.png")}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 35, height: 35 }}
                   contentFit="contain"
                 />
               </View>
@@ -211,7 +211,7 @@ export default function AccountScreen() {
               <View style={styles.historyIconContainer}>
                 <Image
                   source={require("@/assets/ugi3.png")}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 35, height: 35 }}
                   contentFit="contain"
                 />
               </View>
@@ -230,7 +230,7 @@ export default function AccountScreen() {
               <View style={styles.historyIconContainer}>
                 <Image
                   source={require("@/assets/ugi2.png")}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 35, height: 35 }}
                   contentFit="contain"
                 />
               </View>
@@ -256,7 +256,7 @@ export default function AccountScreen() {
               >
                 <Image
                   source={require("@/assets/ss.png")}
-                  style={{ width: "90%", height: "90%" }}
+                  style={{ width: "80%", height: "80%" }}
                   contentFit="contain"
                 />
               </View>
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   username: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   vipText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "600",
     color: "#fff",
   },
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   uidLabel: {
-    fontSize: 11.7,
+    fontSize: 9.7,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     paddingRight: 8,
@@ -539,13 +539,13 @@ const styles = StyleSheet.create({
     borderRightColor: "#fff",
   },
   uidValue: {
-    fontSize: 11.7,
+    fontSize: 9.7,
     color: "#fff",
     fontFamily: "Roboto_400Regular",
     letterSpacing: -1,
   },
   lastLogin: {
-    fontSize: 11.7,
+    fontSize: 9.7,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -567,12 +567,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   balanceTitle: {
-    fontSize: 14.9,
+    fontSize: 12.9,
     fontFamily: "Roboto_400Regular",
     color: "#92A8E3",
   },
   balanceAmount: {
-    fontSize: 19.2,
+    fontSize: 17.2,
     fontFamily: "Roboto_700Bold",
     color: "#fff",
   },
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
   quickActionButton: {
     flex: 1,
     alignItems: "center",
-    gap: 4,
+    gap: 0,
   },
   quickActionIcon: {
     width: 35,
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#10B981',
   },
   quickActionLabel: {
-    fontSize: 14.9,
+    fontSize: 12.9,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#011341",
     borderRadius: 9,
     padding: 10,
-    gap: 12,
+    gap: 10,
     flex: 1,
     flexDirection: "row",
   },
@@ -652,18 +652,24 @@ const styles = StyleSheet.create({
   historyContent: {
     flex: 1,
     flexDirection: "column",
+    gap: 0,
   },
   historyTitle: {
-    fontSize: 14.9,
+    fontSize: 12.9,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
+    lineHeight: 13,
+    marginBottom: 1,
+    includeFontPadding: false,
   },
   historySubtitle: {
-    fontSize: 12.8,
+    fontSize: 10.8,
     fontFamily: "Roboto_400Regular",
-    lineHeight: 14,
+    lineHeight: 11,
     color: "#92A8E3",
     flexShrink: 1,
+    marginTop: 0,
+    includeFontPadding: false,
   },
   settingsSection: {
     backgroundColor: "#011341",
@@ -707,7 +713,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   settingLabel: {
-    fontSize: 14.9,
+    fontSize: 12.9,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     flex: 1,
@@ -718,7 +724,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   languageValue: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#fff",
   },
   badge: {
@@ -731,7 +737,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "500",
     color: "#fff",
     textAlign: "center",
@@ -746,7 +752,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     marginBottom: 16,
@@ -772,7 +778,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   serviceLabel: {
-    fontSize: 12.8,
+    fontSize: 10.8,
     color: "#92A8E3",
     textAlign: "center",
     lineHeight: 14,
@@ -791,7 +797,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "400",
     color: "#00ECBE",
   },

@@ -4,14 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
   Inter_400Regular,
-  Inter_400Regular_Italic,
   Inter_600SemiBold,
-  Inter_700Bold_Italic,
   useFonts as useInter,
 } from "@expo-google-fonts/inter";
 import {
   Roboto_400Regular,
-  Roboto_400Regular_Italic,
   Roboto_700Bold,
   useFonts,
 } from "@expo-google-fonts/roboto";
@@ -33,14 +30,11 @@ export default function WalletScreen() {
   });
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
   const [interLoaded] = useInter({
     Inter_Regular: Inter_400Regular,
     Inter_SemiBold: Inter_600SemiBold,
-    Inter_Bold_Italic: Inter_700Bold_Italic,
-    Inter_Regular_Italic: Inter_400Regular_Italic,
   });
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
@@ -221,12 +215,19 @@ export default function WalletScreen() {
             <ThemedText style={styles.gameBalanceLabel}>ARGame</ThemedText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.gameBalanceCard}>
-            <ThemedText style={styles.gameBalanceAmount}>0.00</ThemedText>
-            <View style={styles.lotteryContent}>
-              <ThemedText style={styles.gameBalanceLabel}>Lottery</ThemedText>
-            </View>
-          </TouchableOpacity>
+          <LinearGradient
+            colors={["#7AFEC3", "#02AFB6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.lotteryGradientCard}
+          >
+            <TouchableOpacity style={styles.lotteryGradientCardContent}>
+              <ThemedText style={styles.lotteryGradientAmount}>0.00</ThemedText>
+              <View style={styles.lotteryContent}>
+                <ThemedText style={styles.lotteryGradientLabel}>Lottery</ThemedText>
+              </View>
+            </TouchableOpacity>
+          </LinearGradient>
           <TouchableOpacity
             style={[styles.gameBalanceCard, { opacity: 0 }]}
           ></TouchableOpacity>
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 12.8,
     color: "#fff",
     marginBottom: 4,
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
   },
   balanceDetails: {
     flexDirection: "row",
@@ -353,14 +354,14 @@ const styles = StyleSheet.create({
   },
   walletAmount: {
     fontSize: 16,
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
     color: "#fff",
     marginBottom: 0,
   },
   walletTypeLabel: {
     color: "#fff",
     fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
   },
   transferButton: {
     borderRadius: 12,
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
   transactionLabel: {
     color: "#92A8E3",
     fontSize: 12.8,
-    fontFamily: "Inter_Regular_Italic",
+    fontFamily: "Inter_Regular",
     textAlign: "center",
     lineHeight: 18,
     marginTop: 4,
@@ -451,17 +452,46 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: "center",
   },
+  gameBalanceCards: {
+    flex: 1,
+    backgroundColor: "#011341",
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+  },
+  lotteryGradientCard: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  lotteryGradientCardContent: {
+    flex: 1,
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  lotteryGradientAmount: {
+    fontSize: 12.8,
+    fontFamily: "Inter_SemiBold",
+    color: "#05012B",
+    marginBottom: 0,
+  },
+  lotteryGradientLabel: {
+    fontSize: 12,
+    color: "#05012B",
+    fontFamily: "Roboto_400Regular",
+  },
   gameBalanceAmount: {
     fontSize: 12.8,
     // fontWeight: "bold",
-    fontFamily: "Inter_Bold_Italic",
+    fontFamily: "Inter_SemiBold",
     color: "#fff",
     marginBottom: 0,
   },
   gameBalanceLabel: {
     fontSize: 12,
     color: "#9BA1A6",
-    fontFamily: "Roboto_400Regular_Italic",
+    fontFamily: "Roboto_400Regular",
   },
   lotteryContent: {
     flexDirection: "row",
