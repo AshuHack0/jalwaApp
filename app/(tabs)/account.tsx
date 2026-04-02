@@ -186,6 +186,7 @@ export default function AccountScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              onPress={() => router.push("/account/transaction-history")}
               style={[styles.historyCard, styles.transactionCard]}
             >
               <View style={styles.historyIconContainer}>

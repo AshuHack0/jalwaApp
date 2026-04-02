@@ -1,18 +1,13 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useToast } from "@/contexts/ToastContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
-import { useToast } from "@/contexts/ToastContext";
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
 export default function PromotionScreen() {
   const [invitationCode] = useState("681759111383");
@@ -20,7 +15,11 @@ export default function PromotionScreen() {
 
   const handleCopyCode = async () => {
     await Clipboard.setStringAsync(invitationCode);
-    showToast({ type: "success", title: "Copied", message: "Invitation code copied to clipboard." });
+    showToast({
+      type: "success",
+      title: "Copied",
+      message: "Invitation code copied to clipboard.",
+    });
   };
 
   const agencyFeatures = [
@@ -622,7 +621,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
-    fontStyle: "italic",
+    // fontStyle: "italic",
   },
   promotionDataLabel: {
     fontSize: 14,
@@ -630,7 +629,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
     lineHeight: 14,
-    fontStyle: "italic",
+    // fontStyle: "italic",
   },
   contentContainer: {
     flex: 1,
