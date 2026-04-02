@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -25,9 +26,16 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
+import * as Clipboard from "expo-clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { CustomHeader } from "@/components/ui/CustomHeader";
+import { LinearGradient } from "expo-linear-gradient";
+import { API_BASE_URL } from "@/services/api/config";
+import { getToken } from "@/services/auth-storage";
 
 // ── Empty History Illustration ────────────────────────────────────────────────
 function EmptyHistory() {
@@ -65,11 +73,46 @@ export default function GiftScreen() {
     Inter_Regular_Italic: Inter_400Regular_Italic,
   });
   const [giftCode, setGiftCode] = useState("");
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [generatedAmount, setGeneratedAmount] = useState<number | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const insets = useSafeAreaInsets();
 
   const handleReceive = () => {
     if (!giftCode.trim()) return;
     // TODO: call redeem API
+  };
+
+  const handleGenerateCode = async () => {
+    setGenerating(true);
+    setGenerateError(null);
+    setGeneratedCode(null);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${API_BASE_URL}/api/v1/gift-codes/claim`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (json.success) {
+        setGeneratedCode(json.data.code);
+        setGeneratedAmount(json.data.amount);
+      } else {
+        setGenerateError(json.message ?? "Failed to generate code");
+      }
+    } catch {
+      setGenerateError("Network error. Please try again.");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!generatedCode) return;
+    await Clipboard.setStringAsync(generatedCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -91,6 +134,77 @@ export default function GiftScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
+            {/* ── Generate Gift Code Panel ── */}
+            <View style={styles.generateCard}>
+              <View style={styles.generateHeader}>
+                <Text style={styles.generateTitle}>Generate Gift Code</Text>
+                <Text style={styles.generateSub}>
+                  Available for users with total deposit ≥ ₹5000
+                </Text>
+              </View>
+
+              {!generatedCode ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.generateBtnWrapper}
+                    onPress={handleGenerateCode}
+                    disabled={generating}
+                    activeOpacity={0.8}
+                  >
+                    <LinearGradient
+                      colors={["#05b1b6", "#78fcc3"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.generateBtn}
+                    >
+                      {generating ? (
+                        <ActivityIndicator color="#05012B" size="small" />
+                      ) : (
+                        <Text style={styles.generateBtnText}>
+                          Generate Gift Code
+                        </Text>
+                      )}
+                    </LinearGradient>
+                  </TouchableOpacity>
+
+                  {generateError ? (
+                    <Text style={styles.generateError}>{generateError}</Text>
+                  ) : null}
+                </>
+              ) : (
+                <View style={styles.codeRevealBox}>
+                  <View style={styles.codeRow}>
+                    <Text style={styles.codeText}>{generatedCode}</Text>
+                    <TouchableOpacity
+                      style={styles.copyBtn}
+                      onPress={handleCopy}
+                      activeOpacity={0.75}
+                    >
+                      <Text style={styles.copyBtnText}>
+                        {copied ? "Copied!" : "Copy"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {generatedAmount !== null && (
+                    <Text style={styles.codeAmountText}>
+                      Worth: ₹{generatedAmount}
+                    </Text>
+                  )}
+                  <TouchableOpacity
+                    onPress={() => {
+                      setGeneratedCode(null);
+                      setGenerateError(null);
+                    }}
+                    style={styles.regenerateLink}
+                  >
+                    <Text style={styles.regenerateLinkText}>
+                      Generate Another
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
             {/* ── Banner ── */}
             <View style={styles.bannerWrapper}>
               <Image
@@ -340,5 +454,81 @@ const styles = StyleSheet.create({
   noDataText: {
     color: "#4A6FA5",
     fontSize: 14,
+  },
+
+  // Generate Gift Code panel
+  generateCard: {
+    backgroundColor: "#011341",
+    borderRadius: 10,
+    marginHorizontal: 12,
+    padding: 20,
+    gap: 14,
+  },
+  generateHeader: { gap: 4 },
+  generateTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  generateSub: {
+    color: "#6A85B8",
+    fontSize: 12,
+  },
+  generateBtnWrapper: { borderRadius: 28, overflow: "hidden" },
+  generateBtn: {
+    paddingVertical: 13,
+    alignItems: "center",
+    borderRadius: 28,
+  },
+  generateBtnText: {
+    color: "#05012B",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  generateError: {
+    color: "#FF6B6B",
+    fontSize: 13,
+    textAlign: "center",
+  },
+
+  // Revealed code
+  codeRevealBox: { gap: 10 },
+  codeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#060B2E",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  codeText: {
+    flex: 1,
+    color: "#78fcc3",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 1.5,
+  },
+  copyBtn: {
+    backgroundColor: "#05b1b6",
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  copyBtnText: {
+    color: "#05012B",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  codeAmountText: {
+    color: "#6A85B8",
+    fontSize: 13,
+    textAlign: "center",
+  },
+  regenerateLink: { alignItems: "center", paddingTop: 4 },
+  regenerateLinkText: {
+    color: "#05b1b6",
+    fontSize: 13,
+    textDecorationLine: "underline",
   },
 });
