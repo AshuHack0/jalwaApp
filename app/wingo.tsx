@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   Pressable,
-  Alert,
   Modal,
   Linking,
 } from "react-native";
@@ -44,6 +43,7 @@ import {
   BET_SELECTION_NUMBER_MAP,
 } from "@/constants/Wingo";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
   usePlaceWinGoBet,
@@ -98,7 +98,7 @@ function buildBetPayload(
   betSelection: string,
   amount: number,
   period: string,
-): PlaceWinGoBetPayload | null {
+): any | null {
   const sel = betSelection.trim();
   if (sel === "Big") {
     return { betType: "BIG_SMALL", choice: "BIG", amount, period };
@@ -169,6 +169,7 @@ export default function WinGoScreen() {
   const { isAuthenticated, isLoading, walletBalance, refreshWallet } =
     useAuth();
   const { openDepositModal } = useDepositModal();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (isLoading) return;
@@ -225,7 +226,6 @@ export default function WinGoScreen() {
   const [selectedModalMultiplier, setSelectedModalMultiplier] = useState("X1");
   const [betModalAgreed, setBetModalAgreed] = useState(true);
   const [expandedBetId, setExpandedBetId] = useState<string | null>(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [telegramUrl, setTelegramUrl] = useState<string | null>(null);
 
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function WinGoScreen() {
       .catch(() => { });
   }, []);
   const [winLossPopupVisible, setWinLossPopupVisible] = useState(false);
-  const [settledBet, setSettledBet] = useState<MyHistoryBet | null>(null);
+  const [settledBet, setSettledBet] = useState<any | null>(null);
   const lastShownPopupPeriodRef = useRef<string | null>(null);
   const [hasInitializedHistory, setHasInitializedHistory] = useState(false);
 
@@ -538,7 +538,7 @@ export default function WinGoScreen() {
   };
 
   // Helper: readable label for a bet's selection
-  const getBetSelectLabel = (bet: MyHistoryBet): string => {
+  const getBetSelectLabel = (bet: any): string => {
     if (bet.betType === "NUMBER" && bet.choiceNumber != null)
       return String(bet.choiceNumber);
     if (bet.betType === "COLOR" && bet.choiceColor)
@@ -549,7 +549,7 @@ export default function WinGoScreen() {
   };
 
   const getBetResultLabel = (
-    bet: MyHistoryBet,
+    bet: any,
   ): { text: string; color: string } => {
     if (bet.round?.status !== "settled" && bet.round?.status !== "closed") {
       return { text: "Pending", color: "#EAB308" };
@@ -632,7 +632,7 @@ export default function WinGoScreen() {
                 if (telegramUrl) {
                   Linking.openURL(telegramUrl);
                 } else {
-                  Alert.alert("Telegram", "Telegram link is not available. Please try again later.");
+                  showToast({ type: "info", title: "Telegram", message: "Telegram link is not available. Please try again later." });
                 }
               }}
               style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
@@ -1944,7 +1944,7 @@ export default function WinGoScreen() {
 
                   const copyToClipboard = async () => {
                     await Clipboard.setStringAsync(orderNumber);
-                    Alert.alert("Success", "Order number copied to clipboard");
+                    showToast({ type: "success", title: "Copied", message: "Order number copied to clipboard." });
                   };
 
                   return (
@@ -2500,10 +2500,7 @@ export default function WinGoScreen() {
           onConfirm={async () => {
             const period = currentRoundData?.currentRound?.period;
             if (!period) {
-              Alert.alert(
-                "Error",
-                "No active round. Please wait for the next round.",
-              );
+              showToast({ type: "error", title: "No Active Round", message: "Please wait for the next round." });
               return;
             }
             const payload = buildBetPayload(
@@ -2512,7 +2509,7 @@ export default function WinGoScreen() {
               period,
             );
             if (!payload) {
-              Alert.alert("Error", "Invalid bet selection.");
+              showToast({ type: "error", title: "Invalid Selection", message: "Invalid bet selection." });
               return;
             }
             try {
@@ -2520,26 +2517,15 @@ export default function WinGoScreen() {
               if (res.success) {
                 setShowBetModal(false);
                 refreshWallet();
-                setShowSuccessMessage(true);
-                setTimeout(() => setShowSuccessMessage(false), 3000);
+                showToast({ type: "success", title: "Bet Successful" });
               } else {
-                Alert.alert(
-                  "Bet Failed",
-                  res.message ?? "Could not place bet.",
-                );
+                showToast({ type: "error", title: "Bet Failed", message: res.message ?? "Could not place bet." });
               }
             } catch {
-              Alert.alert("Bet Failed", "Could not place bet.");
+              showToast({ type: "error", title: "Bet Failed", message: "Could not place bet." });
             }
           }}
         />
-        {showSuccessMessage && (
-          <View style={styles.successMessageOverlay} pointerEvents="none">
-            <View style={styles.successMessageContainer}>
-              <Text style={styles.successMessageText}>Bet Successful</Text>
-            </View>
-          </View>
-        )}
 
         <Modal
           transparent
@@ -3275,23 +3261,6 @@ const styles = StyleSheet.create({
     fontSize: wp(25),
     fontWeight: "800",
     color: "#7afec3",
-  },
-  successMessageOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9999,
-  },
-  successMessageContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    paddingVertical: hp(1.5),
-    paddingHorizontal: wp(6),
-    borderRadius: wp(3.2),
-  },
-  successMessageText: {
-    color: "#fff",
-    fontSize: wp(4.8),
-    fontWeight: "600",
   },
   winLossModalOverlay: {
     flex: 1,

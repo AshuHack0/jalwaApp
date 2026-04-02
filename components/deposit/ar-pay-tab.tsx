@@ -12,7 +12,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useToast } from "@/contexts/ToastContext";
 import Svg, { Path, Rect } from "react-native-svg";
 
 const ACTIVATE_ERROR =
@@ -32,7 +33,8 @@ export function ArPayTab() {
     Inter_Regular: Inter_400Regular,
     Inter_SemiBold: Inter_600SemiBold,
   });
-  const handleActivate = () => Alert.alert("Error", ACTIVATE_ERROR);
+  const { showToast } = useToast();
+  const handleActivate = () => showToast({ type: "error", title: "Not Available", message: ACTIVATE_ERROR });
 
   return (
     <>

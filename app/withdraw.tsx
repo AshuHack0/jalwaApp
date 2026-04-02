@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import { type BankAccount, getBankAccount } from "@/services/api/bankAccount";
 import { initiateWithdrawal } from "@/services/api/withdrawal";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,7 +9,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -23,6 +23,7 @@ function formatBalance(amount: number): string {
 export default function WithdrawScreen() {
   const router = useRouter();
   const { walletBalance, refreshWallet } = useAuth();
+  const { showToast } = useToast();
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,7 +38,7 @@ export default function WithdrawScreen() {
   const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
     if (!bankAccount?.accountNumber) {
-      Alert.alert("No Bank Account", "Please add your bank account before withdrawing.");
+      showToast({ type: "warning", title: "No Bank Account", message: "Please add your bank account before withdrawing." });
       return;
     }
     setLoading(true);
@@ -46,13 +47,13 @@ export default function WithdrawScreen() {
       if (result.success) {
         await refreshWallet();
         setWithdrawAmount("");
-        Alert.alert("Success", "Withdrawal request submitted successfully.");
+        showToast({ type: "success", title: "Withdrawal Submitted", message: "Your withdrawal request has been submitted." });
         router.push("/withdrawal-history");
       } else {
-        Alert.alert("Failed", result.message || "Withdrawal failed. Please try again.");
+        showToast({ type: "error", title: "Withdrawal Failed", message: result.message || "Please try again." });
       }
     } catch {
-      Alert.alert("Error", "Network error. Please check your connection.");
+      showToast({ type: "error", title: "Network Error", message: "Please check your connection." });
     } finally {
       setLoading(false);
     }

@@ -6,8 +6,8 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
+import { useToast } from "@/contexts/ToastContext";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -16,10 +16,11 @@ import {
 
 export default function PromotionScreen() {
   const [invitationCode] = useState("681759111383");
+  const { showToast } = useToast();
 
   const handleCopyCode = async () => {
     await Clipboard.setStringAsync(invitationCode);
-    Alert.alert("Success", "Invitation code copied to clipboard");
+    showToast({ type: "success", title: "Copied", message: "Invitation code copied to clipboard." });
   };
 
   const agencyFeatures = [

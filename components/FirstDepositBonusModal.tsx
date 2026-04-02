@@ -3,9 +3,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import { useState } from "react";
+import { useToast } from "@/contexts/ToastContext";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   Modal,
   ScrollView,
@@ -33,6 +33,7 @@ type Props = {
 export function FirstDepositBonusModal({ visible, onClose }: Props) {
   const router = useRouter();
   const { openDepositModal } = useDepositModal();
+  const { showToast } = useToast();
   const [noReminderToday, setNoReminderToday] = useState(false);
   const [claimingId, setClaimingId] = useState<number | null>(null);
 
@@ -68,7 +69,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
     try {
       const res = await claim(offerId);
       if (res.code !== 0) {
-        Alert.alert("Claim failed", res.msg ?? "Please try again.");
+        showToast({ type: "error", title: "Claim Failed", message: res.msg ?? "Please try again." });
       }
     } finally {
       setClaimingId(null);

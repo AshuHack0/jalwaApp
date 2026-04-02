@@ -4,9 +4,9 @@ import { getBankAccount, saveBankAccount } from "@/services/api/bankAccount";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { useToast } from "@/contexts/ToastContext";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
   ScrollView,
@@ -171,6 +171,7 @@ const BANK_LIST = [
 
 export default function AddBankScreen() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [selectedBank, setSelectedBank] = useState("");
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankSearch, setBankSearch] = useState("");
@@ -217,10 +218,10 @@ export default function AddBankScreen() {
     setSubmitting(false);
 
     if (res.success) {
-      Alert.alert("Success", "Bank account saved successfully.");
+      showToast({ type: "success", title: "Saved", message: "Bank account saved successfully." });
       router.back();
     } else {
-      Alert.alert("Error", res.message || "Failed to save bank account.");
+      showToast({ type: "error", title: "Error", message: res.message || "Failed to save bank account." });
     }
   };
 

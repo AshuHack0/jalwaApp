@@ -2,6 +2,7 @@ import { FirstDepositBonusModal } from "@/components/FirstDepositBonusModal";
 import { SplashScreen as AppSplash } from "@/components/SplashScreen";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { DepositModalProvider } from "@/contexts/DepositModalContext";
+import { ToastProvider } from "@/contexts/ToastContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -98,6 +99,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <DepositModalProvider>
+        <ToastProvider>
         <View style={styles.container}>
         <ThemeProvider value={colorScheme === "dark" ? customDarkTheme : DefaultTheme}>
         <Stack>
@@ -118,6 +120,7 @@ export default function RootLayout() {
           <AppSplash />
         </View>
       )}
+        </ToastProvider>
         </DepositModalProvider>
       </AuthProvider>
     </QueryClientProvider>

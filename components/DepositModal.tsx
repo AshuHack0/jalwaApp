@@ -3,7 +3,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Modal,
   StyleSheet,
   TextInput,
@@ -11,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
+import { useToast } from "@/contexts/ToastContext";
 import { ThemedText } from "./themed-text";
 
 const QUICK_AMOUNTS = [100, 300, 500, 1000, 5000];
@@ -28,6 +28,7 @@ export function DepositModal({
 }: Props) {
   const [amount, setAmount] = useState("");
   const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (visible) {
@@ -42,7 +43,7 @@ export function DepositModal({
   const handleDeposit = async () => {
     const num = parseInt(amount.replace(/[^0-9]/g, ""), 10);
     if (!num || num < 100) {
-      Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
+      showToast({ type: "error", title: "Invalid Amount", message: "Minimum deposit is ₹100." });
       return;
     }
 
@@ -53,10 +54,10 @@ export function DepositModal({
         await Linking.openURL(res.data.payUrl);
         onClose();
       } else {
-        Alert.alert("Deposit failed", res.message ?? "Please try again.");
+        showToast({ type: "error", title: "Deposit Failed", message: res.message ?? "Please try again." });
       }
     } catch {
-      Alert.alert("Deposit failed", "Please try again.");
+      showToast({ type: "error", title: "Deposit Failed", message: "Please try again." });
     }
   };
 

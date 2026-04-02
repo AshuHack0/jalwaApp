@@ -9,6 +9,7 @@ import { DepositMethodTabs } from "@/components/deposit/deposit-method-tabs";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/contexts/ToastContext";
 import {
   useInitiateDeposit,
   useInitiateUsdtDeposit,
@@ -29,7 +30,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Linking,
   ScrollView,
   StyleSheet,
@@ -407,6 +407,7 @@ export default function DepositScreen() {
   const router = useRouter();
   const { amount: amountParam } = useLocalSearchParams<{ amount?: string }>();
   const { walletBalance, refreshWallet } = useAuth();
+  const { showToast } = useToast();
   const { mutateAsync: initiateDeposit, isPending } = useInitiateDeposit();
   const { mutateAsync: initiateUsdtDeposit, isPending: isUsdtPending } =
     useInitiateUsdtDeposit();
@@ -494,50 +495,48 @@ export default function DepositScreen() {
   const handleDeposit = async () => {
     const num = parseFloat(depositAmount.replace(/[^0-9.]/g, ""));
     if (!num || num <= 0) {
-      Alert.alert(
-        "Invalid amount",
-        isUsdt ? "Enter a USDT amount." : "Minimum deposit is ₹100.",
-      );
+      showToast({
+        type: "error",
+        title: "Invalid Amount",
+        message: isUsdt ? "Enter a USDT amount." : "Minimum deposit is ₹100.",
+      });
       return;
     }
     if (!isUsdt && num < 100) {
-      Alert.alert("Invalid amount", "Minimum deposit is ₹100.");
+      showToast({ type: "error", title: "Invalid Amount", message: "Minimum deposit is ₹100." });
       return;
     }
     try {
       if (isUsdt) {
-        const res = await initiateUsdtDeposit({
-          amount: num,
-          network: selectedNetwork,
-        });
+        const res = await initiateUsdtDeposit({ amount: num, network: selectedNetwork });
         if (res.success && res.data) {
           await Linking.openURL(res.data.address);
-          router.push({
-            pathname: "/deposit/usdt-status/[merchantOrderNo]" as any,
-            params: { merchantOrderNo: res.data.merchantOrderNo },
+          showToast({
+            type: "info",
+            title: "Payment Opened",
+            message: "Complete the payment in your browser. Your wallet will be credited automatically.",
+            duration: 5000,
           });
         } else {
-          Alert.alert("Deposit failed", res.message ?? "Please try again.");
+          showToast({ type: "error", title: "Deposit Failed", message: res.message ?? "Please try again." });
         }
         return;
       }
       const isOxoxmg = selectedMethod === "PAYTM" || selectedMethod === "Expert UPI-QR";
-      const res = isOxoxmg
-        ? await initiateOxoxmgDeposit(num)
-        : await initiateDeposit(num);
+      const res = isOxoxmg ? await initiateOxoxmgDeposit(num) : await initiateDeposit(num);
       if (res.success && res.data?.payUrl) {
         await Linking.openURL(res.data.payUrl);
-        router.push({
-          pathname: isOxoxmg
-            ? "/deposit/oxoxmg-status/[merchantOrderNo]"
-            : "/deposit/status/[merchantOrderNo]",
-          params: { merchantOrderNo: res.data.merchantOrderNo },
-        } as any);
+        showToast({
+          type: "info",
+          title: "Payment Opened",
+          message: "Complete the payment in your browser. Your wallet will be credited automatically.",
+          duration: 5000,
+        });
       } else {
-        Alert.alert("Deposit failed", res.message ?? "Please try again.");
+        showToast({ type: "error", title: "Deposit Failed", message: res.message ?? "Please try again." });
       }
     } catch {
-      Alert.alert("Deposit failed", "Please try again.");
+      showToast({ type: "error", title: "Deposit Failed", message: "Please try again." });
     }
   };
 
