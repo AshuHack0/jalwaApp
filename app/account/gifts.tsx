@@ -31,9 +31,6 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { CustomHeader } from "@/components/ui/CustomHeader";
-import { LinearGradient } from "expo-linear-gradient";
 import { API_BASE_URL } from "@/services/api/config";
 import { getToken } from "@/services/auth-storage";
 
