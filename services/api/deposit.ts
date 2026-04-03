@@ -25,6 +25,7 @@ export type DepositRecord = {
   amount: number;
   fee: number;
   status: "pending" | "completed" | "failed";
+  gateway: "mcgindiamc" | "oxoxmg" | "usdt";
   merchantOrderNo: string | null;
   gatewayOrderNo: string | null;
   payUrl: string | null;
