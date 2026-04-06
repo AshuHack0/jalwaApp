@@ -2,15 +2,18 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack, useRouter } from "expo-router";
+
 
 export default function BettingRebate() {
+  const router = useRouter();
   // State to handle active tab switching
   const [activeTab, setActiveTab] = useState("all");
 
@@ -23,156 +26,159 @@ export default function BettingRebate() {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Rebate</Text>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      >
-        {/* HORIZONTAL CATEGORIES - Scrollable */}
-        <View style={styles.categoryContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoryScrollContent}
-          >
-            {categories.map((item) => {
-              const isActive = activeTab === item.id;
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  style={styles.navBox}
-                  onPress={() => setActiveTab(item.id)}
-                >
-                  {isActive ? (
-                    <LinearGradient
-                      colors={["#4facfe", "#00f2fe"]}
-                      style={styles.activeGradient}
-                    >
-                      <MaterialIcons
-                        name={item.icon as any}
-                        size={24}
-                        color="#fff"
-                      />
-                      <Text style={styles.activeText}>{item.name}</Text>
-                    </LinearGradient>
-                  ) : (
-                    <View style={styles.inactiveBox}>
-                      <MaterialIcons
-                        name={item.icon as any}
-                        size={24}
-                        color="#9ba3c7"
-                      />
-                      <Text style={styles.inactiveText}>{item.name}</Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Rebate</Text>
+          <View style={{ width: 24 }} />
         </View>
 
-        {/* MAIN REBATE CARD */}
-        <View style={styles.rebateCard}>
-          <Text style={styles.cardTitle}>All-Total betting rebate</Text>
-
-          <View style={styles.realTimeBadge}>
-            <Ionicons name="checkmark-circle" size={14} color="#00e5ff" />
-            <Text style={styles.badgeText}>Real-time count</Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          {/* HORIZONTAL CATEGORIES - Scrollable */}
+          <View style={styles.categoryContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoryScrollContent}
+            >
+              {categories.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.navBox}
+                    onPress={() => setActiveTab(item.id)}
+                  >
+                    {isActive ? (
+                      <LinearGradient
+                        colors={["#4facfe", "#00f2fe"]}
+                        style={styles.activeGradient}
+                      >
+                        <MaterialIcons
+                          name={item.icon as any}
+                          size={24}
+                          color="#fff"
+                        />
+                        <Text style={styles.activeText}>{item.name}</Text>
+                      </LinearGradient>
+                    ) : (
+                      <View style={styles.inactiveBox}>
+                        <MaterialIcons
+                          name={item.icon as any}
+                          size={24}
+                          color="#9ba3c7"
+                        />
+                        <Text style={styles.inactiveText}>{item.name}</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
           </View>
 
-          <View style={styles.amountRow}>
-            <MaterialIcons
-              name="account-balance-wallet"
-              size={22}
-              color="#00e5ff"
-            />
-            <Text style={styles.mainAmount}>56.00</Text>
-          </View>
+          {/* MAIN REBATE CARD */}
+          <View style={styles.rebateCard}>
+            <Text style={styles.cardTitle}>All-Total betting rebate</Text>
 
-          <View style={styles.vipNote}>
-            <Text style={styles.vipText}>
-              Upgrade VIP level to increase rebate rate
+            <View style={styles.realTimeBadge}>
+              <Ionicons name="checkmark-circle" size={14} color="#00e5ff" />
+              <Text style={styles.badgeText}>Real-time count</Text>
+            </View>
+
+            <View style={styles.amountRow}>
+              <MaterialIcons
+                name="account-balance-wallet"
+                size={22}
+                color="#00e5ff"
+              />
+              <Text style={styles.mainAmount}>56.00</Text>
+            </View>
+
+            <View style={styles.vipNote}>
+              <Text style={styles.vipText}>
+                Upgrade VIP level to increase rebate rate
+              </Text>
+            </View>
+
+            <View style={styles.statsRow}>
+              <View style={styles.statBox}>
+                <Text style={styles.statLabel}>Today rebate</Text>
+                <Text style={styles.statValue}>0</Text>
+              </View>
+              <View style={styles.statBox}>
+                <Text style={styles.statLabel}>Total rebate</Text>
+                <Text style={[styles.statValue, { color: "#ffcc00" }]}>1.5</Text>
+              </View>
+            </View>
+
+            <Text style={styles.timeNote}>
+              Automatic code washing at 01:00:00 every morning
             </Text>
+
+            <TouchableOpacity style={styles.rebateBtn}>
+              <Text style={styles.rebateBtnText}>One-Click Rebate</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.statsRow}>
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>Today rebate</Text>
-              <Text style={styles.statValue}>0</Text>
+          {/* REBATE HISTORY */}
+          <View style={styles.historySection}>
+            <View style={styles.historyHeader}>
+              <View style={styles.historyLine} />
+              <Text style={styles.historyTitle}>Rebate history</Text>
             </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statLabel}>Total rebate</Text>
-              <Text style={[styles.statValue, { color: "#ffcc00" }]}>1.5</Text>
-            </View>
-          </View>
 
-          <Text style={styles.timeNote}>
-            Automatic code washing at 01:00:00 every morning
-          </Text>
-
-          <TouchableOpacity style={styles.rebateBtn}>
-            <Text style={styles.rebateBtnText}>One-Click Rebate</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* REBATE HISTORY */}
-        <View style={styles.historySection}>
-          <View style={styles.historyHeader}>
-            <View style={styles.historyLine} />
-            <Text style={styles.historyTitle}>Rebate history</Text>
-          </View>
-
-          <View style={styles.historyCard}>
-            <View style={styles.historyCardHeader}>
-              <Text style={styles.historyGame}>Lottery</Text>
-              <Text style={styles.completedText}>Completed</Text>
-            </View>
-            <Text style={styles.historyTime}>2026-01-22 01:00:14</Text>
-
-            <View style={styles.historyDetails}>
-              <View style={styles.detailRow}>
-                <View style={styles.dotLine}>
-                  <View style={styles.dot} />
-                </View>
-                <Text style={styles.detailLabel}>Betting rebate</Text>
-                <Text style={styles.detailValue}>1000</Text>
+            <View style={styles.historyCard}>
+              <View style={styles.historyCardHeader}>
+                <Text style={styles.historyGame}>Lottery</Text>
+                <Text style={styles.completedText}>Completed</Text>
               </View>
-              <View style={styles.detailRow}>
-                <View style={styles.dotLine}>
-                  <View style={styles.dot} />
+              <Text style={styles.historyTime}>2026-01-22 01:00:14</Text>
+
+              <View style={styles.historyDetails}>
+                <View style={styles.detailRow}>
+                  <View style={styles.dotLine}>
+                    <View style={styles.dot} />
+                  </View>
+                  <Text style={styles.detailLabel}>Betting rebate</Text>
+                  <Text style={styles.detailValue}>1000</Text>
                 </View>
-                <Text style={styles.detailLabel}>Rebate rate</Text>
-                <Text style={[styles.detailValue, { color: "#ff4d4d" }]}>
-                  0.15%
-                </Text>
-              </View>
-              <View style={styles.detailRow}>
-                <View style={styles.dotLine}>
-                  <View style={styles.dot} />
+                <View style={styles.detailRow}>
+                  <View style={styles.dotLine}>
+                    <View style={styles.dot} />
+                  </View>
+                  <Text style={styles.detailLabel}>Rebate rate</Text>
+                  <Text style={[styles.detailValue, { color: "#ff4d4d" }]}>
+                    0.15%
+                  </Text>
                 </View>
-                <Text style={styles.detailLabel}>Rebate amount</Text>
-                <Text style={[styles.detailValue, { color: "#ffcc00" }]}>
-                  1.5
-                </Text>
+                <View style={styles.detailRow}>
+                  <View style={styles.dotLine}>
+                    <View style={styles.dot} />
+                  </View>
+                  <Text style={styles.detailLabel}>Rebate amount</Text>
+                  <Text style={[styles.detailValue, { color: "#ffcc00" }]}>
+                    1.5
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          <TouchableOpacity style={styles.allHistoryBtn}>
-            <Text style={styles.allHistoryText}>All history</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            <TouchableOpacity style={styles.allHistoryBtn}>
+              <Text style={styles.allHistoryText}>All history</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
@@ -183,7 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
-    paddingTop: 10,
+    paddingTop: 50,
   },
   headerTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 

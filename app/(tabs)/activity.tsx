@@ -55,12 +55,12 @@ export default function ActivityScreen() {
   ];
 
   const promotionalBanners = [
-   // {
-    //   id: 1,
-    //   title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
-    //   icon: "airplane" as const,
-    //   bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
-    // },
+   {
+      id: 1,
+      title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
+      icon: "airplane" as const,
+      bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
+    },
     {
       id: 2,
       title: "CHICKEN ROAD 2",
@@ -155,7 +155,7 @@ export default function ActivityScreen() {
           </View>
           <TouchableOpacity style={styles.bonusDetailsButton}>
             <ThemedText
-              style={[styles.bonusDetailsText, { fontFamily: "SerifRegular" }]}
+              style={[styles.bonusDetailsText]}
             >
               Bonus details
             </ThemedText>
@@ -226,18 +226,18 @@ export default function ActivityScreen() {
         <View style={styles.bannersSection}>
           {promotionalBanners.map((banner) => (
             <TouchableOpacity key={banner.id} style={styles.bannerCard}>
-              <View style={styles.bannerHeader}>
+              {banner.id !== 1 && <View style={styles.bannerHeader}>
                 <Image
                   source={require("@/assets/h5setting_20250315141734j61m.png")}
                   style={styles.bannerLogo}
                   contentFit="contain"
                 />
-              </View>
+              </View>}
               <View style={styles.bannerImagePlaceholder}>
                 <Image
                   source={banner.bannerImage}
                   style={StyleSheet.absoluteFillObject}
-                  contentFit="contain"
+                  contentFit="cover"
                   contentPosition="top"
                 />
               </View>
@@ -324,8 +324,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   bonusDetailsText: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "700",
     paddingHorizontal: 12,
     color: "#00ecbe",
     fontFamily: "sans-serif",
@@ -393,16 +393,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#011341",
     paddingVertical: 3,
     paddingHorizontal: 12,
+    paddingTop:8
   },
   cardTitle: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#E3EFFF",
     lineHeight: 18,
     fontFamily: "sans-serif",
   },
   cardDescription: {
-    fontSize: 10,
+    fontSize: 12,
     lineHeight: 13,
     color: "#92A8E3",
     opacity: 0.9,
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   bannerImagePlaceholder: {
-    height: 120,
+    height: 140,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     position: "relative",
     // width to be full and stretch to the width of the container
@@ -455,7 +456,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   bannerTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#e3efff",
   },
