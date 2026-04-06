@@ -166,6 +166,7 @@ export default function AccountScreen() {
         <View style={styles.historySection}>
           <View style={styles.historyCardContainer}>
             <TouchableOpacity
+              onPress={() => router.push("/account/game-history")}
               style={[styles.historyCard, styles.gameHistoryCard]}
             >
               <View style={styles.historyIconContainer}>
