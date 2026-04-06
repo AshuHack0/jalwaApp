@@ -1,11 +1,11 @@
 import { ThemedView } from "@/components/themed-view";
-import { Image } from "expo-image";
 import {
   Roboto_400Regular,
   Roboto_500Medium,
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
@@ -29,29 +29,46 @@ type FilterDropdownProps = {
 type GameTab = {
   id: string;
   label: string;
-  icon: any;
+  activeIcon: any;
+  inactiveIcon: any;
 };
 
 const GAME_TABS: GameTab[] = [
   {
     id: "lottery",
     label: "Lottery",
-    icon: require("@/assets/icon_lottery-d44718d5.svg"),
+    activeIcon: require("@/assets/b1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/b2-removebg-preview.png"),
   },
   {
     id: "casino",
     label: "Casino",
-    icon: require("@/assets/icon_video-da93a00c.svg"),
+    activeIcon: require("@/assets/c1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/c2-removebg-preview.png"),
   },
   {
     id: "fishing",
     label: "Fishing",
-    icon: require("@/assets/icon_fish-80dac6e1.svg"),
+    activeIcon: require("@/assets/b1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/b2-removebg-preview.png"),
   },
   {
-    id: "run",
-    label: "Run",
-    icon: require("@/assets/iconPhysics-0095b0ff.webp"),
+    id: "rummy",
+    label: "Rummy",
+    activeIcon: require("@/assets/e1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/e2-removebg-preview.png"),
+  },
+  {
+    id: "original",
+    label: "Original",
+    activeIcon: require("@/assets/d1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/d2-removebg-preview.png"),
+  },
+  {
+    id: "slots",
+    label: "Slots",
+    activeIcon: require("@/assets/a1-removebg-preview.png"),
+    inactiveIcon: require("@/assets/a2-removebg-preview.png"),
   },
 ];
 
@@ -176,7 +193,10 @@ export default function GameHistoryScreen() {
                       active && styles.tabIconWrapActive,
                     ]}
                   >
-                    <Image source={tab.icon} style={styles.tabIcon} />
+                    <Image
+                      source={active ? tab.activeIcon : tab.inactiveIcon}
+                      style={styles.tabIcon}
+                    />
                   </View>
                   <Text
                     style={[styles.tabLabel, active && styles.tabLabelActive]}
