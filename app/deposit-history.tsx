@@ -231,11 +231,9 @@ export default function DepositHistoryScreen() {
                         Balance
                       </ThemedText>
                       <ThemedText style={styles.balanceValue}>
-                        ₹
-                        {item.amount.toLocaleString("en-IN", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                        {item.gateway === "usdt"
+                          ? `USDT ${item.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                          : `₹${item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                       </ThemedText>
                     </View>
 
@@ -243,7 +241,7 @@ export default function DepositHistoryScreen() {
                       <View style={styles.cardDetailsRow}>
                         <ThemedText style={styles.detailLabel}>Fee</ThemedText>
                         <ThemedText style={styles.detailValue}>
-                          ₹{item.fee}
+                          {item.gateway === "usdt" ? `USDT ${item.fee}` : `₹${item.fee}`}
                         </ThemedText>
                       </View>
                     )}
@@ -349,8 +347,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    paddingHorizontal: 1,
-    paddingVertical: 1,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
     borderRadius: 8,
     backgroundColor: "rgba(255,255,255,0.05)", // Default tab background
   },

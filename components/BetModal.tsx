@@ -246,9 +246,6 @@ export function BetModal({
               }}
               disabled={!agreed || confirmLoading}
             >
-              {confirmLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : null}
               <ThemedText
                 style={[
                   { fontSize: 16, fontWeight: "600", color: "#fff" },

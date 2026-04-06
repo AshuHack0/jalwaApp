@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getMe, getWalletBalance } from "../auth";
 
 /** Query key factories for Auth APIs */
@@ -11,11 +11,12 @@ export const authKeys = {
 /**
  * Fetch current user. Requires valid token in storage.
  */
-export function useMe(options?: { enabled?: boolean }) {
+export function useMe(options?: { enabled?: boolean; refetchInterval?: number }) {
   return useQuery({
     queryKey: authKeys.me(),
     queryFn: getMe,
     enabled: options?.enabled ?? true,
+    refetchInterval: options?.refetchInterval,
   });
 }
 

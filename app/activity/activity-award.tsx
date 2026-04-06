@@ -1,4 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import {
   ImageBackground,
@@ -25,139 +27,160 @@ export default function ActivityAward() {
     { deposit: "9000", bet: "27000", reward: "400.00" },
     { deposit: "12000", bet: "36000", reward: "500.00" },
   ];
+  const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Ionicons name="chevron-back" size={24} color="#fff" />
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.container}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
 
-        <View style={styles.recordBtn}>
-          <Ionicons name="time-outline" size={24} color="#fff" />
-          <Text style={styles.headerText}>Collection record</Text>
+          <View style={styles.recordBtn}>
+            <Image source={require("../../assets/icon-watchCollection.svg")} style={{ width: 22, height: 22 }} />
+            <Text style={styles.headerText}>Collection record</Text>
+          </View>
         </View>
+
+        <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom:50}}>
+          {/* BANNER */}
+          <ImageBackground
+            source={{ uri: "https://www.jalwagame.win/assets/png/award_bg-8e278a3d.webp" }}
+            style={styles.banner}
+          >
+            <View style={{ width: "60%" }}>
+              <Text style={styles.bannerTitle}>Activity Award</Text>
+
+              <Text style={styles.bannerSub}>
+                Complete weekly/daily tasks to receive rich rewards
+              </Text>
+
+              <Text style={styles.bannerNote}>
+                Weekly rewards cannot be accumulated to the next week, and daily
+                rewards cannot be accumulated to the next day.
+              </Text>
+            </View>
+          </ImageBackground>
+
+          {/* WEEKLY TASKS */}
+          {weeklyTasks.map((item, index) => (
+            <View key={index} style={styles.card}>
+
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 40 }}>
+                <View style={{ height: "100%", backgroundColor: "#d23838", justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderBottomRightRadius: 20 }}>
+                  <Text style={styles.tagText}>weekly tasks</Text>
+                </View>
+                <View style={{ flex: 1, paddingHorizontal: 10, borderBottomColor: "#022c68", borderBottomWidth: 2, height: "100%", justifyContent: "center", alignItems: "flex-end", marginLeft: 20 }}>
+                  <Text style={styles.unfinished}>Unfinished</Text>
+                </View>
+              </View>
+
+              <View style={{ padding: 10 }}>
+
+                <View style={styles.titleRow}>
+                  <Image source={require("../../assets/icon-weeklyType4.svg")} style={{ width: 30, height: 18 }} />
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                    <Text style={styles.taskTitle}>
+                      Weekly Slots Betting Task
+                    </Text>
+                    <Text style={styles.red}> 0/{item.target}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.descBox}>
+                  <Text style={styles.desc}>
+                    Member must place bets on &quot;SLOTS&quot; game and reach the
+                    minimum requirement betting amount in a week to complete this
+                    task and receive the reward.
+                  </Text>
+                </View>
+
+                <View style={styles.rewardRow}>
+                  <Text style={styles.label}>Award amount</Text>
+
+                  <View style={styles.rewardBox}>
+                    <Image source={require("../../assets/icon-activityWallet.svg")} style={{ width: 18, height: 18 }} />
+                    <Text style={styles.reward}>₹{item.reward}</Text>
+                  </View>
+                </View>
+
+                <View style={{ height: 1, width: "100%", backgroundColor: "#022c68", marginTop: 10 }} />
+
+                <TouchableOpacity style={styles.btn}>
+                  <Text style={styles.btnText}>to complete</Text>
+                </TouchableOpacity>
+
+              </View>
+
+            </View>
+          ))}
+
+          {/* DAILY TASKS */}
+          {dailyTasks.map((item, index) => (
+            <View key={index} style={styles.card}>
+
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 40 }}>
+                <View style={{ height: "100%", backgroundColor: "#18B15E", justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderBottomRightRadius: 20 }}>
+                  <Text style={styles.tagText}>Daily missions</Text>
+                </View>
+                <View style={{ flex: 1, paddingHorizontal: 10, borderBottomColor: "#022c68", borderBottomWidth: 2, height: "100%", justifyContent: "center", alignItems: "flex-end", marginLeft: 20 }}>
+                  <Text style={styles.unfinished}>Unfinished</Text>
+                </View>
+              </View>
+
+              <View style={{ padding: 10 }}>
+
+                <View style={styles.titleRow}>
+                  <Image source={require("../../assets/icon-weeklyType1.svg")} style={{ width: 30, height: 30 }} />
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                    <Text style={styles.taskTitle}>
+                      Slot Daily Recharge & Bet Task
+                    </Text>
+                  </View>
+                </View>
+
+                <View>
+                  <View style={{ flex:1, flexDirection: "row", alignItems: "center", justifyContent:"space-between" }}>
+                    <Text style={{color:"#91A8E2", fontSize:16, fontWeight:"500"}}>Deposit</Text>
+                    <Text style={styles.red}> 0/{item.deposit}</Text>
+                  </View>
+                  <View style={{ flex:1, flexDirection: "row", alignItems: "center", justifyContent:"space-between" }}>
+                    <Text style={{color:"#91A8E2", fontSize:16, fontWeight:"500"}}>Bet</Text>
+                    <Text style={styles.red}> 0/{item.bet}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.descBox}>
+                  <Text style={styles.desc}>
+                    Members must place bets on the &quot;SLOTS&quot; game & complete the deposit, also meet both the minimum betting and deposit requirements within a day to complete the task and receive the reward.
+                  </Text>
+                </View>
+
+                <View style={styles.rewardRow}>
+                  <Text style={styles.label}>Award amount</Text>
+
+                  <View style={styles.rewardBox}>
+                    <Image source={require("../../assets/icon-activityWallet.svg")} style={{ width: 18, height: 18 }} />
+                    <Text style={styles.reward}>₹{item.reward}</Text>
+                  </View>
+                </View>
+
+                <View style={{ height: 1, width: "100%", backgroundColor: "#022c68", marginTop: 10 }} />
+
+                <TouchableOpacity style={styles.btn}>
+                  <Text style={styles.btnText}>to complete</Text>
+                </TouchableOpacity>
+
+              </View>
+
+            </View>
+          ))}
+        </ScrollView>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* BANNER */}
-        <ImageBackground
-          source={require("@/assets/activity-awards.avif")}
-          style={styles.banner}
-        >
-          <View style={{ width: "70%" }}>
-            <Text style={styles.bannerTitle}>Activity Award</Text>
-
-            <Text style={styles.bannerSub}>
-              Complete weekly/daily tasks to receive rich rewards
-            </Text>
-
-            <Text style={styles.bannerNote}>
-              Weekly rewards cannot be accumulated to the next week, and daily
-              rewards cannot be accumulated to the next day.
-            </Text>
-          </View>
-        </ImageBackground>
-
-        {/* WEEKLY TASKS */}
-        {weeklyTasks.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <View style={styles.weeklyTag}>
-                <Text style={styles.tagText}>weekly tasks</Text>
-              </View>
-
-              <Text style={styles.unfinished}>Unfinished</Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.titleRow}>
-              <Ionicons name="game-controller" size={18} color="#00e5ff" />
-
-              <Text style={styles.taskTitle}>
-                Weekly Slots Betting Task
-                <Text style={styles.red}> 0/{item.target}</Text>
-              </Text>
-            </View>
-
-            <View style={styles.descBox}>
-              <Text style={styles.desc}>
-                Member must place bets on &quot;SLOTS&quot; game and reach the
-                minimum requirement betting amount in a week to complete this
-                task and receive the reward.
-              </Text>
-            </View>
-
-            <View style={styles.rewardRow}>
-              <Text style={styles.label}>Award amount</Text>
-
-              <View style={styles.rewardBox}>
-                <Ionicons name="wallet" size={16} color="#FFD54F" />
-                <Text style={styles.reward}>₹{item.reward}</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.btn}>
-              <Text style={styles.btnText}>to complete</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-
-        {/* DAILY TASKS */}
-        {dailyTasks.map((item, index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <View style={styles.dailyTag}>
-                <Text style={styles.tagText}>Daily mission</Text>
-              </View>
-
-              <Text style={styles.unfinished}>Unfinished</Text>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.titleRow}>
-              <Ionicons name="briefcase" size={18} color="#ff8c42" />
-              <Text style={styles.taskTitle}>
-                Slot Daily Recharge & Bet Task
-              </Text>
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Deposit</Text>
-              <Text style={styles.red}>0/{item.deposit}</Text>
-            </View>
-
-            <View style={styles.row}>
-              <Text style={styles.rowLabel}>Bet</Text>
-              <Text style={styles.red}>0/{item.bet}</Text>
-            </View>
-
-            <View style={styles.descBox}>
-              <Text style={styles.desc}>
-                Members must place bets on the &quot;SLOTS&quot; game & complete
-                the deposit, also meet both the minimum betting and deposit
-                requirements within a day to complete the task and receive the
-                reward.
-              </Text>
-            </View>
-
-            <View style={styles.rewardRow}>
-              <Text style={styles.label}>Award amount</Text>
-
-              <View style={styles.rewardBox}>
-                <Ionicons name="wallet" size={16} color="#FFD54F" />
-                <Text style={styles.reward}>₹{item.reward}</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.btn}>
-              <Text style={styles.btnText}>to complete</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+    </>
   );
 }
 
@@ -184,6 +207,8 @@ const styles = StyleSheet.create({
   headerText: {
     color: "#fff",
     marginLeft: 5,
+    fontSize: 12,
+    fontWeight: '400'
   },
 
   banner: {
@@ -194,30 +219,31 @@ const styles = StyleSheet.create({
   },
 
   bannerTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
   },
 
   bannerSub: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#fff",
     marginTop: 4,
+    fontWeight: "600"
   },
 
   bannerNote: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#fff",
-    marginTop: 6,
     lineHeight: 15,
+    fontWeight: "600"
   },
 
   card: {
-    backgroundColor: "#081a45",
-    marginHorizontal: 16,
+    backgroundColor: "#021341",
+    marginHorizontal: 10,
     marginBottom: 16,
     borderRadius: 12,
-    padding: 14,
+    overflow: "hidden"
   },
 
   cardHeader: {
@@ -227,9 +253,7 @@ const styles = StyleSheet.create({
   },
 
   weeklyTag: {
-    backgroundColor: "#e53935",
-    paddingHorizontal: 14,
-    paddingVertical: 4,
+    backgroundColor: "#d23838",
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
     marginLeft: -14,
@@ -245,12 +269,15 @@ const styles = StyleSheet.create({
   },
 
   tagText: {
-    color: "#fff",
-    fontWeight: "bold",
+    color: "#e3efff",
+    fontWeight: "800",
+    fontSize: 18
   },
 
   unfinished: {
-    color: "#9ba3c7",
+    color: "#92a8e3",
+    fontWeight: "500",
+    fontSize: 18
   },
 
   divider: {
@@ -263,17 +290,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 8
   },
 
   taskTitle: {
-    color: "#fff",
-    fontSize: 14,
+    color: "#92a8e3",
+    fontSize: 12,
     flexShrink: 1,
   },
 
   red: {
-    color: "#ff4d4d",
+    color: "#d23838",
+    fontSize: 18
   },
 
   row: {
@@ -287,15 +315,15 @@ const styles = StyleSheet.create({
   },
 
   descBox: {
-    backgroundColor: "#0B2C63",
+    backgroundColor: "#001C54",
     padding: 10,
     borderRadius: 8,
     marginVertical: 10,
   },
 
   desc: {
-    color: "#9fb5ff",
-    fontSize: 12,
+    color: "#92a8e3",
+    fontSize: 14,
     lineHeight: 18,
   },
 
@@ -306,33 +334,35 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: "#9ba3c7",
+    color: "#92a8e3",
+    fontSize: 12,
+    fontWeight: "500"
   },
 
   rewardBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
   },
 
   reward: {
-    color: "#facc15",
-    fontWeight: "bold",
-    fontSize: 16,
+    color: "#dd9138",
+    fontWeight: "600",
+    fontSize: 18,
   },
 
   btn: {
     marginTop: 14,
-    borderWidth: 1.5,
-    borderColor: "#00ffd0",
+    borderWidth: 1,
+    borderColor: "#00ECBE",
     borderRadius: 30,
     paddingVertical: 10,
     alignItems: "center",
   },
 
   btnText: {
-    color: "#00ffd0",
-    fontSize: 16,
-    fontWeight: "600",
+    color: "#00ECBE",
+    fontSize: 14,
+    fontWeight: "800",
   },
 });

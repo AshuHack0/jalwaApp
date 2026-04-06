@@ -2,6 +2,7 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
+  keepPreviousData,
 } from "@tanstack/react-query";
 import {
   fetchWinGoCurrentRound,
@@ -32,6 +33,7 @@ export function useWinGoCurrentRound(apiPath: string) {
     queryKey: winGoKeys.currentRound(apiPath),
     queryFn: () => fetchWinGoCurrentRound(apiPath),
     enabled: !!apiPath,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -43,6 +45,7 @@ export function useWinGoHistory(apiPath: string, page = 1, pageSize = 10, option
     queryKey: winGoKeys.history(apiPath, page),
     queryFn: () => fetchWinGoHistory(apiPath, page, pageSize),
     enabled: !!apiPath && (options?.enabled ?? true),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -59,6 +62,7 @@ export function useWinGoMyHistory(
     queryKey: winGoKeys.myHistory(apiPath, page),
     queryFn: () => fetchWinGoMyHistory(apiPath, page, pageSize),
     enabled: !!apiPath && (options?.enabled ?? true),
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -33,6 +33,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refetch: refetchMe,
   } = useMe({
     enabled: hasToken === true,
+    refetchInterval: 5000,
   });
   const { data: walletBalanceData, refetch: refetchWallet } = useWalletBalance({
     enabled: hasToken === true,

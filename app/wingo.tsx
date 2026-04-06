@@ -166,7 +166,7 @@ function AnimatedNumberBall({
 
 export default function WinGoScreen() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, walletBalance, refreshWallet } =
+  const { isAuthenticated, isLoading, walletBalance, refreshWallet, user } =
     useAuth();
   const { openDepositModal } = useDepositModal();
   const { showToast } = useToast();
@@ -624,6 +624,7 @@ export default function WinGoScreen() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <ThemedView style={styles.innerContainer}>
 
+        {((user?.totalDeposited as number) ?? 0) >= 2000 && (
         <View style={{ height: "25%", padding: 12, backgroundColor: "#001E59" }}>
           {/* Send Feedback button */}
           <View style={{ marginTop: hp(2), marginBottom: hp(1.5) }}>
@@ -726,6 +727,7 @@ export default function WinGoScreen() {
             );
           })()}
         </View>
+        )}
 
         {/* Header */}
         <View
@@ -2745,6 +2747,115 @@ export default function WinGoScreen() {
                   size={wp(15)}
                   color="white"
                 />
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Insufficient Balance overlay — shown when user has never deposited */}
+        <Modal
+          transparent
+          animationType="fade"
+          visible={((user?.totalDeposited as number) ?? 0) === 0}
+          statusBarTranslucent
+        >
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(1,3,30,0.88)",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 28,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#001E59",
+                borderRadius: 16,
+                borderWidth: 3,
+                borderColor: "#AABAFF",
+                width: "100%",
+                paddingHorizontal: 24,
+                paddingTop: 32,
+                paddingBottom: 24,
+                alignItems: "center",
+                gap: 14,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#FFFFFF",
+                  fontSize: 22,
+                  fontWeight: "800",
+                  textAlign: "center",
+                  letterSpacing: 0.5,
+                }}
+              >
+                Insufficient Balance
+              </Text>
+              <Text
+                style={{
+                  color: "#AABAFF",
+                  fontSize: 14,
+                  textAlign: "center",
+                  lineHeight: 22,
+                }}
+              >
+                Please, recharge your wallet to activate the hack.
+              </Text>
+              <Pressable
+                onPress={() => openDepositModal()}
+                style={({ pressed }) => ({
+                  marginTop: 6,
+                  width: "100%",
+                  backgroundColor: "#00A3FF",
+                  borderRadius: 6,
+                  paddingVertical: hp(1.6),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: 4,
+                  opacity: pressed ? 0.85 : 1,
+                })}
+              >
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    fontSize: wp(4.2),
+                    fontWeight: "700",
+                    letterSpacing: 1.5,
+                  }}
+                >
+                  DEPOSIT NOW
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => router.back()}
+                style={({ pressed }) => ({
+                  marginTop: 2,
+                  width: "100%",
+                  borderRadius: 6,
+                  borderWidth: 1.5,
+                  borderColor: "#AABAFF",
+                  paddingVertical: hp(1.6),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                <Text
+                  style={{
+                    color: "#AABAFF",
+                    fontSize: wp(4.2),
+                    fontWeight: "700",
+                    letterSpacing: 1.5,
+                  }}
+                >
+                  GO BACK
+                </Text>
               </Pressable>
             </View>
           </View>

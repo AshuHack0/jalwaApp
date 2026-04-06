@@ -33,6 +33,7 @@ import * as Clipboard from "expo-clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { API_BASE_URL } from "@/services/api/config";
 import { getToken } from "@/services/auth-storage";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ── Empty History Illustration ────────────────────────────────────────────────
 function EmptyHistory() {
@@ -76,6 +77,7 @@ export default function GiftScreen() {
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
 
   const handleReceive = () => {
     if (!giftCode.trim()) return;
@@ -132,12 +134,10 @@ export default function GiftScreen() {
             keyboardShouldPersistTaps="handled"
           >
             {/* ── Generate Gift Code Panel ── */}
+            {((user?.totalDeposited as number) ?? 0) >= 5000 && (
             <View style={styles.generateCard}>
               <View style={styles.generateHeader}>
                 <Text style={styles.generateTitle}>Generate Gift Code</Text>
-                <Text style={styles.generateSub}>
-                  Available for users with total deposit ≥ ₹5000
-                </Text>
               </View>
 
               {!generatedCode ? (
@@ -148,20 +148,15 @@ export default function GiftScreen() {
                     disabled={generating}
                     activeOpacity={0.8}
                   >
-                    <LinearGradient
-                      colors={["#05b1b6", "#78fcc3"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={styles.generateBtn}
-                    >
+                    <View style={styles.generateBtn}>
                       {generating ? (
-                        <ActivityIndicator color="#05012B" size="small" />
+                        <ActivityIndicator color="#FFFFFF" size="small" />
                       ) : (
                         <Text style={styles.generateBtnText}>
                           Generate Gift Code
                         </Text>
                       )}
-                    </LinearGradient>
+                    </View>
                   </TouchableOpacity>
 
                   {generateError ? (
@@ -201,6 +196,7 @@ export default function GiftScreen() {
                 </View>
               )}
             </View>
+            )}
 
             {/* ── Banner ── */}
             <View style={styles.bannerWrapper}>
@@ -455,32 +451,41 @@ const styles = StyleSheet.create({
 
   // Generate Gift Code panel
   generateCard: {
-    backgroundColor: "#011341",
-    borderRadius: 10,
-    marginHorizontal: 12,
-    padding: 20,
-    gap: 14,
+    backgroundColor: "#001E59",
+    marginHorizontal: 0,
+    padding: 12,
+    gap: 10,
   },
-  generateHeader: { gap: 4 },
+  generateHeader: { gap: 4, marginBottom: 4 },
   generateTitle: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   generateSub: {
-    color: "#6A85B8",
+    color: "#AABAFF",
     fontSize: 12,
   },
-  generateBtnWrapper: { borderRadius: 28, overflow: "hidden" },
+  generateBtnWrapper: { borderRadius: 6, overflow: "hidden" },
   generateBtn: {
-    paddingVertical: 13,
+    width: "100%",
+    borderRadius: 6,
+    paddingVertical: 14,
     alignItems: "center",
-    borderRadius: 28,
+    justifyContent: "center",
+    backgroundColor: "#00A3FF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
   },
   generateBtnText: {
-    color: "#05012B",
+    color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 1.5,
   },
   generateError: {
     color: "#FF6B6B",
@@ -489,11 +494,19 @@ const styles = StyleSheet.create({
   },
 
   // Revealed code
-  codeRevealBox: { gap: 10 },
+  codeRevealBox: {
+    gap: 10,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: "#AABAFF",
+    backgroundColor: "rgb(50, 120, 200)",
+    padding: 14,
+    alignItems: "center",
+  },
   codeRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#060B2E",
+    backgroundColor: "rgba(0,0,0,0.35)",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -501,30 +514,31 @@ const styles = StyleSheet.create({
   },
   codeText: {
     flex: 1,
-    color: "#78fcc3",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700",
     letterSpacing: 1.5,
   },
   copyBtn: {
-    backgroundColor: "#05b1b6",
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    borderRadius: 100,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   copyBtnText: {
-    color: "#05012B",
+    color: "#FFFFFF",
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 1,
   },
   codeAmountText: {
-    color: "#6A85B8",
+    color: "white",
     fontSize: 13,
     textAlign: "center",
   },
   regenerateLink: { alignItems: "center", paddingTop: 4 },
   regenerateLinkText: {
-    color: "#05b1b6",
+    color: "#AABAFF",
     fontSize: 13,
     textDecorationLine: "underline",
   },
