@@ -1,10 +1,11 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Feather from '@expo/vector-icons/Feather';
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router"; // 1. Router import kiya
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 import {
   Dimensions,
-  ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,117 +25,161 @@ export default function InvitationBanner() {
   const router = useRouter(); // 2. Router instance
 
   return (
-    <View style={styles.outerContainer}>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        bounces={true}
-      >
-        <ImageBackground
-          source={require("@/assets/activity-awards.avif")}
-          style={styles.banner}
-        >
-          <View style={styles.bannerLeft}>
-            <Text style={styles.bannerTitle}>Invite friends and deposit</Text>
-            <Text style={styles.bannerSub}>
-              Both parties can receive rewards
-            </Text>
-            <Text style={styles.bannerSub}>
-              Invite friends to register and recharge to receive rewards
-            </Text>
-            <Text style={styles.dateLabel}>activity date</Text>
-            <Text style={styles.dateRange}>2025-03-18 - 2041-12-29</Text>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.outerContainer}>
+
+
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={28} color="#fff" />
+          </TouchableOpacity>
+
+          <View style={styles.recordBtn}>
+            <Text style={styles.headerText}>Invitation bonus</Text>
           </View>
-        </ImageBackground>
-
-        <View style={styles.navContainer}>
-          {/* 3. Invitation Reward Rules Redirect */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/invitation-reward-rules")}
-          >
-            <LinearGradient
-              colors={["#4facfe", "#00f2fe"]}
-              style={styles.iconWrapper}
-            >
-              <Ionicons name="copy-outline" size={32} color="#fff" />
-            </LinearGradient>
-            <Text style={styles.navText}>Invitation reward rules</Text>
-          </TouchableOpacity>
-
-          {/* 4. Invitation Record Redirect */}
-          <TouchableOpacity
-            style={styles.navItem}
-            onPress={() => router.push("/invitation-record")}
-          >
-            <LinearGradient
-              colors={["#43e97b", "#38f9d7"]}
-              style={styles.iconWrapper}
-            >
-              <MaterialCommunityIcons
-                name="file-document-edit-outline"
-                size={32}
-                color="#fff"
-              />
-            </LinearGradient>
-            <Text style={styles.navText}>Invitation record</Text>
-          </TouchableOpacity>
         </View>
 
-        {bonusData.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <View style={styles.greenTag}>
-                <View style={styles.whiteCircle}>
-                  <Text style={styles.tagId}>{item.id}</Text>
-                </View>
-                <Text style={styles.bonusText}>Bonus</Text>
-                <Ionicons
-                  name="close-circle"
-                  size={20}
-                  color="#fff"
-                  style={{ marginLeft: 10 }}
-                />
-              </View>
-              <Text style={styles.rewardAmount}>₹{item.amount}</Text>
-            </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Number of invitees</Text>
-              <Text style={styles.infoValue}>{item.invitees}</Text>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          bounces={true}
+        >
+          <LinearGradient
+            colors={["#f99937", "#ff6922", "#ff8039"]}
+            locations={[0.0272, 0.4354, 0.9854]}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.banner}
+          >
+            <Image source={{ uri: "https://www.jalwagame.win/assets/png/invitation_bg-611f71ab.webp" }} style={{ width: "100%", height: "100%", position: "absolute" }} />
+            <View style={styles.bannerLeft}>
+              <Text style={styles.bannerTitle}>Invite friends and deposit</Text>
+              <Text style={styles.bannerSub}>
+                Both parties can receive rewards
+              </Text>
+              <Text style={[styles.bannerSub, { marginTop: 10 }]}>
+                Invite friends to register and recharge to receive rewards
+              </Text>
+              <Text style={styles.dateLabel}>activity date</Text>
+              <Text style={styles.dateRange}>2025-03-18 - 2041-12-29</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Recharge per people</Text>
-              <Text style={styles.infoValue}>₹{item.recharge}</Text>
-            </View>
+          </LinearGradient>
 
-            <View style={styles.cardDivider} />
+          <View style={styles.navContainer}>
+            {/* 3. Invitation Reward Rules Redirect */}
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => router.push("/invitation-reward-rules")}
+            >
+              <LinearGradient
+                colors={["#4facfe", "#00f2fe"]}
+                style={styles.iconWrapper}
+              >
+                <Image source={{ uri: "https://www.jalwagame.win/assets/svg/inviterule-7c5f5524.svg" }} style={{ width: "100%", height: "100%" }} />
+              </LinearGradient>
+              <Text style={styles.navText}>Invitation reward rules</Text>
+            </TouchableOpacity>
 
-            <View style={styles.progressRow}>
-              <View style={styles.progressItem}>
-                <Text style={styles.progressNum}>0 / {item.invitees}</Text>
-                <Text style={styles.progressLabel}>Number of invitees</Text>
-              </View>
-              <View style={styles.verticalDivider} />
-              <View style={styles.progressItem}>
-                <Text style={styles.progressNum}>0 / {item.invitees}</Text>
-                <Text style={styles.progressLabel}>Deposit number</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.unfinishedBtn} disabled>
-              <Text style={styles.btnText}>Unfinished</Text>
+            {/* 4. Invitation Record Redirect */}
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => router.push("/invitation-record")}
+            >
+              <LinearGradient
+                colors={["#43e97b", "#38f9d7"]}
+                style={styles.iconWrapper}
+              >
+                <Image source={{ uri: "https://www.jalwagame.win/assets/svg/icon-83990d9a.svg" }} style={{ width: "100%", height: "100%" }} />
+              </LinearGradient>
+              <Text style={styles.navText}>Invitation record</Text>
             </TouchableOpacity>
           </View>
-        ))}
-      </ScrollView>
-    </View>
+
+          {bonusData.map((item) => (
+            <View key={item.id} style={styles.card}>
+              <View style={styles.cardHeader}>
+                <View style={styles.greenTag}>
+                  <Text style={styles.bonusText}>Bonus</Text>
+                  <View style={styles.whiteCircle}>
+                    <Text style={styles.tagId}>{item.id}</Text>
+                  </View>
+                  <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "white", borderRadius: 100, width: 28, height: 28, marginLeft: 30 }}>
+                    <Feather name="x" size={24} color="#BABFDF" style={{fontWeight:"bold"}} />
+                  </View>
+                </View>
+                <View style={{ flex: 1, height: "100%", width: "100%", alignItems: "flex-end", paddingVertical: 16, borderBottomColor: "#022c68", borderBottomWidth: 1, paddingRight: 15, marginLeft: 10 }}>
+                  <Text style={styles.rewardAmount}>₹{item.amount}</Text>
+                </View>
+              </View>
+
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Number of invitees</Text>
+                <View style={{ width: "40%", alignItems: "center", justifyContent: "center" }}>
+                  <Text style={styles.infoValue}>{item.invitees}</Text>
+                </View>
+              </View>
+              <View style={[styles.infoRow, { marginTop: 6 }]}>
+                <Text style={styles.infoLabel}>Recharge per people</Text>
+                <View style={{ width: "40%", alignItems: "center", justifyContent: "center" }}>
+                  <Text style={[styles.infoValue, { color: "#D23838" }]}>₹{item.recharge}</Text>
+                </View>
+              </View>
+
+              <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 }}>
+                <View style={{ width: 30, aspectRatio: 1, backgroundColor: "#05012B", borderRadius: "100%", marginLeft: -15 }} />
+                <View style={[styles.cardDivider, { flex: 1 }]} />
+                <View style={{ width: 30, aspectRatio: 1, backgroundColor: "#05012B", borderRadius: "100%", marginRight: -15 }} />
+              </View>
+
+              <View style={styles.progressRow}>
+                <View style={styles.progressItem}>
+                  <Text style={[styles.progressNum, { color: "#DD9137" }]}>0 / {item.invitees}</Text>
+                  <Text style={styles.progressLabel}>Number of invitees</Text>
+                </View>
+                <View style={styles.verticalDivider} />
+                <View style={styles.progressItem}>
+                  <Text style={[styles.progressNum, { color: "#d23838" }]}>0 / {item.invitees}</Text>
+                  <Text style={styles.progressLabel}>Deposit number</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity style={styles.unfinishedBtn} disabled>
+                <Text style={styles.btnText}>Unfinished</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
 // Styles remains the same as your previous code
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingTop: 50,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+  },
+
+  recordBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: "26%",
+  },
+
+  headerText: {
+    color: "#fff",
+    marginLeft: 5,
+    fontSize: 24,
+    fontWeight: '500'
+  },
   outerContainer: {
     flex: 1,
     backgroundColor: "#05012B",
@@ -142,29 +187,31 @@ const styles = StyleSheet.create({
   },
   scrollView: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingBottom: 60 },
-  banner: { height: 220, paddingHorizontal: 16, flexDirection: "row" },
-  bannerLeft: { flex: 1, justifyContent: "center" },
+  banner: { height: 220, flexDirection: "row", position: "relative" },
+  bannerLeft: { flex: 1, paddingHorizontal: 16 },
   bannerTitle: {
+    marginTop: 10,
     color: "#fff",
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 4,
   },
   bannerSub: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 16,
+    fontWeight: '500',
     opacity: 0.9,
     lineHeight: 16,
     width: "70%",
   },
-  dateLabel: { color: "#fff", fontSize: 12, marginTop: 8, opacity: 0.8 },
-  dateRange: { color: "#fff", fontSize: 15, fontWeight: "bold", marginTop: 2 },
+  dateLabel: { color: "#fff", fontSize: 16, fontWeight: "600", marginTop: 8 },
+  dateRange: { color: "#fff", fontSize: 24, fontWeight: "bold", marginTop: 2 },
   navContainer: {
     flexDirection: "row",
-    backgroundColor: "#0a1a45",
+    backgroundColor: "#001c54",
     marginTop: -35,
     marginHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 16,
     borderRadius: 15,
     elevation: 5,
   },
@@ -178,14 +225,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   navText: {
-    color: "#9BA3C7",
-    fontSize: 12,
+    color: "#92a8e3",
+    fontSize: 15,
     textAlign: "center",
     fontWeight: "500",
     paddingHorizontal: 10,
   },
   card: {
-    backgroundColor: "#0a1b4d",
+    backgroundColor: "#021341",
     marginHorizontal: 16,
     marginTop: 15,
     borderRadius: 10,
@@ -195,57 +242,58 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: 15,
   },
   greenTag: {
-    backgroundColor: "#2e7d32",
+    backgroundColor: "#17b153",
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderBottomRightRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    borderBottomRightRadius: 20
   },
   whiteCircle: {
-    backgroundColor: "#fff",
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    backgroundColor: "#e3efff",
+    height: 22,
+    width: 22,
+    borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
+    marginLeft: 8,
   },
-  tagId: { color: "#2e7d32", fontSize: 12, fontWeight: "bold" },
-  bonusText: { color: "#fff", marginLeft: 8, fontWeight: "bold" },
-  rewardAmount: { color: "#fbc02d", fontWeight: "bold", fontSize: 16 },
+  tagId: { color: "#6fa084", fontSize: 12, fontWeight: "500" },
+  bonusText: { color: "#e3efff", marginLeft: 8, fontWeight: "500", fontSize: 13 },
+  rewardAmount: { color: "#dd9138", fontWeight: "bold", fontSize: 17 },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#0d2566",
+    backgroundColor: "#001C54",
     marginHorizontal: 12,
-    marginTop: 10,
+    marginTop: 16,
     padding: 10,
     borderRadius: 5,
   },
-  infoLabel: { color: "#9ba3c7", fontSize: 13 },
-  infoValue: { color: "#fff", fontWeight: "bold" },
+  infoLabel: { color: "#e3efff", fontSize: 16 },
+  infoValue: { color: "#e3efff", fontWeight: "bold", fontSize: 18 },
   cardDivider: {
     height: 1,
-    backgroundColor: "#1c3c7a",
     marginVertical: 15,
     marginHorizontal: 15,
     borderStyle: "dashed",
-    borderWidth: 1,
+    borderTopColor: "#022C68",
+    borderTopWidth: 1,
   },
   progressRow: { flexDirection: "row", paddingBottom: 15 },
   progressItem: { flex: 1, alignItems: "center" },
-  progressNum: { color: "#ff4d4d", fontSize: 18, fontWeight: "bold" },
-  progressLabel: { color: "#9ba3c7", fontSize: 11, marginTop: 4 },
+  progressNum: { color: "#ff4d4d", fontSize: 21, fontWeight: "bold" },
+  progressLabel: { color: "#92a8e3", fontSize: 12, marginTop: 4 },
   verticalDivider: { width: 1, backgroundColor: "#1c3c7a" },
   unfinishedBtn: {
-    backgroundColor: "#3f4a7a",
+    backgroundColor: "#3D4863",
     margin: 12,
     paddingVertical: 12,
     borderRadius: 30,
     alignItems: "center",
+    marginBottom: 20
   },
-  btnText: { color: "#9ba3c7", fontSize: 16, fontWeight: "bold" },
+  btnText: { color: "white", fontSize: 20, fontWeight: "bold" },
 });
