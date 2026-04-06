@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
+import { Image } from "expo-image";
 
 
 export default function BettingRebate() {
@@ -59,13 +60,13 @@ export default function BettingRebate() {
                   >
                     {isActive ? (
                       <LinearGradient
-                        colors={["#4facfe", "#00f2fe"]}
+                        colors={["rgb(122, 254, 195)", " rgb(2, 175, 182)"]}
                         style={styles.activeGradient}
                       >
                         <MaterialIcons
                           name={item.icon as any}
                           size={24}
-                          color="#fff"
+                          color="#021341"
                         />
                         <Text style={styles.activeText}>{item.name}</Text>
                       </LinearGradient>
@@ -87,19 +88,15 @@ export default function BettingRebate() {
 
           {/* MAIN REBATE CARD */}
           <View style={styles.rebateCard}>
-            <Text style={styles.cardTitle}>All-Total betting rebate</Text>
+            <Text style={styles.cardTitle}>{activeTab}-Total betting rebate</Text>
 
             <View style={styles.realTimeBadge}>
-              <Ionicons name="checkmark-circle" size={14} color="#00e5ff" />
+              <Image source={require("../../assets/icon-rebateRealTime.svg")} style={{ width: 20, height: 20 }} />
               <Text style={styles.badgeText}>Real-time count</Text>
             </View>
 
             <View style={styles.amountRow}>
-              <MaterialIcons
-                name="account-balance-wallet"
-                size={22}
-                color="#00e5ff"
-              />
+              <Image source={require("../../assets/icon-rebate.svg")} style={{ width: 30, height: 30 }} />
               <Text style={styles.mainAmount}>56.00</Text>
             </View>
 
@@ -111,12 +108,12 @@ export default function BettingRebate() {
 
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>Today rebate</Text>
-                <Text style={styles.statValue}>0</Text>
+                <Text style={styles.statLabel}>{activeTab== "all" ? "Today rebate" : "Rebate rate"}</Text>
+                <Text style={[styles.statValue, { color: activeTab== "all" ? "#DD9137" : "#D23838" }]}>{ activeTab== "all" ? "0" : "0.15%"}</Text>
               </View>
               <View style={styles.statBox}>
                 <Text style={styles.statLabel}>Total rebate</Text>
-                <Text style={[styles.statValue, { color: "#ffcc00" }]}>1.5</Text>
+                <Text style={[styles.statValue, { color: "#DD9137" }]}>0</Text>
               </View>
             </View>
 
@@ -136,7 +133,7 @@ export default function BettingRebate() {
               <Text style={styles.historyTitle}>Rebate history</Text>
             </View>
 
-            <View style={styles.historyCard}>
+            {/* <View style={styles.historyCard}>
               <View style={styles.historyCardHeader}>
                 <Text style={styles.historyGame}>Lottery</Text>
                 <Text style={styles.completedText}>Completed</Text>
@@ -170,7 +167,7 @@ export default function BettingRebate() {
                   </Text>
                 </View>
               </View>
-            </View>
+            </View> */}
 
             <TouchableOpacity style={styles.allHistoryBtn}>
               <Text style={styles.allHistoryText}>All history</Text>
@@ -201,8 +198,8 @@ const styles = StyleSheet.create({
     gap: 10, // Items ke beech barabar gap
   },
   navBox: {
-    width: 100, // Image style match fixed width
-    height: 75,
+    width: 110, // Image style match fixed width
+    height: 64,
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -211,73 +208,72 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  activeText: { color: "#fff", fontSize: 12, marginTop: 4, fontWeight: "bold" },
+  activeText: { color: "#021341", fontSize: 12, marginTop: 4, fontWeight: "bold" },
   inactiveBox: {
     flex: 1,
-    backgroundColor: "#0a1a45",
+    backgroundColor: "#021341",
     justifyContent: "center",
     alignItems: "center",
   },
   inactiveText: { color: "#9ba3c7", fontSize: 12, marginTop: 4 },
 
   rebateCard: {
-    backgroundColor: "#0a1a45",
+    backgroundColor: "#021341",
     padding: 16,
     borderRadius: 12,
     marginHorizontal: 12,
     marginBottom: 20,
   },
-  cardTitle: { color: "#fff", fontSize: 14, fontWeight: "bold" },
+  cardTitle: { color: "#e3efff", fontSize: 18, fontWeight: "bold", textTransform: "capitalize" },
   realTimeBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#0d2c66",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 5,
     alignSelf: "flex-start",
     marginTop: 8,
     borderWidth: 1,
-    borderColor: "#00e5ff",
+    borderColor: "#00ECBE",
   },
-  badgeText: { color: "#00e5ff", fontSize: 12, marginLeft: 4 },
+  badgeText: { color: "#00ECBE", fontSize: 14, marginLeft: 4 },
   amountRow: { flexDirection: "row", alignItems: "center", marginTop: 15 },
   mainAmount: {
-    color: "#fff",
+    color: "#e3efff",
     fontSize: 24,
     fontWeight: "bold",
     marginLeft: 10,
   },
   vipNote: {
-    backgroundColor: "#0d2c66",
+    backgroundColor: "#001C54",
     padding: 10,
     borderRadius: 5,
     marginTop: 15,
   },
-  vipText: { color: "#9ba3c7", fontSize: 12 },
+  vipText: { color: "#92a8e3", fontSize: 14 },
   statsRow: { flexDirection: "row", marginTop: 15, gap: 10 },
   statBox: {
     flex: 1,
-    backgroundColor: "#0d2c66",
+    backgroundColor: "#001C54",
     padding: 10,
     borderRadius: 5,
   },
-  statLabel: { color: "#9ba3c7", fontSize: 12 },
-  statValue: { color: "#fff", fontSize: 16, fontWeight: "bold", marginTop: 4 },
+  statLabel: { color: "#92a8e3", fontSize: 14 },
+  statValue: { color: "#fff", fontSize: 21, fontWeight: "bold", marginTop: 4 },
   timeNote: {
-    color: "#9ba3c7",
-    fontSize: 11,
+    color: "#92a8e3",
+    fontSize: 12,
+    fontWeight: "500",
     marginTop: 15,
-    textAlign: "center",
   },
   rebateBtn: {
-    backgroundColor: "#313c5e", // Image match grey/blue
+    backgroundColor: "#3D4863", // Image match grey/blue
     padding: 14,
     borderRadius: 30,
     marginTop: 15,
     alignItems: "center",
   },
-  rebateBtnText: { color: "#9ba3c7", fontSize: 16, fontWeight: "bold" },
+  rebateBtnText: { color: "#e3efff", fontSize: 16, fontWeight: "bold" },
 
   historySection: { paddingHorizontal: 12, marginTop: 10 },
   historyHeader: {
@@ -288,7 +284,7 @@ const styles = StyleSheet.create({
   historyLine: {
     width: 4,
     height: 18,
-    backgroundColor: "#00e5ff",
+    backgroundColor: "#00ECBE",
     borderRadius: 2,
     marginRight: 10,
   },
@@ -320,12 +316,12 @@ const styles = StyleSheet.create({
   detailValue: { color: "#fff", fontSize: 14, fontWeight: "bold" },
   allHistoryBtn: {
     borderWidth: 1,
-    borderColor: "#00e5ff",
+    borderColor: "#00ECBE",
     padding: 12,
     borderRadius: 30,
-    marginTop: 15,
+    marginTop: 2,
     alignItems: "center",
     marginBottom: 20,
   },
-  allHistoryText: { color: "#00e5ff", fontWeight: "bold" },
+  allHistoryText: { color: "#00ECBE", fontWeight: "bold" },
 });
