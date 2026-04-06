@@ -61,7 +61,7 @@ const WinningStar = ({ navigation }: any) => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
       {/* 1. HEADER */}
@@ -114,7 +114,7 @@ const WinningStar = ({ navigation }: any) => {
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     height: 60,
+    paddingTop: 50,
   },
   headerTitle: {
     color: "#FFF",

@@ -13,7 +13,7 @@ export default function InvitationRecord() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -30,7 +30,7 @@ export default function InvitationRecord() {
       <View style={styles.content}>
         <Text style={styles.noMoreText}>No more</Text>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -45,8 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 15,
-    // Agar notch area cover karna hai toh paddingTop adjust karein
-    paddingTop: 20,
+    paddingTop: 50,
   },
   backBtn: {
     padding: 8,

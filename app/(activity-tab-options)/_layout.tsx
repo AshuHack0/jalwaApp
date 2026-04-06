@@ -5,6 +5,8 @@ const ACTIVITY_CATEGORIES_BACKGROUND = "#05012B";
 
 export default function ActivityCategoriesLayout() {
   return (
+    <>
+    <Stack.Screen options={{headerShown:false}}/>
     <View style={{ flex: 1, backgroundColor: ACTIVITY_CATEGORIES_BACKGROUND }}>
       <StatusBar
         barStyle="light-content"
@@ -21,5 +23,6 @@ export default function ActivityCategoriesLayout() {
         }}
       />
     </View>
+      </>
   );
 }

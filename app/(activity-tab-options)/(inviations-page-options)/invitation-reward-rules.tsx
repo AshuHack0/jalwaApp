@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -36,7 +37,7 @@ export default function InvitationRewardRules() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
@@ -78,7 +79,7 @@ export default function InvitationRewardRules() {
               key={index}
               style={[
                 styles.row,
-                { backgroundColor: index % 2 === 0 ? "#0a1b4d" : "#08163d" },
+                { backgroundColor: index % 2 === 0 ? "#021341" : "#000B33" },
               ]}
             >
               <Text style={[styles.cell, { textAlign: "left" }]}>
@@ -86,7 +87,7 @@ export default function InvitationRewardRules() {
               </Text>
               <Text style={styles.cell}>₹{item.deposit}</Text>
               <Text
-                style={[styles.cell, { textAlign: "right", color: "#82b1ff" }]}
+                style={[styles.cell, { textAlign: "right" }]}
               >
                 ₹{item.bonus}
               </Text>
@@ -98,6 +99,9 @@ export default function InvitationRewardRules() {
         <View style={styles.rulesContainer}>
           <View style={styles.rulesHeaderWrapper}>
             <View style={styles.rulesHeader}>
+              <View style={{ position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center", height:26 }}>
+                <Image source={require("../../../assets/icon-ruleHead.svg")} style={{ height: 24, width: 200, position: "absolute" }} />
+              </View>
               <Text style={styles.rulesHeaderText}>Rules</Text>
             </View>
           </View>
@@ -112,7 +116,7 @@ export default function InvitationRewardRules() {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -125,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 20,
+    paddingTop: 50,
     paddingHorizontal: 16,
     paddingBottom: 15,
   },
@@ -142,14 +146,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   description: {
-    color: "#9ba3c7",
+    color: "#92a8e3",
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 8,
   },
   subDescription: {
-    color: "#9ba3c7",
-    fontSize: 13,
+    color: "#92a8e3",
+    fontSize: 14,
     lineHeight: 18,
   },
   table: {
@@ -159,7 +163,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: "row",
-    backgroundColor: "#2A52BE",
+    backgroundColor: "#2C5ECA",
     paddingVertical: 14,
     paddingHorizontal: 12,
   },
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 15,
     textAlign: "center",
   },
   row: {
@@ -179,31 +183,31 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    color: "#9ba3c7",
-    fontSize: 13,
+    color: "#92a8e3",
+    fontSize: 14,
     textAlign: "center",
   },
   // RULES STYLES
   rulesContainer: {
-    backgroundColor: "#0a1b4d",
+    backgroundColor: "#021341",
     borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "#1c3c7a",
     overflow: "hidden",
   },
   rulesHeaderWrapper: {
     alignItems: "center",
   },
   rulesHeader: {
-    backgroundColor: "#2A52BE",
-    paddingHorizontal: 50,
-    paddingVertical: 6,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    // backgroundColor: "#2C5ECA",
+    // paddingHorizontal: 50,
+    // paddingVertical: 6,
+    // borderBottomLeftRadius: 20,
+    // borderBottomRightRadius: 20,
+    flex: 1,
+    position: "relative",
   },
   rulesHeaderText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "bold",
   },
   rulesBody: {
@@ -218,15 +222,15 @@ const styles = StyleSheet.create({
   diamondBullet: {
     width: 6,
     height: 6,
-    backgroundColor: "#00e5ff",
+    backgroundColor: "rgb(122, 254, 195)",
     transform: [{ rotate: "45deg" }],
     marginTop: 6,
     marginRight: 10,
   },
   ruleText: {
     flex: 1,
-    color: "#9ba3c7",
-    fontSize: 13,
+    color: "#92a8e3",
+    fontSize: 14,
     lineHeight: 18,
   },
 });

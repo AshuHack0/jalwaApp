@@ -32,7 +32,7 @@ const SuperJackpotRules = ({ navigation }: any) => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
       {/* 1. TOP HEADER - Dark Midnight Blue */}
@@ -151,7 +151,7 @@ const SuperJackpotRules = ({ navigation }: any) => {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     height: 55,
+    paddingTop: 50,
   },
   headerTitle: {
     color: "#FFF",
