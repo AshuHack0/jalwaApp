@@ -102,7 +102,7 @@ export default function AttendanceBonusScreen() {
 const BG = "#060B2E";
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BG },
+  container: { flex: 1, backgroundColor: BG , paddingTop:40},
 
   scroll: { flex: 1 },
   scrollContent: { gap: 12 },

@@ -421,6 +421,15 @@ export default function WinGoScreen() {
     }
   }, [isScreenFocused, showCountdownModal, secondsRemaining, di1Player, di2Player]);
 
+  // Play deposit audio when insufficient balance modal opens
+  const isInsufficientBalanceModalVisible = ((user?.totalDeposited as number) ?? 0) === 0;
+  useEffect(() => {
+    if (isInsufficientBalanceModalVisible && isScreenFocused) {
+      minDepositPlayer.seekTo(0);
+      minDepositPlayer.play();
+    }
+  }, [isInsufficientBalanceModalVisible, isScreenFocused, minDepositPlayer]);
+
   // Close bet modal when countdown starts
   useEffect(() => {
     if (showCountdownModal) {
