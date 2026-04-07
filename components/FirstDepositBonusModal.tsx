@@ -3,7 +3,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import { useState } from "react";
-import { useToast } from "@/contexts/ToastContext";
 import {
   ActivityIndicator,
   Dimensions,
@@ -13,10 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  useFirstDepositBonus,
-  useClaimFirstDepositBonus,
-} from "@/services/api/hooks/useFirstDepositBonus";
+import { useFirstDepositBonus } from "@/services/api/hooks/useFirstDepositBonus";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NO_REMINDER_KEY = "@jalwa_no_deposit_reminder_until";
@@ -33,12 +29,9 @@ type Props = {
 export function FirstDepositBonusModal({ visible, onClose }: Props) {
   const router = useRouter();
   const { openDepositModal } = useDepositModal();
-  const { showToast } = useToast();
   const [noReminderToday, setNoReminderToday] = useState(false);
-  const [claimingId, setClaimingId] = useState<number | null>(null);
 
   const { data: offers, isLoading } = useFirstDepositBonus({ enabled: visible });
-  const { claim } = useClaimFirstDepositBonus();
 
   const sortedOffers = [...(offers ?? [])]
     .filter((o) => !o.isFinshed)
@@ -59,21 +52,9 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
     router.push("/(tabs)/activity");
   };
 
-  const handleDeposit = (rechargeAmount?: number) => {
+  const handleDeposit = async (rechargeAmount?: number) => {
+    await handleClose();
     openDepositModal(rechargeAmount);
-    // Don't close bonus modal - keep it open so user sees updated progress after deposit
-  };
-
-  const handleReceive = async (offerId: number) => {
-    setClaimingId(offerId);
-    try {
-      const res = await claim(offerId);
-      if (res.code !== 0) {
-        showToast({ type: "error", title: "Claim Failed", message: res.msg ?? "Please try again." });
-      }
-    } finally {
-      setClaimingId(null);
-    }
   };
 
   return (
@@ -191,7 +172,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           color: "#dd9138",
                         }}
                       >
-                        {formatBonus(offer.rewardAmount)}
+                        {formatBonus(offer.rewardAmount)} 
                       </Text>
                     </View>
                     <Text
@@ -226,54 +207,28 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           {offer.currentProgress ?? 0}/{offer.rechargeAmount}
                         </Text>
                       </View>
-                      {offer.canReceive ? (
-                        <TouchableOpacity
-                          style={{ borderRadius: 4, overflow: "hidden" }}
-                          onPress={() => handleReceive(offer.id)}
-                          activeOpacity={0.8}
-                          disabled={claimingId !== null}
-                        >
-                          <LinearGradient
-                            colors={["#7AFEC3", "#02AFB6"]}
-                            start={{ x: 0.5, y: 0 }}
-                            end={{ x: 0.5, y: 1 }}
-                            style={{
-                              paddingVertical: 4,
-                              paddingHorizontal: 20,
-                              borderRadius: 4,
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-
-                            <Text
-                              style={{
-                                fontSize: 13,
-                                fontWeight: "600",
-                                color: "#05012B",
-                              }}
-                            >
-                              Receive
-                            </Text>
-                          </LinearGradient>
-                        </TouchableOpacity>
-                      ) : (
-                        <TouchableOpacity
+                      <TouchableOpacity
+                        style={{
+                          paddingVertical: 4,
+                          paddingHorizontal: 20,
+                          borderRadius: 8,
+                          borderWidth: 1,
+                          borderColor: "#dd9138",
+                          backgroundColor: "transparent",
+                        }}
+                        onPress={() => handleDeposit(offer.rechargeAmount)}
+                        activeOpacity={0.8}
+                      >
+                        <Text
                           style={{
-                            paddingVertical: 4,
-                            paddingHorizontal: 20,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor: "#dd9138",
+                            fontSize: 13,
+                            fontWeight: "600",
+                            color: "#dd9138",
                           }}
-                          onPress={() => handleDeposit(offer.rechargeAmount)}
-                          activeOpacity={0.8}
                         >
-                          <Text style={{ fontSize: 13, fontWeight: "500", color: "#dd9138" }}>
-                            Deposit
-                          </Text>
-                        </TouchableOpacity>
-                      )}
+                          Deposit
+                        </Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))

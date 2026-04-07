@@ -618,17 +618,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   promotionDataValue: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
     // fontStyle: "italic",
   },
   promotionDataLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#92A8E3",
     textAlign: "center",
     fontWeight: "500",
-    lineHeight: 14,
+    lineHeight: 20,
+
     // fontStyle: "italic",
   },
   contentContainer: {

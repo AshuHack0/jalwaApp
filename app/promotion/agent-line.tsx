@@ -48,7 +48,7 @@ export default function AgentLineScreen() {
   const insets = useSafeAreaInsets();
 
   const handleTelegram = () => {
-    Linking.openURL("https://t.me/SHiV4i"); // TODO: replace with actual Telegram link
+    Linking.openURL("https://t.me/Jalwa_Channel_Official"); 
   };
 
   return (

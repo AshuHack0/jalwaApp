@@ -19,6 +19,9 @@ import {
   View,
 } from "react-native";
 
+const MAIN_GRADIENT_START = "#7AFEC3";
+const MAIN_GRADIENT_END = "#02AFB6";
+
 export default function LoginScreen() {
   const { login: authLogin } = useAuth();
   const router = useRouter();
@@ -58,10 +61,10 @@ export default function LoginScreen() {
         await authLogin(res.token);
         router.replace("/(tabs)");
       } else {
-        setError(res.message ?? "Login failed");
+        router.replace("/auth/register");
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      router.replace("/auth/register");
     } finally {
       setLoading(false);
     }
@@ -121,10 +124,10 @@ export default function LoginScreen() {
             </ThemedText>
           </View>
 
-          <View style={{ paddingHorizontal: 20, marginVertical: 20 }}>
+          <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
             {/* Tabs: phone number | Email Login */}
             <View
-              style={{ flexDirection: "row", marginBottom: 24, height: 72 }}
+              style={{ flexDirection: "row", marginBottom: 24, height: 64 }}
             >
               <Pressable
                 style={{
@@ -143,12 +146,12 @@ export default function LoginScreen() {
                       ? require("@/assets/Screenshot 2026-02-20 030004.png")
                       : require("@/assets/Screenshot 2026-02-20 030820.png")
                   }
-                  style={{ width: 20, height: 26 }}
+                  style={{ width: 18, height: 22 }}
                 />
                 <ThemedText
                   style={{
                     color: activeTab === "phone" ? "#00ECBE" : "#92A8E3",
-                    fontSize: 17,
+                    fontSize: 16,
                     fontWeight: "600",
                   }}
                 >
@@ -183,13 +186,13 @@ export default function LoginScreen() {
                         ? require("@/assets/Screenshot 2026-02-20 030103.png")
                         : require("@/assets/Screenshot 2026-02-20 030832.png")
                     }
-                    style={{ width: 29, height: 20 }}
+                    style={{ width: 25, height: 20 }}
                   />
                 </View>
                 <ThemedText
                   style={{
                     color: activeTab === "email" ? "#00ECBE" : "#92A8E3",
-                    fontSize: 17,
+                    fontSize: 16,
                     fontWeight: "600",
                   }}
                 >
@@ -214,17 +217,9 @@ export default function LoginScreen() {
                   <View style={styles.labelRow}>
                     <Image
                       source={require("@/assets/Screenshot 2026-02-20 030004.png")}
-                      style={{ width: 20, height: 26 }}
+                      style={{ width: 20, height: 23 }}
                     />
-                    <ThemedText
-                      style={{
-                        color: "white",
-                        fontSize: 17,
-                        fontWeight: "400",
-                      }}
-                    >
-                      Phone number
-                    </ThemedText>
+                    <ThemedText style={styles.label}>Phone number</ThemedText>
                   </View>
                   <View style={styles.phoneRow}>
                     <TouchableOpacity style={styles.countryCode}>
@@ -250,15 +245,7 @@ export default function LoginScreen() {
                       source={require("@/assets/Screenshot 2026-02-20 030103.png")}
                       style={{ width: 29, height: 20 }}
                     />
-                    <ThemedText
-                      style={{
-                        color: "white",
-                        fontSize: 17,
-                        fontWeight: "400",
-                      }}
-                    >
-                      Email Login
-                    </ThemedText>
+                    <ThemedText style={styles.label}>Email Login</ThemedText>
                   </View>
                   <TextInput
                     style={styles.input}
@@ -276,18 +263,14 @@ export default function LoginScreen() {
                 <View style={styles.labelRow}>
                   <Image
                     source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                    style={{ width: 26, height: 26 }}
+                    style={{ width: 23, height: 23 }}
                   />
-                  <ThemedText
-                    style={{ color: "white", fontSize: 17, fontWeight: "400" }}
-                  >
-                    Password
-                  </ThemedText>
+                  <ThemedText style={styles.label}>Password</ThemedText>
                 </View>
                 <View style={styles.passwordRow}>
                   <TextInput
                     style={[styles.input, styles.passwordInput]}
-                    placeholder=".........."
+                    placeholder="Password"
                     placeholderTextColor="rgba(255,255,255,0.4)"
                     value={password}
                     onChangeText={setPassword}
@@ -307,12 +290,7 @@ export default function LoginScreen() {
               </View>
 
               <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 24,
-                  gap: 10,
-                }}
+                style={styles.checkRow}
                 onPress={() => setRememberPassword(!rememberPassword)}
                 activeOpacity={0.8}
               >
@@ -323,28 +301,7 @@ export default function LoginScreen() {
                   ]}
                 >
                   {rememberPassword && (
-                    <View
-                      style={{
-                        position: "relative",
-                        width: 17,
-                        height: 17,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Ionicons
-                        name="checkmark"
-                        size={17}
-                        color="#ffffff"
-                        style={{ position: "absolute" }}
-                      />
-                      <Ionicons
-                        name="checkmark"
-                        size={17}
-                        color="#ffffff"
-                        style={{ position: "absolute", left: 0.5, top: 0.5 }}
-                      />
-                    </View>
+                    <Ionicons name="checkmark" size={14} color="#05012B" />
                   )}
                 </View>
                 <ThemedText style={styles.checkLabel}>
@@ -357,7 +314,7 @@ export default function LoginScreen() {
               ) : null}
               <TouchableOpacity
                 style={[
-                  { borderRadius: 9999, overflow: "hidden", marginBottom: 14 },
+                  styles.primaryButtonWrap,
                   activeTab === "email" && { opacity: 0.5 },
                 ]}
                 activeOpacity={0.8}
@@ -365,27 +322,15 @@ export default function LoginScreen() {
                 disabled={activeTab === "email" || loading}
               >
                 <LinearGradient
-                  colors={["#05B1B7", "#76FBC3"]}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 0, y: 0 }}
-                  style={{
-                    paddingVertical: 12,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 9999,
-                  }}
+                  colors={["#7AFEC3", "#02AFB6"]}
+                  start={{ x: 0.5, y: 0 }}
+                  end={{ x: 0.5, y: 1 }}
+                  style={styles.gradientButton}
                 >
                   {loading ? (
                     <ActivityIndicator color="#000" />
                   ) : (
-                    <ThemedText
-                      style={{
-                        color: "black",
-                        fontSize: 20,
-                        fontWeight: "700",
-                        letterSpacing: 2,
-                      }}
-                    >
+                    <ThemedText style={styles.gradientButtonText}>
                       Log in
                     </ThemedText>
                   )}
@@ -393,26 +338,12 @@ export default function LoginScreen() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={{
-                  paddingVertical: 12,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 9999,
-                  borderWidth: 1,
-                  borderColor: "#00ECBE",
-                  backgroundColor: "transparent",
-                }}
+                style={styles.outlineButton}
                 onPress={() => router.replace("/auth/register")}
                 activeOpacity={0.8}
               >
-                <ThemedText
-                  style={{
-                    color: "#00ECBE",
-                    fontSize: 20,
-                    fontWeight: "700",
-                    letterSpacing: 2,
-                  }}
-                >
+                
+                <ThemedText style={styles.outlineButtonAccent}>
                   Register
                 </ThemedText>
               </TouchableOpacity>
@@ -423,7 +354,7 @@ export default function LoginScreen() {
               <TouchableOpacity style={styles.footerLink}>
                 <Image
                   source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                  style={{ width: 38, height: 40 }}
+                  style={{ width: 30, height: 30 }}
                 />
                 <ThemedText
                   style={{ color: "white", fontSize: 13, fontWeight: "600" }}
@@ -434,7 +365,7 @@ export default function LoginScreen() {
               <TouchableOpacity style={styles.footerLink}>
                 <Image
                   source={require("@/assets/Screenshot 2026-02-20 030138.png")}
-                  style={{ width: 40, height: 40 }}
+                  style={{ width: 30, height: 30 }}
                 />
                 <ThemedText
                   style={{ color: "white", fontSize: 13, fontWeight: "600" }}
@@ -493,7 +424,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   infoSection: {
-    backgroundColor: "#011341",
+    height: 114,
+    width: "100%",
+    backgroundColor: "#021341",
     padding: 20,
   },
   title: {
@@ -501,14 +434,13 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "white",
     marginBottom: 8,
-    fontFamily: "sans-serif",
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: "white",
-    lineHeight: 14,
+    lineHeight: 16,
     marginBottom: 4,
-    fontFamily: "sans-serif",
+    fontWeight: "500",
   },
   form: {
     marginBottom: 32,
@@ -522,12 +454,13 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 10,
   },
+  label: { fontSize: 15, color: "white", fontWeight: "500" },
   input: {
     backgroundColor: "#011341",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 16,
+    fontSize: 14,
     color: "white",
   },
   phoneRow: {
@@ -544,7 +477,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   countryCodeText: {
-    color: "white",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "500",
   },
@@ -552,9 +485,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#011341",
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 14,
     color: "white",
   },
   passwordRow: {
@@ -570,12 +503,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
   },
+  checkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 24,
+    gap: 6,
+    flexWrap: "wrap",
+  },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#00ECBE",
+    borderColor: "rgba(255,255,255,0.6)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -585,8 +525,33 @@ const styles = StyleSheet.create({
   },
   checkLabel: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "rgba(255,255,255,0.9)",
   },
+  primaryButtonWrap: {
+    borderRadius: 9999,
+    overflow: "hidden",
+    marginBottom: 14,
+  },
+  gradientButton: {
+    paddingVertical: 11,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9999,
+  },
+  gradientButtonText: { color: "black", fontSize: 18, fontWeight: "900" },
+  outlineButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 11,
+    borderRadius: 9999,
+    borderWidth: 1,
+    borderColor: "#00ECBE",
+    backgroundColor: "transparent",
+  },
+  outlineButtonMuted: { fontSize: 16, color: "white", fontWeight: "600" },
+  outlineButtonAccent: { fontSize: 16, color: "#00ECBE", fontWeight: "900" },
   errorText: {
     fontSize: 13,
     color: "#E53935",

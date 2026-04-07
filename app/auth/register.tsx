@@ -161,7 +161,7 @@ export default function RegisterScreen() {
                 <View style={styles.labelRow}>
                   <Image
                     source={require("@/assets/Screenshot 2026-02-20 030004.png")}
-                    style={{ width: 20, height: 26 }}
+                    style={{ width: 20, height: 23 }}
                   />
                   <ThemedText style={styles.label}>Phone number</ThemedText>
                 </View>
@@ -185,7 +185,7 @@ export default function RegisterScreen() {
                 <View style={styles.labelRow}>
                   <Image
                     source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                    style={{ width: 26, height: 26 }}
+                    style={{ width: 23, height: 23 }}
                   />
                   <ThemedText style={styles.label}>Set password</ThemedText>
                 </View>
@@ -215,7 +215,7 @@ export default function RegisterScreen() {
                 <View style={styles.labelRow}>
                   <Image
                     source={require("@/assets/Screenshot 2026-02-20 030012.png")}
-                    style={{ width: 26, height: 26 }}
+                    style={{ width: 23, height: 23 }}
                   />
                   <ThemedText style={styles.label}>Confirm password</ThemedText>
                 </View>
@@ -247,7 +247,7 @@ export default function RegisterScreen() {
                 <View style={styles.labelRow}>
                   <Image
                     source={require("@/assets/Adobe Express - file (5).png")}
-                    style={{ width: 23, height: 26 }}
+                    style={{ width: 20, height: 23 }}
                   />
                   <ThemedText style={styles.label}>Invite code</ThemedText>
                 </View>
@@ -299,8 +299,8 @@ export default function RegisterScreen() {
               >
                 <LinearGradient
                   colors={["#7AFEC3", "#02AFB6"]}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 0, y: 0 }}
+                  start={{ x: 0.5, y: 0 }}
+                  end={{ x: 0.5, y: 1 }}
                   style={styles.gradientButton}
                 >
                   {loading ? (
@@ -362,13 +362,13 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 10,
   },
-  label: { fontSize: 17, color: "white", fontWeight: "500" },
+  label: { fontSize: 15, color: "white", fontWeight: "500" },
   input: {
     backgroundColor: "#011341",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 16,
+    fontSize: 14,
     color: "white",
   },
   phoneRow: { flexDirection: "row", gap: 10 },
@@ -386,9 +386,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#011341",
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 14,
     color: "white",
   },
   passwordRow: { position: "relative" },
@@ -420,8 +420,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#00ECBE",
     borderColor: "#00ECBE",
   },
-  checkLabel: { fontSize: 14, color: "rgba(255,255,255,0.9)" },
-  privacyLink: { fontSize: 14, color: "#E53935", fontWeight: "600" },
+  checkLabel: { fontSize: 12, color: "rgba(255,255,255,0.9)" },
+  privacyLink: { fontSize: 12, color: "#E53935", fontWeight: "600" },
   errorText: {
     fontSize: 13,
     color: "#E53935",
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   gradientButton: {
-    paddingVertical: 16,
+    paddingVertical: 13,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 9999,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    paddingVertical: 16,
+    paddingVertical: 13,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: "#00ECBE",

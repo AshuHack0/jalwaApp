@@ -11,7 +11,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -57,10 +57,6 @@ const queryClient = new QueryClient({
 
 SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 const customDarkTheme = {
   ...DarkTheme,
   colors: {
@@ -102,14 +98,30 @@ export default function RootLayout() {
         <ToastProvider>
         <View style={styles.container}>
         <ThemeProvider value={colorScheme === "dark" ? customDarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth" options={{ headerShown: false }} />
-          <Stack.Screen name="wingo" options={{ headerShown: false }} />
-          <Stack.Screen name="withdraw" options={{ headerShown: false }} />
-          <Stack.Screen name="deposit-history" options={{ headerShown: false }} />
-          <Stack.Screen name="withdrawal-history" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: Platform.OS === "android" ? "ios_from_right" : "simple_push",
+            animationDuration: 300,
+            animationMatchesGesture: true,
+            contentStyle: { backgroundColor: "#05012B" },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="auth" />
+          <Stack.Screen name="wingo" />
+          <Stack.Screen name="withdraw" />
+          <Stack.Screen name="deposit-history" />
+          <Stack.Screen name="withdrawal-history" />
+          <Stack.Screen
+            name="modal"
+            options={{
+              presentation: "modal",
+              title: "Modal",
+              animation: "slide_from_bottom",
+            }}
+          />
         </Stack>
         <StatusBar style="light" />
         </ThemeProvider>
