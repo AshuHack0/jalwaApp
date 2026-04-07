@@ -82,6 +82,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
       transparent
       animationType="fade"
       onRequestClose={handleClose}
+
     >
       <TouchableOpacity
         style={{
