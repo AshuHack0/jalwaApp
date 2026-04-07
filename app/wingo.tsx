@@ -6,6 +6,7 @@ import {
   Pressable,
   Modal,
   Linking,
+  Platform,
 } from "react-native";
 import {
   widthPercentageToDP as wpBase,
@@ -3364,7 +3365,7 @@ const styles = StyleSheet.create({
   },
   countdownSectionOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     borderRadius: wp(3.2),
     justifyContent: "center",
     alignItems: "center",
@@ -3372,23 +3373,23 @@ const styles = StyleSheet.create({
   countdownDigitsRow: {
     flexDirection: "row",
     gap: wp(4.3),
+    width:"100%",
     alignItems: "center",
     justifyContent: "center",
   },
   countdownDigitCard: {
-    width: wp(32),
-    height: hp(19.7),
-    backgroundColor: "#0A1F44",
-    borderRadius: wp(4.3),
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: "#1E3A5F",
+    backgroundColor: "#001C54",
+    borderRadius: 16,
+
   },
   countdownDigitText: {
-    fontSize: wp(25),
-    fontWeight: "800",
-    color: "#7afec3",
+    paddingVertical:16,
+    paddingHorizontal:16,
+    fontSize: 153,
+    lineHeight:145,
+    fontWeight: "700",
+    color: "#00ecbe",
+    fontFamily: "-apple-system",
   },
   winLossModalOverlay: {
     flex: 1,
