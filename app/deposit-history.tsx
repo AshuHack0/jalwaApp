@@ -18,7 +18,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -40,6 +40,13 @@ function statusLabel(status: DepositRecord["status"]) {
   return "Pending";
 }
 
+function gatewayLabel(gateway: DepositRecord["gateway"]) {
+  if (gateway === "usdt") return "USDT";
+  if (gateway === "mcgindiamc") return "ArUpi Pay";
+  if (gateway === "oxoxmg") return "Innate UPI-QR";
+  return gateway;
+}
+
 function formatDate(iso: string) {
   const date = new Date(iso);
   const year = date.getFullYear();
@@ -54,6 +61,7 @@ function formatDate(iso: string) {
 
 export default function DepositHistoryScreen() {
   const router = useRouter();
+  const { filter } = useLocalSearchParams<{ filter?: string }>();
   const [loaded] = useFonts({
     BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
     BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
@@ -73,11 +81,13 @@ export default function DepositHistoryScreen() {
   });
   const { data, isLoading, refetch, isRefetching } = useMyDeposits();
 
-  const [selectedFilter, setSelectedFilter] = useState<string>("All");
+  const [selectedFilter, setSelectedFilter] = useState<string>(filter || "All");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const statusOptions = ["All", "Completed", "Pending", "Failed"];
   const [selectedDate, setSelectedDate] = useState<string>("Choose a date");
 
-  const deposits = data?.deposits ?? [];
+  const allDeposits = data?.deposits ?? [];
 
   const paymentMethods = [
     {
@@ -85,26 +95,67 @@ export default function DepositHistoryScreen() {
       label: "All",
       icon: "grid",
       image: require("@/assets/dh1.png"),
+      gateways: [] as string[],
     },
     {
       id: "ArUpi Pay",
       label: "ArUpi Pay",
       icon: "qr-code",
       image: require("@/assets/dh3.png"),
+      gateways: ["mcgindiamc"],
     },
     {
       id: "Innate UPI-QR",
       label: "Innate UPI-QR",
       icon: "qr-code-outline",
       image: require("@/assets/dh2.png"),
+      gateways: ["oxoxmg"],
     },
     {
       id: "Paytm",
       label: "Paytm",
       icon: "wallet",
       image: require("@/assets/dh1.png"),
+      gateways: ["paytm"],
+    },
+    {
+      id: "Expert UPI-QR",
+      label: "Expert UPI-QR",
+      icon: "qr-code-outline",
+      image: require("@/assets/dh2.png"),
+      gateways: ["expert"],
+    },
+    {
+      id: "USDT",
+      label: "USDT",
+      icon: "qr-code-outline",
+      image: require("@/assets/payNameIcon_20250317165636a3yk.png"),
+      gateways: ["usdt"],
+    },
+    {
+      id: "AR Pay",
+      label: "AR Pay",
+      icon: "qr-code-outline",
+      image: require("@/assets/payNameIcon2_20250317165730f7ml.png"),
+      gateways: ["arpay"],
     },
   ];
+
+  // Dynamic filtering based on selected tab and status
+  const selectedMethod = paymentMethods.find((m) => m.id === selectedFilter);
+  const filteredByGateway =
+    selectedFilter === "All"
+      ? allDeposits
+      : allDeposits.filter((d) =>
+          selectedMethod?.gateways.includes(d.gateway)
+        );
+
+  const deposits =
+    selectedStatus === "All"
+      ? filteredByGateway
+      : filteredByGateway.filter(
+          (d) => d.status === selectedStatus.toLowerCase()
+        );
 
   return (
     <>
@@ -173,13 +224,49 @@ export default function DepositHistoryScreen() {
 
           {/* Dropdowns */}
           <View style={styles.filterRow}>
-            <TouchableOpacity style={styles.filterDropdown}>
-              <ThemedText style={styles.filterDropdownText}>
-                {selectedStatus}
-              </ThemedText>
-              <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterDropdown}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
+                style={styles.filterDropdown}
+                onPress={() => setShowStatusDropdown(!showStatusDropdown)}
+              >
+                <ThemedText style={styles.filterDropdownText}>
+                  {selectedStatus}
+                </ThemedText>
+                <Ionicons
+                  name={showStatusDropdown ? "chevron-up" : "chevron-down"}
+                  size={18}
+                  color="#92A8E3"
+                />
+              </TouchableOpacity>
+              {showStatusDropdown && (
+                <View style={styles.dropdownList}>
+                  {statusOptions.map((option) => (
+                    <TouchableOpacity
+                      key={option}
+                      style={[
+                        styles.dropdownItem,
+                        selectedStatus === option && styles.dropdownItemActive,
+                      ]}
+                      onPress={() => {
+                        setSelectedStatus(option);
+                        setShowStatusDropdown(false);
+                      }}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.dropdownItemText,
+                          selectedStatus === option &&
+                            styles.dropdownItemTextActive,
+                        ]}
+                      >
+                        {option}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+            <TouchableOpacity style={[styles.filterDropdown, { flex: 1 }]}>
               <ThemedText style={styles.filterDropdownText}>
                 {selectedDate}
               </ThemedText>
@@ -241,7 +328,9 @@ export default function DepositHistoryScreen() {
                       <View style={styles.cardDetailsRow}>
                         <ThemedText style={styles.detailLabel}>Fee</ThemedText>
                         <ThemedText style={styles.detailValue}>
-                          {item.gateway === "usdt" ? `USDT ${item.fee}` : `₹${item.fee}`}
+                          {item.gateway === "usdt"
+                            ? `USDT ${item.fee}`
+                            : `₹${item.fee}`}
                         </ThemedText>
                       </View>
                     )}
@@ -249,7 +338,7 @@ export default function DepositHistoryScreen() {
                     <View style={styles.cardDetailsRow}>
                       <ThemedText style={styles.detailLabel}>Type</ThemedText>
                       <ThemedText style={styles.detailValue}>
-                        UPay13USDT
+                        {gatewayLabel(item.gateway)}
                       </ThemedText>
                     </View>
 
@@ -488,5 +577,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     fontFamily: "BahnschriftRegular",
+  },
+  dropdownList: {
+    backgroundColor: "#011341",
+    borderRadius: 8,
+    marginTop: 4,
+    overflow: "hidden" as const,
+  },
+  dropdownItem: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  dropdownItemActive: {
+    backgroundColor: "rgba(122, 254, 195, 0.15)",
+  },
+  dropdownItemText: {
+    fontSize: 14,
+    color: "#92A8E3",
+    fontFamily: "BahnschriftRegular",
+  },
+  dropdownItemTextActive: {
+    color: "#7AFEC3",
   },
 });
