@@ -579,7 +579,7 @@ export default function WinGoScreen() {
   const displayPeriod =
     currentRoundData?.currentRound?.period ??
     displayHistoryData?.historyRounds?.[0]?.period ??
-    "-";
+    "20260407100050000";
   const totalPagesGameHistory =
     displayHistoryData?.historyPagination?.totalPages ?? 1;
   const totalPagesMyHistory = myHistoryData?.pagination?.totalPages ?? 1;
@@ -669,11 +669,11 @@ export default function WinGoScreen() {
 
           {/* current assumed prediction */}
           {(() => {
-            const pred = currentRoundData?.currentRound?.predictedBigSmall as string | null | undefined;
+            const pred = (currentRoundData?.currentRound?.predictedBigSmall as string | null | undefined) ?? "BIG";
             const isBig = pred === "BIG";
-            const bgColor = pred ? (isBig ? "rgb(255, 80, 80)" : "rgb(50, 120, 200)") : "rgb(80, 80, 80)";
-            const badgeBg = pred ? (isBig ? "rgb(125, 56, 50)" : "rgb(30, 70, 140)") : "rgb(50, 50, 50)";
-            const predLabel = pred ? (isBig ? "Big" : "Small") : "—";
+            const bgColor = isBig ? "rgb(255, 80, 80)" : "rgb(50, 120, 200)";
+            const badgeBg = isBig ? "rgb(125, 56, 50)" : "rgb(30, 70, 140)";
+            const predLabel = isBig ? "Big" : "Small";
             return (
               <View
                 style={{
