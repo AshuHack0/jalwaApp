@@ -83,8 +83,8 @@ export default function HomeScreen() {
   const sectionPadding = 16;
   const categoryGridGap = 12;
   const categoryContentWidth = screenWidth - sectionPadding * 2;
-  const categoryCardWidth2 = (categoryContentWidth - categoryGridGap) / 2; // Lottery: 2 per row
-  const categoryCardWidth3 = (categoryContentWidth - categoryGridGap * 2) / 3; // Others: 3 per row
+  const categoryCardWidth2 = Math.floor((categoryContentWidth - categoryGridGap) / 2); // Lottery: 2 per row
+  const categoryCardWidth3 = Math.floor((categoryContentWidth - categoryGridGap * 2) / 3); // Others: 3 per row
 
   const carouselImages = [
     require("@/assets/Banner_20250319132416d7h9.jpg"),
