@@ -1,3 +1,4 @@
+import OverlayButtonsModal from "@/components/OverlayButtonsModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { WINGO_ANNOUNCEMENT_MESSAGES } from "@/constants/Wingo";
@@ -63,6 +64,8 @@ export default function HomeScreen() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
   const [showGameErrorModal, setShowGameErrorModal] = useState(false);
+  const [isPageScrolling, setIsPageScrolling] = useState(false);
+  const scrollStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameErrorPlayer = useAudioPlayer(
     require("@/assets/only wingo game hack audio .mp3"),
   );
@@ -598,6 +601,12 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={() => {
+          setIsPageScrolling(true)
+          if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current)
+          scrollStopTimer.current = setTimeout(() => setIsPageScrolling(false), 500)
+        }}
       >
         {/* Promotional Banners */}
         <View style={styles.promoBanners}>
@@ -897,33 +906,33 @@ export default function HomeScreen() {
                           ? index % 2 === 1
                           : index % 3 === 2;
                         return (
-                        <TouchableOpacity
-                          key={game.name}
-                          style={[
-                            styles.categoryGameCardBase,
-                            {
-                              width: isLottery
-                                ? categoryCardWidth2
-                                : categoryCardWidth3,
-                              height: cardHeight,
-                              marginRight: isLastInRow ? 0 : categoryGridGap,
-                              marginBottom: categoryGridGap,
-                            },
-                          ]}
-                          onPress={() => {
-                            if (game.name === "WIN GO") {
-                              router.push("/wingo");
-                            } else {
-                              setShowGameErrorModal(true);
-                            }
-                          }}
-                        >
-                          <Image
-                            source={game.image}
-                            style={styles.lotteryGameImage}
-                            contentFit="cover"
-                          />
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            key={game.name}
+                            style={[
+                              styles.categoryGameCardBase,
+                              {
+                                width: isLottery
+                                  ? categoryCardWidth2
+                                  : categoryCardWidth3,
+                                height: cardHeight,
+                                marginRight: isLastInRow ? 0 : categoryGridGap,
+                                marginBottom: categoryGridGap,
+                              },
+                            ]}
+                            onPress={() => {
+                              if (game.name === "WIN GO") {
+                                router.push("/wingo");
+                              } else {
+                                setShowGameErrorModal(true);
+                              }
+                            }}
+                          >
+                            <Image
+                              source={game.image}
+                              style={styles.lotteryGameImage}
+                              contentFit="cover"
+                            />
+                          </TouchableOpacity>
                         );
                       })}
                     </View>
@@ -1384,6 +1393,9 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
+      {/* Overlay Buttons Modal */}
+      <OverlayButtonsModal bottom={10} visibleButtons={['rewardCenter', 'turntable', 'tg_bg', 'changlong', 'icon_sevice']} scrolling={isPageScrolling} />
     </ThemedView>
   );
 }

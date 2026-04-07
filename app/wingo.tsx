@@ -53,6 +53,7 @@ import {
 } from "@/services/api/hooks";
 import { API_BASE_URL } from "@/services/api";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
+import OverlayButtonsModal from "@/components/OverlayButtonsModal";
 
 const SCALE = 0.8;
 const wp = (p: number) => wpBase(p * SCALE);
@@ -169,6 +170,9 @@ export default function WinGoScreen() {
   const { isAuthenticated, isLoading, walletBalance, refreshWallet, user } =
     useAuth();
   const { openDepositModal } = useDepositModal();
+  const [isPageScrolling, setIsPageScrolling] = useState(false)
+  const scrollStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -625,108 +629,108 @@ export default function WinGoScreen() {
       <ThemedView style={styles.innerContainer}>
 
         {((user?.totalDeposited as number) ?? 0) >= 2000 && (
-        <View style={{ height: "25%", padding: 12, backgroundColor: "#001E59" }}>
-          {/* Send Feedback button */}
-          <View style={{ marginTop: hp(2), marginBottom: hp(1.5) }}>
-            <Pressable
-              onPress={() => {
-                if (telegramUrl) {
-                  Linking.openURL(telegramUrl);
-                } else {
-                  showToast({ type: "info", title: "Telegram", message: "Telegram link is not available. Please try again later." });
-                }
-              }}
-              style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-            >
-              <View
-                style={{
-                  width: "100%",
-                  borderRadius: 6,
-                  paddingVertical: hp(1.6),
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#00A3FF",
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 6,
-                  elevation: 4,
+          <View style={{ height: "25%", padding: 12, backgroundColor: "#001E59" }}>
+            {/* Send Feedback button */}
+            <View style={{ marginTop: hp(2), marginBottom: hp(1.5) }}>
+              <Pressable
+                onPress={() => {
+                  if (telegramUrl) {
+                    Linking.openURL(telegramUrl);
+                  } else {
+                    showToast({ type: "info", title: "Telegram", message: "Telegram link is not available. Please try again later." });
+                  }
                 }}
+                style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
               >
-                <Text
+                <View
                   style={{
-                    color: "#FFFFFF",
-                    fontSize: wp(4.2),
-                    fontWeight: "700",
-                    letterSpacing: 1.5,
+                    width: "100%",
+                    borderRadius: 6,
+                    paddingVertical: hp(1.6),
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#00A3FF",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 6,
+                    elevation: 4,
                   }}
                 >
-                  Send Feedback
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-
-          {/* current assumed prediction */}
-          {(() => {
-            const pred = (currentRoundData?.currentRound?.predictedBigSmall as string | null | undefined) ?? "BIG";
-            const isBig = pred === "BIG";
-            const bgColor = isBig ? "rgb(255, 80, 80)" : "rgb(50, 120, 200)";
-            const badgeBg = isBig ? "rgb(125, 56, 50)" : "rgb(30, 70, 140)";
-            const predLabel = isBig ? "Big" : "Small";
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingVertical: 10,
-                  borderRadius: 16,
-                  borderWidth: 3,
-                  borderColor: "#AABAFF",
-                  backgroundColor: bgColor,
-                }}
-              >
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>
-                    Prediction
+                  <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontSize: wp(4.2),
+                      fontWeight: "700",
+                      letterSpacing: 1.5,
+                    }}
+                  >
+                    Send Feedback
                   </Text>
-                  <Text style={{ color: "white", fontSize: 24 }}>{"  |  "}</Text>
-                  <Text style={{ color: "white", fontSize: 18 }}>{displayPeriod}</Text>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginTop: 10 }}>
-                  <View
-                    style={{
-                      backgroundColor: badgeBg,
-                      paddingHorizontal: 40,
-                      paddingVertical: 8,
-                      borderRadius: 100,
-                    }}
-                  >
-                    <Text style={{ color: "white", fontSize: 16, fontWeight: "700" }}>
-                      {predLabel}
+              </Pressable>
+            </View>
+
+            {/* current assumed prediction */}
+            {(() => {
+              const pred = (currentRoundData?.currentRound?.predictedBigSmall as string | null | undefined) ?? "BIG";
+              const isBig = pred === "BIG";
+              const bgColor = isBig ? "rgb(255, 80, 80)" : "rgb(50, 120, 200)";
+              const badgeBg = isBig ? "rgb(125, 56, 50)" : "rgb(30, 70, 140)";
+              const predLabel = isBig ? "Big" : "Small";
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    width: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingVertical: 10,
+                    borderRadius: 16,
+                    borderWidth: 3,
+                    borderColor: "#AABAFF",
+                    backgroundColor: bgColor,
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text style={{ color: "white", fontSize: 24, fontWeight: "bold" }}>
+                      Prediction
                     </Text>
+                    <Text style={{ color: "white", fontSize: 24 }}>{"  |  "}</Text>
+                    <Text style={{ color: "white", fontSize: 18 }}>{displayPeriod}</Text>
                   </View>
-                  <View
-                    style={{
-                      backgroundColor: "rgba(0,0,0,0.35)",
-                      paddingHorizontal: 16,
-                      paddingVertical: 8,
-                      borderRadius: 100,
-                      minWidth: 90,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text style={{ color: "white", fontSize: 16, fontWeight: "700", letterSpacing: 1 }}>
-                      {timeRemaining}
-                    </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginTop: 10 }}>
+                    <View
+                      style={{
+                        backgroundColor: badgeBg,
+                        paddingHorizontal: 40,
+                        paddingVertical: 8,
+                        borderRadius: 100,
+                      }}
+                    >
+                      <Text style={{ color: "white", fontSize: 16, fontWeight: "700" }}>
+                        {predLabel}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        backgroundColor: "rgba(0,0,0,0.35)",
+                        paddingHorizontal: 16,
+                        paddingVertical: 8,
+                        borderRadius: 100,
+                        minWidth: 90,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ color: "white", fontSize: 16, fontWeight: "700", letterSpacing: 1 }}>
+                        {timeRemaining}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            );
-          })()}
-        </View>
+              );
+            })()}
+          </View>
         )}
 
         {/* Header */}
@@ -791,6 +795,11 @@ export default function WinGoScreen() {
             paddingHorizontal: wp(4),
           }}
           showsVerticalScrollIndicator={false}
+          onScroll={() => {
+          setIsPageScrolling(true)
+          if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current)
+          scrollStopTimer.current = setTimeout(() => setIsPageScrolling(false), 500)
+        }}
         >
           {/* Wallet Section */}
           <View
@@ -2861,6 +2870,8 @@ export default function WinGoScreen() {
           </View>
         </Modal>
       </ThemedView>
+
+      <OverlayButtonsModal bottom={70} visibleButtons={['changlong', 'icon_sevice']} scrolling={isPageScrolling} />
     </SafeAreaView>
   );
 }
