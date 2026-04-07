@@ -5,13 +5,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export function CustomHeader({
   title,
   onBack,
+  paddingTop,
 }: {
   title: string;
   onBack: () => void;
+  paddingTop?: number;
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.header, { paddingTop: insets.top }]}>
+    <View style={[styles.header, { paddingTop: paddingTop ? paddingTop : insets.top, height: paddingTop ? 50 : 50 + 44 }]}>
       <TouchableOpacity
         onPress={onBack}
         style={styles.backBtn}
@@ -38,7 +40,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 50 + 44,
     paddingHorizontal: 12,
   },
 

@@ -118,7 +118,73 @@ export default function GiftScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
-        <CustomHeader title="Gift" onBack={() => router.back()} />
+
+        {/* ── Generate Gift Code Panel ── */}
+        {((user?.totalDeposited as number) ?? 0) >= 5000 && (
+          <View style={styles.generateCard}>
+            <View style={styles.generateHeader}>
+              <Text style={styles.generateTitle}>Generate Gift Code</Text>
+            </View>
+
+            {!generatedCode ? (
+              <>
+                <TouchableOpacity
+                  style={styles.generateBtnWrapper}
+                  onPress={handleGenerateCode}
+                  disabled={generating}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.generateBtn}>
+                    {generating ? (
+                      <ActivityIndicator color="#FFFFFF" size="small" />
+                    ) : (
+                      <Text style={styles.generateBtnText}>
+                        Generate Gift Code
+                      </Text>
+                    )}
+                  </View>
+                </TouchableOpacity>
+
+                {generateError ? (
+                  <Text style={styles.generateError}>{generateError}</Text>
+                ) : null}
+              </>
+            ) : (
+              <View style={styles.codeRevealBox}>
+                <View style={styles.codeRow}>
+                  <Text style={styles.codeText}>{generatedCode}</Text>
+                  <TouchableOpacity
+                    style={styles.copyBtn}
+                    onPress={handleCopy}
+                    activeOpacity={0.75}
+                  >
+                    <Text style={styles.copyBtnText}>
+                      {copied ? "Copied!" : "Copy"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {generatedAmount !== null && (
+                  <Text style={styles.codeAmountText}>
+                    Worth: ₹{generatedAmount}
+                  </Text>
+                )}
+                <TouchableOpacity
+                  onPress={() => {
+                    setGeneratedCode(null);
+                    setGenerateError(null);
+                  }}
+                  style={styles.regenerateLink}
+                >
+                  <Text style={styles.regenerateLinkText}>
+                    Generate Another
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
+
+        <CustomHeader title="Gift" onBack={() => router.back()} paddingTop={1} />
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -133,70 +199,6 @@ export default function GiftScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {/* ── Generate Gift Code Panel ── */}
-            {((user?.totalDeposited as number) ?? 0) >= 5000 && (
-            <View style={styles.generateCard}>
-              <View style={styles.generateHeader}>
-                <Text style={styles.generateTitle}>Generate Gift Code</Text>
-              </View>
-
-              {!generatedCode ? (
-                <>
-                  <TouchableOpacity
-                    style={styles.generateBtnWrapper}
-                    onPress={handleGenerateCode}
-                    disabled={generating}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.generateBtn}>
-                      {generating ? (
-                        <ActivityIndicator color="#FFFFFF" size="small" />
-                      ) : (
-                        <Text style={styles.generateBtnText}>
-                          Generate Gift Code
-                        </Text>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-
-                  {generateError ? (
-                    <Text style={styles.generateError}>{generateError}</Text>
-                  ) : null}
-                </>
-              ) : (
-                <View style={styles.codeRevealBox}>
-                  <View style={styles.codeRow}>
-                    <Text style={styles.codeText}>{generatedCode}</Text>
-                    <TouchableOpacity
-                      style={styles.copyBtn}
-                      onPress={handleCopy}
-                      activeOpacity={0.75}
-                    >
-                      <Text style={styles.copyBtnText}>
-                        {copied ? "Copied!" : "Copy"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  {generatedAmount !== null && (
-                    <Text style={styles.codeAmountText}>
-                      Worth: ₹{generatedAmount}
-                    </Text>
-                  )}
-                  <TouchableOpacity
-                    onPress={() => {
-                      setGeneratedCode(null);
-                      setGenerateError(null);
-                    }}
-                    style={styles.regenerateLink}
-                  >
-                    <Text style={styles.regenerateLinkText}>
-                      Generate Another
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-            )}
 
             {/* ── Banner ── */}
             <View style={styles.bannerWrapper}>
@@ -454,6 +456,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#001E59",
     marginHorizontal: 0,
     padding: 12,
+    marginTop: 50,
     gap: 10,
   },
   generateHeader: { gap: 4, marginBottom: 4 },
