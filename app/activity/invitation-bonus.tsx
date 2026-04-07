@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   headerText: {
     color: "#fff",
     marginLeft: 5,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '500'
   },
   outerContainer: {
@@ -192,20 +192,20 @@ const styles = StyleSheet.create({
   bannerTitle: {
     marginTop: 10,
     color: "#fff",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 4,
   },
   bannerSub: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     opacity: 0.9,
-    lineHeight: 16,
+    lineHeight: 15,
     width: "70%",
   },
-  dateLabel: { color: "#fff", fontSize: 16, fontWeight: "600", marginTop: 8 },
-  dateRange: { color: "#fff", fontSize: 24, fontWeight: "bold", marginTop: 2 },
+  dateLabel: { color: "#fff", fontSize: 15, fontWeight: "600", marginTop: 8 },
+  dateRange: { color: "#fff", fontSize: 21, fontWeight: "bold", marginTop: 2 },
   navContainer: {
     flexDirection: "row",
     backgroundColor: "#001c54",
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#92a8e3",
-    fontSize: 15,
+    fontSize: 14,
     textAlign: "center",
     fontWeight: "500",
     paddingHorizontal: 10,
@@ -260,9 +260,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 8,
   },
-  tagId: { color: "#6fa084", fontSize: 12, fontWeight: "500" },
-  bonusText: { color: "#e3efff", marginLeft: 8, fontWeight: "500", fontSize: 13 },
-  rewardAmount: { color: "#dd9138", fontWeight: "bold", fontSize: 17 },
+  tagId: { color: "#6fa084", fontSize: 11, fontWeight: "500" },
+  bonusText: { color: "#e3efff", marginLeft: 8, fontWeight: "500", fontSize: 12 },
+  rewardAmount: { color: "#dd9138", fontWeight: "bold", fontSize: 16 },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -272,8 +272,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  infoLabel: { color: "#e3efff", fontSize: 16 },
-  infoValue: { color: "#e3efff", fontWeight: "bold", fontSize: 18 },
+  infoLabel: { color: "#e3efff", fontSize: 15 },
+  infoValue: { color: "#e3efff", fontWeight: "bold", fontSize: 16 },
   cardDivider: {
     height: 1,
     marginVertical: 15,
@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
   },
   progressRow: { flexDirection: "row", paddingBottom: 15 },
   progressItem: { flex: 1, alignItems: "center" },
-  progressNum: { color: "#ff4d4d", fontSize: 21, fontWeight: "bold" },
-  progressLabel: { color: "#92a8e3", fontSize: 12, marginTop: 4 },
+  progressNum: { color: "#ff4d4d", fontSize: 19, fontWeight: "bold" },
+  progressLabel: { color: "#92a8e3", fontSize: 11, marginTop: 4 },
   verticalDivider: { width: 1, backgroundColor: "#1c3c7a" },
   unfinishedBtn: {
     backgroundColor: "#3D4863",
@@ -295,5 +295,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20
   },
-  btnText: { color: "white", fontSize: 20, fontWeight: "bold" },
+  btnText: { color: "white", fontSize: 18, fontWeight: "bold" },
 });

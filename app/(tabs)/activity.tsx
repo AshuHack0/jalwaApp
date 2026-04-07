@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { PROMOTIONAL_BANNERS } from "@/constants/promotionalBanners";
 import {
   EBGaramond_400Regular,
   EBGaramond_700Bold,
@@ -51,75 +52,6 @@ export default function ActivityScreen() {
       name: "Super Jackpot",
       image: require("@/assets/superJackpot-ecb648b4.webp"),
       route: "/activity/super-jackpot",
-    },
-  ];
-
-  const promotionalBanners = [
-   {
-      id: 1,
-      title: "INSTALL 1.1.1.1 FOR A FASTER EXPERIENCE",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20251209170621lke3.jpg"),
-    },
-    {
-      id: 2,
-      title: "CHICKEN ROAD 2",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20250812180341sv9g.jpg"),
-    },
-    {
-      id: 3,
-      title: "Cummulative 10Days Recharge Bonus",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20250728144118et9j.jpg"),
-    },
-    {
-      id: 4,
-      title: "Tutorial AR Wallet How To Buy & Sell ARB Coins",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_202508190055411etn.png"),
-    },
-    {
-      id: 5,
-      title: "Member First Deposit Bonus",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20250324130803du5l.jpg"),
-    },
-    {
-      id: 6,
-      title: "AGENT REFFERAL BONUS",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_2025031913463468d9.jpg"),
-    },
-    {
-      id: 7,
-      title: "REFFERAL BONUS",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20250319134140rpj6.jpg"),
-    },
-    {
-      id: 8,
-      title: "RECHARGE BONUS FOR NEW PLAYERS",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_20250324130748d4lf.jpg"),
-    },
-    {
-      id: 9,
-      title: "7-DAYS CUMULATIVE BETTING REWARDS",
-      icon: "airplane" as const,
-      bannerImage: require("@/assets/Banner_202505051626178ysv.png"),
-    },
-    {
-      id: 10,
-      title: "MINI GAMES DAILY MISSION REWARDS",
-      icon: "baseball" as const,
-      bannerImage: require("@/assets/Banner_20250505174559l35y.jpg"),
-    },
-    {
-      id: 11,
-      title: "Benefits of Using AR WALLET",
-      icon: "wallet" as const,
-      bannerImage: require("@/assets/Banner_20250509160039hucu.jpg"),
     },
   ];
 
@@ -186,7 +118,11 @@ export default function ActivityScreen() {
 
         {/* Main Activity Cards */}
         <View style={styles.mainCards}>
-          <TouchableOpacity style={[styles.mainCard, styles.giftsCard]}>
+          <TouchableOpacity
+            style={[styles.mainCard, styles.giftsCard]}
+            onPress={() => router.push("/account/gifts" as Href)}
+            activeOpacity={0.8}
+          >
             <View style={styles.cardContent}>
               <ImageBackground
                 source={require("@/assets/signInBanner-ff4a210f.webp")}
@@ -202,7 +138,11 @@ export default function ActivityScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.mainCard, styles.attendanceCard]}>
+          <TouchableOpacity
+            style={[styles.mainCard, styles.attendanceCard]}
+            onPress={() => router.push("/activity/attendance-bonus" as Href)}
+            activeOpacity={0.8}
+          >
             <View style={styles.cardContent}>
               <ImageBackground
                 source={require("@/assets/giftRedeem-bb2f7a92.webp")}
@@ -224,8 +164,18 @@ export default function ActivityScreen() {
 
         {/* Promotional Banners */}
         <View style={styles.bannersSection}>
-          {promotionalBanners.map((banner) => (
-            <TouchableOpacity key={banner.id} style={styles.bannerCard}>
+          {PROMOTIONAL_BANNERS.map((banner) => (
+            <TouchableOpacity
+              key={banner.id}
+              style={styles.bannerCard}
+              activeOpacity={0.85}
+              onPress={() =>
+                router.push({
+                  pathname: "/activity/activity-details",
+                  params: { id: String(banner.id) },
+                } as Href)
+              }
+            >
               {banner.id !== 1 && <View style={styles.bannerHeader}>
                 <Image
                   source={require("@/assets/h5setting_20250315141734j61m.png")}
@@ -324,7 +274,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   bonusDetailsText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
     paddingHorizontal: 12,
     color: "#00ecbe",
@@ -396,14 +346,14 @@ const styles = StyleSheet.create({
     paddingTop:8
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#E3EFFF",
     lineHeight: 18,
     fontFamily: "sans-serif",
   },
   cardDescription: {
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 13,
     color: "#92A8E3",
     opacity: 0.9,
