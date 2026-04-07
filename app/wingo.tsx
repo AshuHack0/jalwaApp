@@ -1007,28 +1007,34 @@ export default function WinGoScreen() {
               ))}
             </ScrollView>
 
-            <LinearGradient
-              colors={["rgb(122, 254, 195)", "rgb(2, 175, 182)"]}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-              style={{
-                borderRadius: 100,
-                width: wp(27),
-                height: hp(4.4),
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+            <Pressable
+              onPress={() =>
+                router.push("/account/service-center/announcement")
+              }
             >
-              <ThemedText
+              <LinearGradient
+                colors={["rgb(122, 254, 195)", "rgb(2, 175, 182)"]}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
                 style={{
-                  color: "#05012B",
-                  fontSize: wp(4.7),
-                  fontWeight: "400",
+                  borderRadius: 100,
+                  width: wp(27),
+                  height: hp(4.4),
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                Detail
-              </ThemedText>
-            </LinearGradient>
+                <ThemedText
+                  style={{
+                    color: "#05012B",
+                    fontSize: wp(4.7),
+                    fontWeight: "400",
+                  }}
+                >
+                  Detail
+                </ThemedText>
+              </LinearGradient>
+            </Pressable>
           </LinearGradient>
 
           {/* Game Mode Selection */}
