@@ -30,19 +30,19 @@ export const PROMOTIONAL_BANNERS: PromotionalBanner[] = [
     id: 4,
     title: "Tutorial AR Wallet How To Buy & Sell ARB Coins",
     bannerImage: require("@/assets/Banner_202508190055411etn.png"),
-    detailImage:require("@/assets/editor_20251209174449kmw6.png"),
+    detailImage: "",
   },
   {
     id: 5,
     title: "Member First Deposit Bonus",
     bannerImage: require("@/assets/Banner_20250324130803du5l.jpg"),
-    detailImage:require("@/assets/editor_20251209174449kmw6.png"),
+    detailImage: "",
   },
   {
     id: 6,
     title: "AGENT REFFERAL BONUS",
     bannerImage: require("@/assets/Banner_2025031913463468d9.jpg"),
-    detailImage:require("@/assets/editor_20251209174449kmw6.png"),
+    detailImage: "",
   },
   {
     id: 7,
@@ -60,13 +60,13 @@ export const PROMOTIONAL_BANNERS: PromotionalBanner[] = [
     id: 9,
     title: "7-DAYS CUMULATIVE BETTING REWARDS",
     bannerImage: require("@/assets/Banner_202505051626178ysv.png"),
-    detailImage:require("@/assets/editor_20251209174449kmw6.png"),
+    detailImage: "",
   },
   {
     id: 10,
     title: "MINI GAMES DAILY MISSION REWARDS",
     bannerImage: require("@/assets/Banner_20250505174559l35y.jpg"),
-    detailImage:require("@/assets/editor_20251209174449kmw6.png"),
+    detailImage: "",
   },  
   {
     id: 11,

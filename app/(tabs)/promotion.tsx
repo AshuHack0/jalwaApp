@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+import { type Href, router } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -218,7 +218,11 @@ export default function PromotionScreen() {
             end={{ x: 0, y: 1 }}
             style={styles.qrButton}
           >
-            <TouchableOpacity style={styles.qrButtonContent}>
+            <TouchableOpacity
+              style={styles.qrButtonContent}
+              onPress={() => router.push("/promotion/invite" as Href)}
+              activeOpacity={0.85}
+            >
               <ThemedText style={styles.qrButtonText}>
                 Download QR Code
               </ThemedText>

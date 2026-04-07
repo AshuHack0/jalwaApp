@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   username: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   vipText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "600",
     color: "#fff",
   },
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   uidLabel: {
-    fontSize: 9.7,
+    fontSize: 11,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     paddingRight: 8,
@@ -541,13 +541,13 @@ const styles = StyleSheet.create({
     borderRightColor: "#fff",
   },
   uidValue: {
-    fontSize: 9.7,
+    fontSize: 11,
     color: "#fff",
     fontFamily: "Roboto_400Regular",
     letterSpacing: -1,
   },
   lastLogin: {
-    fontSize: 9.7,
+    fontSize: 11,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -569,12 +569,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   balanceTitle: {
-    fontSize: 12.9,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#92A8E3",
   },
   balanceAmount: {
-    fontSize: 17.2,
+    fontSize: 19,
     fontFamily: "Roboto_700Bold",
     color: "#fff",
   },
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#10B981',
   },
   quickActionLabel: {
-    fontSize: 12.9,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
   },
@@ -657,17 +657,17 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   historyTitle: {
-    fontSize: 12.9,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
-    lineHeight: 13,
+    lineHeight: 15,
     marginBottom: 1,
     includeFontPadding: false,
   },
   historySubtitle: {
-    fontSize: 10.8,
+    fontSize: 12,
     fontFamily: "Roboto_400Regular",
-    lineHeight: 11,
+    lineHeight: 13,
     color: "#92A8E3",
     flexShrink: 1,
     marginTop: 0,
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   settingLabel: {
-    fontSize: 12.9,
+    fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     flex: 1,
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   languageValue: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#fff",
   },
   badge: {
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "500",
     color: "#fff",
     textAlign: "center",
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
     marginBottom: 16,
@@ -780,10 +780,10 @@ const styles = StyleSheet.create({
     // backgroundColor: 'rgba(16, 185, 129, 0.2)',
   },
   serviceLabel: {
-    fontSize: 10.8,
+    fontSize: 12,
     color: "#92A8E3",
     textAlign: "center",
-    lineHeight: 14,
+    lineHeight: 16,
     fontFamily: "Roboto_400Regular",
   },
   logoutButton: {
@@ -799,7 +799,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoutText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "400",
     color: "#00ECBE",
   },
