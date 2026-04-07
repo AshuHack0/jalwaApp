@@ -102,7 +102,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
               backgroundColor: "#021341",
               borderRadius: 10,
               width: "100%",
-              maxWidth: 360,
+              maxWidth: Dimensions.get("window").width - 34,
               maxHeight: Dimensions.get("window").height * 0.85,
             }}
           >
@@ -132,7 +132,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
 
             <ScrollView
               style={{
-                maxHeight: 560,
+                maxHeight: Dimensions.get("window").height * 0.58,
                 minHeight: 200,
                 paddingHorizontal: 6,
                 paddingVertical: 14,
@@ -147,32 +147,42 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                   <Text style={{ color: "#92a8e3", marginTop: 12 }}>Loading...</Text>
                 </View>
               ) : (
-              sortedOffers.map((offer) => (
-                <View
-                  key={offer.id}
-                  style={{
-                    backgroundColor: "#001C54",
-                    borderRadius: 12,
-                    padding: 14,
-                    marginBottom: 12,
-                  }}
-                >
+                sortedOffers.map((offer) => (
                   <View
+                    key={offer.id}
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: 6,
+                      backgroundColor: "#001C54",
+                      borderRadius: 12,
+                      padding: 14,
+                      marginBottom: 12,
                     }}
                   >
-                    <Text
+                    <View
                       style={{
-                        fontSize: 15,
-                        fontWeight: "500",
-                        color: "#e3efff",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: 6,
                       }}
                     >
-                      First deposit
+                      <Text
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "500",
+                          color: "#e3efff",
+                        }}
+                      >
+                        First deposit
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            fontWeight: "500",
+                            color: "#dd9138",
+                          }}
+                        >
+                          {offer.rechargeAmount}
+                        </Text>
+                      </Text>
                       <Text
                         style={{
                           fontSize: 15,
@@ -180,70 +190,60 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           color: "#dd9138",
                         }}
                       >
-                        {offer.rechargeAmount}
-                      </Text>
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: "500",
-                        color: "#dd9138",
-                      }}
-                    >
-                      {formatBonus(offer.rewardAmount)}
-                    </Text>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: "#92a8e3",
-                      marginBottom: 10,
-                      lineHeight: 18,
-                    }}
-                  >
-                    Deposit {offer.rechargeAmount} for the first time and you
-                    will receive {offer.rewardAmount} bonus
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 12,
-                    }}
-                  >
-                    <View
-                      style={{
-                        flex: 1,
-                        backgroundColor: "#05012B",
-                        borderRadius: 100,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Text style={{ fontSize: 16, color: "#e3efff" }}>
-                        {offer.currentProgress ?? 0}/{offer.rechargeAmount}
+                        {formatBonus(offer.rewardAmount)}
                       </Text>
                     </View>
-                    {offer.canReceive ? (
-                      <TouchableOpacity
-                        style={{ borderRadius: 4, overflow: "hidden" }}
-                        onPress={() => handleReceive(offer.id)}
-                        activeOpacity={0.8}
-                        disabled={claimingId !== null}
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: "#92a8e3",
+                        marginBottom: 10,
+                        lineHeight: 18,
+                      }}
+                    >
+                      Deposit {offer.rechargeAmount} for the first time and you
+                      will receive {offer.rewardAmount} bonus
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+                          backgroundColor: "#05012B",
+                          borderRadius: 100,
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
                       >
-                        <LinearGradient
-                          colors={["#7AFEC3", "#02AFB6"]}
-                          start={{ x: 0.5, y: 0 }}
-                          end={{ x: 0.5, y: 1 }}
-                          style={{
-                            paddingVertical: 4,
-                            paddingHorizontal: 20,
-                            borderRadius: 4,
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
+                        <Text style={{ fontSize: 16, color: "#e3efff" }}>
+                          {offer.currentProgress ?? 0}/{offer.rechargeAmount}
+                        </Text>
+                      </View>
+                      {offer.canReceive ? (
+                        <TouchableOpacity
+                          style={{ borderRadius: 4, overflow: "hidden" }}
+                          onPress={() => handleReceive(offer.id)}
+                          activeOpacity={0.8}
+                          disabled={claimingId !== null}
                         >
+                          <LinearGradient
+                            colors={["#7AFEC3", "#02AFB6"]}
+                            start={{ x: 0.5, y: 0 }}
+                            end={{ x: 0.5, y: 1 }}
+                            style={{
+                              paddingVertical: 4,
+                              paddingHorizontal: 20,
+                              borderRadius: 4,
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
 
                             <Text
                               style={{
@@ -254,28 +254,28 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                             >
                               Receive
                             </Text>
-                        </LinearGradient>
-                      </TouchableOpacity>
-                    ) : (
-                      <TouchableOpacity
-                        style={{
-                          paddingVertical: 4,
-                          paddingHorizontal: 20,
-                          borderRadius: 8,
-                          borderWidth: 1,
-                          borderColor: "#dd9138",
-                        }}
-                        onPress={() => handleDeposit(offer.rechargeAmount)}
-                        activeOpacity={0.8}
-                      >
-                        <Text style={{ fontSize: 13, fontWeight: "500", color: "#dd9138" }}>
-                          Deposit
-                        </Text>
-                      </TouchableOpacity>
-                    )}
+                          </LinearGradient>
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          style={{
+                            paddingVertical: 4,
+                            paddingHorizontal: 20,
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            borderColor: "#dd9138",
+                          }}
+                          onPress={() => handleDeposit(offer.rechargeAmount)}
+                          activeOpacity={0.8}
+                        >
+                          <Text style={{ fontSize: 13, fontWeight: "500", color: "#dd9138" }}>
+                            Deposit
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
-                </View>
-              ))
+                ))
               )}
             </ScrollView>
 
