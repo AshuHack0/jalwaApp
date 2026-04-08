@@ -7,6 +7,7 @@ import {
   getAvatarImageSource,
   getSelectedAvatarId,
 } from "@/services/avatar-storage";
+import { getToken } from "@/services/auth-storage";
 import {
   Inter_400Regular,
   Inter_400Regular_Italic,
@@ -24,7 +25,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
@@ -80,6 +87,15 @@ export default function AccountScreen() {
     await logout();
     router.replace("/auth/login");
   };
+
+  const handleOpenCustomerSupport = useCallback(async () => {
+    const token = await getToken();
+    let url = "https://support.indgames.online/";
+    if (token) {
+      url += `?token=${encodeURIComponent(token)}`;
+    }
+    await Linking.openURL(url);
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
@@ -432,9 +448,7 @@ export default function AccountScreen() {
 
             <TouchableOpacity
               style={styles.serviceItem}
-              onPress={() =>
-                router.push("/account/service-center/customer-service" as any)
-              }
+              onPress={handleOpenCustomerSupport}
             >
               <View style={[styles.serviceIconContainer, styles.serviceIcon]}>
                 <Image
