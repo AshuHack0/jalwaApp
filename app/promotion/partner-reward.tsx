@@ -1,6 +1,6 @@
 import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
-import { router, Stack } from "expo-router";
+import { type Href, router, Stack } from "expo-router";
 import { useState } from "react";
 import {
   Clipboard,
@@ -60,7 +60,13 @@ function StatsSection() {
         <Text style={[styles.statValue, styles.redValue]}>₹0.00</Text>
       </View>
 
-      <TouchableOpacity style={styles.recordLink}>
+      <TouchableOpacity
+        style={styles.recordLink}
+        onPress={() =>
+          router.push("/promotion/invitation-record" as Href)
+        }
+        activeOpacity={0.7}
+      >
         <Text style={styles.recordLinkText}>Invitation record »</Text>
       </TouchableOpacity>
     </View>

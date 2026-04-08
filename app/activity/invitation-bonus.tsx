@@ -94,7 +94,7 @@ export default function InvitationBanner() {
               >
                 <Image source={{ uri: "https://www.jalwagame.win/assets/svg/icon-83990d9a.svg" }} style={{ width: "100%", height: "100%" }} />
               </LinearGradient>
-              <Text style={styles.navText}>Invitation record</Text>
+              <Text style={styles.navText}>Invitation record j</Text>
             </TouchableOpacity>
           </View>
 
