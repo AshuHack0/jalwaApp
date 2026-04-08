@@ -3,21 +3,53 @@ import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { type BankAccount, getBankAccount } from "@/services/api/bankAccount";
-import { initiateWithdrawal } from "@/services/api/withdrawal";
+import {
+  type WithdrawalRecord,
+  getMyWithdrawals,
+  initiateWithdrawal,
+} from "@/services/api/withdrawal";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
+  Image,
   ScrollView,
   StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import Svg, {
+  Defs,
+  Path,
+  Rect,
+  Stop,
+  LinearGradient as SvgGradient,
+} from "react-native-svg";
+
+const BANK_CARD_ICON = require("@/assets/WithBeforeImgIcon_20250317170035rogo.png");
+const UPI_ICON = require("@/assets/WithBeforeImgIcon2_20250802174209t2y7.png");
+const USDT_ICON = require("@/assets/payNameIcon_20250317165636a3yk.png");
+
+type WithdrawMethod = "BANK_CARD" | "UPI" | "USDT";
 
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
+}
+
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate().toString().padStart(2, "0")}-${(d.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${d.getFullYear()}`;
+}
+
+function statusColor(status: WithdrawalRecord["status"]): string {
+  if (status === "approved") return "#7AFEC3";
+  if (status === "rejected") return "#FF6B6B";
+  return "#FFD700";
 }
 
 export default function WithdrawScreen() {
@@ -25,20 +57,38 @@ export default function WithdrawScreen() {
   const { walletBalance, refreshWallet } = useAuth();
   const { showToast } = useToast();
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
+  const [usdtAmount, setUsdtAmount] = useState<string>("");
   const [bankAccount, setBankAccount] = useState<BankAccount | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedMethod, setSelectedMethod] =
+    useState<WithdrawMethod>("BANK_CARD");
+  const [recentWithdrawals, setRecentWithdrawals] = useState<
+    WithdrawalRecord[]
+  >([]);
 
   useFocusEffect(
     useCallback(() => {
       getBankAccount().then(setBankAccount);
-    }, [])
+      getMyWithdrawals(1, 3).then((res) => {
+        if (res.success && res.data) {
+          setRecentWithdrawals(res.data.withdrawals);
+        }
+      });
+    }, []),
   );
+
   const withdrawableBalance = walletBalance;
+  const isDisabled =
+    loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0;
 
   const handleWithdraw = async () => {
     const amount = parseFloat(withdrawAmount);
     if (!bankAccount?.accountNumber) {
-      showToast({ type: "warning", title: "No Bank Account", message: "Please add your bank account before withdrawing." });
+      showToast({
+        type: "warning",
+        title: "No Bank Account",
+        message: "Please add your bank account before withdrawing.",
+      });
       return;
     }
     setLoading(true);
@@ -47,13 +97,25 @@ export default function WithdrawScreen() {
       if (result.success) {
         await refreshWallet();
         setWithdrawAmount("");
-        showToast({ type: "success", title: "Withdrawal Submitted", message: "Your withdrawal request has been submitted." });
+        showToast({
+          type: "success",
+          title: "Withdrawal Submitted",
+          message: "Your withdrawal request has been submitted.",
+        });
         router.push("/withdrawal-history");
       } else {
-        showToast({ type: "error", title: "Withdrawal Failed", message: result.message || "Please try again." });
+        showToast({
+          type: "error",
+          title: "Withdrawal Failed",
+          message: result.message || "Please try again.",
+        });
       }
     } catch {
-      showToast({ type: "error", title: "Network Error", message: "Please check your connection." });
+      showToast({
+        type: "error",
+        title: "Network Error",
+        message: "Please check your connection.",
+      });
     } finally {
       setLoading(false);
     }
@@ -65,259 +127,712 @@ export default function WithdrawScreen() {
 
   return (
     <>
-    <Stack.Screen options={{ headerShown: false }} />
-    <ThemedView style={styles.container}>
-      {/* Top Navigation Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <ThemedText style={styles.screenTitle}>Withdraw</ThemedText>
-        <TouchableOpacity
-          onPress={() => router.push("/withdrawal-history")}
-          style={styles.historyButton}
-        >
-          <ThemedText style={styles.historyButtonText}>
-            Withdrawal history
-          </ThemedText>
-        </TouchableOpacity>
-      </View>
+      <Stack.Screen options={{ headerShown: false }} />
+      <ThemedView style={styles.container}>
+        {/* ── Top Bar ── */}
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <ThemedText style={styles.screenTitle}>Withdraw</ThemedText>
+          <TouchableOpacity
+            onPress={() => router.push("/withdrawal-history")}
+            style={styles.historyNavButton}
+          >
+            <ThemedText style={styles.historyNavText}>
+              Withdrawal history
+            </ThemedText>
+          </TouchableOpacity>
+        </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Available Balance Card */}
-        <LinearGradient
-          colors={["#7AFEC3", "#02AFB6"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.balanceCard}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.balanceCardContent}>
-            <View style={styles.balanceHeader}>
-              <View style={styles.balanceHeaderLeft}>
-                <Ionicons name="wallet" size={20} color="#FFD700" />
+          {/* ── Balance Card ── */}
+          <LinearGradient
+            colors={["#66F5C2", "#01B8BF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.balanceCard}
+          >
+            <View style={styles.balanceCardInner}>
+              <View style={styles.balanceHeaderRow}>
+                <Ionicons name="wallet" size={16} color="#FFD700" />
                 <ThemedText style={styles.balanceLabel}>
                   Available balance
                 </ThemedText>
               </View>
-              <TouchableOpacity onPress={refreshWallet}>
-                <Ionicons name="refresh" size={20} color="#fff" />
+              <View style={styles.balanceAmountRow}>
+                <ThemedText style={styles.balanceAmount}>
+                  {formatBalance(walletBalance)}
+                </ThemedText>
+                <TouchableOpacity
+                  onPress={refreshWallet}
+                  style={styles.refreshBtn}
+                >
+                  <Ionicons
+                    name="refresh-circle-outline"
+                    size={22}
+                    color="rgba(255,255,255,0.85)"
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.cardFooterRow}>
+                <Ionicons
+                  name="card-outline"
+                  size={30}
+                  color="rgba(255,255,255,0.55)"
+                />
+                <ThemedText style={styles.cardMask}>**** ****</ThemedText>
+              </View>
+            </View>
+          </LinearGradient>
+
+          {/* ── ARPay + Method Tabs ── */}
+          <View style={styles.methodSection}>
+            {/* ARPay header */}
+            <View style={styles.arPayRow}>
+              <View style={styles.arPayIconWrap}>
+                <Ionicons name="triangle" size={20} color="#FFD700" />
+              </View>
+              <View style={styles.arPayTextWrap}>
+                <ThemedText style={styles.arPayTitle}>ARPay</ThemedText>
+                <ThemedText style={styles.arPaySubtitle}>
+                  Supports UPI for fast payment
+                </ThemedText>
+              </View>
+            </View>
+
+            {/* Tabs */}
+            <View style={styles.tabsRow}>
+              {/* BANK CARD */}
+              <TouchableOpacity
+                style={styles.methodTabWrap}
+                onPress={() => setSelectedMethod("BANK_CARD")}
+                activeOpacity={0.85}
+              >
+                {selectedMethod === "BANK_CARD" ? (
+                  <LinearGradient
+                    colors={["#66F5C2", "#01B8BF"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.methodTab}
+                  >
+                    <Image
+                      source={BANK_CARD_ICON}
+                      style={styles.tabIconLarge}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabelActive}>BANK CARD</Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={[styles.methodTab, styles.methodTabInactive]}>
+                    <Image
+                      source={BANK_CARD_ICON}
+                      style={styles.tabIconLarge}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabel}>BANK CARD</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* UPI */}
+              <TouchableOpacity
+                style={styles.methodTabWrap}
+                onPress={() => setSelectedMethod("UPI")}
+                activeOpacity={0.85}
+              >
+                {selectedMethod === "UPI" ? (
+                  <LinearGradient
+                    colors={["#66F5C2", "#01B8BF"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.methodTab}
+                  >
+                    <Image
+                      source={UPI_ICON}
+                      style={styles.tabIconMedium}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabelActive}>UPI</Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={[styles.methodTab, styles.methodTabInactive]}>
+                    <Image
+                      source={UPI_ICON}
+                      style={styles.tabIconMedium}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabel}>UPI</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* USDT */}
+              <TouchableOpacity
+                style={styles.methodTabWrap}
+                onPress={() => setSelectedMethod("USDT")}
+                activeOpacity={0.85}
+              >
+                {selectedMethod === "USDT" ? (
+                  <LinearGradient
+                    colors={["#66F5C2", "#01B8BF"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.methodTab}
+                  >
+                    <Image
+                      source={USDT_ICON}
+                      style={styles.tabIconMedium}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabelActive}>USDT</Text>
+                  </LinearGradient>
+                ) : (
+                  <View style={[styles.methodTab, styles.methodTabInactive]}>
+                    <Image
+                      source={USDT_ICON}
+                      style={styles.tabIconMedium}
+                      resizeMode="contain"
+                    />
+                    <Text style={styles.tabLabel}>USDT</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
-            <ThemedText style={styles.balanceAmount}>
-              {formatBalance(walletBalance)}
-            </ThemedText>
-            <View style={styles.cardFooter}>
-              <Ionicons
-                name="card"
-                size={24}
-                color="#fff"
-                style={styles.cardIcon}
-              />
-              <ThemedText style={styles.cardNumber}>**** ****</ThemedText>
-            </View>
-          </View>
-        </LinearGradient>
 
-        {/* Payment Method — Bank Card only */}
-        <View style={styles.section}>
-          <View style={styles.paymentMethodHeader}>
-            <View style={styles.arPayLogo}>
-              <Ionicons name="triangle" size={24} color="#FFD700" />
-              <ThemedText style={styles.arPayText}>ARPay</ThemedText>
-            </View>
-            <ThemedText style={styles.paymentMethodSubtext}>
-              Bank card withdrawal
-            </ThemedText>
-          </View>
-          <View style={styles.methodsRow}>
-            <TouchableOpacity style={[styles.methodButton, styles.methodButtonActive]}>
-              <Ionicons name="card" size={24} color="#05012B" />
-              <ThemedText style={[styles.methodLabel, styles.methodLabelActive]}>
-                BANK CARD
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
-          {bankAccount && bankAccount.accountNumber ? (
-            <TouchableOpacity
-              style={styles.savedBankCard}
-              onPress={() => router.push("/add-bank")}
-            >
-              <View style={styles.savedBankRow}>
-                <View style={styles.bankIconCircle}>
-                  <Ionicons name="business" size={20} color="#7AFEC3" />
-                </View>
-                <View style={styles.savedBankInfo}>
-                  <ThemedText style={styles.savedBankName}>
-                    {bankAccount.bankName}
+            {/* Bank account section (BANK CARD only) */}
+            {selectedMethod === "BANK_CARD" &&
+              (bankAccount && bankAccount.accountNumber ? (
+                <TouchableOpacity
+                  style={styles.savedBankCard}
+                  onPress={() => router.push("/add-bank")}
+                >
+                  <View style={styles.savedBankRow}>
+                    <View style={styles.bankIconCircle}>
+                      <Ionicons name="business" size={20} color="#7AFEC3" />
+                    </View>
+                    <View style={styles.savedBankInfo}>
+                      <ThemedText style={styles.savedBankName}>
+                        {bankAccount.bankName}
+                      </ThemedText>
+                      <ThemedText style={styles.savedBankHolder}>
+                        {bankAccount.accountHolder}
+                      </ThemedText>
+                      <ThemedText style={styles.savedBankNumber}>
+                        {"**** **** " + bankAccount.accountNumber.slice(-4)}
+                      </ThemedText>
+                    </View>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={20}
+                      color="#92A8E3"
+                    />
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    style={styles.addBankBtn}
+                    onPress={() => router.push("/add-bank")}
+                  >
+                    <View style={styles.addBankIconBox}>
+                      <Ionicons name="add" size={28} color="#92A8E3" />
+                    </View>
+                    <ThemedText style={styles.addBankText}>
+                      Add a bank account number
+                    </ThemedText>
+                  </TouchableOpacity>
+                  <ThemedText style={styles.addBankWarning}>
+                    Need to add beneficiary information to be able to withdraw
+                    money
                   </ThemedText>
-                  <ThemedText style={styles.savedBankHolder}>
-                    {bankAccount.accountHolder}
-                  </ThemedText>
-                  <ThemedText style={styles.savedBankNumber}>
-                    {"**** **** " + bankAccount.accountNumber.slice(-4)}
-                  </ThemedText>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="#92A8E3" />
-              </View>
-            </TouchableOpacity>
-          ) : (
-            <>
+                </>
+              ))}
+
+            {/* UPI / USDT placeholder */}
+            {
               <TouchableOpacity
-                style={styles.addBankButton}
+                style={styles.addBankBtn}
                 onPress={() => router.push("/add-bank")}
               >
                 <View style={styles.addBankIconBox}>
                   <Ionicons name="add" size={28} color="#92A8E3" />
                 </View>
                 <ThemedText style={styles.addBankText}>
-                  Add a bank account number
+                  Add{" "}
+                  {selectedMethod === "UPI" ? "UPI ID" : "USDT wallet address"}
                 </ThemedText>
               </TouchableOpacity>
-              <ThemedText style={styles.addBankWarning}>
-                Need to add beneficiary information to be able to withdraw money
-              </ThemedText>
-            </>
-          )}
-        </View>
+            }
+          </View>
 
-        {/* Withdrawal Amount */}
-        <View style={styles.section}>
-          <View style={styles.amountInputContainer}>
-            <ThemedText style={styles.currencySymbol}>₹</ThemedText>
-            <TextInput
-              style={styles.amountInput}
-              placeholder="Please enter the amount"
-              placeholderTextColor="#92A8E3"
-              value={withdrawAmount}
-              onChangeText={setWithdrawAmount}
-              keyboardType="numeric"
-            />
-          </View>
-          <View style={styles.balanceInfo}>
-            <ThemedText style={styles.balanceInfoText}>
-              Withdrawable balance {formatBalance(withdrawableBalance)}
-            </ThemedText>
-          </View>
-          <View style={styles.amountReceivedRow}>
-            <ThemedText style={styles.amountReceivedLabel}>
-              Withdrawal amount received
-            </ThemedText>
-            <View style={styles.amountReceivedRight}>
-              <ThemedText style={styles.amountReceivedValue}>
-                ₹{withdrawAmount || "0.00"}
-              </ThemedText>
-              <TouchableOpacity
-                onPress={handleAllAmount}
-                style={styles.allButton}
+          {/* ── Amount Input ── */}
+          <View style={styles.amountCard}>
+            {selectedMethod === "USDT" ? (
+              <>
+                {/* USDT header */}
+                <View style={styles.usdtHeader}>
+                  <Image source={USDT_ICON} style={styles.usdtHeaderIcon} resizeMode="contain" />
+                  <ThemedText style={styles.usdtHeaderTitle}>
+                    Select amount of USDT
+                  </ThemedText>
+                </View>
+
+                {/* INR input */}
+                <View style={styles.usdtInputRow}>
+                  <ThemedText style={styles.usdtInputCurrency}>₹</ThemedText>
+                  <TextInput
+                    style={styles.usdtInput}
+                    placeholder="Please enter withdrawal amount"
+                    placeholderTextColor="#4A5B7A"
+                    value={withdrawAmount}
+                    onChangeText={setWithdrawAmount}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                {/* USDT input */}
+                <View style={styles.usdtInputRow}>
+                  <Image source={USDT_ICON} style={styles.usdtInputIcon} resizeMode="contain" />
+                  <TextInput
+                    style={styles.usdtInput}
+                    placeholder="Please enter USDT amount"
+                    placeholderTextColor="#4A5B7A"
+                    value={usdtAmount}
+                    onChangeText={setUsdtAmount}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                {/* Balance + All */}
+                <View style={styles.usdtBalanceRow}>
+                  <ThemedText style={styles.usdtBalanceText}>
+                    Withdrawable balance{" "}
+                    <Text style={styles.usdtBalanceAmount}>
+                      {formatBalance(withdrawableBalance)}
+                    </Text>
+                  </ThemedText>
+                  <TouchableOpacity
+                    onPress={() => setWithdrawAmount(withdrawableBalance.toFixed(2))}
+                    style={styles.allBtn}
+                  >
+                    <ThemedText style={styles.allBtnText}>All</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.amountInputRow}>
+                  <ThemedText style={styles.currencySymbol}>₹</ThemedText>
+                  <TextInput
+                    style={styles.amountInput}
+                    placeholder="Please enter the amount"
+                    placeholderTextColor="#4A5B7A"
+                    value={withdrawAmount}
+                    onChangeText={setWithdrawAmount}
+                    keyboardType="numeric"
+                  />
+                </View>
+                <View style={styles.balanceInfoRow}>
+                  <ThemedText style={styles.balanceInfoText}>
+                    Withdrawable balance{" "}
+                    <Text style={styles.balanceInfoAmount}>
+                      {formatBalance(withdrawableBalance)}
+                    </Text>
+                  </ThemedText>
+                  <TouchableOpacity
+                    onPress={handleAllAmount}
+                    style={styles.allBtn}
+                  >
+                    <ThemedText style={styles.allBtnText}>All</ThemedText>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.receivedRow}>
+                  <ThemedText style={styles.receivedLabel}>
+                    Withdrawal amount received
+                  </ThemedText>
+                  <ThemedText style={styles.receivedValue}>
+                    ₹
+                    {withdrawAmount
+                      ? parseFloat(withdrawAmount).toFixed(2)
+                      : "0.00"}
+                  </ThemedText>
+                </View>
+              </>
+            )}
+
+            {/* ── Withdraw Button ── */}
+            <TouchableOpacity
+              style={[
+                styles.withdrawBtn,
+                isDisabled && styles.withdrawBtnDisabled,
+              ]}
+              onPress={handleWithdraw}
+              disabled={isDisabled}
+              activeOpacity={0.85}
+            >
+              <ThemedText
+                style={[
+                  styles.withdrawBtnText,
+                  isDisabled && styles.withdrawBtnTextDisabled,
+                ]}
               >
-                <ThemedText style={styles.allButtonText}>All</ThemedText>
-              </TouchableOpacity>
+                {loading ? "Processing..." : "Withdraw"}
+              </ThemedText>
+            </TouchableOpacity>
+            {/* ── Withdrawal Rules ── */}
+            <View style={styles.rulesSection}>
+              <RuleItem>
+                {"Need to bet "}
+                <Text style={styles.highlight}>{formatBalance(0)}</Text>
+                {" to be able to withdraw"}
+              </RuleItem>
+              <RuleItem>
+                {"Withdraw time "}
+                <Text style={styles.highlight}>{"00:00-23:59"}</Text>
+              </RuleItem>
+              <RuleItem>
+                {"Inday Remaining Withdrawal Times"}
+                <Text style={styles.highlight}>{"3"}</Text>
+              </RuleItem>
+              <RuleItem>
+                {"Withdrawal amount range "}
+                <Text style={styles.highlight}>{"₹110.00-₹100,000.00"}</Text>
+              </RuleItem>
+              <RuleItem>
+                {
+                  "Please confirm your beneficial account information before withdrawing. If your information is incorrect, our company will not be liable for the amount of loss"
+                }
+              </RuleItem>
+              <RuleItem>
+                {
+                  "If your beneficial information is incorrect, please contact customer service"
+                }
+              </RuleItem>
             </View>
           </View>
-        </View>
 
-        {/* Withdraw Button */}
-        <TouchableOpacity
-          style={[
-            styles.withdrawButton,
-            (loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
-              styles.withdrawButtonDisabled,
-          ]}
-          onPress={handleWithdraw}
-          disabled={loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0}
-        >
-          <ThemedText
-            style={[
-              styles.withdrawButtonText,
-              (loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0) &&
-                styles.withdrawButtonTextDisabled,
-            ]}
-          >
-            {loading ? "Processing..." : "Withdraw"}
-          </ThemedText>
-        </TouchableOpacity>
+          {/* ── Withdrawal History Preview ── */}
+          <View style={styles.historySection}>
+            <View style={styles.historySectionHeader}>
+              <Image
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
+                source={require("@/assets/Screenshot_2026-04-08_025104-removebg-preview (1).png")}
+                style={styles.historySectionIcon}
+                resizeMode="contain"
+              />
+              <ThemedText style={styles.historySectionTitle}>
+                Withdrawal history
+              </ThemedText>
+            </View>
 
-        {/* Withdrawal Rules */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="document-text" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>
-              Withdrawal Rules
-            </ThemedText>
-          </View>
-          <View style={styles.rulesList}>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                Need to bet {formatBalance(0)} to be able to withdraw
-              </ThemedText>
-            </View>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                Withdraw time 00:00-23:59
-              </ThemedText>
-            </View>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                Inday Remaining Withdrawal Times 3
-              </ThemedText>
-            </View>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                Withdrawal amount range ₹100.00-₹50,000.00
-              </ThemedText>
-            </View>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                Please confirm your beneficial account information before
-                withdrawing. If your information is incorrect, our company will
-                not be liable for the amount of loss
-              </ThemedText>
-            </View>
-            <View style={styles.ruleItem}>
-              <ThemedText style={styles.ruleBullet}>◆</ThemedText>
-              <ThemedText style={styles.ruleText}>
-                If your beneficial information is incorrect, please contact
-                customer service
-              </ThemedText>
-            </View>
-          </View>
-        </View>
+            {recentWithdrawals.length > 0 ? (
+              <View style={styles.historyList}>
+                {recentWithdrawals.map((item) => (
+                  <View key={item._id} style={styles.historyItem}>
+                    <View>
+                      <ThemedText style={styles.historyItemAmount}>
+                        {formatBalance(item.amount)}
+                      </ThemedText>
+                      <ThemedText style={styles.historyItemDate}>
+                        {formatDate(item.createdAt)}
+                      </ThemedText>
+                    </View>
+                    <ThemedText
+                      style={[
+                        styles.historyItemStatus,
+                        { color: statusColor(item.status) },
+                      ]}
+                    >
+                      {item.status.charAt(0).toUpperCase() +
+                        item.status.slice(1)}
+                    </ThemedText>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.noDataWrap}>
+                <Svg viewBox="0 0 389 227" width={240} height={130} fill="none">
+                  <Defs>
+                    <SvgGradient
+                      id="wg0"
+                      x1="185.676"
+                      y1="129.156"
+                      x2="185.676"
+                      y2="227"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#484852" />
+                      <Stop
+                        offset="0.615"
+                        stopColor="#777783"
+                        stopOpacity="0.1"
+                      />
+                      <Stop offset="1" stopColor="#DEDEE6" stopOpacity="0" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg1"
+                      x1="110.557"
+                      y1="19.5694"
+                      x2="110.557"
+                      y2="79.5818"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#353240" />
+                      <Stop offset="1" stopColor="#24212F" stopOpacity="0" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg2"
+                      x1="303.907"
+                      y1="65.2301"
+                      x2="303.907"
+                      y2="109.586"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#353240" />
+                      <Stop offset="1" stopColor="#24212F" stopOpacity="0" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg3"
+                      x1="212.361"
+                      y1="177.425"
+                      x2="211.673"
+                      y2="-1.70206e-05"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#100F15" />
+                      <Stop offset="0.232" stopColor="#27252F" />
+                      <Stop offset="0.925" stopColor="#514E5A" />
+                      <Stop offset="1" stopColor="#33323C" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg4"
+                      x1="188.942"
+                      y1="9.13086"
+                      x2="188.942"
+                      y2="155.486"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#676570" />
+                      <Stop offset="1" stopColor="#403F4B" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg5"
+                      x1="177.68"
+                      y1="144.809"
+                      x2="177.68"
+                      y2="177.424"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#504F5C" />
+                      <Stop offset="1" stopColor="#2E2C3B" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg6"
+                      x1="275.816"
+                      y1="28.1825"
+                      x2="275.816"
+                      y2="3.62035"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#31303A" />
+                      <Stop offset="1" stopColor="#2B2930" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg7"
+                      x1="51.3203"
+                      y1="144"
+                      x2="51.3203"
+                      y2="164"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#33303E" />
+                      <Stop offset="1" stopColor="#3D3B46" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg8"
+                      x1="52.0976"
+                      y1="99.1497"
+                      x2="52.0976"
+                      y2="149.74"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#302C3F" />
+                      <Stop offset="1" stopColor="#494854" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg9"
+                      x1="344.097"
+                      y1="165.449"
+                      x2="344.097"
+                      y2="181.337"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#23202A" />
+                      <Stop offset="1" stopColor="#42404B" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg10"
+                      x1="344.795"
+                      y1="140.896"
+                      x2="344.795"
+                      y2="172.673"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#302C3F" />
+                      <Stop offset="1" stopColor="#494854" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg11"
+                      x1="296.068"
+                      y1="131.764"
+                      x2="296.068"
+                      y2="170.902"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#494855" />
+                      <Stop offset="1" stopColor="#312F3B" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg12"
+                      x1="84.0489"
+                      y1="52.2659"
+                      x2="113.914"
+                      y2="80.8551"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#605D6A" />
+                      <Stop offset="1" stopColor="#7D7B8B" />
+                    </SvgGradient>
+                    <SvgGradient
+                      id="wg13"
+                      x1="83.5475"
+                      y1="51.2645"
+                      x2="106.537"
+                      y2="69.6654"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <Stop stopColor="#7C7A84" />
+                      <Stop offset="1" stopColor="#ABAAB3" />
+                    </SvgGradient>
+                  </Defs>
+                  <Path
+                    opacity={0.3}
+                    d="M185.676 227C268.288 227 335.259 205.097 335.259 178.077C335.259 151.058 268.288 129.156 185.676 129.156C103.064 129.156 36.0938 151.058 36.0938 178.077C36.0938 205.097 103.064 227 185.676 227Z"
+                    fill="url(#wg0)"
+                  />
+                  <Path
+                    d="M24.2361 48.4838C39.3083 46.0376 45.4084 44.1986 60.1233 29.9067C74.8398 15.6163 89.7608 36.4663 111.891 28.0943C134.02 19.7238 136.044 9.58829 169.892 40.6345C185.494 53.8291 197.904 48.6052 205.553 53.8291C210.65 57.3103 215.564 65.8955 220.296 79.5818H24.2361C8.62556 74.1061 0.820312 69.5603 0.820312 65.9399C0.820312 60.5116 9.1638 50.9284 24.2361 48.4838Z"
+                    fill="url(#wg1)"
+                  />
+                  <Path
+                    d="M237.112 86.6013C248.773 84.7933 253.495 83.4326 264.881 72.8706C276.268 62.3072 287.815 77.7185 304.939 71.5305C322.063 65.3441 323.628 57.8532 349.821 80.7998C361.895 90.5518 371.497 86.6901 377.415 90.5518C381.36 93.1253 385.162 99.4702 388.823 109.586H237.112C225.031 105.54 218.992 102.178 218.992 99.5043C218.992 95.4915 225.448 88.4078 237.112 86.6013Z"
+                    fill="url(#wg2)"
+                  />
+                  <Path
+                    d="M273.802 0C283.932 0 292.144 8.2002 292.144 18.3165V20.12H259.592V159.109C259.592 169.224 251.381 177.425 241.251 177.425H123.687C123.322 177.425 122.973 177.28 122.715 177.022C122.457 176.765 122.312 176.415 122.313 176.051V14.6532C122.313 6.56105 128.881 0 136.986 0H273.802Z"
+                    fill="url(#wg3)"
+                  />
+                  <Path
+                    opacity={0.712}
+                    d="M240.78 9.13086H137.104C136.363 9.13086 135.629 9.27668 134.944 9.55999C134.26 9.84329 133.637 10.2585 133.113 10.782C132.589 11.3055 132.174 11.9269 131.89 12.6108C131.607 13.2948 131.461 14.0277 131.461 14.7679V162.656C131.461 163.396 131.607 164.129 131.89 164.813C132.174 165.496 132.59 166.118 133.114 166.641C133.638 167.164 134.26 167.579 134.945 167.863C135.629 168.146 136.363 168.292 137.104 168.292H240.78C241.522 168.292 242.255 168.146 242.94 167.863C243.625 167.579 244.247 167.164 244.771 166.641C245.295 166.118 245.711 165.496 245.994 164.813C246.278 164.129 246.424 163.396 246.424 162.656V14.7679C246.424 14.0277 246.278 13.2948 245.995 12.6108C245.711 11.9269 245.296 11.3055 244.771 10.782C244.247 10.2585 243.625 9.84329 242.94 9.55999C242.256 9.27668 241.522 9.13086 240.78 9.13086Z"
+                    fill="url(#wg4)"
+                  />
+                  <Path
+                    d="M225.836 144.809V160.94C225.836 170.043 233.226 177.424 242.343 177.424H114.529C104.401 177.424 96.1875 169.223 96.1875 159.108V144.809H225.836ZM259.174 161.117C259.174 170.123 251.863 177.424 242.843 177.424H242.667C251.783 177.424 259.174 170.043 259.174 160.94L259.173 161.028L259.174 161.117Z"
+                    fill="url(#wg5)"
+                  />
+                  <Path
+                    d="M275.816 0C284.834 0 292.145 7.29993 292.145 16.3071L292.144 30.0052H259.484V16.3086C259.484 7.30141 266.796 0 275.816 0Z"
+                    fill="url(#wg6)"
+                  />
+                  <Rect
+                    x={48.8203}
+                    y={144}
+                    width={5}
+                    height={20}
+                    rx={2.5}
+                    fill="url(#wg7)"
+                  />
+                  <Path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M46.1844 105.961C41.438 115.8 25.098 145.98 47.9933 149.359C70.8901 152.738 69.8685 132.651 65.8517 125.462C61.8364 118.273 57.3036 114.249 57.3036 105.961C57.3036 97.6734 50.9292 96.1201 46.1829 105.961H46.1844Z"
+                    fill="url(#wg8)"
+                  />
+                  <Path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M343.974 165.449H344.221C344.921 165.449 345.491 166.016 345.491 166.717V180.068C345.491 180.405 345.357 180.727 345.119 180.965C344.881 181.203 344.558 181.337 344.221 181.337H343.974C343.637 181.337 343.314 181.204 343.075 180.966C342.837 180.728 342.703 180.405 342.703 180.068V166.717C342.703 166.016 343.272 165.449 343.974 165.449Z"
+                    fill="url(#wg9)"
+                  />
+                  <Path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M340.932 145.174C337.834 151.355 327.164 170.311 342.114 172.434C357.066 174.556 356.399 161.939 353.778 157.424C351.155 152.908 348.195 150.38 348.195 145.174C348.195 139.968 344.031 138.994 340.932 145.174Z"
+                    fill="url(#wg10)"
+                  />
+                  <Path
+                    d="M269.941 131.764H322.196C323.639 131.764 324.809 132.933 324.809 134.373V168.292C324.809 169.734 323.639 170.901 322.196 170.901H269.941C269.248 170.901 268.583 170.626 268.093 170.137C267.603 169.648 267.328 168.984 267.328 168.292V134.373C267.328 132.933 268.498 131.764 269.941 131.764Z"
+                    fill="url(#wg11)"
+                  />
+                  <Path
+                    opacity={0.398}
+                    d="M284.309 32.6133C282.541 53.9608 273.212 64.0459 263.885 69.6786C249.04 78.6443 231.874 74.1814 227.627 69.6786C220.715 62.3476 233.578 51.1844 246.322 59.5164C259.065 67.8484 223.925 97.2125 187.223 92.0122C162.755 88.5459 140.684 82.0766 121.008 72.6045"
+                    stroke="#908E9B"
+                    strokeWidth={0.881}
+                    strokeLinecap="round"
+                    strokeDasharray="2.64 2.64"
+                  />
+                  <Path
+                    d="M83.2109 50.6191L124.558 71.2914L116.173 82.6011L83.2109 50.6191Z"
+                    fill="#565461"
+                  />
+                  <Path
+                    d="M83.2109 50.6191L116.168 82.5997L118.765 69.3487L83.2109 50.6191Z"
+                    fill="url(#wg12)"
+                  />
+                  <Path
+                    d="M83.2109 50.6191L103.479 66.3814L118.759 69.3443L83.2109 50.6191Z"
+                    fill="url(#wg13)"
+                  />
+                  <Path
+                    d="M88.8516 53.4336L136.814 71.5901L124.564 71.291L88.8516 53.4336Z"
+                    fill="#6D6B7A"
+                  />
+                </Svg>
+                <ThemedText style={styles.noDataText}>No data</ThemedText>
+              </View>
+            )}
 
-        {/* Withdrawal History Preview */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="document-text" size={18} color="#7AFEC3" />
-            <ThemedText style={styles.sectionTitle}>
-              Withdrawal history
-            </ThemedText>
+            <TouchableOpacity
+              style={styles.allHistoryBtn}
+              onPress={() => router.push("/withdrawal-history")}
+            >
+              <ThemedText style={styles.allHistoryBtnText}>
+                All history
+              </ThemedText>
+            </TouchableOpacity>
           </View>
-          <View style={styles.historyPlaceholder}>
-            <ThemedText style={styles.noDataText}>No data</ThemedText>
-          </View>
-          <TouchableOpacity
-            style={styles.allHistoryButton}
-            onPress={() => router.push("/withdrawal-history")}
-          >
-            <ThemedText style={styles.allHistoryButtonText}>
-              All history
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </ThemedView>
+        </ScrollView>
+      </ThemedView>
     </>
+  );
+}
+
+function RuleItem({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={styles.ruleItem}>
+      <Text style={styles.ruleBullet}>◆</Text>
+      <Text style={styles.ruleText}>{children}</Text>
+    </View>
   );
 }
 
@@ -326,335 +841,400 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#05012B",
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 100,
-    paddingTop: 90,
-  },
+  scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 40, paddingTop: 88 },
+
+  /* Top bar */
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 1000,
+    zIndex: 100,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 50,
+    paddingTop: 48,
     paddingBottom: 12,
     backgroundColor: "#05012B",
   },
-  backButton: {
-    padding: 4,
-  },
-  screenTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  historyButton: {
-    padding: 4,
-  },
-  historyButtonText: {
-    fontSize: 14,
-    color: "#7AFEC3",
-  },
+  backButton: { padding: 4 },
+  screenTitle: { fontSize: 18, fontWeight: "700", color: "#fff" },
+  historyNavButton: { padding: 4 },
+  historyNavText: { fontSize: 13, color: "#ffffff" },
+
+  /* Balance card */
   balanceCard: {
-    marginHorizontal: 16,
-    marginTop: 20,
+    marginHorizontal: 14,
+    marginTop: 12,
     borderRadius: 16,
     overflow: "hidden",
   },
-  balanceCardContent: {
-    padding: 20,
+  balanceCardInner: { padding: 18 },
+  balanceHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 10,
   },
-  balanceHeader: {
+  balanceLabel: { fontSize: 14, color: "#fff", fontWeight: "500" },
+  balanceAmountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 18,
+  },
+  balanceAmount: { fontSize: 30, fontWeight: "800", color: "#05012B" },
+  refreshBtn: { paddingTop: 2 },
+  cardFooterRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
   },
-  balanceHeaderLeft: {
+  cardMask: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.65)",
+    letterSpacing: 3,
+  },
+
+  /* Method section */
+  methodSection: {
+    marginHorizontal: 14,
+    marginTop: 16,
+  },
+  arPayRow: {
+    padding: 14,
+    paddingVertical: 7,
     flexDirection: "row",
+    borderRadius: 14,
+    backgroundColor: "#0A1A45",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
+    marginBottom: 14,
   },
-  balanceLabel: {
-    fontSize: 14,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  balanceAmount: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 16,
-  },
-  cardFooter: {
-    flexDirection: "row",
+  arPayIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 8,
+    backgroundColor: "#12204E",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
   },
-  cardIcon: {
-    opacity: 0.8,
-  },
-  cardNumber: {
-    fontSize: 16,
-    color: "#fff",
-    letterSpacing: 2,
-  },
-  section: {
-    marginHorizontal: 16,
-    marginTop: 24,
-  },
-  sectionHeader: {
+  arPayTextWrap: { gap: 2 },
+  arPayTitle: { fontSize: 16, fontWeight: "700", color: "#ffffff" },
+  arPaySubtitle: { fontSize: 12, color: "#92A8E3" },
+
+  /* Tabs */
+  tabsRow: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
+    gap: 10,
+    marginBottom: 14,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  paymentMethodHeader: {
-    marginBottom: 16,
-  },
-  arPayLogo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 4,
-  },
-  arPayText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#FFD700",
-  },
-  paymentMethodSubtext: {
-    fontSize: 14,
-    color: "#92A8E3",
-  },
-  methodsRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 12,
-  },
-  methodButton: {
+  methodTabWrap: {
     flex: 1,
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    gap: 8,
+    borderRadius: 10,
+    overflow: "hidden",
   },
-  methodButtonActive: {
+  methodTab: {
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 10,
+  },
+  methodTabInactive: {
+    backgroundColor: "#0D1E52",
+  },
+  methodTabActive: {
     backgroundColor: "#7AFEC3",
   },
-  methodLabel: {
-    fontSize: 12,
-    color: "#fff",
-    fontWeight: "600",
+  tabIconLarge: {
+    width: 40,
+    height: 40,
   },
-  methodLabelActive: {
+  tabIconMedium: {
+    width: 36,
+    height: 36,
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#92A8E3",
+    letterSpacing: 0.3,
+  },
+  tabLabelActive: {
+    fontSize: 11,
+    fontWeight: "700",
     color: "#05012B",
+    letterSpacing: 0.3,
   },
-  addBankButton: {
+
+  /* Add bank */
+  addBankBtn: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
+    gap: 8,
+    borderRadius: 10,
+    paddingVertical: 22,
     backgroundColor: "#011341",
-    borderRadius: 12,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    borderWidth: 1.5,
-    borderColor: "rgba(146, 168, 227, 0.3)",
-    borderStyle: "dashed",
+    // borderWidth: 1.5,
+    // borderColor: "rgba(146,168,227,0.25)",
+    // borderStyle: "dashed",
   },
   addBankIconBox: {
-    width: 44,
-    height: 44,
+    width: 42,
+    height: 42,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: "rgba(146, 168, 227, 0.4)",
+    borderColor: "rgba(146,168,227,0.35)",
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
   },
-  addBankText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#92A8E3",
-  },
+  addBankText: { fontSize: 14, fontWeight: "600", color: "#92A8E3" },
   addBankWarning: {
-    fontSize: 13,
-    color: "#FF6B6B",
-    marginTop: 10,
-    textAlign: "left",
+    fontSize: 12.5,
+    color: "#D23838",
+    marginTop: 8,
+    textAlign: "center",
   },
-  amountInputContainer: {
+
+  /* Saved bank card */
+  savedBankCard: {
+    backgroundColor: "#0D1E52",
+    borderRadius: 10,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "rgba(122,254,195,0.25)",
+  },
+  savedBankRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  bankIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "rgba(122,254,195,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  savedBankInfo: { flex: 1, gap: 2 },
+  savedBankName: { fontSize: 13, fontWeight: "600", color: "#7AFEC3" },
+  savedBankHolder: { fontSize: 12, color: "#fff" },
+  savedBankNumber: { fontSize: 12, color: "#92A8E3" },
+
+  /* Amount card */
+  amountCard: {
+    marginHorizontal: 14,
+    marginTop: 14,
+    backgroundColor: "#0A1A45",
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  amountInputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#011341",
-    borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 5,
     gap: 8,
-    marginBottom: 12,
+    backgroundColor: "#05012B",
+    borderRadius: 100,
+    margin: 15,
   },
-  currencySymbol: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#fff",
+  currencySymbol: { fontSize: 20, fontWeight: "600", color: "#00ECBE" },
+  amountInput: { flex: 1, fontSize: 16, color: "#fff" },
+  amountDivider: {
+    height: 1,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    marginHorizontal: 0,
   },
-  amountInput: {
-    flex: 1,
-    fontSize: 16,
-    color: "#fff",
-  },
-  balanceInfo: {
-    marginBottom: 12,
-  },
-  balanceInfoText: {
-    fontSize: 14,
-    color: "#92A8E3",
-  },
-  amountReceivedRow: {
+  balanceInfoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 8,
   },
-  amountReceivedLabel: {
-    fontSize: 14,
-    color: "#92A8E3",
+  balanceInfoText: { fontSize: 13, color: "#92A8E3" },
+  balanceInfoAmount: { fontSize: 13, color: "#DD9138" },
+  allBtn: {
+    borderWidth: 0.5,
+    borderColor: "#7AFEC3",
+    borderRadius: 6,
+    paddingHorizontal: 44,
+    paddingVertical: 0,
   },
-  amountReceivedRight: {
+  allBtnText: { fontSize: 13, fontWeight: "600", color: "#7AFEC3" },
+  receivedRow: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    gap: 12,
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 14,
   },
-  amountReceivedValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  allButton: {
+  receivedLabel: { fontSize: 13, color: "#92A8E3" },
+  receivedValue: { fontSize: 16, fontWeight: "700", color: "#DD9138" },
+
+  /* Withdraw button */
+  withdrawBtn: {
+    marginHorizontal: 14,
+    marginTop: 16,
     backgroundColor: "#7AFEC3",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  allButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#05012B",
-  },
-  withdrawButton: {
-    marginHorizontal: 16,
-    marginTop: 24,
-    backgroundColor: "#7AFEC3",
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: 50,
+    paddingVertical: 10,
     alignItems: "center",
   },
-  withdrawButtonDisabled: {
-    backgroundColor: "#011341",
-    opacity: 0.5,
-  },
-  withdrawButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
+  withdrawBtnDisabled: { backgroundColor: "#2A3A5C", opacity: 0.7 },
+  withdrawBtnText: {
+    fontSize: 17,
+    fontWeight: "400",
     color: "#05012B",
   },
-  withdrawButtonTextDisabled: {
-    color: "#92A8E3",
-  },
-  rulesList: {
-    gap: 12,
+  withdrawBtnTextDisabled: { color: "#6A7FA8" },
+
+  /* Rules */
+  rulesSection: {
+    marginHorizontal: 14,
+    marginVertical: 20,
+    padding: 15,
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#022C68",
   },
   ruleItem: {
     flexDirection: "row",
-    gap: 12,
+    gap: 10,
     alignItems: "flex-start",
   },
   ruleBullet: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#7AFEC3",
-    marginTop: 2,
+    marginTop: 3,
   },
   ruleText: {
     flex: 1,
-    fontSize: 14,
-    color: "#92A8E3",
+    fontSize: 13.5,
+    color: "#7B8FC0",
     lineHeight: 20,
   },
-  historyPlaceholder: {
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 40,
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  noDataText: {
-    fontSize: 14,
-    color: "#92A8E3",
-  },
-  allHistoryButton: {
-    backgroundColor: "transparent",
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#7AFEC3",
-  },
-  allHistoryButtonText: {
-    fontSize: 16,
+  highlight: {
+    color: "#D23838",
     fontWeight: "600",
-    color: "#7AFEC3",
   },
-  savedBankCard: {
-    backgroundColor: "#011341",
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "rgba(122, 254, 195, 0.3)",
+
+  /* History section */
+  historySection: {
+    marginHorizontal: 14,
+    marginTop: 24,
   },
-  savedBankRow: {
+  historySectionIcon: {
+    width: 22,
+    height: 22,
+  },
+  historySectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 8,
+    marginBottom: 14,
   },
-  bankIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(122, 254, 195, 0.1)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  savedBankInfo: {
-    flex: 1,
-    gap: 2,
-  },
-  savedBankName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#7AFEC3",
-  },
-  savedBankHolder: {
-    fontSize: 13,
+  historySectionTitle: {
+    fontSize: 15,
+    fontWeight: "700",
     color: "#fff",
   },
-  savedBankNumber: {
-    fontSize: 13,
+  historyList: { gap: 10, marginBottom: 14 },
+  historyItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#0A1A45",
+    borderRadius: 10,
+    padding: 14,
+  },
+  historyItemAmount: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  historyItemDate: { fontSize: 12, color: "#92A8E3", marginTop: 2 },
+  historyItemStatus: { fontSize: 13, fontWeight: "600" },
+  noDataWrap: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  noDataText: { fontSize: 13.5, color: "#6F80A4", marginTop: 4 },
+  allHistoryBtn: {
+    marginTop: 10,
+    borderRadius: 50,
+    paddingVertical: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#7AFEC3",
+  },
+  allHistoryBtnText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#7AFEC3",
+  },
+
+  /* USDT amount section */
+  usdtHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 14,
+    paddingBottom: 12,
+  },
+  usdtHeaderIcon: {
+    width: 22,
+    height: 22,
+  },
+  usdtHeaderTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#fff",
+    fontStyle: "italic",
+  },
+  usdtInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#0D1E52",
+    borderRadius: 10,
+    marginHorizontal: 12,
+    marginBottom: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    gap: 10,
+  },
+  usdtInputCurrency: {
+    fontSize: 18,
+    fontWeight: "600",
     color: "#92A8E3",
+  },
+  usdtInputIcon: {
+    width: 22,
+    height: 22,
+  },
+  usdtInput: {
+    flex: 1,
+    fontSize: 14,
+    color: "#fff",
+  },
+  usdtBalanceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingTop: 4,
+    paddingBottom: 14,
+  },
+  usdtBalanceText: {
+    fontSize: 13,
+    color: "#7AFEC3",
+  },
+  usdtBalanceAmount: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#7AFEC3",
   },
 });

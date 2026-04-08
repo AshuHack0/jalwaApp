@@ -1,5 +1,11 @@
 import { ThemedView } from "@/components/themed-view";
-import { router, Stack } from "expo-router";
+import { router, Stack, useFocusEffect } from "expo-router";
+import {
+  DEFAULT_AVATAR_ID,
+  getAvatarImageSource,
+  getSelectedAvatarId,
+} from "@/services/avatar-storage";
+import { useCallback, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -78,6 +84,27 @@ function SettingRow({
 
 // ── Main Screen ──────────────────────────────────────────────────────────────
 export default function SettingsScreen() {
+  const [selectedAvatarId, setSelectedAvatarId] =
+    useState(DEFAULT_AVATAR_ID);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      (async () => {
+        const avatarId = await getSelectedAvatarId();
+
+        if (isActive) {
+          setSelectedAvatarId(avatarId);
+        }
+      })();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -121,7 +148,7 @@ export default function SettingsScreen() {
               <View style={styles.avatarRow}>
                 <View style={styles.avatarCircle}>
                   <Image
-                    source={require("@/assets/1-a6662edb.webp")}
+                    source={getAvatarImageSource(selectedAvatarId)}
                     style={[
                       {
                         width: "100%",
@@ -134,6 +161,7 @@ export default function SettingsScreen() {
                 <TouchableOpacity
                   style={styles.changeAvatarBtn}
                   activeOpacity={0.7}
+                  onPress={() => router.push("/account/avatar")}
                 >
                   <Text style={styles.changeAvatarText}>Change avatar</Text>
                   <Image

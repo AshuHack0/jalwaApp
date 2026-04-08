@@ -3,6 +3,11 @@ import { ThemedView } from "@/components/themed-view";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import {
+  DEFAULT_AVATAR_ID,
+  getAvatarImageSource,
+  getSelectedAvatarId,
+} from "@/services/avatar-storage";
+import {
   Inter_400Regular,
   Inter_400Regular_Italic,
   Inter_600SemiBold,
@@ -17,25 +22,25 @@ import {
 } from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
 
 export default function AccountScreen() {
-  const [loaded] = useFonts({
+  useFonts({
     BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
     BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
     BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
   });
-  const [fontsLoaded] = useFonts({
+  useFonts({
     Roboto_400Regular,
     Roboto_400Regular_Italic,
     Roboto_700Bold,
   });
-  const [interLoaded] = useInter({
+  useInter({
     Inter_Regular: Inter_400Regular,
     Inter_SemiBold: Inter_600SemiBold,
     Inter_Bold_Italic: Inter_700Bold_Italic,
@@ -43,8 +48,28 @@ export default function AccountScreen() {
   });
   const router = useRouter();
   const { walletBalance, logout } = useAuth();
-  const { openDepositModal } = useDepositModal();
+  useDepositModal();
   const [notificationCount] = useState(2);
+  const [selectedAvatarId, setSelectedAvatarId] =
+    useState(DEFAULT_AVATAR_ID);
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      (async () => {
+        const avatarId = await getSelectedAvatarId();
+
+        if (isActive) {
+          setSelectedAvatarId(avatarId);
+        }
+      })();
+
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   const handleCopyUID = () => {
     // Handle copy UID functionality
@@ -65,13 +90,16 @@ export default function AccountScreen() {
       >
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <View style={styles.profileImageContainer}>
+          <TouchableOpacity
+            style={styles.profileImageContainer}
+            onPress={() => router.push("/account/avatar")}
+          >
             <Image
-              source={require("@/assets/1-a6662edb.webp")}
+              source={getAvatarImageSource(selectedAvatarId)}
               style={{ width: 84, height: 84 }}
               contentFit="cover"
             />
-          </View>
+          </TouchableOpacity>
           <View style={styles.profileInfo}>
             <View style={styles.usernameRow}>
               <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
@@ -149,7 +177,10 @@ export default function AccountScreen() {
               </View>
               <ThemedText style={styles.quickActionLabel}>Withdraw</ThemedText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.quickActionButton}>
+            <TouchableOpacity
+              onPress={() => router.push("/account/vip")}
+              style={styles.quickActionButton}
+            >
               <View style={[styles.quickActionIcon, styles.vipIcon]}>
                 <Image
                   source={require("@/assets/gfg1.png")}
@@ -431,7 +462,7 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>
-                Beginner's Guide
+                Beginner&apos;s Guide
               </ThemedText>
             </TouchableOpacity>
 

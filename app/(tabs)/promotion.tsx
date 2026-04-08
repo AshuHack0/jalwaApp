@@ -218,7 +218,10 @@ export default function PromotionScreen() {
             end={{ x: 0, y: 1 }}
             style={styles.qrButton}
           >
-            <TouchableOpacity style={styles.qrButtonContent}>
+            <TouchableOpacity
+              style={styles.qrButtonContent}
+              onPress={() => router.push("/promotion/invite")}
+            >
               <ThemedText style={styles.qrButtonText}>
                 Download QR Code
               </ThemedText>
