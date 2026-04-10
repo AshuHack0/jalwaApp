@@ -173,7 +173,7 @@ export default function WinGoScreen() {
   const { openDepositModal } = useDepositModal();
   const [isPageScrolling, setIsPageScrolling] = useState(false)
   const scrollStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
+
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -806,10 +806,10 @@ export default function WinGoScreen() {
           }}
           showsVerticalScrollIndicator={false}
           onScroll={() => {
-          setIsPageScrolling(true)
-          if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current)
-          scrollStopTimer.current = setTimeout(() => setIsPageScrolling(false), 500)
-        }}
+            setIsPageScrolling(true)
+            if (scrollStopTimer.current) clearTimeout(scrollStopTimer.current)
+            scrollStopTimer.current = setTimeout(() => setIsPageScrolling(false), 500)
+          }}
         >
           {/* Wallet Section */}
           <View
@@ -1812,7 +1812,7 @@ export default function WinGoScreen() {
                           style={[styles.chartRow, {
                             paddingHorizontal: wp(3.2),
                             borderBottomWidth: index === gameHistory.length - 1 ? 0 : 0.7,
-                            borderBottomColor: "#e1e3f2",
+                            borderBottomColor: "#E2E3F2",
                           }]}
                           onLayout={(e) => {
                             const { y, height } = e.nativeEvent.layout;
@@ -1838,7 +1838,7 @@ export default function WinGoScreen() {
                                     <Text
                                       style={[
                                         styles.chartNumberText,
-                                        { color: "#fff" },
+                                        { color: isHighlighted ? "#fff" : "#B1B1B4" },
                                       ]}
                                     >
                                       {n}
@@ -2016,30 +2016,36 @@ export default function WinGoScreen() {
                                   style={{
                                     height: wp(13),
                                     width: wp(14),
-                                    borderRadius: wp(2.5),
+                                    borderRadius: wp(2),
                                     overflow: "hidden",
-                                    justifyContent: "center",
+                                    backgroundColor: "#0A1A44",
                                     alignItems: "center",
+                                    justifyContent: "center",
                                   }}
                                 >
-                                  <Svg
-                                    height="100%"
-                                    width="100%"
-                                    viewBox="0 0 100 100"
-                                    style={{ position: "absolute" }}
+                                  {/* Diagonal split */}
+                                  <View
+                                    style={{
+                                      position: "absolute",
+                                      width: "200%",
+                                      height: "200%",
+                                      flexDirection: "row",
+                                      transform: [{ rotate: "45deg" }],
+                                    }}
                                   >
-                                    <Rect
-                                      x="0"
-                                      y="0"
-                                      width="100"
-                                      height="100"
-                                      fill={colors[0]}
+                                    <View
+                                      style={{
+                                        flex: 1,
+                                        backgroundColor: colors[0],
+                                      }}
                                     />
-                                    <Polygon
-                                      points="0,100 100,100 100,0"
-                                      fill={colors[1]}
+                                    <View
+                                      style={{
+                                        flex: 1,
+                                        backgroundColor: colors[1],
+                                      }}
                                     />
-                                  </Svg>
+                                  </View>
                                   <Text
                                     style={[
                                       styles.myHistoryNumberText,
@@ -2227,8 +2233,9 @@ export default function WinGoScreen() {
                                 >
                                   <Ionicons
                                     name="copy-outline"
-                                    size={wp(4)}
-                                    color="#3b3b3bff"
+                                    size={wp(6.5)}
+                                    color="#666"
+                                    style={{transform: [{ rotate: '90deg' }]}}
                                   />
                                 </Pressable>
                               </View>
@@ -3077,23 +3084,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0
   },
   chartPeriod: {
-    fontSize: wp(4),
-    color: "#fff",
+    fontSize: wp(4.2),
+    color: "#e3efff",
     fontWeight: "400",
     width: wp(40),
   },
   chartNumbersRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: wp(1.2),
-    marginLeft: wp(1.7),
+    flex:1,
+    justifyContent:"space-between",
+    marginLeft: wp(1),
   },
   chartNumberCircle: {
-    width: wp(4.8),
-    height: wp(4.8),
-    borderRadius: wp(2.4),
+    width: wp(5.2),
+    height: wp(5.2),
+    borderRadius: 100,
     borderWidth: 1,
-    borderColor: "#fff",
+    borderColor: "#B1B1B4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -3102,7 +3110,9 @@ const styles = StyleSheet.create({
   },
   chartNumberText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "400",
+    color:"#B1B1B4",
+    marginTop:-1,
   },
   chartBSBadge: {
     width: wp(5.1),
@@ -3120,7 +3130,7 @@ const styles = StyleSheet.create({
   },
   chartBSBadgeText: {
     fontSize: wp(3.7),
-    fontWeight: "700",
+    fontWeight: "600",
     color: "#fff",
   },
   chartHeader: {
@@ -3158,6 +3168,7 @@ const styles = StyleSheet.create({
   statsHeaderRight: {
     color: "#e3efff",
     fontSize: wp(5),
+    marginLeft:-15
   },
   statsRow: {
     flexDirection: "row",
@@ -3174,23 +3185,25 @@ const styles = StyleSheet.create({
     width: wp(5.9),
     height: wp(5.9),
     borderRadius: wp(3),
-    borderWidth: 1.5,
-    borderColor: "#e74c3c",
+    borderWidth: 0.6,
+    borderColor: "#DE4E59",
     alignItems: "center",
     justifyContent: "center",
   },
   statsNumCircleText: {
-    color: "#e74c3c",
+    color: "#DE4E59",
     fontSize: wp(4),
-    fontWeight: "700",
+    fontWeight: "600",
+    marginTop:-3
   },
   statsValuesRow: {
     flexDirection: "row",
-    gap: 0,
+    gap: 2.2,
   },
   statsValue: {
     color: "#9da7b3",
-    fontSize: wp(4),
+    fontSize: wp(5),
+    fontWeight:"500",
     width: wp(6),
     textAlign: "center",
   },
@@ -3222,8 +3235,8 @@ const styles = StyleSheet.create({
   },
   myHistoryNumberText: {
     color: "#fff",
-    fontSize: wp(6),
-    fontWeight: "bold",
+    fontSize: wp(8),
+    fontWeight: "500",
   },
   myHistoryMiddle: {
     flex: 1,
@@ -3376,13 +3389,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     borderRadius: wp(3.2),
+    // marginLeft:2,
     justifyContent: "center",
     alignItems: "center",
   },
   countdownDigitsRow: {
     flexDirection: "row",
     gap: wp(4.3),
-    width:"100%",
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -3392,10 +3406,10 @@ const styles = StyleSheet.create({
 
   },
   countdownDigitText: {
-    paddingVertical:16,
-    paddingHorizontal:16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     fontSize: 153,
-    lineHeight:145,
+    lineHeight: 145,
     fontWeight: "700",
     color: "#00ecbe",
     fontFamily: "-apple-system",
