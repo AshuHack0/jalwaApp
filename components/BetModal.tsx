@@ -77,6 +77,9 @@ export function BetModal({
   const headerColors = getBetSelectionColors(betSelection);
   const hasGradient = headerColors.length > 1;
 
+  console.log("------>>>>>>>>>>", headerColors[0])
+  console.log("------>>>>>>>>>>", headerColors[1])
+
   return (
     <Modal
       visible={visible}
@@ -86,178 +89,178 @@ export function BetModal({
       statusBarTranslucent
     >
       <SafeAreaView style={styles.overlay} edges={[]}>
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.content} onPress={(e) => e.stopPropagation()}>
-          {/* Modal Header */}
-          <View style={styles.headerWrapper}>
-          <MaskedView
-            style={styles.header}
-            maskElement={
-              <View style={styles.headerMask}>
-                <Svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 100 100"
-                  preserveAspectRatio="none"
-                >
-                  <Polygon
-                    fill="white"
-                    points="0,0 100,0 100,70 50,100 0,70"
+        <Pressable style={styles.overlay} onPress={onClose}>
+          <Pressable style={styles.content} onPress={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <View style={styles.headerWrapper}>
+              <MaskedView
+                style={styles.header}
+                maskElement={
+                  <View style={styles.headerMask}>
+                    <Svg
+                      width="100%"
+                      height="100%"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                    >
+                      <Polygon
+                        fill="white"
+                        points="0,0 100,0 100,70 50,100 0,70"
+                      />
+                    </Svg>
+                  </View>
+                }
+              >
+                {hasGradient ? (
+                  <LinearGradient
+                    style={StyleSheet.absoluteFill}
+                    colors={[headerColors[0] == "#d23838" ? "#FD5456" : headerColors[0] == "#9b48db" ? "#9B48DB" : headerColors[0] == "#5088d3" ? "#74ADF3" : headerColors[0] == "#dd9138" ? "#DD9137" : "#41AE73", headerColors[1] == "#9b48db" ? "#9B48DB" : ""]}
+                    locations={[0.5, 0.5]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0.11, y: 1.7 }}
                   />
-                </Svg>
-              </View>
-            }
-          >
-            {hasGradient ? (
-              <LinearGradient
-                style={StyleSheet.absoluteFill}
-                colors={[headerColors[0], headerColors[1]]}
-                locations={[0.5, 0.5]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0.11, y: 1.7 }}
-              />
-            ) : (
-              <View style={[styles.headerBackground, { backgroundColor: headerColors[0] }]} />
-            )}
-            <View style={styles.headerContent}>
-              <ThemedText style={styles.title}>{gameName}</ThemedText>
-              <View style={styles.selectionBox}>
-                <ThemedText style={styles.selectionText}>
-                  Select {betSelection}
-                </ThemedText>
-              </View>
+                ) : (
+                  <View style={[styles.headerBackground, { backgroundColor: headerColors[0] == "#d23838" ? "#FD5456" : headerColors[0] == "#9b48db" ? "#9B48DB" : headerColors[0] == "#5088d3" ? "#74ADF3" : headerColors[0] == "#dd9138" ? "#DD9137" : "#41AE73" }]} />
+                )}
+                <View style={styles.headerContent}>
+                  <ThemedText style={styles.title}>{gameName}</ThemedText>
+                  <View style={styles.selectionBox}>
+                    <ThemedText style={styles.selectionText}>
+                      Select {betSelection}
+                    </ThemedText>
+                  </View>
+                </View>
+              </MaskedView>
             </View>
-          </MaskedView>
-          </View>
 
-          {/* Modal Body */}
-          <View style={styles.body}>
-            {/* Balance */}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Balance</ThemedText>
-              <View style={{ flexDirection: "row", gap: 6 }}>
-                {BALANCE_AMOUNTS.map((amt) => (
+            {/* Modal Body */}
+            <View style={styles.body}>
+              {/* Balance */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Balance</ThemedText>
+                <View style={{ flexDirection: "row", gap: 6 }}>
+                  {BALANCE_AMOUNTS.map((amt) => (
+                    <TouchableOpacity
+                      key={amt}
+                      style={[
+                        { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#05012B", alignItems: "center", justifyContent: "center", borderRadius: 6 },
+                        selectedBalanceAmount === amt && { backgroundColor: headerColors[0], borderRadius: 0 },
+                      ]}
+                      onPress={() => onBalanceAmountChange(amt)}
+                    >
+                      <ThemedText
+                        style={[
+                          { fontSize: 15, fontWeight: "500", color: "#92A8E3" },
+                          selectedBalanceAmount === amt &&
+                          { color: "white" },
+                        ]}
+                      >
+                        {amt}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              {/* Quantity */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
+                <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Quantity</ThemedText>
+                <View style={{ flexDirection: "row", gap: 14 }}>
                   <TouchableOpacity
-                    key={amt}
+                    style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
+                    onPress={() =>
+                      onQuantityChange(Math.max(1, betQuantity - 1))
+                    }
+                  >
+                    <ThemedText style={styles.quantityBtnText}>-</ThemedText>
+                  </TouchableOpacity>
+                  <View style={styles.quantityValue}>
+                    <ThemedText style={styles.quantityText}>{betQuantity}</ThemedText>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
+                    onPress={() => onQuantityChange(betQuantity + 1)}
+                  >
+                    <ThemedText style={styles.quantityBtnText}>+</ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Multipliers */}
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 14, justifyContent: "flex-end" }}>
+                {MULTIPLIERS.map((mult) => (
+                  <TouchableOpacity
+                    key={mult}
                     style={[
-                      {paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#05012B", alignItems: "center", justifyContent: "center", borderRadius: 6 },
-                      selectedBalanceAmount === amt && { backgroundColor: headerColors[0], borderRadius: 0 },
+                      { paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#05012B" },
+                      selectedMultiplier === mult && { backgroundColor: headerColors[0], borderRadius: 0 },
                     ]}
-                    onPress={() => onBalanceAmountChange(amt)}
+                    onPress={() => handleMultiplierPress(mult)}
                   >
                     <ThemedText
                       style={[
-                        { fontSize: 15, fontWeight: "500", color: "#92A8E3" },
-                        selectedBalanceAmount === amt &&
-                          { color: "white" },
+                        { fontSize: 14, fontWeight: "600", color: "#92A8E3" },
+                        selectedMultiplier === mult &&
+                        { color: "white" },
                       ]}
                     >
-                      {amt}
+                      {mult}
                     </ThemedText>
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
 
-            {/* Quantity */}
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-              <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Quantity</ThemedText>
-              <View style={{ flexDirection: "row", gap: 14 }}>
-                <TouchableOpacity
-                  style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
-                  onPress={() =>
-                    onQuantityChange(Math.max(1, betQuantity - 1))
-                  }
-                >
-                  <ThemedText style={styles.quantityBtnText}>-</ThemedText>
-                </TouchableOpacity>
-                <View style={styles.quantityValue}>
-                  <ThemedText style={styles.quantityText}>{betQuantity}</ThemedText>
-                </View>
-                <TouchableOpacity
-                  style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
-                  onPress={() => onQuantityChange(betQuantity + 1)}
-                >
-                  <ThemedText style={styles.quantityBtnText}>+</ThemedText>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Multipliers */}
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 14, justifyContent:"flex-end" }}>
-              {MULTIPLIERS.map((mult) => (
-                <TouchableOpacity
-                  key={mult}
+              {/* Agreement */}
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center", marginTop: 14 }}
+                onPress={() => onAgreedChange(!agreed)}
+              >
+                <View
                   style={[
-                    {paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#05012B" },
-                    selectedMultiplier === mult && { backgroundColor: headerColors[0], borderRadius: 0 },
+                    { width: 20, height: 20, borderRadius: 50, borderWidth: 1, borderColor: "#92A8E3", alignItems: "center", justifyContent: "center", marginRight: 8 },
+                    agreed && { backgroundColor: "#00ECBE", borderWidth: 0 },
                   ]}
-                  onPress={() => handleMultiplierPress(mult)}
                 >
-                  <ThemedText
-                    style={[
-                      { fontSize: 14, fontWeight: "600", color: "#92A8E3" },
-                      selectedMultiplier === mult &&
-                        { color: "white" },
-                    ]}
-                  >
-                    {mult}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
+                  {agreed && (
+                    <Ionicons name="checkmark" size={16} color="#fff" />
+                  )}
+                </View>
+                <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
+                <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
+              </TouchableOpacity>
             </View>
 
-            {/* Agreement */}
-            <TouchableOpacity
-              style={{ flexDirection: "row", alignItems: "center", marginTop: 14 }}
-              onPress={() => onAgreedChange(!agreed)}
-            >
-              <View
-                style={[
-                  { width: 20, height: 20, borderRadius: 50, borderWidth: 1, borderColor: "#92A8E3", alignItems: "center", justifyContent: "center", marginRight: 8 },
-                  agreed && { backgroundColor: "#00ECBE", borderWidth:0},
-                ]}
+            {/* Modal Footer */}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
+              <TouchableOpacity
+                style={{ flex: 1, paddingVertical: 10, backgroundColor: "#05012B", alignItems: "center" }}
+                onPress={onClose}
               >
-                {agreed && (
-                  <Ionicons name="checkmark" size={16} color="#fff" />
-                )}
-              </View>
-              <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
-              <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
-            </TouchableOpacity>
-          </View>
-
-          {/* Modal Footer */}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-            <TouchableOpacity
-              style={{ flex: 1, paddingVertical: 10, backgroundColor: "#05012B", alignItems: "center" }}
-              onPress={onClose}
-            >
-              <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#92A8E3" }}>Cancel</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                { flex: 2, paddingVertical: 10, backgroundColor: headerColors[0], alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
-                !agreed && { backgroundColor: headerColors[0], opacity: 0.7 },
-              ]}
-              onPress={() => {
-                if (!agreed || confirmLoading) return;
-                onConfirm();
-              }}
-              disabled={!agreed || confirmLoading}
-            >
-              <ThemedText
+                <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#92A8E3" }}>Cancel</ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={[
-                  { fontSize: 16, fontWeight: "600", color: "#fff" },
-                  !agreed && { color: "#94a3b8" },
+                  { flex: 2, paddingVertical: 10, backgroundColor: headerColors[0], alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
+                  !agreed && { backgroundColor: headerColors[0], opacity: 0.7 },
                 ]}
+                onPress={() => {
+                  if (!agreed || confirmLoading) return;
+                  onConfirm();
+                }}
+                disabled={!agreed || confirmLoading}
               >
-                Total amount ₹{totalBetAmount.toFixed(2)}
-              </ThemedText>
-            </TouchableOpacity>
-          </View>
+                <ThemedText
+                  style={[
+                    { fontSize: 16, fontWeight: "600", color: "#fff" },
+                    !agreed && { color: "#94a3b8" },
+                  ]}
+                >
+                  Total amount ₹{totalBetAmount.toFixed(2)}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
         </Pressable>
-      </Pressable>
       </SafeAreaView>
     </Modal>
   );
@@ -355,8 +358,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   quantityBtn: {
-    height:32,
-    width:28,
+    height: 32,
+    width: 28,
     borderRadius: 5,
     backgroundColor: "#17B15E",
     alignItems: "center",
@@ -368,8 +371,8 @@ const styles = StyleSheet.create({
     color: "black",
   },
   quantityValue: {
-    width:90,
-    height:33,
+    width: 90,
+    height: 33,
     backgroundColor: "#05012B",
     justifyContent: "center",
     alignItems: "center",
