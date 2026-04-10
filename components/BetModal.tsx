@@ -77,9 +77,6 @@ export function BetModal({
   const headerColors = getBetSelectionColors(betSelection);
   const hasGradient = headerColors.length > 1;
 
-  console.log("------>>>>>>>>>>", headerColors[0])
-  console.log("------>>>>>>>>>>", headerColors[1])
-
   return (
     <Modal
       visible={visible}
