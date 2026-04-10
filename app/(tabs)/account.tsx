@@ -117,6 +117,7 @@ export default function AccountScreen() {
             />
           </TouchableOpacity>
           <View style={styles.profileInfo}>
+
             <View style={styles.usernameRow}>
               <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
               <Image
@@ -125,13 +126,15 @@ export default function AccountScreen() {
                 contentFit="contain"
               />
             </View>
+
             <TouchableOpacity
               style={styles.uidContainer}
               onPress={handleCopyUID}
             >
               <ThemedText style={styles.uidLabel}>UID</ThemedText>
+              <View style={{width:1, height:"60%", backgroundColor:"white"}}/>
               <ThemedText style={styles.uidValue}>9111383</ThemedText>
-              <Ionicons name="copy-outline" size={16} color="#fff" />
+              <Ionicons name="copy-outline" size={12} color="#fff" style={{transform: [{ rotate: '90deg' }]}} />
             </TouchableOpacity>
             <ThemedText style={styles.lastLogin}>
               Last login: 2026-01-25 23:01:42
@@ -545,6 +548,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
+    fontWeight:"600"
   },
   vipBadge: {
     flexDirection: "row",
@@ -561,15 +565,16 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   uidContainer: {
-    width: "50%",
+    width: "40%",
     // maxWidth: "auto",
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     backgroundColor: "#DD9138",
     borderRadius: 18,
-    padding: 8,
+    padding: 6,
     paddingVertical: 0,
+    marginTop:-5
   },
   uidTag: {
     backgroundColor: "#F97316",
@@ -578,23 +583,23 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   uidLabel: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
-    paddingRight: 8,
-    borderRightWidth: 1,
-    borderRightColor: "#fff",
+    fontWeight:"700"
   },
   uidValue: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#fff",
     fontFamily: "Roboto_400Regular",
-    letterSpacing: -1,
+    letterSpacing: -0.5,
+    fontWeight:"800"
   },
   lastLogin: {
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
+    fontWeight: "bold"
   },
   balanceSectionContainer: {
     backgroundColor: "#001C54",
@@ -622,6 +627,7 @@ const styles = StyleSheet.create({
     fontSize: 19,
     fontFamily: "Roboto_700Bold",
     color: "#fff",
+    fontWeight: "bold",
   },
   quickActions: {
     flexDirection: "row",
