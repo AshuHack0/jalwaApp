@@ -20,14 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View, Pressable } from "react-native";
 function statusColor(status: DepositRecord["status"]) {
   if (status === "completed") return "#17B15E"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
@@ -147,15 +140,15 @@ export default function DepositHistoryScreen() {
     selectedFilter === "All"
       ? allDeposits
       : allDeposits.filter((d) =>
-          selectedMethod?.gateways.includes(d.gateway)
-        );
+        selectedMethod?.gateways.includes(d.gateway)
+      );
 
   const deposits =
     selectedStatus === "All"
       ? filteredByGateway
       : filteredByGateway.filter(
-          (d) => d.status === selectedStatus.toLowerCase()
-        );
+        (d) => d.status === selectedStatus.toLowerCase()
+      );
 
   return (
     <>
@@ -163,12 +156,12 @@ export default function DepositHistoryScreen() {
       <ThemedView style={styles.container}>
         {/* Top Bar */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="chevron-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
           <View style={styles.placeholder} />
         </View>
@@ -193,7 +186,7 @@ export default function DepositHistoryScreen() {
             contentContainerStyle={styles.filterTabsContent}
           >
             {paymentMethods.map((method) => (
-              <TouchableOpacity
+              <Pressable
                 key={method.id}
                 style={[
                   styles.filterTab,
@@ -218,14 +211,14 @@ export default function DepositHistoryScreen() {
                 >
                   {method.label}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </ScrollView>
 
           {/* Dropdowns */}
           <View style={styles.filterRow}>
             <View style={{ flex: 1 }}>
-              <TouchableOpacity
+              <Pressable
                 style={styles.filterDropdown}
                 onPress={() => setShowStatusDropdown(!showStatusDropdown)}
               >
@@ -237,11 +230,11 @@ export default function DepositHistoryScreen() {
                   size={18}
                   color="#92A8E3"
                 />
-              </TouchableOpacity>
+              </Pressable>
               {showStatusDropdown && (
                 <View style={styles.dropdownList}>
                   {statusOptions.map((option) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={option}
                       style={[
                         styles.dropdownItem,
@@ -256,22 +249,22 @@ export default function DepositHistoryScreen() {
                         style={[
                           styles.dropdownItemText,
                           selectedStatus === option &&
-                            styles.dropdownItemTextActive,
+                          styles.dropdownItemTextActive,
                         ]}
                       >
                         {option}
                       </ThemedText>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               )}
             </View>
-            <TouchableOpacity style={[styles.filterDropdown, { flex: 1 }]}>
+            <Pressable style={[styles.filterDropdown, { flex: 1 }]}>
               <ThemedText style={styles.filterDropdownText}>
                 {selectedDate}
               </ThemedText>
               <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {isLoading ? (
@@ -362,13 +355,13 @@ export default function DepositHistoryScreen() {
                         >
                           {item.merchantOrderNo || item._id}
                         </ThemedText>
-                        <TouchableOpacity style={styles.copyIconContainer}>
+                        <Pressable style={styles.copyIconContainer}>
                           <Ionicons
                             name="copy-outline"
                             size={14}
                             color="#92A8E3"
                           />
-                        </TouchableOpacity>
+                        </Pressable>
                       </View>
                     </View>
                   </View>

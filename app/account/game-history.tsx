@@ -9,15 +9,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View,  } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type FilterDropdownProps = {
@@ -86,14 +78,13 @@ function FilterDropdown({ value, options, onSelect }: FilterDropdownProps) {
 
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.85}
+      <Pressable
         onPress={() => setOpen(true)}
         style={styles.dropdown}
       >
         <Text style={styles.dropdownText}>{value}</Text>
         <Ionicons name="chevron-down" size={18} color="#90A6DB" />
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         animationType="fade"
@@ -107,9 +98,8 @@ function FilterDropdown({ value, options, onSelect }: FilterDropdownProps) {
               const active = option === value;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={option}
-                  activeOpacity={0.85}
                   style={[
                     styles.modalOption,
                     active && styles.modalOptionActive,
@@ -128,7 +118,7 @@ function FilterDropdown({ value, options, onSelect }: FilterDropdownProps) {
                   >
                     {option}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </Pressable>
@@ -157,13 +147,12 @@ export default function GameHistoryScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
         <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="chevron-back" size={30} color="#E5EEFF" />
-          </TouchableOpacity>
+          </Pressable>
 
           <Text style={styles.headerTitle}>Bet history</Text>
 
@@ -207,9 +196,8 @@ export default function GameHistoryScreen() {
               );
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={tab.id}
-                  activeOpacity={0.88}
                   onPress={() => setActiveTab(tab.id)}
                   style={styles.tabCard}
                 >
@@ -225,7 +213,7 @@ export default function GameHistoryScreen() {
                   ) : (
                     <View style={styles.tabCardInactive}>{content}</View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </ScrollView>

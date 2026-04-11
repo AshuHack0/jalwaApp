@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Modal, Pressable, StyleSheet, View,  } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Polygon } from "react-native-svg";
@@ -137,7 +130,7 @@ export function BetModal({
                 <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Balance</ThemedText>
                 <View style={{ flexDirection: "row", gap: 6 }}>
                   {BALANCE_AMOUNTS.map((amt) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={amt}
                       style={[
                         { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#05012B", alignItems: "center", justifyContent: "center", borderRadius: 6 },
@@ -154,7 +147,7 @@ export function BetModal({
                       >
                         {amt}
                       </ThemedText>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -163,30 +156,30 @@ export function BetModal({
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
                 <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Quantity</ThemedText>
                 <View style={{ flexDirection: "row", gap: 14 }}>
-                  <TouchableOpacity
+                  <Pressable
                     style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
                     onPress={() =>
                       onQuantityChange(Math.max(1, betQuantity - 1))
                     }
                   >
                     <ThemedText style={styles.quantityBtnText}>-</ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                   <View style={styles.quantityValue}>
                     <ThemedText style={styles.quantityText}>{betQuantity}</ThemedText>
                   </View>
-                  <TouchableOpacity
+                  <Pressable
                     style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
                     onPress={() => onQuantityChange(betQuantity + 1)}
                   >
                     <ThemedText style={styles.quantityBtnText}>+</ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
               {/* Multipliers */}
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 14, justifyContent: "flex-end" }}>
                 {MULTIPLIERS.map((mult) => (
-                  <TouchableOpacity
+                  <Pressable
                     key={mult}
                     style={[
                       { paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#05012B" },
@@ -203,12 +196,12 @@ export function BetModal({
                     >
                       {mult}
                     </ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 ))}
               </View>
 
               {/* Agreement */}
-              <TouchableOpacity
+              <Pressable
                 style={{ flexDirection: "row", alignItems: "center", marginTop: 14 }}
                 onPress={() => onAgreedChange(!agreed)}
               >
@@ -224,18 +217,18 @@ export function BetModal({
                 </View>
                 <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
                 <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {/* Modal Footer */}
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-              <TouchableOpacity
+              <Pressable
                 style={{ flex: 1, paddingVertical: 10, backgroundColor: "#05012B", alignItems: "center" }}
                 onPress={onClose}
               >
                 <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#92A8E3" }}>Cancel</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={[
                   { flex: 2, paddingVertical: 10, backgroundColor: headerColors[0], alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
                   !agreed && { backgroundColor: headerColors[0], opacity: 0.7 },
@@ -254,7 +247,7 @@ export function BetModal({
                 >
                   Total amount ₹{totalBetAmount.toFixed(2)}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </Pressable>
         </Pressable>

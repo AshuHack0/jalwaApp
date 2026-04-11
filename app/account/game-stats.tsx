@@ -16,15 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ImageSourcePropType, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
@@ -45,10 +37,9 @@ function TabBar({
       {TABS.map((tab) => {
         const isActive = active === tab;
         return (
-          <TouchableOpacity
+          <Pressable
             key={tab}
             onPress={() => onChange(tab)}
-            activeOpacity={0.8}
             style={styles.tabItem}
           >
             {isActive ? (
@@ -67,7 +58,7 @@ function TabBar({
                 <Text style={styles.tabText}>{tab}</Text>
               </View>
             )}
-          </TouchableOpacity>
+          </Pressable>
         );
       })}
     </View>

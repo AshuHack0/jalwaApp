@@ -7,7 +7,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { type Href, router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable } from "react-native";
 
 export default function PromotionScreen() {
   const [invitationCode] = useState("681759111383");
@@ -73,7 +73,7 @@ export default function PromotionScreen() {
         <View style={styles.header}>
           <ThemedText style={styles.headerTitle}>Agency</ThemedText>
           <View style={styles.headerRightCorner}>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push("/promotion/new-subordinate")}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -82,7 +82,7 @@ export default function PromotionScreen() {
                 style={styles.headerFilterIcon}
                 contentFit="contain"
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
         <View style={styles.contentContainer}>
@@ -218,22 +218,21 @@ export default function PromotionScreen() {
             end={{ x: 0, y: 1 }}
             style={styles.qrButton}
           >
-            <TouchableOpacity
+            <Pressable
               style={styles.qrButtonContent}
               onPress={() => router.push("/promotion/invite" as Href)}
-              activeOpacity={0.85}
             >
               <ThemedText style={styles.qrButtonText}>
                 Download QR Code
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </LinearGradient>
         </View>
 
         {/* Agency Features List */}
         <View style={styles.featuresSection}>
           {agencyFeatures.map((feature, index) => (
-            <TouchableOpacity
+            <Pressable
               key={index}
               style={styles.featureItem}
               onPress={() => router.push(feature?.url as any)}
@@ -254,14 +253,14 @@ export default function PromotionScreen() {
                     <ThemedText style={styles.codeText}>
                       {invitationCode}
                     </ThemedText>
-                    <TouchableOpacity onPress={handleCopyCode}>
+                    <Pressable onPress={handleCopyCode}>
                       <Ionicons
                         name="copy-outline"
                         size={16}
                         color="#92a8e3"
                         style={{ transform: [{ scaleX: -1 }] }}
                       />
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
                 )}
               </View>
@@ -269,7 +268,7 @@ export default function PromotionScreen() {
               {!feature.hasCode ? (
                 <Ionicons name="chevron-forward" size={20} color="#ffffff" />
               ) : null}
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 

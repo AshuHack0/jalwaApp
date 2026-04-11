@@ -1,10 +1,5 @@
 import { ThemedText } from "@/components/themed-text";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View, Pressable } from "react-native";
 
 type Props = {
   rechargeMethod: string;
@@ -29,7 +24,7 @@ export function DepositBottomBar({
           {rechargeMethod}
         </ThemedText>
       </View>
-      <TouchableOpacity
+      <Pressable
         style={[
           styles.depositButton,
           isDisabled && styles.depositButtonDisabled,
@@ -42,7 +37,7 @@ export function DepositBottomBar({
         ) : (
           <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
         )}
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

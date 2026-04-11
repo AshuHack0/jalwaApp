@@ -7,17 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { setAudioModeAsync, useAudioPlayer } from "expo-audio";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View,  } from "react-native";
 
 const MAIN_GRADIENT_START = "#7AFEC3";
 const MAIN_GRADIENT_END = "#02AFB6";
@@ -74,7 +64,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           style={styles.headerIcon}
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/(tabs)")
@@ -82,7 +72,7 @@ export default function LoginScreen() {
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
         <View style={styles.headerLogoWrap}>
           <Image
             source={
@@ -222,12 +212,12 @@ export default function LoginScreen() {
                     <ThemedText style={styles.label}>Phone number</ThemedText>
                   </View>
                   <View style={styles.phoneRow}>
-                    <TouchableOpacity style={styles.countryCode}>
+                    <Pressable style={styles.countryCode}>
                       <ThemedText style={styles.countryCodeText}>
                         +91
                       </ThemedText>
                       <Ionicons name="chevron-down" size={16} color="#fff" />
-                    </TouchableOpacity>
+                    </Pressable>
                     <TextInput
                       style={styles.phoneInput}
                       placeholder="Please enter the phone number"
@@ -276,7 +266,7 @@ export default function LoginScreen() {
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                   />
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.eyeButton}
                     onPress={() => setShowPassword(!showPassword)}
                   >
@@ -285,14 +275,13 @@ export default function LoginScreen() {
                       size={20}
                       color="rgba(255,255,255,0.6)"
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.checkRow}
                 onPress={() => setRememberPassword(!rememberPassword)}
-                activeOpacity={0.8}
               >
                 <View
                   style={[
@@ -307,17 +296,16 @@ export default function LoginScreen() {
                 <ThemedText style={styles.checkLabel}>
                   Remember password
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
 
               {error ? (
                 <ThemedText style={styles.errorText}>{error}</ThemedText>
               ) : null}
-              <TouchableOpacity
+              <Pressable
                 style={[
                   styles.primaryButtonWrap,
                   activeTab === "email" && { opacity: 0.5 },
                 ]}
-                activeOpacity={0.8}
                 onPress={activeTab === "phone" ? handleLogin : undefined}
                 disabled={activeTab === "email" || loading}
               >
@@ -335,23 +323,22 @@ export default function LoginScreen() {
                     </ThemedText>
                   )}
                 </LinearGradient>
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.outlineButton}
                 onPress={() => router.replace("/auth/register")}
-                activeOpacity={0.8}
               >
                 
                 <ThemedText style={styles.outlineButtonAccent}>
                   Register
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {/* Footer links */}
             <View style={styles.footer}>
-              <TouchableOpacity style={styles.footerLink}>
+              <Pressable style={styles.footerLink}>
                 <Image
                   source={require("@/assets/Screenshot 2026-02-20 030012.png")}
                   style={{ width: 30, height: 30 }}
@@ -361,8 +348,8 @@ export default function LoginScreen() {
                 >
                   Forgot password
                 </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.footerLink}>
+              </Pressable>
+              <Pressable style={styles.footerLink}>
                 <Image
                   source={require("@/assets/Screenshot 2026-02-20 030138.png")}
                   style={{ width: 30, height: 30 }}
@@ -372,7 +359,7 @@ export default function LoginScreen() {
                 >
                   Customer Service
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </ScrollView>

@@ -1,13 +1,6 @@
 import { ThemedView } from "@/components/themed-view";
 import { router, Stack } from "expo-router";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
 
@@ -22,10 +15,9 @@ function MenuRow({
   onPress?: () => void;
 }) {
   return (
-    <TouchableOpacity
+    <Pressable
       style={styles.menuRow}
       onPress={onPress}
-      activeOpacity={0.7}
     >
       <Image source={icon} style={styles.ImageIcon} resizeMode="cover" />
       <Text style={styles.menuLabel}>{label}</Text>
@@ -34,7 +26,7 @@ function MenuRow({
         style={styles.ImageArrow}
         resizeMode="cover"
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

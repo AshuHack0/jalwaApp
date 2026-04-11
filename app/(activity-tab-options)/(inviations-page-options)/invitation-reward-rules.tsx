@@ -2,14 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 const rewardData = [
   { invite: "1People", deposit: "300.00", bonus: "38.00" },
@@ -40,9 +33,9 @@ export default function InvitationRewardRules() {
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <Pressable onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.headerTitle}>Invitation reward rules</Text>
         <View style={{ width: 24 }} />
       </View>
@@ -99,7 +92,7 @@ export default function InvitationRewardRules() {
         <View style={styles.rulesContainer}>
           <View style={styles.rulesHeaderWrapper}>
             <View style={styles.rulesHeader}>
-              <View style={{ position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center", height:26 }}>
+              <View style={{ position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center", height: 26 }}>
                 <Image source={require("../../../assets/icon-ruleHead.svg")} style={{ height: 24, width: 200, position: "absolute" }} />
               </View>
               <Text style={styles.rulesHeaderText}>Rules</Text>

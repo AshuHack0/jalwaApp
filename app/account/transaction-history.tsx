@@ -7,15 +7,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View,  } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type DropdownProps = {
@@ -98,14 +90,13 @@ function Dropdown({ value, options, onSelect }: DropdownProps) {
 
   return (
     <>
-      <TouchableOpacity
-        activeOpacity={0.85}
+      <Pressable
         style={styles.dropdown}
         onPress={() => setOpen(true)}
       >
         <Text style={styles.dropdownText}>{value}</Text>
         <Ionicons name="chevron-down" size={16} color="#89A4DF" />
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         animationType="fade"
@@ -119,9 +110,8 @@ function Dropdown({ value, options, onSelect }: DropdownProps) {
               const isSelected = option === value;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={option}
-                  activeOpacity={0.85}
                   style={[
                     styles.dropdownOption,
                     isSelected && styles.dropdownOptionActive,
@@ -140,7 +130,7 @@ function Dropdown({ value, options, onSelect }: DropdownProps) {
                   >
                     {option}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </Pressable>
@@ -217,13 +207,12 @@ export default function TransactionHistoryScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
         <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <Pressable
             style={styles.backButton}
             onPress={() => router.back()}
           >
             <Ionicons name="chevron-back" size={29} color="#DCE7FF" />
-          </TouchableOpacity>
+          </Pressable>
 
           <Text style={styles.headerTitle}>Transaction history</Text>
 

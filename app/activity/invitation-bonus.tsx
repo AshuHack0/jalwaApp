@@ -4,14 +4,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -31,9 +24,9 @@ export default function InvitationBanner() {
 
 
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={28} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
 
           <View style={styles.recordBtn}>
             <Text style={styles.headerText}>Invitation bonus</Text>
@@ -70,7 +63,7 @@ export default function InvitationBanner() {
 
           <View style={styles.navContainer}>
             {/* 3. Invitation Reward Rules Redirect */}
-            <TouchableOpacity
+            <Pressable
               style={styles.navItem}
               onPress={() => router.push("/invitation-reward-rules")}
             >
@@ -81,10 +74,10 @@ export default function InvitationBanner() {
                 <Image source={{ uri: "https://www.jalwagame.win/assets/svg/inviterule-7c5f5524.svg" }} style={{ width: "100%", height: "100%" }} />
               </LinearGradient>
               <Text style={styles.navText}>Invitation reward rules</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* 4. Invitation Record Redirect */}
-            <TouchableOpacity
+            <Pressable
               style={styles.navItem}
               onPress={() => router.push("/invitation-record")}
             >
@@ -95,7 +88,7 @@ export default function InvitationBanner() {
                 <Image source={{ uri: "https://www.jalwagame.win/assets/svg/icon-83990d9a.svg" }} style={{ width: "100%", height: "100%" }} />
               </LinearGradient>
               <Text style={styles.navText}>Invitation record j</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {bonusData.map((item) => (
@@ -107,7 +100,7 @@ export default function InvitationBanner() {
                     <Text style={styles.tagId}>{item.id}</Text>
                   </View>
                   <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "white", borderRadius: 100, width: 28, height: 28, marginLeft: 30 }}>
-                    <Feather name="x" size={24} color="#BABFDF" style={{fontWeight:"bold"}} />
+                    <Feather name="x" size={24} color="#BABFDF" style={{ fontWeight: "bold" }} />
                   </View>
                 </View>
                 <View style={{ flex: 1, height: "100%", width: "100%", alignItems: "flex-end", paddingVertical: 16, borderBottomColor: "#022c68", borderBottomWidth: 1, paddingRight: 15, marginLeft: 10 }}>
@@ -146,9 +139,9 @@ export default function InvitationBanner() {
                 </View>
               </View>
 
-              <TouchableOpacity style={styles.unfinishedBtn} disabled>
+              <Pressable style={styles.unfinishedBtn} disabled>
                 <Text style={styles.btnText}>Unfinished</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           ))}
         </ScrollView>

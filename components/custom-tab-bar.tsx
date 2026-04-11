@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Image } from 'expo-image';
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, StyleSheet, Text, View, Pressable } from 'react-native';
 
 interface TabItemProps {
   route: any;
@@ -94,14 +94,13 @@ function TabItem({
   );
 
   return (
-    <TouchableOpacity
+    <Pressable
       accessibilityRole="button"
       accessibilityState={isFocused ? { selected: true } : {}}
       accessibilityLabel={options.tabBarAccessibilityLabel}
       testID={(options as any).tabBarTestID}
       onPress={handlePress}
       style={styles.tabItem}
-      activeOpacity={0.7}
     >
       <Animated.View
         style={{
@@ -129,7 +128,7 @@ function TabItem({
           </View>
         )}
       </Animated.View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

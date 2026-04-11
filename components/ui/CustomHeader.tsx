@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Custom Header ─────────────────────────────────────────────────────────────
@@ -14,16 +14,15 @@ export function CustomHeader({
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.header, { paddingTop: paddingTop ? paddingTop : insets.top, height: paddingTop ? 50 : 50 + 44 }]}>
-      <TouchableOpacity
+      <Pressable
         onPress={onBack}
         style={styles.backBtn}
-        activeOpacity={0.7}
       >
         <Image
           source={require("@/assets/Screenshot202603-09p230133-removebg-preview.png")}
           style={styles.backIcon}
         />
-      </TouchableOpacity>
+      </Pressable>
       <Text style={styles.headerTitle}>{title}</Text>
       <View style={styles.backBtn} />
     </View>

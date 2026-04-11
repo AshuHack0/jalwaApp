@@ -5,13 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Stack } from "expo-router";
 import React from "react";
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Path, Rect, Stop } from "react-native-svg";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 const SuperJackpot = () => {
   const navigation = useNavigation<any>();
@@ -22,12 +16,12 @@ const SuperJackpot = () => {
 
         {/* 1. DARK BLUE HEADER */}
         <View style={styles.headerNav}>
-          <TouchableOpacity
+          <Pressable
             style={styles.backBtn}
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerNavTitle}>Super Jackpot</Text>
           <View style={{ width: 24 }} />
         </View>
@@ -55,30 +49,30 @@ const SuperJackpot = () => {
           </ImageBackground>
 
           {/* 3. BATCH BUTTON (Muted Blue) */}
-          <TouchableOpacity style={styles.batchBtn} disabled>
+          <Pressable style={styles.batchBtn} disabled>
             <View style={styles.batchIconCircle}>
               <Image source={require("../../assets/icon-super_no.svg")} style={{ width: 30, height: 30 }} />
             </View>
             <Text style={styles.batchBtnText}>Receive in batches</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* 4. NAV CARDS - Updated with Navigation Redirects */}
           <View style={styles.navRow}>
-            <TouchableOpacity
+            <Pressable
               style={styles.navCard}
               onPress={() => navigation.navigate("super-jackpot-rules")}
             >
               <Image source={require("../../assets/icon-rule.svg")} style={{ width: 30, height: 30 }} />
               <Text style={styles.navCardText}>Rule</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.navCard}
               onPress={() => navigation.navigate("winning-star")}
             >
               <Image source={require("../../assets/icon-winningStar.svg")} style={{ width: 30, height: 30 }} />
               <Text style={styles.navCardText}>Winning star</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* 5. EMPTY STATE CARD */}
@@ -338,8 +332,7 @@ const SuperJackpot = () => {
           </View>
 
           {/* 6. GO BET BUTTON */}
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <Pressable
             style={styles.goBetWrapper}
             onPress={() => navigation.navigate("GameScreen")} // Optional: Add game redirect here
           >
@@ -351,7 +344,7 @@ const SuperJackpot = () => {
             >
               <Text style={styles.goBetLabel}>Go bet</Text>
             </LinearGradient>
-          </TouchableOpacity>
+          </Pressable>
         </ScrollView>
       </View>
     </>
@@ -420,7 +413,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-   emptyState: {
+  emptyState: {
     alignItems: "center",
     paddingVertical: 24,
   },

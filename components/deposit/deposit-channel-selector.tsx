@@ -12,7 +12,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 type Channel = { id: string; label: string; balance: string };
 type UsdtChannel = { id: UsdtNetwork; label: string; balance: string };
 
@@ -64,7 +64,7 @@ export function DepositChannelSelector({
           {usdtChannels.map((net) => {
             const isActive = selectedNetwork === net.id;
             return (
-              <TouchableOpacity
+              <Pressable
                 key={net.id}
                 style={styles.usdtChannelCard}
                 onPress={() => onSelectNetwork(net.id)}
@@ -101,7 +101,7 @@ export function DepositChannelSelector({
                     {net.balance}
                   </ThemedText>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>
@@ -110,7 +110,7 @@ export function DepositChannelSelector({
           {channels.map((ch) => {
             const isActive = selectedChannel === ch.id;
             return (
-              <TouchableOpacity
+              <Pressable
                 key={ch.id}
                 style={styles.channelCard}
                 onPress={() => onSelectChannel(ch.id)}
@@ -139,7 +139,7 @@ export function DepositChannelSelector({
                 >
                   {ch.balance}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>

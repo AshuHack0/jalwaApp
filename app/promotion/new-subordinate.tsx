@@ -2,7 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Tab types ─────────────────────────────────────────────────────────────────
@@ -80,14 +80,13 @@ export default function NewSubordinatesScreen() {
         {/* ── Tab Bar ── */}
         <View style={styles.tabBar}>
           {TABS.map((tab) => (
-            <TouchableOpacity
+            <Pressable
               key={tab}
               style={[
                 styles.tabItem,
                 activeTab === tab && styles.tabItemActive,
               ]}
               onPress={() => setActiveTab(tab)}
-              activeOpacity={0.8}
             >
               <Text
                 style={[
@@ -97,7 +96,7 @@ export default function NewSubordinatesScreen() {
               >
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 

@@ -2,14 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
-import {
-  Image,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Linking, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Telegram Icon (built from primitives) ─────────────────────────────────────
@@ -48,7 +41,7 @@ export default function AgentLineScreen() {
   const insets = useSafeAreaInsets();
 
   const handleTelegram = () => {
-    Linking.openURL("https://t.me/Jalwa_Channel_Official"); 
+    Linking.openURL("https://t.me/Jalwa_Channel_Official");
   };
 
   return (
@@ -65,10 +58,9 @@ export default function AgentLineScreen() {
 
         {/* Telegram Row */}
         <View style={{ padding: 10, borderRadius: 10 }}>
-          <TouchableOpacity
+          <Pressable
             style={styles.telegramRow}
             onPress={handleTelegram}
-            activeOpacity={0.75}
           >
             <TelegramIcon />
             <Text style={styles.telegramLabel}>Telegram</Text>
@@ -79,7 +71,7 @@ export default function AgentLineScreen() {
                 resizeMode="contain"
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </ThemedView>
     </>

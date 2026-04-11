@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TextInput, View, Pressable } from "react-native";
 
 type Props = {
   isUsdt: boolean;
@@ -83,7 +83,7 @@ export function DepositAmountSelector({
           {amounts.map((amount) => {
             const isActive = selectedAmount === amount;
             return (
-              <TouchableOpacity
+              <Pressable
                 key={amount}
                 style={[
                   styles.amountButton,
@@ -164,7 +164,7 @@ export function DepositAmountSelector({
                     </View>
                   </>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>
@@ -195,9 +195,9 @@ export function DepositAmountSelector({
             keyboardType="numeric"
           />
           {depositAmount.length > 0 && (
-            <TouchableOpacity onPress={onClearDeposit}>
+            <Pressable onPress={onClearDeposit}>
               <Ionicons name="close-circle-outline" size={22} color="#606062" />
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
 

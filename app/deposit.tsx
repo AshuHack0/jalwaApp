@@ -29,13 +29,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Linking, ScrollView, StyleSheet, View, Pressable } from "react-native";
 type Channel = {
   id: string;
   label: string;
@@ -432,7 +426,7 @@ export default function DepositScreen() {
         );
         const data = await res.json();
         if (data?.tether?.inr) setUsdtRate(data.tether.inr);
-      } catch {}
+      } catch { }
     };
     fetchUsdtRate();
     const interval = setInterval(fetchUsdtRate, 60000);
@@ -553,21 +547,21 @@ export default function DepositScreen() {
       <ThemedView style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.screenTitle}>Deposit</ThemedText>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.push("/deposit-history")}
             style={styles.historyButton}
           >
             <ThemedText style={styles.historyButtonText}>
               Deposit history
             </ThemedText>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <ScrollView

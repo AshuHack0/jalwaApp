@@ -4,14 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo } from "react";
-import {
-  Dimensions,
-  Image as RNImage,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, Image as RNImage, ScrollView, StyleSheet, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ActivityDetailsScreen() {
@@ -62,13 +55,13 @@ export default function ActivityDetailsScreen() {
         style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
       >
         <View style={styles.header}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             style={styles.backBtn}
           >
             <Ionicons name="chevron-back" size={28} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.headerTitle}>Activity details</ThemedText>
           <View style={styles.headerRight} />
         </View>

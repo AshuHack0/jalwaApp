@@ -1,12 +1,7 @@
 import { ThemedText } from "@/components/themed-text";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, View, Pressable } from "react-native";
 
 export default function PrivacyScreen() {
   const router = useRouter();
@@ -14,13 +9,13 @@ export default function PrivacyScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           style={styles.headerIcon}
           onPress={() => router.back()}
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
         <ThemedText style={styles.headerTitle}>Privacy Agreement</ThemedText>
         <View style={styles.headerRight} />
       </View>

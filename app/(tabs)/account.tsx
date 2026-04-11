@@ -25,13 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Linking, ScrollView, StyleSheet, View, Pressable } from "react-native";
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
@@ -106,7 +100,7 @@ export default function AccountScreen() {
       >
         {/* Profile Section */}
         <View style={styles.profileSection}>
-          <TouchableOpacity
+          <Pressable
             style={styles.profileImageContainer}
             onPress={() => router.push("/account/avatar")}
           >
@@ -115,7 +109,7 @@ export default function AccountScreen() {
               style={{ width: 84, height: 84 }}
               contentFit="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
           <View style={styles.profileInfo}>
 
             <View style={styles.usernameRow}>
@@ -127,15 +121,15 @@ export default function AccountScreen() {
               />
             </View>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.uidContainer}
               onPress={handleCopyUID}
             >
               <ThemedText style={styles.uidLabel}>UID</ThemedText>
-              <View style={{width:1, height:"60%", backgroundColor:"white"}}/>
+              <View style={{ width: 1, height: "60%", backgroundColor: "white" }} />
               <ThemedText style={styles.uidValue}>9111383</ThemedText>
-              <Ionicons name="copy-outline" size={12} color="#fff" style={{transform: [{ rotate: '90deg' }]}} />
-            </TouchableOpacity>
+              <Ionicons name="copy-outline" size={12} color="#fff" style={{ transform: [{ rotate: '90deg' }] }} />
+            </Pressable>
             <ThemedText style={styles.lastLogin}>
               Last login: 2026-01-25 23:01:42
             </ThemedText>
@@ -160,7 +154,7 @@ export default function AccountScreen() {
 
           {/* Quick Action Buttons */}
           <View style={styles.quickActions}>
-            <TouchableOpacity style={styles.quickActionButton}>
+            <Pressable style={styles.quickActionButton}>
               <View style={[styles.quickActionIcon, styles.walletIcon]}>
                 <Image
                   source={require("@/assets/gfg4.png")}
@@ -169,8 +163,8 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.quickActionLabel}>ARWallet</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               onPress={() => router.push("/deposit")}
               style={styles.quickActionButton}
             >
@@ -182,8 +176,8 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.quickActionLabel}>Deposit</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               onPress={() => router.push("/withdraw")}
               style={styles.quickActionButton}
             >
@@ -195,8 +189,8 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.quickActionLabel}>Withdraw</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               onPress={() => router.push("/account/vip")}
               style={styles.quickActionButton}
             >
@@ -208,14 +202,14 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.quickActionLabel}>VIP</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
         {/* History Sections */}
         <View style={styles.historySection}>
           <View style={styles.historyCardContainer}>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push("/account/game-history")}
               style={[styles.historyCard, styles.gameHistoryCard]}
             >
@@ -234,9 +228,9 @@ export default function AccountScreen() {
                   My game history
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push("/account/transaction-history")}
               style={[styles.historyCard, styles.transactionCard]}
             >
@@ -253,10 +247,10 @@ export default function AccountScreen() {
                   My transaction history
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <View style={styles.historyCardContainer}>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push("/deposit-history")}
               style={[styles.historyCard, styles.depositHistoryCard]}
             >
@@ -273,9 +267,9 @@ export default function AccountScreen() {
                   My deposit history
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push("/withdrawal-history")}
               style={[styles.historyCard, styles.withdrawHistoryCard]}
             >
@@ -292,13 +286,13 @@ export default function AccountScreen() {
                   My withdraw history
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
         {/* Account Settings List */}
         <View style={styles.settingsSection}>
-          <TouchableOpacity
+          <Pressable
             style={styles.settingItem}
             onPress={() => router.push("/account/notification" as any)}
           >
@@ -326,9 +320,9 @@ export default function AccountScreen() {
               style={{ width: 35, height: 35 }}
               contentFit="contain"
             />
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.settingItem}
             onPress={() => router.push("/account/gifts" as any)}
           >
@@ -347,9 +341,9 @@ export default function AccountScreen() {
               style={{ width: 35, height: 35 }}
               contentFit="contain"
             />
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.settingItem}
             onPress={() => router.push("/account/game-stats" as any)}
           >
@@ -370,9 +364,9 @@ export default function AccountScreen() {
               style={{ width: 35, height: 35 }}
               contentFit="contain"
             />
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={styles.settingItem}
             onPress={() => router.push("/account/language" as any)}
           >
@@ -394,14 +388,14 @@ export default function AccountScreen() {
                 contentFit="contain"
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Service Center Section */}
         <View style={styles.serviceSection}>
           <ThemedText style={styles.sectionTitle}>Service center</ThemedText>
           <View style={styles.serviceGrid}>
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={() =>
                 router.push("/account/service-center/settings" as any)
@@ -415,9 +409,9 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Settings</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={() =>
                 router.push("/account/service-center/feedback" as any)
@@ -431,9 +425,9 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Feedback</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={() =>
                 router.push("/account/service-center/announcement" as any)
@@ -447,9 +441,9 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>Announcement</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={handleOpenCustomerSupport}
             >
@@ -463,9 +457,9 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>
                 Customer Service
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={() =>
                 router.push("/account/service-center/beginners-guide" as any)
@@ -481,9 +475,9 @@ export default function AccountScreen() {
               <ThemedText style={styles.serviceLabel}>
                 Beginner&apos;s Guide
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.serviceItem}
               onPress={() =>
                 router.push("/account/service-center/about-us" as any)
@@ -497,15 +491,15 @@ export default function AccountScreen() {
                 />
               </View>
               <ThemedText style={styles.serviceLabel}>About us</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
         {/* Log Out Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="power" size={25} color="#00ECBE" />
           <ThemedText style={styles.logoutText}>Log out</ThemedText>
-        </TouchableOpacity>
+        </Pressable>
       </ScrollView>
     </ThemedView>
   );
@@ -548,7 +542,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
-    fontWeight:"600"
+    fontWeight: "600"
   },
   vipBadge: {
     flexDirection: "row",
@@ -574,7 +568,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 6,
     paddingVertical: 0,
-    marginTop:-5
+    marginTop: -5
   },
   uidTag: {
     backgroundColor: "#F97316",
@@ -586,14 +580,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
-    fontWeight:"700"
+    fontWeight: "700"
   },
   uidValue: {
     fontSize: 12,
     color: "#fff",
     fontFamily: "Roboto_400Regular",
     letterSpacing: -0.5,
-    fontWeight:"800"
+    fontWeight: "800"
   },
   lastLogin: {
     fontSize: 12,

@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 import { useToast } from "@/contexts/ToastContext";
 import Svg, { Path, Rect } from "react-native-svg";
 
@@ -39,7 +39,7 @@ export function ArPayTab() {
   return (
     <>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.arRulesRow}>
+        <Pressable style={styles.arRulesRow}>
           <Svg width={20} height={27} viewBox="0 0 37 40" fill="none">
             <Rect
               opacity={0.4}
@@ -66,7 +66,7 @@ export function ArPayTab() {
           </ThemedText>
           <ThemedText style={styles.arRulesCheck}>Check </ThemedText>
           <Ionicons name="chevron-forward" size={14} color="white" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <View style={styles.section}>
@@ -80,7 +80,7 @@ export function ArPayTab() {
           <ThemedText style={styles.arNotActivatedText}>
             Your AR wallet has not been activated yet
           </ThemedText>
-          <TouchableOpacity onPress={handleActivate}>
+          <Pressable onPress={handleActivate}>
             <LinearGradient
               colors={["#7AFEC3", "#02AFB6"]}
               start={{ x: 0.5, y: 0 }}
@@ -91,7 +91,7 @@ export function ArPayTab() {
                 activate AR wallet
               </ThemedText>
             </LinearGradient>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
 
@@ -126,12 +126,12 @@ export function ArPayTab() {
           <ThemedText style={styles.arInfoText}>
             Safe, stable and fast
           </ThemedText>
-          <TouchableOpacity style={styles.arHowToRow}>
+          <Pressable style={styles.arHowToRow}>
             <ThemedText style={styles.arHowToText}>
               How to activate AR wallet{" "}
             </ThemedText>
             <Ionicons name="chevron-forward" size={14} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
 
           <ThemedText style={styles.arFeaturesTitle}>
             AR wallet features
@@ -155,7 +155,7 @@ export function ArPayTab() {
             to sell to UPI when you need to use the funds.
           </ThemedText>
 
-          <TouchableOpacity onPress={handleActivate}>
+          <Pressable onPress={handleActivate}>
             <LinearGradient
               colors={["#00ECBE", "#00ECBE"]}
               start={{ x: 0.5, y: 0 }}
@@ -166,7 +166,7 @@ export function ArPayTab() {
                 activate AR wallet
               </ThemedText>
             </LinearGradient>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </>

@@ -10,14 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, router, useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, useWindowDimensions, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SCREEN_BG = "#05012B";
@@ -69,14 +62,13 @@ export default function AvatarScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
         <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
-          <TouchableOpacity
+          <Pressable
             accessibilityRole="button"
-            activeOpacity={0.75}
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="chevron-back" size={24} color="#EEF5FF" />
-          </TouchableOpacity>
+          </Pressable>
 
           <Text style={styles.headerTitle}>Change avatar</Text>
           <View style={styles.backButton} />
@@ -101,10 +93,9 @@ export default function AvatarScreen() {
               const isLastColumn = index % 3 === 2;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={avatar.id}
                   accessibilityRole="button"
-                  activeOpacity={0.92}
                   onPress={() => handleSelect(avatar.id)}
                   style={[
                     styles.tile,
@@ -134,7 +125,7 @@ export default function AvatarScreen() {
                       </View>
                     ) : null}
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>

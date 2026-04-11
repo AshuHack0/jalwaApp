@@ -12,15 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 import Svg, {
   Defs,
   Path,
@@ -131,21 +123,21 @@ export default function WithdrawScreen() {
       <ThemedView style={styles.container}>
         {/* ── Top Bar ── */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.screenTitle}>Withdraw</ThemedText>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.push("/withdrawal-history")}
             style={styles.historyNavButton}
           >
             <ThemedText style={styles.historyNavText}>
               Withdrawal history
             </ThemedText>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <ScrollView
@@ -171,7 +163,7 @@ export default function WithdrawScreen() {
                 <ThemedText style={styles.balanceAmount}>
                   {formatBalance(walletBalance)}
                 </ThemedText>
-                <TouchableOpacity
+                <Pressable
                   onPress={refreshWallet}
                   style={styles.refreshBtn}
                 >
@@ -180,7 +172,7 @@ export default function WithdrawScreen() {
                     size={22}
                     color="rgba(255,255,255,0.85)"
                   />
-                </TouchableOpacity>
+                </Pressable>
               </View>
               <View style={styles.cardFooterRow}>
                 <Ionicons
@@ -211,10 +203,9 @@ export default function WithdrawScreen() {
             {/* Tabs */}
             <View style={styles.tabsRow}>
               {/* BANK CARD */}
-              <TouchableOpacity
+              <Pressable
                 style={styles.methodTabWrap}
                 onPress={() => setSelectedMethod("BANK_CARD")}
-                activeOpacity={0.85}
               >
                 {selectedMethod === "BANK_CARD" ? (
                   <LinearGradient
@@ -240,13 +231,12 @@ export default function WithdrawScreen() {
                     <Text style={styles.tabLabel}>BANK CARD</Text>
                   </View>
                 )}
-              </TouchableOpacity>
+              </Pressable>
 
               {/* UPI */}
-              <TouchableOpacity
+              <Pressable
                 style={styles.methodTabWrap}
                 onPress={() => setSelectedMethod("UPI")}
-                activeOpacity={0.85}
               >
                 {selectedMethod === "UPI" ? (
                   <LinearGradient
@@ -272,13 +262,12 @@ export default function WithdrawScreen() {
                     <Text style={styles.tabLabel}>UPI</Text>
                   </View>
                 )}
-              </TouchableOpacity>
+              </Pressable>
 
               {/* USDT */}
-              <TouchableOpacity
+              <Pressable
                 style={styles.methodTabWrap}
                 onPress={() => setSelectedMethod("USDT")}
-                activeOpacity={0.85}
               >
                 {selectedMethod === "USDT" ? (
                   <LinearGradient
@@ -304,13 +293,13 @@ export default function WithdrawScreen() {
                     <Text style={styles.tabLabel}>USDT</Text>
                   </View>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {/* Bank account section (BANK CARD only) */}
             {selectedMethod === "BANK_CARD" &&
               (bankAccount && bankAccount.accountNumber ? (
-                <TouchableOpacity
+                <Pressable
                   style={styles.savedBankCard}
                   onPress={() => router.push("/add-bank")}
                 >
@@ -335,10 +324,10 @@ export default function WithdrawScreen() {
                       color="#92A8E3"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               ) : (
                 <>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.addBankBtn}
                     onPress={() => router.push("/add-bank")}
                   >
@@ -348,7 +337,7 @@ export default function WithdrawScreen() {
                     <ThemedText style={styles.addBankText}>
                       Add a bank account number
                     </ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                   <ThemedText style={styles.addBankWarning}>
                     Need to add beneficiary information to be able to withdraw
                     money
@@ -358,7 +347,7 @@ export default function WithdrawScreen() {
 
             {/* UPI / USDT placeholder */}
             {
-              <TouchableOpacity
+              <Pressable
                 style={styles.addBankBtn}
                 onPress={() => router.push("/add-bank")}
               >
@@ -369,7 +358,7 @@ export default function WithdrawScreen() {
                   Add{" "}
                   {selectedMethod === "UPI" ? "UPI ID" : "USDT wallet address"}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             }
           </View>
 
@@ -419,12 +408,12 @@ export default function WithdrawScreen() {
                       {formatBalance(withdrawableBalance)}
                     </Text>
                   </ThemedText>
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => setWithdrawAmount(withdrawableBalance.toFixed(2))}
                     style={styles.allBtn}
                   >
                     <ThemedText style={styles.allBtnText}>All</ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </>
             ) : (
@@ -447,12 +436,12 @@ export default function WithdrawScreen() {
                       {formatBalance(withdrawableBalance)}
                     </Text>
                   </ThemedText>
-                  <TouchableOpacity
+                  <Pressable
                     onPress={handleAllAmount}
                     style={styles.allBtn}
                   >
                     <ThemedText style={styles.allBtnText}>All</ThemedText>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
                 <View style={styles.receivedRow}>
                   <ThemedText style={styles.receivedLabel}>
@@ -469,14 +458,13 @@ export default function WithdrawScreen() {
             )}
 
             {/* ── Withdraw Button ── */}
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.withdrawBtn,
                 isDisabled && styles.withdrawBtnDisabled,
               ]}
               onPress={handleWithdraw}
               disabled={isDisabled}
-              activeOpacity={0.85}
             >
               <ThemedText
                 style={[
@@ -486,7 +474,7 @@ export default function WithdrawScreen() {
               >
                 {loading ? "Processing..." : "Withdraw"}
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
             {/* ── Withdrawal Rules ── */}
             <View style={styles.rulesSection}>
               <RuleItem>
@@ -812,14 +800,14 @@ export default function WithdrawScreen() {
               </View>
             )}
 
-            <TouchableOpacity
+            <Pressable
               style={styles.allHistoryBtn}
               onPress={() => router.push("/withdrawal-history")}
             >
               <ThemedText style={styles.allHistoryBtnText}>
                 All history
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </ScrollView>
       </ThemedView>

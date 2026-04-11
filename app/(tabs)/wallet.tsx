@@ -16,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable } from "react-native";
 
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
@@ -44,17 +44,17 @@ export default function WalletScreen() {
     <ThemedView style={styles.container}>
       {/* Top Navigation Bar - Sticky Header */}
       <View style={styles.topBar}>
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.back()}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
         <ThemedText style={styles.screenTitle}>Wallet</ThemedText>
-        <TouchableOpacity
+        <Pressable
           onPress={refreshWallet}
           style={styles.refreshButton}
-        ></TouchableOpacity>
+        ></Pressable>
       </View>
 
       <ScrollView
@@ -124,15 +124,15 @@ export default function WalletScreen() {
             end={{ x: 0, y: 1 }}
             style={styles.qrButton}
           >
-            <TouchableOpacity style={styles.qrButtonContent}>
+            <Pressable style={styles.qrButtonContent}>
               <ThemedText style={styles.qrButtonText}>
                 Main wallet transfer
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </LinearGradient>
           {/* Transaction Actions */}
           <View style={styles.transactionGrid}>
-            <TouchableOpacity
+            <Pressable
               style={styles.transactionButton}
               onPress={() => router.push("/deposit")}
             >
@@ -146,9 +146,9 @@ export default function WalletScreen() {
                 />
               </View>
               <ThemedText style={styles.transactionLabel}>Deposit</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.transactionButton}
               onPress={() => router.push("/withdraw")}
             >
@@ -162,9 +162,9 @@ export default function WalletScreen() {
                 />
               </View>
               <ThemedText style={styles.transactionLabel}>Withdraw</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.transactionButton}
               onPress={() => router.push("/deposit-history")}
             >
@@ -183,9 +183,9 @@ export default function WalletScreen() {
               <ThemedText style={styles.transactionLabel}>
                 Deposit history
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.transactionButton}
               onPress={() => router.push("/withdrawal-history")}
             >
@@ -204,16 +204,16 @@ export default function WalletScreen() {
               <ThemedText style={styles.transactionLabel}>
                 Withdrawal history
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
         {/* Game Balances */}
         <View style={styles.gameBalances}>
-          <TouchableOpacity style={styles.gameBalanceCard}>
+          <Pressable style={styles.gameBalanceCard}>
             <ThemedText style={styles.gameBalanceAmount}>0.00</ThemedText>
             <ThemedText style={styles.gameBalanceLabel}>ARGame</ThemedText>
-          </TouchableOpacity>
+          </Pressable>
 
           <LinearGradient
             colors={["#7AFEC3", "#02AFB6"]}
@@ -221,16 +221,16 @@ export default function WalletScreen() {
             end={{ x: 0, y: 1 }}
             style={styles.lotteryGradientCard}
           >
-            <TouchableOpacity style={styles.lotteryGradientCardContent}>
+            <Pressable style={styles.lotteryGradientCardContent}>
               <ThemedText style={styles.lotteryGradientAmount}>0.00</ThemedText>
               <View style={styles.lotteryContent}>
                 <ThemedText style={styles.lotteryGradientLabel}>Lottery</ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </LinearGradient>
-          <TouchableOpacity
+          <Pressable
             style={[styles.gameBalanceCard, { opacity: 0 }]}
-          ></TouchableOpacity>
+          ></Pressable>
         </View>
       </ScrollView>
     </ThemedView>

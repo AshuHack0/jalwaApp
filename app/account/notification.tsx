@@ -16,14 +16,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Notification Card ─────────────────────────────────────────────────────────
@@ -51,16 +44,15 @@ function NotificationCard({
           />
         </View>
         <Text style={styles.cardTitle}>{title}</Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => onDelete(id)}
-          activeOpacity={0.7}
           style={styles.deleteBtn}
         >
           <Image
             source={require("@/assets/trash.png")}
             style={styles.deleteIcon}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Timestamp */}

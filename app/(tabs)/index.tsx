@@ -24,14 +24,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Dimensions,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, Modal, ScrollView, StyleSheet, View, Pressable } from "react-native";
 import {
   heightPercentageToDP as hpBase,
   widthPercentageToDP as wpBase,
@@ -514,15 +507,15 @@ export default function HomeScreen() {
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
             >
-              <TouchableOpacity>
+              <Pressable>
                 <Image
                   source={require("@/assets/update.png")}
                   style={{ width: 26, height: 26 }}
                   contentFit="cover"
                 />
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity>
+              <Pressable>
                 <View
                   style={{
                     flexDirection: "row",
@@ -563,22 +556,20 @@ export default function HomeScreen() {
                     EN
                   </ThemedText>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           )}
 
           {!isAuthenticated && (
             <>
-              <TouchableOpacity
+              <Pressable
                 style={styles.loginButton}
-                activeOpacity={0.8}
                 onPress={() => router.push("/auth/login")}
               >
                 <ThemedText style={styles.loginButtonText}>Log in</ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={styles.registerButtonWrap}
-                activeOpacity={0.8}
                 onPress={() => router.push("/auth/register")}
               >
                 <LinearGradient
@@ -591,7 +582,7 @@ export default function HomeScreen() {
                     Register
                   </ThemedText>
                 </LinearGradient>
-              </TouchableOpacity>
+              </Pressable>
             </>
           )}
         </View>
@@ -610,20 +601,20 @@ export default function HomeScreen() {
       >
         {/* Promotional Banners */}
         <View style={styles.promoBanners}>
-          <TouchableOpacity style={styles.promoBanner}>
+          <Pressable style={styles.promoBanner}>
             <Image
               source={require("@/assets/home1-14aaac97.png")}
               style={styles.promoBannerImage}
               contentFit="contain"
             />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.promoBanner}>
+          </Pressable>
+          <Pressable style={styles.promoBanner}>
             <Image
               source={require("@/assets/home2-44a54115.png")}
               style={styles.promoBannerImage}
               contentFit="contain"
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Main Promotional Carousel */}
@@ -639,7 +630,7 @@ export default function HomeScreen() {
             contentContainerStyle={styles.carouselContent}
           >
             {carouselImages.map((image, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 style={[styles.mainCarouselCard, { width: carouselWidth }]}
               >
@@ -648,7 +639,7 @@ export default function HomeScreen() {
                   style={styles.mainCarouselImage}
                   contentFit="cover"
                 />
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </ScrollView>
           <View style={styles.carouselIndicators}>
@@ -738,9 +729,8 @@ export default function HomeScreen() {
               </View>
             ))}
           </ScrollView>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.push("/account/service-center/announcement")}
-            activeOpacity={0.8}
           >
             <LinearGradient
               colors={["rgb(122, 254, 195)", "rgb(2, 175, 182)"]}
@@ -760,7 +750,7 @@ export default function HomeScreen() {
                 Detail
               </ThemedText>
             </LinearGradient>
-          </TouchableOpacity>
+          </Pressable>
         </LinearGradient>
 
         {/* Wallet Balance Section */}
@@ -781,17 +771,17 @@ export default function HomeScreen() {
                 <ThemedText style={styles.balanceAmount}>
                   {formatBalance(walletBalance)}
                 </ThemedText>
-                <TouchableOpacity onPress={refreshWallet}>
+                <Pressable onPress={refreshWallet}>
                   <Image
                     source={require("@/assets/Screenshot_2026-04-01_041631-removebg-preview.png")}
                     style={{ height: 20, width: 20 }}
                     contentFit="cover"
                   />
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
             <View style={[styles.walletButtons, { width: "48%" }]}>
-              <TouchableOpacity
+              <Pressable
                 style={styles.walletButton}
                 onPress={() => router.push("/withdraw")}
               >
@@ -806,8 +796,8 @@ export default function HomeScreen() {
                     Withdraw
                   </ThemedText>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 style={styles.walletButton}
                 onPress={() => openDepositModal()}
               >
@@ -822,7 +812,7 @@ export default function HomeScreen() {
                     Deposit
                   </ThemedText>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         )}
@@ -834,11 +824,10 @@ export default function HomeScreen() {
           {gameCategories.map((category, index) => {
             const isActive = selectedCategory === category.name;
             return (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 style={styles.gameCard}
                 onPress={() => setSelectedCategory(category.name)}
-                activeOpacity={0.8}
               >
                 <View style={styles.gameCardBackgroundContainer}>
                   <Image
@@ -865,7 +854,7 @@ export default function HomeScreen() {
                 >
                   {category.name}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>
@@ -911,7 +900,7 @@ export default function HomeScreen() {
                           ? index % 2 === 1
                           : index % 3 === 2;
                         return (
-                          <TouchableOpacity
+                          <Pressable
                             key={game.name}
                             style={[
                               styles.categoryGameCardBase,
@@ -937,7 +926,7 @@ export default function HomeScreen() {
                               style={styles.lotteryGameImage}
                               contentFit="cover"
                             />
-                          </TouchableOpacity>
+                          </Pressable>
                         );
                       })}
                     </View>
@@ -1358,13 +1347,11 @@ export default function HomeScreen() {
         animationType="fade"
         onRequestClose={() => setShowGameErrorModal(false)}
       >
-        <TouchableOpacity
+        <Pressable
           style={styles.gameErrorOverlay}
-          activeOpacity={1}
           onPress={() => setShowGameErrorModal(false)}
         >
-          <TouchableOpacity
-            activeOpacity={1}
+          <Pressable
             onPress={(e) => e.stopPropagation()}
             style={styles.gameErrorPopup}
           >
@@ -1374,16 +1361,16 @@ export default function HomeScreen() {
             </ThemedText>
             <View style={styles.gameErrorSeparator} />
             <View style={styles.gameErrorButtonRow}>
-              <TouchableOpacity
+              <Pressable
                 style={styles.gameErrorButton}
                 onPress={() => setShowGameErrorModal(false)}
               >
                 <ThemedText style={styles.gameErrorButtonTextCancel}>
                   Cancel
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
               <View style={styles.gameErrorButtonDivider} />
-              <TouchableOpacity
+              <Pressable
                 style={styles.gameErrorButton}
                 onPress={() => {
                   setShowGameErrorModal(false);
@@ -1393,10 +1380,10 @@ export default function HomeScreen() {
                 <ThemedText style={styles.gameErrorButtonTextConfirm}>
                   Confirm
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
+          </Pressable>
+        </Pressable>
       </Modal>
 
       {/* Overlay Buttons Modal */}

@@ -3,15 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useDepositModal } from "@/contexts/DepositModalContext";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Dimensions, Modal, ScrollView, Text, View, Pressable } from "react-native";
 import { useFirstDepositBonus } from "@/services/api/hooks/useFirstDepositBonus";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -65,19 +57,17 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
       onRequestClose={handleClose}
 
     >
-      <TouchableOpacity
+      <Pressable
         style={{
           flex: 1,
           backgroundColor: "rgba(0, 0, 0, 0.7)",
           justifyContent: "center",
           alignItems: "center",
         }}
-        activeOpacity={1}
         onPress={handleClose}
       >
         <View style={{ alignItems: "center", width: "100%" }}>
-          <TouchableOpacity
-            activeOpacity={1}
+          <Pressable
             onPress={(e) => e.stopPropagation()}
             style={{
               overflow: "hidden",
@@ -172,7 +162,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           color: "#dd9138",
                         }}
                       >
-                        {formatBonus(offer.rewardAmount)} 
+                        {formatBonus(offer.rewardAmount)}
                       </Text>
                     </View>
                     <Text
@@ -207,7 +197,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           {offer.currentProgress ?? 0}/{offer.rechargeAmount}
                         </Text>
                       </View>
-                      <TouchableOpacity
+                      <Pressable
                         style={{
                           paddingVertical: 4,
                           paddingHorizontal: 20,
@@ -217,7 +207,6 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                           backgroundColor: "transparent",
                         }}
                         onPress={() => handleDeposit(offer.rechargeAmount)}
-                        activeOpacity={0.8}
                       >
                         <Text
                           style={{
@@ -228,7 +217,7 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                         >
                           Deposit
                         </Text>
-                      </TouchableOpacity>
+                      </Pressable>
                     </View>
                   </View>
                 ))
@@ -245,14 +234,13 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                 backgroundColor: "#001C54",
               }}
             >
-              <TouchableOpacity
+              <Pressable
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   gap: 6,
                 }}
                 onPress={() => setNoReminderToday(!noReminderToday)}
-                activeOpacity={0.8}
               >
                 <View
                   style={{
@@ -279,11 +267,10 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                 <Text style={{ fontSize: 14, color: "#92a8e3" }}>
                   No more reminders today
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity
+              <Pressable
                 onPress={handleActivity}
-                activeOpacity={0.8}
                 style={{ borderRadius: 12, overflow: "hidden" }}
               >
                 <LinearGradient
@@ -307,19 +294,19 @@ export function FirstDepositBonusModal({ visible, onClose }: Props) {
                     Activity
                   </Text>
                 </LinearGradient>
-              </TouchableOpacity>
+              </Pressable>
             </View>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={{ marginTop: 10, zIndex: 10 }}
             onPress={handleClose}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <EvilIcons name="close-o" size={40} color="white" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 }

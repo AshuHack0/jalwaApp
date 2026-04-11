@@ -5,15 +5,7 @@ import {
 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, Pressable } from "react-native";
 
 /**
  * SuperJackpotRules - 100% UI Match
@@ -37,12 +29,12 @@ const SuperJackpotRules = ({ navigation }: any) => {
 
       {/* 1. TOP HEADER - Dark Midnight Blue */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           onPress={() => navigation?.goBack()}
           style={styles.backIcon}
         >
           <Ionicons name="chevron-back" size={26} color="#FFF" />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.headerTitle}>Rule</Text>
         <View style={{ width: 40 }} />
       </View>
@@ -135,7 +127,7 @@ const SuperJackpotRules = ({ navigation }: any) => {
 
       {/* 6. CONTACT CUSTOMER SERVICE - Bottom Fixed Button */}
       <View style={styles.footerAction}>
-        <TouchableOpacity activeOpacity={0.9}>
+        <Pressable>
           <LinearGradient
             colors={["#5df5dc", "#3ab6a1"]} // Vivid Cyan/Greenish Gradient
             start={{ x: 0, y: 0.5 }}
@@ -149,7 +141,7 @@ const SuperJackpotRules = ({ navigation }: any) => {
             />
             <Text style={styles.contactBtnText}>Contact customer service</Text>
           </LinearGradient>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

@@ -2,14 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Modal, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Dropdown ──────────────────────────────────────────────────────────────────
@@ -25,19 +18,18 @@ function Dropdown({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <TouchableOpacity
+      <Pressable
         style={styles.dropdown}
         onPress={() => setOpen(true)}
-        activeOpacity={0.8}
       >
         <Text style={styles.dropdownText}>{value}</Text>
-        <TouchableOpacity activeOpacity={0.7}>
+        <Pressable>
           <Image
             source={require("@/assets/Screenshot202603-09p230133-removebg-preview.png")}
             style={styles.backIcon}
           />
-        </TouchableOpacity>
-      </TouchableOpacity>
+        </Pressable>
+      </Pressable>
 
       <Modal
         transparent
@@ -45,14 +37,13 @@ function Dropdown({
         animationType="fade"
         onRequestClose={() => setOpen(false)}
       >
-        <TouchableOpacity
+        <Pressable
           style={styles.modalOverlay}
           onPress={() => setOpen(false)}
-          activeOpacity={1}
         >
           <View style={styles.dropdownMenu}>
             {options.map((opt) => (
-              <TouchableOpacity
+              <Pressable
                 key={opt}
                 style={[
                   styles.dropdownOption,
@@ -62,7 +53,6 @@ function Dropdown({
                   onSelect(opt);
                   setOpen(false);
                 }}
-                activeOpacity={0.7}
               >
                 <Text
                   style={[
@@ -72,10 +62,10 @@ function Dropdown({
                 >
                   {opt}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </Modal>
     </>
   );

@@ -10,7 +10,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { Image } from "expo-image";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 function formatBalance(amount: number): string {
   return `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
@@ -67,14 +67,14 @@ export function DepositBalanceCard({ walletBalance, onRefresh }: Props) {
             <ThemedText style={styles.balanceAmount}>
               {formatBalance(walletBalance)}
             </ThemedText>
-            <TouchableOpacity style={{ marginBottom: 20 }} onPress={onRefresh}>
+            <Pressable style={{ marginBottom: 20 }} onPress={onRefresh}>
               <Image
                 source={{
                   uri: "https://www.jalwagame.win/assets/png/refresh-8e0efe26.webp",
                 }}
                 style={{ width: 23, height: 15 }}
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

@@ -2,14 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import React from "react";
-import {
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 export default function ActivityAward() {
   const weeklyTasks = [
@@ -35,9 +28,9 @@ export default function ActivityAward() {
       <View style={styles.container}>
         {/* HEADER */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
 
           <View style={styles.recordBtn}>
             <Image source={require("../../assets/icon-watchCollection.svg")} style={{ width: 22, height: 22 }} />
@@ -45,7 +38,7 @@ export default function ActivityAward() {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom:50}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: 50 }}>
           {/* BANNER */}
           <ImageBackground
             source={{ uri: "https://www.jalwagame.win/assets/png/award_bg-8e278a3d.webp" }}
@@ -109,9 +102,9 @@ export default function ActivityAward() {
 
                 <View style={{ height: 1, width: "100%", backgroundColor: "#022c68", marginTop: 10 }} />
 
-                <TouchableOpacity style={styles.btn}>
+                <Pressable style={styles.btn}>
                   <Text style={styles.btnText}>to complete</Text>
-                </TouchableOpacity>
+                </Pressable>
 
               </View>
 
@@ -143,12 +136,12 @@ export default function ActivityAward() {
                 </View>
 
                 <View>
-                  <View style={{ flex:1, flexDirection: "row", alignItems: "center", justifyContent:"space-between" }}>
-                    <Text style={{color:"#91A8E2", fontSize:16, fontWeight:"500"}}>Deposit</Text>
+                  <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <Text style={{ color: "#91A8E2", fontSize: 16, fontWeight: "500" }}>Deposit</Text>
                     <Text style={styles.red}> 0/{item.deposit}</Text>
                   </View>
-                  <View style={{ flex:1, flexDirection: "row", alignItems: "center", justifyContent:"space-between" }}>
-                    <Text style={{color:"#91A8E2", fontSize:16, fontWeight:"500"}}>Bet</Text>
+                  <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <Text style={{ color: "#91A8E2", fontSize: 16, fontWeight: "500" }}>Bet</Text>
                     <Text style={styles.red}> 0/{item.bet}</Text>
                   </View>
                 </View>
@@ -170,9 +163,9 @@ export default function ActivityAward() {
 
                 <View style={{ height: 1, width: "100%", backgroundColor: "#022c68", marginTop: 10 }} />
 
-                <TouchableOpacity style={styles.btn}>
+                <Pressable style={styles.btn}>
                   <Text style={styles.btnText}>to complete</Text>
-                </TouchableOpacity>
+                </Pressable>
 
               </View>
 

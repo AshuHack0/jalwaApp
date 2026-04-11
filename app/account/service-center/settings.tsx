@@ -6,14 +6,7 @@ import {
   getSelectedAvatarId,
 } from "@/services/avatar-storage";
 import { useCallback, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
 
@@ -44,10 +37,9 @@ function SettingRow({
   onPress?: () => void;
 }) {
   return (
-    <TouchableOpacity
+    <Pressable
       style={styles.settingRow}
       onPress={onPress}
-      activeOpacity={0.7}
     >
       <View style={styles.settingLeft}>
         <Image
@@ -78,7 +70,7 @@ function SettingRow({
           ]}
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -158,9 +150,8 @@ export default function SettingsScreen() {
                     ]}
                   />
                 </View>
-                <TouchableOpacity
+                <Pressable
                   style={styles.changeAvatarBtn}
-                  activeOpacity={0.7}
                   onPress={() => router.push("/account/avatar")}
                 >
                   <Text style={styles.changeAvatarText}>Change avatar</Text>
@@ -177,13 +168,13 @@ export default function SettingsScreen() {
                       },
                     ]}
                   />
-                </TouchableOpacity>
+                </Pressable>
               </View>
 
               <View style={styles.cardDivider} />
 
               {/* Nickname */}
-              <TouchableOpacity style={styles.profileRow} activeOpacity={0.7}>
+              <Pressable style={styles.profileRow}>
                 <Text style={styles.profileLabel}>Nickname</Text>
                 <View style={styles.profileRight}>
                   <Text style={styles.profileValue}>MiRACLE</Text>
@@ -201,7 +192,7 @@ export default function SettingsScreen() {
                     ]}
                   />
                 </View>
-              </TouchableOpacity>
+              </Pressable>
 
               <View style={styles.cardDivider} />
 
@@ -210,7 +201,7 @@ export default function SettingsScreen() {
                 <Text style={styles.profileLabel}>UID</Text>
                 <View style={styles.profileRight}>
                   <Text style={styles.profileValue}>3659199</Text>
-                  <TouchableOpacity style={styles.copyBtn} activeOpacity={0.7}>
+                  <Pressable style={styles.copyBtn}>
                     <Image
                       source={require("@/assets/copypast.png")}
                       style={[
@@ -221,7 +212,7 @@ export default function SettingsScreen() {
                         },
                       ]}
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
             </View>

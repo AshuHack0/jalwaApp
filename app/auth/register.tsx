@@ -7,16 +7,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View, Pressable } from "react-native";
 
 export default function RegisterScreen() {
   const { login: authLogin } = useAuth();
@@ -82,7 +73,7 @@ export default function RegisterScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           style={styles.headerIcon}
           onPress={() =>
             router.canGoBack() ? router.back() : router.replace("/(tabs)")
@@ -90,7 +81,7 @@ export default function RegisterScreen() {
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
         <View style={styles.headerLogoWrap}>
           <Image
             source="https://jalwaimg.jalwa-jalwa.com/Jalwa/other/h5setting_20250315140925tbe6.png"
@@ -166,10 +157,10 @@ export default function RegisterScreen() {
                   <ThemedText style={styles.label}>Phone number</ThemedText>
                 </View>
                 <View style={styles.phoneRow}>
-                  <TouchableOpacity style={styles.countryCode}>
+                  <Pressable style={styles.countryCode}>
                     <ThemedText style={styles.countryCodeText}>+91</ThemedText>
                     <Ionicons name="chevron-down" size={16} color="#fff" />
-                  </TouchableOpacity>
+                  </Pressable>
                   <TextInput
                     style={styles.phoneInput}
                     placeholder="Please enter the phone number"
@@ -198,7 +189,7 @@ export default function RegisterScreen() {
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                   />
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.eyeButton}
                     onPress={() => setShowPassword(!showPassword)}
                   >
@@ -207,7 +198,7 @@ export default function RegisterScreen() {
                       size={20}
                       color="rgba(255,255,255,0.6)"
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
@@ -228,7 +219,7 @@ export default function RegisterScreen() {
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!showConfirmPassword}
                   />
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.eyeButton}
                     onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
@@ -239,7 +230,7 @@ export default function RegisterScreen() {
                       size={20}
                       color="rgba(255,255,255,0.6)"
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               </View>
 
@@ -260,10 +251,9 @@ export default function RegisterScreen() {
                 />
               </View>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.checkRow}
                 onPress={() => setAgreePrivacy(!agreePrivacy)}
-                activeOpacity={0.8}
               >
                 <View
                   style={[
@@ -278,22 +268,20 @@ export default function RegisterScreen() {
                 <ThemedText style={styles.checkLabel}>
                   I have read and agree{" "}
                 </ThemedText>
-                <TouchableOpacity
-                  activeOpacity={0.8}
+                <Pressable
                   onPress={() => router.push("/auth/privacy")}
                 >
                   <ThemedText style={styles.privacyLink}>
                     [Privacy Agreement]
                   </ThemedText>
-                </TouchableOpacity>
-              </TouchableOpacity>
+                </Pressable>
+              </Pressable>
 
               {error ? (
                 <ThemedText style={styles.errorText}>{error}</ThemedText>
               ) : null}
-              <TouchableOpacity
+              <Pressable
                 style={styles.registerButtonWrap}
-                activeOpacity={0.8}
                 onPress={handleRegister}
                 disabled={loading}
               >
@@ -311,18 +299,17 @@ export default function RegisterScreen() {
                     </ThemedText>
                   )}
                 </LinearGradient>
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity
+              <Pressable
                 style={styles.loginButton}
                 onPress={() => router.replace("/auth/login")}
-                activeOpacity={0.8}
               >
                 <ThemedText style={styles.loginRowText}>
                   I have an account{" "}
                 </ThemedText>
                 <ThemedText style={styles.loginLink}>Login</ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </ScrollView>

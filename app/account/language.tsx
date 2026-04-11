@@ -16,7 +16,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Language Data ─────────────────────────────────────────────────────────────
@@ -45,10 +45,9 @@ function LanguageRow({
 }) {
   return (
     <>
-      <TouchableOpacity
+      <Pressable
         style={[styles.row, selected && styles.rowSelected]}
         onPress={onPress}
-        activeOpacity={0.75}
       >
         <View
           style={{
@@ -74,7 +73,7 @@ function LanguageRow({
         ) : (
           <View style={styles.emptyCircle} />
         )}
-      </TouchableOpacity>
+      </Pressable>
       {/* {showDivider && <View style={styles.divider} />} */}
     </>
   );

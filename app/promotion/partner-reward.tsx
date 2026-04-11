@@ -2,15 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { type Href, router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  Clipboard,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Clipboard, Image, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface LinkCopyBannerProps {
   link: string;
@@ -60,15 +52,14 @@ function StatsSection() {
         <Text style={[styles.statValue, styles.redValue]}>₹0.00</Text>
       </View>
 
-      <TouchableOpacity
+      <Pressable
         style={styles.recordLink}
         onPress={() =>
           router.push("/promotion/invitation-record" as Href)
         }
-        activeOpacity={0.7}
       >
         <Text style={styles.recordLinkText}>Invitation record »</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -287,10 +278,9 @@ function LinkCopyBanner({ link, onCopy }: LinkCopyBannerProps) {
         </View>
 
         {/* Right section with copy button */}
-        <TouchableOpacity
+        <Pressable
           style={styles.buttonWrapper}
           onPress={handleCopy}
-          activeOpacity={0.8}
         >
           {/* Angled teal background */}
           <View style={styles.angledBg} />
@@ -306,7 +296,7 @@ function LinkCopyBanner({ link, onCopy }: LinkCopyBannerProps) {
               }}
             />
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

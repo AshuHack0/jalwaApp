@@ -6,16 +6,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useRef, useState } from "react";
-import {
-  Dimensions,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -140,8 +131,7 @@ export default function InviteScreen() {
           </View>
 
           {/* ── Download QR Code button ── */}
-          <TouchableOpacity
-            activeOpacity={0.85}
+          <Pressable
             style={styles.downloadBtnWrap}
             onPress={handleDownloadQr}
           >
@@ -153,16 +143,15 @@ export default function InviteScreen() {
             >
               <Text style={styles.downloadBtnText}>Download QR Code</Text>
             </LinearGradient>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* ── Copy invitation link button ── */}
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <Pressable
             style={styles.copyBtn}
             onPress={handleCopyLink}
           >
             <Text style={styles.copyBtnText}>Copy invitation link</Text>
-          </TouchableOpacity>
+          </Pressable>
         </ScrollView>
       </View>
     </>

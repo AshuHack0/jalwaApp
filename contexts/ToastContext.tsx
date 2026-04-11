@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, Text, View, Pressable } from "react-native";
 
 export type ToastType = "success" | "error" | "info" | "warning";
 
@@ -47,12 +47,11 @@ function ToastOverlay({
       statusBarTranslucent
       onRequestClose={onHide}
     >
-      <TouchableOpacity
+      <Pressable
         style={styles.overlay}
-        activeOpacity={1}
         onPress={onHide}
       >
-        <TouchableOpacity activeOpacity={1} onPress={() => { }}>
+        <Pressable onPress={() => { }}>
           <View style={styles.box}>
             {toast.type === "error" || toast.type === "warning" ? <Text style={styles.iconText}>{TYPE_ICON[toast.type]}</Text> : null}
             {!!toast.title && !toast.message && <Text style={styles.title}>{toast.title}</Text>}
@@ -60,8 +59,8 @@ function ToastOverlay({
               <Text style={styles.title}>{toast.message}</Text>
             )}
           </View>
-        </TouchableOpacity>
-      </TouchableOpacity>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

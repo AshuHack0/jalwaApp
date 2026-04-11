@@ -11,7 +11,7 @@ import {
 } from "@expo-google-fonts/roboto";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, View, Pressable } from "react-native";
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = (width - 32 - 24) / 4; // 32 for padding (16*2), 24 for gap (8*3)
 
@@ -52,11 +52,10 @@ export function DepositMethodTabs({
     <View style={styles.methodsSection}>
       <View style={styles.methodsGrid}>
         {methods.map((method) => (
-          <TouchableOpacity
+          <Pressable
             key={method.id}
             style={styles.methodButton}
             onPress={() => method.enabled && onSelect(method.id)}
-            activeOpacity={method.enabled ? 0.7 : 1}
           >
             {selectedMethod === method.id ? (
               <LinearGradient
@@ -128,7 +127,7 @@ export function DepositMethodTabs({
                 )}
               </View>
             )}
-          </TouchableOpacity>
+          </Pressable>
         ))}
       </View>
     </View>

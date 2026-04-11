@@ -17,18 +17,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { API_BASE_URL } from "@/services/api/config";
@@ -128,11 +117,10 @@ export default function GiftScreen() {
 
             {!generatedCode ? (
               <>
-                <TouchableOpacity
+                <Pressable
                   style={styles.generateBtnWrapper}
                   onPress={handleGenerateCode}
                   disabled={generating}
-                  activeOpacity={0.8}
                 >
                   <View style={styles.generateBtn}>
                     {generating ? (
@@ -143,7 +131,7 @@ export default function GiftScreen() {
                       </Text>
                     )}
                   </View>
-                </TouchableOpacity>
+                </Pressable>
 
                 {generateError ? (
                   <Text style={styles.generateError}>{generateError}</Text>
@@ -153,22 +141,21 @@ export default function GiftScreen() {
               <View style={styles.codeRevealBox}>
                 <View style={styles.codeRow}>
                   <Text style={styles.codeText}>{generatedCode}</Text>
-                  <TouchableOpacity
+                  <Pressable
                     style={styles.copyBtn}
                     onPress={handleCopy}
-                    activeOpacity={0.75}
                   >
                     <Text style={styles.copyBtnText}>
                       {copied ? "Copied!" : "Copy"}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
                 {generatedAmount !== null && (
                   <Text style={styles.codeAmountText}>
                     Worth: ₹{generatedAmount}
                   </Text>
                 )}
-                <TouchableOpacity
+                <Pressable
                   onPress={() => {
                     setGeneratedCode(null);
                     setGenerateError(null);
@@ -178,7 +165,7 @@ export default function GiftScreen() {
                   <Text style={styles.regenerateLinkText}>
                     Generate Another
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             )}
           </View>

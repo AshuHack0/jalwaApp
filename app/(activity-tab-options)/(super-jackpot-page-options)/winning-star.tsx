@@ -1,15 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View, Pressable } from "react-native";
 
 /**
  * WinningStar Component
@@ -66,12 +57,12 @@ const WinningStar = ({ navigation }: any) => {
 
       {/* 1. HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           onPress={() => navigation?.goBack()}
           style={styles.backBtn}
         >
           <Ionicons name="chevron-back" size={26} color="#FFF" />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.headerTitle}>Winning star</Text>
         <View style={{ width: 40 }} />
       </View>

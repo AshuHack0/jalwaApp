@@ -1,14 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Modal, StyleSheet, TextInput, View, Pressable } from "react-native";
 import { useInitiateDeposit } from "@/services/api/hooks/useDeposit";
 import { useToast } from "@/contexts/ToastContext";
 import { ThemedText } from "./themed-text";
@@ -70,19 +63,17 @@ export function DepositModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableOpacity
+      <Pressable
         style={styles.overlay}
-        activeOpacity={1}
         onPress={onClose}
       >
-        <TouchableOpacity
-          activeOpacity={1}
+        <Pressable
           onPress={(e) => e.stopPropagation()}
           style={styles.modal}
         >
           <View style={styles.header}>
             <ThemedText style={styles.title}>Deposit</ThemedText>
-            <TouchableOpacity
+            <Pressable
               onPress={onClose}
               style={styles.closeButton}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -90,7 +81,7 @@ export function DepositModal({
               <View style={styles.closeCircle}>
                 <Ionicons name="close" size={18} color="#0a0e27" />
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <ThemedText style={styles.label}>Amount (₹)</ThemedText>
@@ -109,11 +100,10 @@ export function DepositModal({
             {QUICK_AMOUNTS.map((value) => {
               const isSelected = numAmount === value;
               return (
-                <TouchableOpacity
+                <Pressable
                   key={value}
                   style={[styles.quickButton, isSelected && styles.quickButtonActive]}
                   onPress={() => handleQuickAmount(value)}
-                  activeOpacity={0.8}
                 >
                   <ThemedText
                     style={[
@@ -123,14 +113,13 @@ export function DepositModal({
                   >
                     ₹{value}
                   </ThemedText>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>
 
-          <TouchableOpacity
+          <Pressable
             onPress={handleDeposit}
-            activeOpacity={0.8}
             style={styles.depositButtonWrap}
             disabled={isPending || numAmount <= 0}
           >
@@ -146,9 +135,9 @@ export function DepositModal({
                 <ThemedText style={styles.depositButtonText}>Deposit</ThemedText>
               )}
             </LinearGradient>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

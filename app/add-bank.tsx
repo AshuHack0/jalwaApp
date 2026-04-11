@@ -5,16 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useToast } from "@/contexts/ToastContext";
-import {
-  ActivityIndicator,
-  FlatList,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet, TextInput, View, Pressable } from "react-native";
 
 const BANK_LIST = [
   "Bank of Baroda",
@@ -231,12 +222,12 @@ export default function AddBankScreen() {
       <ThemedView style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="chevron-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.screenTitle}>
             Add a bank account number
           </ThemedText>
@@ -266,7 +257,7 @@ export default function AddBankScreen() {
               <Ionicons name="business" size={20} color="#7AFEC3" />
               <ThemedText style={styles.fieldLabel}>Choose a bank</ThemedText>
             </View>
-            <TouchableOpacity
+            <Pressable
               style={styles.selectBankButton}
               onPress={() => setShowBankModal(true)}
             >
@@ -283,7 +274,7 @@ export default function AddBankScreen() {
                 size={20}
                 color={selectedBank ? "#05012B" : "#fff"}
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* Full recipient's name */}
@@ -381,7 +372,7 @@ export default function AddBankScreen() {
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
+          <Pressable
             style={[
               styles.submitButton,
               (!selectedBank ||
@@ -390,7 +381,7 @@ export default function AddBankScreen() {
                 !phoneNumber ||
                 !ifscCode ||
                 submitting) &&
-                styles.submitButtonDisabled,
+              styles.submitButtonDisabled,
             ]}
             onPress={handleSubmit}
             disabled={
@@ -413,13 +404,13 @@ export default function AddBankScreen() {
                     !bankAccountNumber ||
                     !phoneNumber ||
                     !ifscCode) &&
-                    styles.submitButtonTextDisabled,
+                  styles.submitButtonTextDisabled,
                 ]}
               >
                 Save
               </ThemedText>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </ScrollView>
       </ThemedView>
 
@@ -435,7 +426,7 @@ export default function AddBankScreen() {
             {/* Modal Header */}
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Choose a bank</ThemedText>
-              <TouchableOpacity
+              <Pressable
                 onPress={() => {
                   setShowBankModal(false);
                   setBankSearch("");
@@ -443,7 +434,7 @@ export default function AddBankScreen() {
                 style={styles.modalCloseButton}
               >
                 <Ionicons name="close" size={24} color="#fff" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {/* Search Input */}
@@ -458,9 +449,9 @@ export default function AddBankScreen() {
                 autoCapitalize="none"
               />
               {bankSearch.length > 0 && (
-                <TouchableOpacity onPress={() => setBankSearch("")}>
+                <Pressable onPress={() => setBankSearch("")}>
                   <Ionicons name="close-circle" size={18} color="#92A8E3" />
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
 
@@ -471,7 +462,7 @@ export default function AddBankScreen() {
               showsVerticalScrollIndicator={false}
               style={styles.bankList}
               renderItem={({ item }) => (
-                <TouchableOpacity
+                <Pressable
                   style={[
                     styles.bankItem,
                     selectedBank === item && styles.bankItemSelected,
@@ -494,7 +485,7 @@ export default function AddBankScreen() {
                   {selectedBank === item && (
                     <Ionicons name="checkmark-circle" size={20} color="#7AFEC3" />
                   )}
-                </TouchableOpacity>
+                </Pressable>
               )}
               ListEmptyComponent={
                 <View style={styles.emptyList}>

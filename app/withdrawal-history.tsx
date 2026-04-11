@@ -17,7 +17,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 export default function WithdrawalHistoryScreen() {
   const router = useRouter();
@@ -54,12 +54,12 @@ export default function WithdrawalHistoryScreen() {
       <ThemedView style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.back()}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <ThemedText style={styles.screenTitle}>Withdrawal history</ThemedText>
           <View style={styles.placeholder} />
         </View>
@@ -72,7 +72,7 @@ export default function WithdrawalHistoryScreen() {
           {/* Filter Tabs */}
           <View style={styles.filterTabs}>
             {paymentMethods.map((method) => (
-              <TouchableOpacity
+              <Pressable
                 key={method.id}
                 style={[
                   styles.filterTab,
@@ -101,24 +101,24 @@ export default function WithdrawalHistoryScreen() {
                 >
                   {method.label}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
 
           {/* Status and Date Filters */}
           <View style={styles.filterRow}>
-            <TouchableOpacity style={styles.filterDropdown}>
+            <Pressable style={styles.filterDropdown}>
               <ThemedText style={styles.filterDropdownText}>
                 {selectedStatus}
               </ThemedText>
               <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterDropdown}>
+            </Pressable>
+            <Pressable style={styles.filterDropdown}>
               <ThemedText style={styles.filterDropdownText}>
                 {selectedDate}
               </ThemedText>
               <Ionicons name="chevron-down" size={18} color="#92A8E3" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* No Data Display */}

@@ -9,13 +9,7 @@ import {
 import { Image } from "expo-image";
 import { type Href, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ImageBackground, ScrollView, StyleSheet, View, Pressable } from "react-native";
 
 export default function ActivityScreen() {
   // Load the fonts
@@ -33,27 +27,27 @@ export default function ActivityScreen() {
     image: number;
     route: Href;
   }> = [
-    {
-      name: "Activity Award",
-      image: require("@/assets/activityReward-66772619.webp"),
-      route: "/activity/activity-award",
-    },
-    {
-      name: "Invitation bonus",
-      image: require("@/assets/invitationBonus-aa7acbd3.webp"),
-      route: "/activity/invitation-bonus",
-    },
-    {
-      name: "Betting rebate",
-      image: require("@/assets/BettingRebate-17d35455.webp"),
-      route: "/activity/betting-rebate",
-    },
-    {
-      name: "Super Jackpot",
-      image: require("@/assets/superJackpot-ecb648b4.webp"),
-      route: "/activity/super-jackpot",
-    },
-  ];
+      {
+        name: "Activity Award",
+        image: require("@/assets/activityReward-66772619.webp"),
+        route: "/activity/activity-award",
+      },
+      {
+        name: "Invitation bonus",
+        image: require("@/assets/invitationBonus-aa7acbd3.webp"),
+        route: "/activity/invitation-bonus",
+      },
+      {
+        name: "Betting rebate",
+        image: require("@/assets/BettingRebate-17d35455.webp"),
+        route: "/activity/betting-rebate",
+      },
+      {
+        name: "Super Jackpot",
+        image: require("@/assets/superJackpot-ecb648b4.webp"),
+        route: "/activity/super-jackpot",
+      },
+    ];
 
   return (
     <ThemedView style={styles.container}>
@@ -85,19 +79,19 @@ export default function ActivityScreen() {
               <ThemedText style={styles.bonusAmount}>{totalBonus}</ThemedText>
             </View>
           </View>
-          <TouchableOpacity style={styles.bonusDetailsButton}>
+          <Pressable style={styles.bonusDetailsButton}>
             <ThemedText
               style={[styles.bonusDetailsText]}
             >
               Bonus details
             </ThemedText>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Activity Categories Grid */}
         <View style={styles.categoriesGrid}>
           {activityCategories.map((category, index) => (
-            <TouchableOpacity
+            <Pressable
               key={index}
               style={styles.categoryCard}
               onPress={() => router.push(category.route)}
@@ -112,16 +106,15 @@ export default function ActivityScreen() {
               <ThemedText numberOfLines={2} style={styles.categoryLabel}>
                 {category.name}
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 
         {/* Main Activity Cards */}
         <View style={styles.mainCards}>
-          <TouchableOpacity
+          <Pressable
             style={[styles.mainCard, styles.giftsCard]}
             onPress={() => router.push("/account/gifts" as Href)}
-            activeOpacity={0.8}
           >
             <View style={styles.cardContent}>
               <ImageBackground
@@ -136,12 +129,11 @@ export default function ActivityScreen() {
                 </ThemedText>
               </View>
             </View>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             style={[styles.mainCard, styles.attendanceCard]}
             onPress={() => router.push("/activity/attendance-bonus" as Href)}
-            activeOpacity={0.8}
           >
             <View style={styles.cardContent}>
               <ImageBackground
@@ -159,16 +151,15 @@ export default function ActivityScreen() {
                 </ThemedText>
               </View>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Promotional Banners */}
         <View style={styles.bannersSection}>
           {PROMOTIONAL_BANNERS.map((banner) => (
-            <TouchableOpacity
+            <Pressable
               key={banner.id}
               style={styles.bannerCard}
-              activeOpacity={0.85}
               onPress={() =>
                 router.push({
                   pathname: "/activity/activity-details",
@@ -196,7 +187,7 @@ export default function ActivityScreen() {
                   {banner.title}
                 </ThemedText>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </View>
 
@@ -343,7 +334,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#011341",
     paddingVertical: 3,
     paddingHorizontal: 12,
-    paddingTop:8
+    paddingTop: 8
   },
   cardTitle: {
     fontSize: 16,

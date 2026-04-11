@@ -15,13 +15,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { router, Stack } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
@@ -320,9 +314,9 @@ export default function RulesScreen() {
               Different game types also have different payout percentages.{"\n"}
               The commission rate is specifically explained as follows
             </Text>
-            <TouchableOpacity activeOpacity={0.7} style={{ marginTop: 6 }}>
+            <Pressable style={{ marginTop: 6 }}>
               <Text style={styles.linkText}>View rebate ratio &gt;&gt;</Text>
-            </TouchableOpacity>
+            </Pressable>
           </RuleCard>
 
           {/* ── Rule 07 ── */}

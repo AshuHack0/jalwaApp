@@ -2,13 +2,7 @@ import { ThemedView } from "@/components/themed-view";
 import { CustomHeader } from "@/components/ui/CustomHeader";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -203,11 +197,10 @@ export default function RebateRatioScreen() {
             {TABS.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
-                <TouchableOpacity
+                <Pressable
                   key={tab.key}
                   style={[styles.tabItem, isActive && styles.tabItemActive]}
                   onPress={() => setActiveTab(tab.key)}
-                  activeOpacity={0.8}
                 >
                   <Text style={styles.tabIcon}>{tab.icon}</Text>
                   <Text
@@ -215,7 +208,7 @@ export default function RebateRatioScreen() {
                   >
                     {tab.key}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </ScrollView>

@@ -4,12 +4,7 @@ import type { DepositRecord } from "@/services/api/deposit";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
 
 function statusColor(status: DepositRecord["status"]) {
@@ -168,22 +163,22 @@ export function DepositHistoryPreview({
           ))}
 
           {deposits.length > 3 && (
-            <TouchableOpacity
+            <Pressable
               style={styles.viewAllButton}
               onPress={() =>
                 router.push(
                   gateway
                     ? {
-                        pathname: "/deposit-history",
-                        params: { filter: gateway === "usdt" ? "USDT" : "All" },
-                      }
+                      pathname: "/deposit-history",
+                      params: { filter: gateway === "usdt" ? "USDT" : "All" },
+                    }
                     : "/deposit-history"
                 )
               }
             >
               <ThemedText style={styles.viewAllText}>View all</ThemedText>
               <Ionicons name="chevron-forward" size={16} color="#7AFEC3" />
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
       )}

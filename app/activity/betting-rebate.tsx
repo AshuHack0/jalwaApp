@@ -1,13 +1,7 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { Image } from "expo-image";
@@ -32,9 +26,9 @@ export default function BettingRebate() {
       <View style={styles.container}>
         {/* HEADER */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <Pressable onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.headerTitle}>Rebate</Text>
           <View style={{ width: 24 }} />
         </View>
@@ -53,7 +47,7 @@ export default function BettingRebate() {
               {categories.map((item) => {
                 const isActive = activeTab === item.id;
                 return (
-                  <TouchableOpacity
+                  <Pressable
                     key={item.id}
                     style={styles.navBox}
                     onPress={() => setActiveTab(item.id)}
@@ -80,7 +74,7 @@ export default function BettingRebate() {
                         <Text style={styles.inactiveText}>{item.name}</Text>
                       </View>
                     )}
-                  </TouchableOpacity>
+                  </Pressable>
                 );
               })}
             </ScrollView>
@@ -108,8 +102,8 @@ export default function BettingRebate() {
 
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>{activeTab== "all" ? "Today rebate" : "Rebate rate"}</Text>
-                <Text style={[styles.statValue, { color: activeTab== "all" ? "#DD9137" : "#D23838" }]}>{ activeTab== "all" ? "0" : "0.15%"}</Text>
+                <Text style={styles.statLabel}>{activeTab == "all" ? "Today rebate" : "Rebate rate"}</Text>
+                <Text style={[styles.statValue, { color: activeTab == "all" ? "#DD9137" : "#D23838" }]}>{activeTab == "all" ? "0" : "0.15%"}</Text>
               </View>
               <View style={styles.statBox}>
                 <Text style={styles.statLabel}>Total rebate</Text>
@@ -121,9 +115,9 @@ export default function BettingRebate() {
               Automatic code washing at 01:00:00 every morning
             </Text>
 
-            <TouchableOpacity style={styles.rebateBtn}>
+            <Pressable style={styles.rebateBtn}>
               <Text style={styles.rebateBtnText}>One-Click Rebate</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* REBATE HISTORY */}
@@ -169,9 +163,9 @@ export default function BettingRebate() {
               </View>
             </View> */}
 
-            <TouchableOpacity style={styles.allHistoryBtn}>
+            <Pressable style={styles.allHistoryBtn}>
               <Text style={styles.allHistoryText}>All history</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </ScrollView>
       </View>
