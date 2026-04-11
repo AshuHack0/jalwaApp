@@ -1,7 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, Stack } from "expo-router";
+import { router, Stack, useFocusEffect } from "expo-router";
 import {
   EBGaramond_400Regular,
   EBGaramond_700Bold,
@@ -9,26 +9,19 @@ import {
 } from "@expo-google-fonts/eb-garamond";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFonts as useExpoFonts } from "expo-font";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
+  FlatList,
+  Dimensions
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, {
-  Easing,
-  FadeInDown,
-  FadeInUp,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withRepeat,
-  withSequence,
-  withTiming,
-} from "react-native-reanimated";
+import { DEFAULT_AVATAR_ID, getAvatarImageSource, getSelectedAvatarId } from "@/services/avatar-storage";
+import { ThemedText } from "@/components/themed-text";
 
 type BadgeTone = "gold" | "teal";
 
@@ -39,6 +32,7 @@ type VipBadge = {
 
 type BenefitItem = {
   icon: string;
+  url:string;
   title: string;
   subtitle: string;
   badges: VipBadge[];
@@ -54,9 +48,68 @@ type HistoryItem = {
   suffix?: string;
 };
 
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CAROUSEL_WIDTH = SCREEN_WIDTH - 16; // Account for pagePadding (8px on each side)
+const ITEM_WIDTH = CAROUSEL_WIDTH * 0.86;
+const ITEM_GAP = 12;
+
+const vipcards = [
+  {
+    image: require("@/assets/VipCards/vip1.png"),
+    title: "VIP1",
+    subtitle: "VIP1",
+  },
+  {
+    image: require("@/assets/VipCards/vip2.png"),
+    title: "VIP2",
+    subtitle: "VIP2",
+  },
+  {
+    image: require("@/assets/VipCards/vip3.png"),
+    title: "VIP3",
+    subtitle: "VIP3",
+  },
+  {
+    image: require("@/assets/VipCards/vip4.png"),
+    title: "VIP4",
+    subtitle: "VIP4",
+  },
+  {
+    image: require("@/assets/VipCards/vip5.png"),
+    title: "VIP5",
+    subtitle: "VIP5",
+  },
+  {
+    image: require("@/assets/VipCards/vip6.png"),
+    title: "VIP6",
+    subtitle: "VIP6",
+  },
+  {
+    image: require("@/assets/VipCards/vip7.png"),
+    title: "VIP7",
+    subtitle: "VIP7",
+  },
+  {
+    image: require("@/assets/VipCards/vip8.png"),
+    title: "VIP8",
+    subtitle: "VIP8",
+  },
+  {
+    image: require("@/assets/VipCards/vip9.png"),
+    title: "VIP9",
+    subtitle: "VIP9",
+  },
+  {
+    image: require("@/assets/VipCards/vip10.png"),
+    title: "VIP10",
+    subtitle: "VIP10",
+  },
+];
+
 const BENEFIT_ITEMS: BenefitItem[] = [
   {
     icon: "gift",
+    url:"https://www.jalwagame.win/assets/png/1-c9eacf75.webp",
     title: "Level up rewards",
     subtitle: "Each account can only receive 1 time",
     badges: [
@@ -66,6 +119,7 @@ const BENEFIT_ITEMS: BenefitItem[] = [
   },
   {
     icon: "brightness-percent",
+    url:"https://www.jalwagame.win/assets/png/2-70676554.webp",
     title: "Monthly reward",
     subtitle: "Each account can only receive 1 time per month",
     badges: [
@@ -75,6 +129,7 @@ const BENEFIT_ITEMS: BenefitItem[] = [
   },
   {
     icon: "cash-fast",
+    url:"https://www.jalwagame.win/assets/png/5-2c5b0016.webp",
     title: "Rebate rate",
     subtitle: "Increase income of rebate",
     badges: [{ tone: "teal", value: "0.04%" }],
@@ -135,12 +190,9 @@ function BadgePill({ tone, value }: VipBadge) {
         isGold ? styles.badgePillGold : styles.badgePillTeal,
       ]}
     >
-      <View
-        style={[
-          styles.badgeDot,
-          isGold ? styles.badgeDotGold : styles.badgeDotTeal,
-        ]}
-      />
+      {isGold && <Image source={{ uri: "https://www.jalwagame.win/assets/png/gold-b5be1e1b.webp" }} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
+      {tone === "teal" && value != "0.04%" && <Image source={require("@/assets/blankDiamond.png")} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
+      {tone === "teal" && value == "0.04%" && <Image source={require("@/assets/stack.png")} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
       <Text
         style={[
           styles.badgePillText,
@@ -153,18 +205,10 @@ function BadgePill({ tone, value }: VipBadge) {
   );
 }
 
-function BenefitRow({ icon, title, subtitle, badges }: BenefitItem) {
+function BenefitRow({ icon, title, subtitle, badges, url }: BenefitItem) {
   return (
     <View style={styles.benefitRow}>
-      <LinearGradient
-        colors={["#FFDA75", "#F5A621"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.benefitIconWrap}
-      >
-        <MaterialCommunityIcons name={icon as any} size={18} color="#FFF9E8" />
-      </LinearGradient>
-
+      <Image source={{ uri: url }} style={{ height: 53, aspectRatio: 1 }} contentFit="contain" />
       <View style={styles.benefitTextWrap}>
         <Text style={styles.benefitTitle}>{title}</Text>
         <Text style={styles.benefitSubtitle}>{subtitle}</Text>
@@ -365,76 +409,27 @@ export default function VipScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"history" | "rules">("history");
+  const [selectedAvatarId, setSelectedAvatarId] =
+    useState(DEFAULT_AVATAR_ID);
+  const [selectedIndex, setSelectedIndex] = useState(5);
 
-  const scrollY = useSharedValue(0);
-  const viewportHeight = useSharedValue(1);
-  const contentHeight = useSharedValue(1);
-  const floatingCard = useSharedValue(0);
-  const ctaPulse = useSharedValue(1);
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-  useEffect(() => {
-    floatingCard.value = withRepeat(
-      withSequence(
-        withTiming(-4, { duration: 1700, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 1700, easing: Easing.inOut(Easing.quad) }),
-      ),
-      -1,
-      false,
-    );
+      (async () => {
+        const avatarId = await getSelectedAvatarId();
 
-    ctaPulse.value = withRepeat(
-      withSequence(
-        withTiming(1.02, {
-          duration: 1200,
-          easing: Easing.inOut(Easing.quad),
-        }),
-        withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.quad) }),
-      ),
-      -1,
-      false,
-    );
-  }, [ctaPulse, floatingCard]);
+        if (isActive) {
+          setSelectedAvatarId(avatarId);
+        }
+      })();
 
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
-  const thumbHeight = useDerivedValue(() => {
-    const visible = Math.max(viewportHeight.value, 1);
-    const full = Math.max(contentHeight.value, visible);
-    return Math.max((visible / full) * visible, 68);
-  });
-
-  const scrollbarThumbStyle = useAnimatedStyle(() => {
-    const visible = Math.max(viewportHeight.value, 1);
-    const full = Math.max(contentHeight.value, visible);
-    const scrollable = Math.max(full - visible, 1);
-    const trackTravel = Math.max(visible - thumbHeight.value, 0);
-    const progress = Math.min(scrollY.value / scrollable, 1);
-
-    return {
-      height: thumbHeight.value,
-      opacity: full > visible + 2 ? 1 : 0,
-      transform: [{ translateY: progress * trackTravel }],
-    };
-  });
-
-  const floatingCardStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatingCard.value }],
-  }));
-
-  const medalStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: `${floatingCard.value * -1.25}deg` },
-      { scale: 1 + Math.abs(floatingCard.value) * 0.01 },
-    ],
-  }));
-
-  const ctaPulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: ctaPulse.value }],
-  }));
+      return () => {
+        isActive = false;
+      };
+    }, [])
+  );
 
   const displayName =
     typeof user?.nickname === "string" && user.nickname.trim()
@@ -456,75 +451,44 @@ export default function VipScreen() {
           <View style={styles.headerBack} />
         </View>
 
-        <View
-          style={styles.scrollArea}
-          onLayout={(event) => {
-            viewportHeight.value = event.nativeEvent.layout.height;
-          }}
-        >
-          <Animated.ScrollView
-            onScroll={onScroll}
-            scrollEventThrottle={16}
+        <View style={styles.scrollArea}>
+          <ScrollView
             showsVerticalScrollIndicator={false}
-            onContentSizeChange={(_, height) => {
-              contentHeight.value = height;
-            }}
             contentContainerStyle={[
               styles.scrollContent,
               { paddingBottom: insets.bottom + 28 },
             ]}
           >
-            <Animated.View entering={FadeInUp.duration(280)} style={styles.heroPanel}>
+            <View style={styles.heroPanel}>
               <View style={styles.profileRow}>
                 <View style={styles.avatarShell}>
                   <Image
-                    source={require("@/assets/1-a6662edb.webp")}
-                    style={styles.avatarImage}
+                    source={getAvatarImageSource(selectedAvatarId)}
+                    style={{ width: 74, height: 74, borderRadius: 100 }}
                     contentFit="cover"
                   />
-
-                  <View style={styles.avatarVipBubble}>
-                    <LinearGradient
-                      colors={["#FFF6B7", "#FDBB37"]}
-                      start={{ x: 0.1, y: 0.1 }}
-                      end={{ x: 0.9, y: 1 }}
-                      style={styles.avatarVipBubbleInner}
-                    >
-                      <Ionicons name="star" size={10} color="#FFF" />
-                    </LinearGradient>
-                  </View>
-                </View>
-
-                <View style={styles.profileMeta}>
-                  <View style={styles.vipRibbonRow}>
-                    <View style={styles.vipRibbonCoinWrap}>
-                      <LinearGradient
-                        colors={["#FFF8B7", "#FDB628"]}
-                        start={{ x: 0.2, y: 0.1 }}
-                        end={{ x: 0.9, y: 0.9 }}
-                        style={styles.vipRibbonCoin}
-                      >
-                        <Ionicons name="star" size={14} color="#FFF7E7" />
-                      </LinearGradient>
+                  <View style={{
+                    flex: 1,
+                    gap: 2,
+                  }}>
+                    <View style={styles.usernameRow}>
+                      <Image
+                        source={require("@/assets/pro.webp")}
+                        style={{ width: 40, height: 40 }}
+                        contentFit="contain"
+                      />
+                      <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
                     </View>
-                    <LinearGradient
-                      colors={["#AFFCE2", "#47D0B6"]}
-                      start={{ x: 0, y: 0.1 }}
-                      end={{ x: 1, y: 0.9 }}
-                      style={styles.vipRibbonTag}
-                    >
-                      <Text style={styles.vipRibbonText}>VIP6</Text>
-                    </LinearGradient>
                   </View>
-
-                  <Text style={styles.profileName}>{displayName}</Text>
                 </View>
+
+
               </View>
 
               <View style={styles.statGrid}>
                 <View style={styles.statCard}>
                   <Text style={[styles.statValue, styles.statValueTeal]}>
-                    207865462 EXP
+                    0 EXP
                   </Text>
                   <Text style={styles.statLabel}>My experience</Text>
                 </View>
@@ -537,76 +501,57 @@ export default function VipScreen() {
                   <Text style={styles.statLabel}>Payout time</Text>
                 </View>
               </View>
-            </Animated.View>
+            </View>
 
-            <Animated.View
-              entering={FadeInDown.delay(40).duration(320)}
-              style={styles.pagePadding}
-            >
+            <View style={styles.pagePadding}>
               <View style={styles.noteBanner}>
                 <Text style={styles.noteText}>
                   VIP level rewards are settled at 2:00 am on the 1st of every month
                 </Text>
               </View>
 
-              <View style={styles.vipCarouselRow}>
-                <Animated.View style={[styles.vipTierCard, floatingCardStyle]}>
-                  <LinearGradient
-                    colors={["#C5D2E8", "#9EB4D6", "#A8BDDE"]}
-                    start={{ x: 0, y: 0.15 }}
-                    end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                  />
 
-                  <View style={styles.vipTierShapePrimary} />
-                  <View style={styles.vipTierShapeSecondary} />
-
-                  <View style={styles.vipTierHeader}>
-                    <View style={styles.vipTierLead}>
-                      <View style={styles.vipTierIcon}>
-                        <Ionicons name="checkmark" size={17} color="#F5FAFF" />
-                      </View>
-                      <Text style={styles.vipTierLevel}>VIP1</Text>
-                    </View>
-
-                    <View style={styles.vipAchievedRow}>
-                      <Ionicons name="checkmark-circle" size={20} color="#48D54D" />
-                      <Text style={styles.vipAchievedText}>Achieved</Text>
-                    </View>
+              <FlatList
+                data={vipcards}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={ITEM_WIDTH + ITEM_GAP}
+                decelerationRate="fast"
+                snapToAlignment="start"
+                initialScrollIndex={5}
+                scrollEventThrottle={16}
+                onScroll={(e) => {
+                  const x = e.nativeEvent.contentOffset.x;
+                  const index = Math.round(x / (ITEM_WIDTH + ITEM_GAP));
+                  if (index !== selectedIndex && index >= 0 && index < vipcards.length) {
+                    setSelectedIndex(index);
+                  }
+                }}
+                getItemLayout={(data, index) => ({
+                  length: ITEM_WIDTH + ITEM_GAP,
+                  offset: (ITEM_WIDTH + ITEM_GAP) * index,
+                  index,
+                })}
+                contentContainerStyle={{
+                  paddingHorizontal: (CAROUSEL_WIDTH - ITEM_WIDTH) / 2,
+                  gap: ITEM_GAP,
+                  paddingVertical: 10,
+                }}
+                renderItem={({ item }) => (
+                  <View style={{ width: ITEM_WIDTH, height: 188, borderRadius: 5, overflow: "hidden" }}>
+                    <Image
+                      source={item.image}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
                   </View>
+                )}
+              />
 
-                  <View style={styles.vipTierSubtag}>
-                    <Text style={styles.vipTierSubtagText}>Dear VIP1 customer</Text>
-                  </View>
-
-                  <Text style={styles.vipTierDescription}>
-                    Please receive VIP1 level up bonus
-                  </Text>
-
-                  <Animated.View style={[styles.vipMedalWrap, medalStyle]}>
-                    <View style={styles.vipMedalGlow} />
-                    <LinearGradient
-                      colors={["#F5F8FD", "#CDD8EA", "#A4B5D3"]}
-                      start={{ x: 0.1, y: 0.1 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.vipMedalInner}
-                    >
-                      <Ionicons name="compass-outline" size={48} color="#7588AE" />
-                    </LinearGradient>
-                  </Animated.View>
-                </Animated.View>
-
-                <View style={styles.carouselThumb} />
-              </View>
-
-              <Animated.View entering={FadeInDown.delay(90).duration(320)} style={styles.panel}>
+              <View style={styles.panel}>
                 <View style={styles.sectionHeader}>
-                  <MaterialCommunityIcons
-                    name="diamond-stone"
-                    size={18}
-                    color="#30F2D4"
-                  />
-                  <Text style={styles.sectionTitle}>VIP1 Benefits level</Text>
+                  <Image source={require("@/assets/dimandIcon.png")} style={{ width: 21, height: 21 }} contentFit="contain" />
+                  <Text style={styles.sectionTitle}>{vipcards[selectedIndex]?.title || "VIP"} Benefits level</Text>
                 </View>
 
                 {BENEFIT_ITEMS.map((item, index) => (
@@ -620,9 +565,9 @@ export default function VipScreen() {
                     <BenefitRow {...item} />
                   </View>
                 ))}
-              </Animated.View>
+              </View>
 
-              <Animated.View entering={FadeInDown.delay(140).duration(320)} style={styles.panel}>
+              <View style={styles.panel}>
                 <View style={styles.sectionHeader}>
                   <MaterialCommunityIcons name="crown" size={18} color="#30F2D4" />
                   <Text style={styles.sectionTitle}>My benefits</Text>
@@ -647,9 +592,9 @@ export default function VipScreen() {
                     <RebatePromoArt />
                   </BenefitPromoCard>
                 </View>
-              </Animated.View>
+              </View>
 
-              <Animated.View entering={FadeInDown.delay(190).duration(320)} style={styles.panel}>
+              <View style={styles.panel}>
                 <View style={styles.tabRow}>
                   <Pressable
                     onPress={() => setActiveTab("history")}
@@ -687,11 +632,7 @@ export default function VipScreen() {
                 </View>
 
                 {activeTab === "history" ? (
-                  <Animated.View
-                    key="history"
-                    entering={FadeInDown.duration(220)}
-                    style={styles.historyList}
-                  >
+                  <View key="history" style={styles.historyList}>
                     {HISTORY_ITEMS.map((item, index) => (
                       <View key={`${item.title}-${index}`} style={styles.historyItemWrap}>
                         <HistoryRow item={item} />
@@ -700,13 +641,9 @@ export default function VipScreen() {
                         ) : null}
                       </View>
                     ))}
-                  </Animated.View>
+                  </View>
                 ) : (
-                  <Animated.View
-                    key="rules"
-                    entering={FadeInDown.duration(220)}
-                    style={styles.rulesList}
-                  >
+                  <View key="rules" style={styles.rulesList}>
                     {RULES.map((rule, index) => (
                       <View key={rule} style={styles.ruleItem}>
                         <LinearGradient
@@ -720,28 +657,22 @@ export default function VipScreen() {
                         <Text style={styles.ruleText}>{rule}</Text>
                       </View>
                     ))}
-                  </Animated.View>
+                  </View>
                 )}
 
-                <Animated.View style={ctaPulseStyle}>
-                  <Pressable>
-                    <LinearGradient
-                      colors={["#7CF5C8", "#2AC6D8"]}
-                      start={{ x: 0, y: 0.2 }}
-                      end={{ x: 1, y: 0.9 }}
-                      style={styles.viewAllButton}
-                    >
-                      <Text style={styles.viewAllButtonText}>View All</Text>
-                    </LinearGradient>
-                  </Pressable>
-                </Animated.View>
-              </Animated.View>
-            </Animated.View>
-          </Animated.ScrollView>
-
-          <Animated.View
-            style={[styles.scrollbarThumbOverlay, scrollbarThumbStyle]}
-          />
+                <Pressable>
+                  <LinearGradient
+                    colors={["#7CF5C8", "#2AC6D8"]}
+                    start={{ x: 0, y: 0.2 }}
+                    end={{ x: 1, y: 0.9 }}
+                    style={styles.viewAllButton}
+                  >
+                    <Text style={styles.viewAllButtonText}>View All</Text>
+                  </LinearGradient>
+                </Pressable>
+              </View>
+            </View>
+          </ScrollView>
         </View>
       </View>
     </>
@@ -768,10 +699,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
-    color: "#F1F5FF",
-    fontSize: 26,
-    fontFamily: "SerifBold",
-    letterSpacing: 0.3,
+    color: "white",
+    fontSize: 19
   },
   scrollArea: {
     flex: 1,
@@ -780,10 +709,11 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   heroPanel: {
-    backgroundColor: "#071C57",
+    backgroundColor: "#021341",
     paddingHorizontal: 14,
     paddingTop: 8,
-    paddingBottom: 14,
+    paddingBottom: 50,
+    marginBottom: 30
   },
   profileRow: {
     flexDirection: "row",
@@ -791,13 +721,36 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   avatarShell: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    overflow: "hidden",
-    position: "relative",
-    backgroundColor: "#102A6A",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
   },
+  usernameRow: {
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    marginTop: -10
+  },
+  username: {
+    fontSize: 14,
+    color: "#fff",
+    fontWeight: "500",
+    marginTop: -6
+  },
+  vipBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+  },
+  vipText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#fff",
+  },
+
   avatarImage: {
     width: "100%",
     height: "100%",
@@ -866,44 +819,44 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   statGrid: {
+    position: "absolute",
     flexDirection: "row",
-    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    left: 0,
+    right: 0,
+    bottom: -25,
+    paddingHorizontal: 14,
+    gap: 20,
     marginTop: 14,
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#0A286B",
-    borderRadius: 10,
-    minHeight: 82,
+    backgroundColor: "#001C54",
+    borderRadius: 8,
+    minHeight: 64,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 12,
   },
   statValue: {
-    color: "#FFFFFF",
-    fontFamily: "SerifBold",
-    fontSize: 18,
-    textAlign: "center",
+
   },
   statValueTeal: {
-    color: "#22E6CA",
-    fontSize: 18,
+    color: "#00ecbe",
+    fontSize: 14,
   },
   statValueLarge: {
-    color: "#FFFFFF",
-    fontSize: 26,
-    fontFamily: "SerifBold",
+    color: "#e3efff",
+    fontSize: 19,
+    fontWeight: "700"
   },
   statValueSmall: {
-    color: "#BFC9EB",
-    fontSize: 18,
-    fontFamily: "SerifRegular",
+    color: "#92a8e3",
+    fontSize: 12
   },
   statLabel: {
-    color: "#C4CDED",
+    color: "#92a8e3",
     fontSize: 12,
-    fontFamily: "SerifRegular",
     marginTop: 3,
   },
   pagePadding: {
@@ -911,19 +864,14 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   noteBanner: {
-    backgroundColor: "#060C3A",
-    borderWidth: 1,
-    borderColor: "#0A3C86",
-    borderRadius: 9,
     paddingHorizontal: 12,
     paddingVertical: 10,
     marginBottom: 10,
   },
   noteText: {
-    color: "#DEE7FF",
-    fontSize: 12.5,
-    fontFamily: "SerifRegular",
-    lineHeight: 16,
+    color: "#92a8e3",
+    fontSize: 12,
+    marginBottom:-16
   },
   vipCarouselRow: {
     flexDirection: "row",
@@ -934,7 +882,7 @@ const styles = StyleSheet.create({
   vipTierCard: {
     flex: 1,
     minHeight: 175,
-    borderRadius: 14,
+    borderRadius: 5,
     overflow: "hidden",
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -961,12 +909,11 @@ const styles = StyleSheet.create({
   vipTierHeader: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
   },
   vipTierLead: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 4,
   },
   vipTierIcon: {
     width: 24,
@@ -978,43 +925,35 @@ const styles = StyleSheet.create({
   },
   vipTierLevel: {
     color: "#F7FBFF",
-    fontSize: 30,
+    fontSize: 25,
     fontFamily: "SerifBold",
-    lineHeight: 33,
   },
   vipAchievedRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginRight: 64,
+    gap: 3,
+    marginLeft: 10
   },
   vipAchievedText: {
-    color: "#D9F39C",
-    fontSize: 16,
-    fontFamily: "SerifRegular",
+    color: "white",
+    fontSize: 11
   },
   vipTierSubtag: {
     alignSelf: "flex-start",
-    marginTop: 6,
-    backgroundColor: "rgba(255,255,255,0.16)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.38)",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    borderRadius: 2,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
   },
   vipTierSubtagText: {
-    color: "#F7FBFF",
-    fontSize: 11.5,
-    fontFamily: "SerifRegular",
+    color: "white",
+    fontSize: 11
   },
   vipTierDescription: {
-    marginTop: 72,
-    width: "74%",
-    color: "#F7FBFF",
-    fontSize: 18,
-    fontFamily: "SerifBold",
-    lineHeight: 24,
+    marginTop: 40,
+    color: "white",
+    fontSize: 14,
   },
   vipMedalWrap: {
     position: "absolute",
@@ -1048,10 +987,11 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   panel: {
-    backgroundColor: "#081A55",
+    backgroundColor: "#021341",
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
+    marginTop: 10
   },
   sectionHeader: {
     flexDirection: "row",
@@ -1060,13 +1000,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    color: "#F3F8FF",
+    color: "#e3efff",
     fontSize: 18,
     fontFamily: "SerifBold",
   },
   benefitRowWrap: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#0D2A6B",
     paddingBottom: 10,
     marginBottom: 10,
   },
@@ -1088,44 +1026,45 @@ const styles = StyleSheet.create({
   },
   benefitTextWrap: {
     flex: 1,
+    gap:2,
+    justifyContent:"space-between",
     marginLeft: 10,
-    marginRight: 8,
+    marginRight: 8
   },
   benefitTitle: {
-    color: "#F5F8FF",
-    fontSize: 13,
+    color: "#e3efff",
+    fontSize: 16,
     fontFamily: "BahnschriftBold",
   },
   benefitSubtitle: {
-    color: "#93A1D6",
-    fontSize: 10.8,
+    color: "#92a8e3",
+    fontSize: 12,
     fontFamily: "BahnschriftRegular",
     lineHeight: 13,
     marginTop: 2,
+    width:"90%"
   },
   benefitBadges: {
     alignItems: "flex-end",
     gap: 6,
   },
   badgePill: {
-    minWidth: 48,
+    minWidth: 60,
     height: 20,
-    borderRadius: 6,
-    paddingHorizontal: 6,
+    borderRadius: 4,
+    paddingHorizontal: 5,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 5,
   },
   badgePillGold: {
-    backgroundColor: "#0A245C",
-    borderWidth: 1,
-    borderColor: "#E7A43E",
+    borderWidth: 0.6,
+    borderColor: "#DD9137",
   },
   badgePillTeal: {
-    backgroundColor: "#071C54",
-    borderWidth: 1,
-    borderColor: "#00E6C6",
+    borderWidth: 0.6,
+    borderColor: "#00ECBE",
   },
   badgeDot: {
     width: 7,
@@ -1139,14 +1078,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#36F2D0",
   },
   badgePillText: {
-    fontSize: 10.2,
+    fontSize: 12,
     fontFamily: "BahnschriftBold",
   },
   badgePillTextGold: {
-    color: "#F2BE57",
+    color: "#DD9137",
   },
   badgePillTextTeal: {
-    color: "#3BF5D5",
+    color: "#00ECBE"
   },
   benefitsGrid: {
     flexDirection: "row",
