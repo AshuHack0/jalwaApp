@@ -256,6 +256,7 @@ function BenefitPromoCard({
   subtitle,
   actionLabel,
   primary,
+  received,
   onPress,
   children,
 }: {
@@ -263,6 +264,7 @@ function BenefitPromoCard({
   subtitle: string;
   actionLabel: string;
   primary?: boolean;
+  received?: boolean;
   onPress?: () => void;
   children: React.ReactNode;
 }) {
@@ -283,7 +285,11 @@ function BenefitPromoCard({
       </View>
       <View style={styles.promoContent}>
         <Pressable onPress={onPress}>
-          {primary ? (
+          {received ? (
+            <View style={styles.receivedAction}>
+              <Text style={styles.receivedActionText}>{actionLabel}</Text>
+            </View>
+          ) : primary ? (
             <LinearGradient
               colors={["#7CF5C8", "#2AC6D8"]}
               start={{ x: 0, y: 0.2 }}
@@ -539,8 +545,8 @@ export default function VipScreen() {
                   <BenefitPromoCard
                     title="Level up rewards"
                     subtitle="Each account can only receive 1 time"
-                    actionLabel="Receive"
-                    primary
+                    actionLabel="Received"
+                    received
                   >
                     <LinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
@@ -557,12 +563,10 @@ export default function VipScreen() {
                   </BenefitPromoCard>
 
                   <BenefitPromoCard
-                    title="Rebate rate"
-                    subtitle="Increase income of rebate"
-                    actionLabel="Check the details"
-                    onPress={() =>
-                      router.push("/activity/betting-rebate" as any)
-                    }
+                    title="Monthly reward"
+                    subtitle="Each account can only receive 1 time per month"
+                    actionLabel="Received"
+                    received
                   >
                     <LinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
@@ -1243,6 +1247,18 @@ const styles = StyleSheet.create({
     minHeight: 24,
     marginTop: 2,
     marginBottom: 8,
+  },
+  receivedAction: {
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#1E3068",
+  },
+  receivedActionText: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontFamily: "SerifRegular",
   },
   primaryAction: {
     height: 30,
