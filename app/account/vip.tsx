@@ -11,7 +11,6 @@ import {
   useFonts as useSerifFonts,
 } from "@expo-google-fonts/eb-garamond";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFonts as useExpoFonts } from "expo-font";
 import { Image } from "expo-image";
 import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import { router, Stack, useFocusEffect } from "expo-router";
@@ -454,6 +453,7 @@ function SectionHeader({ number }: { number: string }) {
         fontWeight="600"
         fill="white"
         textAnchor="middle"
+        fontFamily="SerifRegular"
       >
         {number}
       </SvgText>
@@ -515,11 +515,11 @@ function HistoryRow({ item }: { item: HistoryItem }) {
 }
 
 export default function VipScreen() {
-  useExpoFonts({
-    BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
-    BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
-    BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
-  });
+  // useExpoFonts({
+  //   BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
+  //   BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
+  //   BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
+  // });
   useSerifFonts({
     SerifRegular: EBGaramond_400Regular,
     SerifBold: EBGaramond_700Bold,
@@ -846,11 +846,29 @@ export default function VipScreen() {
                     </View>
                   ) : (
                     <View key="rules" style={styles.rulesList}>
+                      <View style={{ flex: 1, alignItems: "center" }}>
+                        <Text
+                          style={{
+                            color: "#02ECBE",
+                            fontFamily: "SerifBold",
+                            fontSize: 20,
+                          }}
+                        >
+                          VIP privileges
+                        </Text>
+                        <Text
+                          style={{
+                            color: "#A4B0E1",
+                            fontFamily: "SerifRegular",
+                            fontSize: 15,
+                          }}
+                        >
+                          VIP rule description
+                        </Text>
+                      </View>
                       {RULES.map((rule, index) => (
                         <>
-                          <View></View>
-                          {/* ----------------------------- */}
-                          <RuleCard number={rule.title}>
+                          <RuleCard number={rule.title} key={index + 1}>
                             <Text style={styles.ruleText}>{rule.body}</Text>
                           </RuleCard>
                         </>
@@ -1595,7 +1613,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 16,
     fontSize: 12.8,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
   },
   rulesList: {
     gap: 10,
@@ -1632,7 +1650,7 @@ const styles = StyleSheet.create({
   ruleText: {
     color: "#A4B0E1",
     fontSize: 11.2,
-    lineHeight: 15,
+    lineHeight: 20,
     fontFamily: "SerifRegular",
   },
   viewAllButton: {
