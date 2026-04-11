@@ -1,7 +1,10 @@
+import { ThemedText } from "@/components/themed-text";
 import { useAuth } from "@/contexts/AuthContext";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { router, Stack, useFocusEffect } from "expo-router";
+import {
+  DEFAULT_AVATAR_ID,
+  getAvatarImageSource,
+  getSelectedAvatarId,
+} from "@/services/avatar-storage";
 import {
   EBGaramond_400Regular,
   EBGaramond_700Bold,
@@ -9,19 +12,20 @@ import {
 } from "@expo-google-fonts/eb-garamond";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFonts as useExpoFonts } from "expo-font";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { router, Stack, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Dimensions,
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  FlatList,
-  Dimensions
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DEFAULT_AVATAR_ID, getAvatarImageSource, getSelectedAvatarId } from "@/services/avatar-storage";
-import { ThemedText } from "@/components/themed-text";
 
 type BadgeTone = "gold" | "teal";
 
@@ -32,7 +36,7 @@ type VipBadge = {
 
 type BenefitItem = {
   icon: string;
-  url:string;
+  url: string;
   title: string;
   subtitle: string;
   badges: VipBadge[];
@@ -109,7 +113,7 @@ const vipcards = [
 const BENEFIT_ITEMS: BenefitItem[] = [
   {
     icon: "gift",
-    url:"https://www.jalwagame.win/assets/png/1-c9eacf75.webp",
+    url: "https://www.jalwagame.win/assets/png/1-c9eacf75.webp",
     title: "Level up rewards",
     subtitle: "Each account can only receive 1 time",
     badges: [
@@ -119,7 +123,7 @@ const BENEFIT_ITEMS: BenefitItem[] = [
   },
   {
     icon: "brightness-percent",
-    url:"https://www.jalwagame.win/assets/png/2-70676554.webp",
+    url: "https://www.jalwagame.win/assets/png/2-70676554.webp",
     title: "Monthly reward",
     subtitle: "Each account can only receive 1 time per month",
     badges: [
@@ -129,7 +133,7 @@ const BENEFIT_ITEMS: BenefitItem[] = [
   },
   {
     icon: "cash-fast",
-    url:"https://www.jalwagame.win/assets/png/5-2c5b0016.webp",
+    url: "https://www.jalwagame.win/assets/png/5-2c5b0016.webp",
     title: "Rebate rate",
     subtitle: "Increase income of rebate",
     badges: [{ tone: "teal", value: "0.04%" }],
@@ -190,9 +194,29 @@ function BadgePill({ tone, value }: VipBadge) {
         isGold ? styles.badgePillGold : styles.badgePillTeal,
       ]}
     >
-      {isGold && <Image source={{ uri: "https://www.jalwagame.win/assets/png/gold-b5be1e1b.webp" }} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
-      {tone === "teal" && value != "0.04%" && <Image source={require("@/assets/blankDiamond.png")} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
-      {tone === "teal" && value == "0.04%" && <Image source={require("@/assets/stack.png")} style={{ height: 14, aspectRatio: 1 }} contentFit="contain" />}
+      {isGold && (
+        <Image
+          source={{
+            uri: "https://www.jalwagame.win/assets/png/gold-b5be1e1b.webp",
+          }}
+          style={{ height: 14, aspectRatio: 1 }}
+          contentFit="contain"
+        />
+      )}
+      {tone === "teal" && value != "0.04%" && (
+        <Image
+          source={require("@/assets/blankDiamond.png")}
+          style={{ height: 14, aspectRatio: 1 }}
+          contentFit="contain"
+        />
+      )}
+      {tone === "teal" && value == "0.04%" && (
+        <Image
+          source={require("@/assets/stack.png")}
+          style={{ height: 14, aspectRatio: 1 }}
+          contentFit="contain"
+        />
+      )}
       <Text
         style={[
           styles.badgePillText,
@@ -208,7 +232,11 @@ function BadgePill({ tone, value }: VipBadge) {
 function BenefitRow({ icon, title, subtitle, badges, url }: BenefitItem) {
   return (
     <View style={styles.benefitRow}>
-      <Image source={{ uri: url }} style={{ height: 53, aspectRatio: 1 }} contentFit="contain" />
+      <Image
+        source={{ uri: url }}
+        style={{ height: 53, aspectRatio: 1 }}
+        contentFit="contain"
+      />
       <View style={styles.benefitTextWrap}>
         <Text style={styles.benefitTitle}>{title}</Text>
         <Text style={styles.benefitSubtitle}>{subtitle}</Text>
@@ -218,105 +246,6 @@ function BenefitRow({ icon, title, subtitle, badges, url }: BenefitItem) {
         {badges.map((badge) => (
           <BadgePill key={`${title}-${badge.tone}-${badge.value}`} {...badge} />
         ))}
-      </View>
-    </View>
-  );
-}
-
-function RewardPromoArt() {
-  return (
-    <View style={styles.promoArtShell}>
-      <LinearGradient
-        colors={["#7BF7D7", "#35CAE0"]}
-        start={{ x: 0.1, y: 0.1 }}
-        end={{ x: 0.9, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-      <Image
-        source={require("@/assets/giftRedeem-bb2f7a92.webp")}
-        style={styles.rewardArtImage}
-        contentFit="cover"
-      />
-      <Image
-        source={require("@/assets/coin.png")}
-        style={[styles.smallCoin, styles.smallCoinLeft]}
-        contentFit="contain"
-      />
-      <Image
-        source={require("@/assets/coin.png")}
-        style={[styles.smallCoin, styles.smallCoinRight]}
-        contentFit="contain"
-      />
-      <View style={[styles.cornerChip, styles.cornerChipGold]}>
-        <Text style={styles.cornerChipTextGold}>60</Text>
-      </View>
-      <View
-        style={[
-          styles.cornerChip,
-          styles.cornerChipTeal,
-          styles.cornerChipRight,
-        ]}
-      >
-        <Text style={styles.cornerChipTextTeal}>0</Text>
-      </View>
-    </View>
-  );
-}
-
-function RebatePromoArt() {
-  return (
-    <View style={styles.promoArtShell}>
-      <LinearGradient
-        colors={["#82F6D6", "#25B1D8"]}
-        start={{ x: 0.15, y: 0.05 }}
-        end={{ x: 0.95, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <View style={styles.rebateTreasureWrap}>
-        <LinearGradient
-          colors={["#FFC94D", "#D08E16"]}
-          start={{ x: 0.2, y: 0.1 }}
-          end={{ x: 0.8, y: 1 }}
-          style={styles.rebateTreasureBase}
-        >
-          <MaterialCommunityIcons name="help-box" size={34} color="#FFF3B8" />
-        </LinearGradient>
-      </View>
-
-      <Image
-        source={require("@/assets/coin.png")}
-        style={[styles.largeCoin, styles.largeCoinFront]}
-        contentFit="contain"
-      />
-      <Image
-        source={require("@/assets/coin.png")}
-        style={[styles.largeCoin, styles.largeCoinBack]}
-        contentFit="contain"
-      />
-      <Image
-        source={require("@/assets/coin.png")}
-        style={[styles.smallCoin, styles.smallCoinTop]}
-        contentFit="contain"
-      />
-
-      <View style={[styles.bubbleBadge, styles.bubbleBadgeLeft]}>
-        <MaterialCommunityIcons name="currency-usd" size={12} color="#FFCA50" />
-      </View>
-      <View style={[styles.bubbleBadge, styles.bubbleBadgeRight]}>
-        <MaterialCommunityIcons name="help" size={12} color="#79F6D3" />
-      </View>
-      <View style={[styles.cornerChip, styles.cornerChipGold]}>
-        <Text style={styles.cornerChipTextGold}>3</Text>
-      </View>
-      <View
-        style={[
-          styles.cornerChip,
-          styles.cornerChipTeal,
-          styles.cornerChipRight,
-        ]}
-      >
-        <Text style={styles.cornerChipTextTeal}>0</Text>
       </View>
     </View>
   );
@@ -339,12 +268,20 @@ function BenefitPromoCard({
 }) {
   return (
     <View style={styles.promoCard}>
-      {children}
-
+      <View
+        style={{
+          backgroundColor: "#001C54",
+          borderRadius: 10,
+          overflow: "hidden",
+        }}
+      >
+        {children}
+        <View style={{ paddingHorizontal: 6, backgroundColor: "#001C54" }}>
+          <Text style={styles.promoTitle}>{title}</Text>
+          <Text style={styles.promoSubtitle}>{subtitle}</Text>
+        </View>
+      </View>
       <View style={styles.promoContent}>
-        <Text style={styles.promoTitle}>{title}</Text>
-        <Text style={styles.promoSubtitle}>{subtitle}</Text>
-
         <Pressable onPress={onPress}>
           {primary ? (
             <LinearGradient
@@ -380,7 +317,10 @@ function HistoryRow({ item }: { item: HistoryItem }) {
       {item.badges ? (
         <View style={styles.historyBadgeStack}>
           {item.badges.map((badge) => (
-            <BadgePill key={`${item.title}-${badge.tone}-${badge.value}`} {...badge} />
+            <BadgePill
+              key={`${item.title}-${badge.tone}-${badge.value}`}
+              {...badge}
+            />
           ))}
         </View>
       ) : item.value ? (
@@ -409,8 +349,7 @@ export default function VipScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"history" | "rules">("history");
-  const [selectedAvatarId, setSelectedAvatarId] =
-    useState(DEFAULT_AVATAR_ID);
+  const [selectedAvatarId, setSelectedAvatarId] = useState(DEFAULT_AVATAR_ID);
   const [selectedIndex, setSelectedIndex] = useState(5);
 
   useFocusEffect(
@@ -428,7 +367,7 @@ export default function VipScreen() {
       return () => {
         isActive = false;
       };
-    }, [])
+    }, []),
   );
 
   const displayName =
@@ -467,35 +406,37 @@ export default function VipScreen() {
                     style={{ width: 74, height: 74, borderRadius: 100 }}
                     contentFit="cover"
                   />
-                  <View style={{
-                    flex: 1,
-                    gap: 2,
-                  }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      gap: 2,
+                    }}
+                  >
                     <View style={styles.usernameRow}>
                       <Image
                         source={require("@/assets/pro.webp")}
                         style={{ width: 40, height: 40 }}
                         contentFit="contain"
                       />
-                      <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
+                      <ThemedText style={styles.username}>
+                        MEMBERNNGH2JM8
+                      </ThemedText>
                     </View>
                   </View>
                 </View>
-
-
               </View>
 
               <View style={styles.statGrid}>
                 <View style={styles.statCard}>
                   <Text style={[styles.statValue, styles.statValueTeal]}>
-                    0 EXP
+                    207865479 EXP
                   </Text>
                   <Text style={styles.statLabel}>My experience</Text>
                 </View>
 
                 <View style={styles.statCard}>
                   <Text style={styles.statValue}>
-                    <Text style={styles.statValueLarge}>23</Text>
+                    <Text style={styles.statValueLarge}>20</Text>
                     <Text style={styles.statValueSmall}> Days</Text>
                   </Text>
                   <Text style={styles.statLabel}>Payout time</Text>
@@ -506,10 +447,10 @@ export default function VipScreen() {
             <View style={styles.pagePadding}>
               <View style={styles.noteBanner}>
                 <Text style={styles.noteText}>
-                  VIP level rewards are settled at 2:00 am on the 1st of every month
+                  VIP level rewards are settled at 2:00 am on the 1st of every
+                  month
                 </Text>
               </View>
-
 
               <FlatList
                 data={vipcards}
@@ -523,7 +464,11 @@ export default function VipScreen() {
                 onScroll={(e) => {
                   const x = e.nativeEvent.contentOffset.x;
                   const index = Math.round(x / (ITEM_WIDTH + ITEM_GAP));
-                  if (index !== selectedIndex && index >= 0 && index < vipcards.length) {
+                  if (
+                    index !== selectedIndex &&
+                    index >= 0 &&
+                    index < vipcards.length
+                  ) {
                     setSelectedIndex(index);
                   }
                 }}
@@ -538,7 +483,14 @@ export default function VipScreen() {
                   paddingVertical: 10,
                 }}
                 renderItem={({ item }) => (
-                  <View style={{ width: ITEM_WIDTH, height: 188, borderRadius: 5, overflow: "hidden" }}>
+                  <View
+                    style={{
+                      width: ITEM_WIDTH,
+                      height: 188,
+                      borderRadius: 5,
+                      overflow: "hidden",
+                    }}
+                  >
                     <Image
                       source={item.image}
                       style={{ width: "100%", height: "100%" }}
@@ -550,8 +502,14 @@ export default function VipScreen() {
 
               <View style={styles.panel}>
                 <View style={styles.sectionHeader}>
-                  <Image source={require("@/assets/dimandIcon.png")} style={{ width: 21, height: 21 }} contentFit="contain" />
-                  <Text style={styles.sectionTitle}>{vipcards[selectedIndex]?.title || "VIP"} Benefits level</Text>
+                  <Image
+                    source={require("@/assets/dimandIcon.png")}
+                    style={{ width: 21, height: 21 }}
+                    contentFit="contain"
+                  />
+                  <Text style={styles.sectionTitle}>
+                    {vipcards[selectedIndex]?.title || "VIP"} Benefits level
+                  </Text>
                 </View>
 
                 {BENEFIT_ITEMS.map((item, index) => (
@@ -569,7 +527,11 @@ export default function VipScreen() {
 
               <View style={styles.panel}>
                 <View style={styles.sectionHeader}>
-                  <MaterialCommunityIcons name="crown" size={18} color="#30F2D4" />
+                  <MaterialCommunityIcons
+                    name="crown"
+                    size={18}
+                    color="#30F2D4"
+                  />
                   <Text style={styles.sectionTitle}>My benefits</Text>
                 </View>
 
@@ -580,16 +542,61 @@ export default function VipScreen() {
                     actionLabel="Receive"
                     primary
                   >
-                    <RewardPromoArt />
+                    <LinearGradient
+                      colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
+                      start={{ x: 1, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.promoArtShell}
+                    >
+                      <Image
+                        source={require("@/assets/mybenifit1.webp")}
+                        style={StyleSheet.absoluteFill}
+                        contentFit="cover"
+                      />
+                    </LinearGradient>
                   </BenefitPromoCard>
 
                   <BenefitPromoCard
                     title="Rebate rate"
                     subtitle="Increase income of rebate"
                     actionLabel="Check the details"
-                    onPress={() => router.push("/activity/betting-rebate" as any)}
+                    onPress={() =>
+                      router.push("/activity/betting-rebate" as any)
+                    }
                   >
-                    <RebatePromoArt />
+                    <LinearGradient
+                      colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
+                      start={{ x: 1, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.promoArtShell}
+                    >
+                      <Image
+                        source={require("@/assets/mybenifit2.webp")}
+                        style={StyleSheet.absoluteFill}
+                        contentFit="cover"
+                      />
+                    </LinearGradient>
+                  </BenefitPromoCard>
+                  <BenefitPromoCard
+                    title="Rebate rate"
+                    subtitle="Increase income of rebate"
+                    actionLabel="Check the details"
+                    onPress={() =>
+                      router.push("/activity/betting-rebate" as any)
+                    }
+                  >
+                    <LinearGradient
+                      colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
+                      start={{ x: 1, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.promoArtShell}
+                    >
+                      <Image
+                        source={require("@/assets/mybenifit3.webp")}
+                        style={StyleSheet.absoluteFill}
+                        contentFit="cover"
+                      />
+                    </LinearGradient>
                   </BenefitPromoCard>
                 </View>
               </View>
@@ -630,46 +637,51 @@ export default function VipScreen() {
                     </Text>
                   </Pressable>
                 </View>
-
-                {activeTab === "history" ? (
-                  <View key="history" style={styles.historyList}>
-                    {HISTORY_ITEMS.map((item, index) => (
-                      <View key={`${item.title}-${index}`} style={styles.historyItemWrap}>
-                        <HistoryRow item={item} />
-                        {index !== HISTORY_ITEMS.length - 1 ? (
-                          <View style={styles.divider} />
-                        ) : null}
-                      </View>
-                    ))}
-                  </View>
-                ) : (
-                  <View key="rules" style={styles.rulesList}>
-                    {RULES.map((rule, index) => (
-                      <View key={rule} style={styles.ruleItem}>
-                        <LinearGradient
-                          colors={["#74F6CC", "#24C7D8"]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}
-                          style={styles.ruleNumber}
+                <View style={{}}>
+                  {activeTab === "history" ? (
+                    <View key="history" style={styles.historyList}>
+                      {HISTORY_ITEMS.map((item, index) => (
+                        <View
+                          key={`${item.title}-${index}`}
+                          style={styles.historyItemWrap}
                         >
-                          <Text style={styles.ruleNumberText}>{index + 1}</Text>
-                        </LinearGradient>
-                        <Text style={styles.ruleText}>{rule}</Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-
-                <Pressable>
-                  <LinearGradient
-                    colors={["#7CF5C8", "#2AC6D8"]}
-                    start={{ x: 0, y: 0.2 }}
-                    end={{ x: 1, y: 0.9 }}
-                    style={styles.viewAllButton}
-                  >
-                    <Text style={styles.viewAllButtonText}>View All</Text>
-                  </LinearGradient>
-                </Pressable>
+                          <HistoryRow item={item} />
+                          {index !== HISTORY_ITEMS.length - 1 ? (
+                            <View style={styles.divider} />
+                          ) : null}
+                        </View>
+                      ))}
+                    </View>
+                  ) : (
+                    <View key="rules" style={styles.rulesList}>
+                      {RULES.map((rule, index) => (
+                        <View key={rule} style={styles.ruleItem}>
+                          <LinearGradient
+                            colors={["#74F6CC", "#24C7D8"]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.ruleNumber}
+                          >
+                            <Text style={styles.ruleNumberText}>
+                              {index + 1}
+                            </Text>
+                          </LinearGradient>
+                          <Text style={styles.ruleText}>{rule}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                  <Pressable>
+                    <LinearGradient
+                      colors={["#7CF5C8", "#2AC6D8"]}
+                      start={{ x: 0, y: 0.2 }}
+                      end={{ x: 1, y: 0.9 }}
+                      style={styles.viewAllButton}
+                    >
+                      <Text style={styles.viewAllButtonText}>View All</Text>
+                    </LinearGradient>
+                  </Pressable>
+                </View>
               </View>
             </View>
           </ScrollView>
@@ -700,7 +712,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: "white",
-    fontSize: 19
+    fontSize: 19,
   },
   scrollArea: {
     flex: 1,
@@ -713,7 +725,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingTop: 8,
     paddingBottom: 50,
-    marginBottom: 30
+    marginBottom: 30,
   },
   profileRow: {
     flexDirection: "row",
@@ -728,13 +740,14 @@ const styles = StyleSheet.create({
   usernameRow: {
     alignItems: "flex-start",
     justifyContent: "flex-start",
-    marginTop: -10
+    marginTop: -10,
   },
   username: {
     fontSize: 14,
     color: "#fff",
     fontWeight: "500",
-    marginTop: -6
+    fontFamily: "SerifBold",
+    marginTop: -6,
   },
   vipBadge: {
     flexDirection: "row",
@@ -809,7 +822,7 @@ const styles = StyleSheet.create({
   vipRibbonText: {
     color: "#F5FFF9",
     fontSize: 12,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
     letterSpacing: 0.4,
   },
   profileName: {
@@ -833,31 +846,33 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     backgroundColor: "#001C54",
-    borderRadius: 8,
+    borderRadius: 6,
     minHeight: 64,
     alignItems: "center",
     justifyContent: "center",
   },
-  statValue: {
-
-  },
+  statValue: {},
   statValueTeal: {
     color: "#00ecbe",
     fontSize: 14,
+    fontFamily: "SerifBold",
   },
   statValueLarge: {
     color: "#e3efff",
     fontSize: 19,
-    fontWeight: "700"
+    // fontWeight: "700",
+    fontFamily: "SerifBold",
   },
   statValueSmall: {
     color: "#92a8e3",
-    fontSize: 12
+    fontFamily: "SerifBold",
+    fontSize: 12,
   },
   statLabel: {
     color: "#92a8e3",
     fontSize: 12,
     marginTop: 3,
+    fontFamily: "SerifBold",
   },
   pagePadding: {
     paddingHorizontal: 8,
@@ -865,13 +880,17 @@ const styles = StyleSheet.create({
   },
   noteBanner: {
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 6,
     marginBottom: 10,
+    borderWidth: 0.7,
+    borderRadius: 5,
+    borderColor: "#022C68",
   },
   noteText: {
     color: "#92a8e3",
     fontSize: 12,
-    marginBottom:-16
+    // marginBottom: -16,
+    fontFamily: "SerifBold",
   },
   vipCarouselRow: {
     flexDirection: "row",
@@ -932,11 +951,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    marginLeft: 10
+    marginLeft: 10,
   },
   vipAchievedText: {
     color: "white",
-    fontSize: 11
+    fontSize: 11,
   },
   vipTierSubtag: {
     alignSelf: "flex-start",
@@ -948,7 +967,7 @@ const styles = StyleSheet.create({
   },
   vipTierSubtagText: {
     color: "white",
-    fontSize: 11
+    fontSize: 11,
   },
   vipTierDescription: {
     marginTop: 40,
@@ -991,7 +1010,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -1026,23 +1045,23 @@ const styles = StyleSheet.create({
   },
   benefitTextWrap: {
     flex: 1,
-    gap:2,
-    justifyContent:"space-between",
+    gap: 2,
+    justifyContent: "space-between",
     marginLeft: 10,
-    marginRight: 8
+    marginRight: 8,
   },
   benefitTitle: {
     color: "#e3efff",
     fontSize: 16,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   benefitSubtitle: {
     color: "#92a8e3",
     fontSize: 12,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
     lineHeight: 13,
     marginTop: 2,
-    width:"90%"
+    width: "90%",
   },
   benefitBadges: {
     alignItems: "flex-end",
@@ -1079,21 +1098,23 @@ const styles = StyleSheet.create({
   },
   badgePillText: {
     fontSize: 12,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   badgePillTextGold: {
     color: "#DD9137",
   },
   badgePillTextTeal: {
-    color: "#00ECBE"
+    color: "#00ECBE",
   },
   benefitsGrid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   promoCard: {
-    flex: 1,
-    backgroundColor: "#081446",
+    width: "48%",
+    flexGrow: 0,
+    // backgroundColor: "#081446",
     borderRadius: 10,
     overflow: "hidden",
   },
@@ -1196,27 +1217,28 @@ const styles = StyleSheet.create({
   cornerChipTextGold: {
     color: "#F2BE57",
     fontSize: 8.6,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   cornerChipTextTeal: {
     color: "#3BF5D5",
     fontSize: 8.6,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   promoContent: {
     paddingHorizontal: 6,
     paddingBottom: 8,
+    paddingTop: 8,
   },
   promoTitle: {
     color: "#F5F8FF",
-    fontSize: 12,
-    fontFamily: "BahnschriftBold",
+    fontSize: 13,
+    fontFamily: "SerifRegular",
     marginTop: 2,
   },
   promoSubtitle: {
     color: "#92A0D5",
-    fontSize: 10.2,
-    fontFamily: "BahnschriftRegular",
+    fontSize: 13,
+    fontFamily: "SerifRegular",
     lineHeight: 12,
     minHeight: 24,
     marginTop: 2,
@@ -1231,7 +1253,7 @@ const styles = StyleSheet.create({
   primaryActionText: {
     color: "#06204E",
     fontSize: 12,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   secondaryAction: {
     height: 30,
@@ -1245,11 +1267,11 @@ const styles = StyleSheet.create({
   secondaryActionText: {
     color: "#16EBD0",
     fontSize: 11,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: "#071446",
+    backgroundColor: "red",
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -1293,13 +1315,13 @@ const styles = StyleSheet.create({
   historyDetail: {
     color: "#9AA7DB",
     fontSize: 10.8,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
     lineHeight: 13.5,
   },
   historyTimestamp: {
     color: "#7F8DC5",
     fontSize: 10.2,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
     marginTop: 4,
   },
   historyBadgeStack: {
@@ -1316,7 +1338,7 @@ const styles = StyleSheet.create({
   historyValue: {
     color: "#8C97D1",
     fontSize: 12,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
     lineHeight: 14,
     textAlign: "right",
   },
@@ -1352,14 +1374,14 @@ const styles = StyleSheet.create({
   ruleNumberText: {
     color: "#06204E",
     fontSize: 11,
-    fontFamily: "BahnschriftBold",
+    fontFamily: "SerifRegular",
   },
   ruleText: {
     flex: 1,
     color: "#A4B0E1",
     fontSize: 11.2,
     lineHeight: 15,
-    fontFamily: "BahnschriftRegular",
+    fontFamily: "SerifRegular",
   },
   viewAllButton: {
     height: 32,
