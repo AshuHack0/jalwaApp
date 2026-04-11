@@ -142,10 +142,58 @@ const BENEFIT_ITEMS: BenefitItem[] = [
 
 const HISTORY_ITEMS: HistoryItem[] = [
   {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-11 15:42:37",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "2 EXP",
+  },
+  {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-10 19:42:37",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "1 EXP",
+  },
+  {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-10 19:37:39",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "2 EXP",
+  },
+  {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-10 15:57:36",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "5 EXP",
+  },
+  {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-10 15:52:38",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "6 EXP",
+  },
+  {
+    title: "Experience Bonus",
+    detail: "Betting EXP",
+    timestamp: "2026-04-10 12:22:37",
+    accent: "#4F87D1",
+    value: "0",
+    suffix: "1 EXP",
+  },
+  {
     title: "Successfully received",
     detail: "Successfully received [Monthly bonus]",
     timestamp: "2026-04-04 12:46:22",
-    accent: "#2EE3A4",
+    accent: "#17B15E",
     badges: [
       { tone: "gold", value: "6,900" },
       { tone: "teal", value: "0" },
@@ -155,7 +203,7 @@ const HISTORY_ITEMS: HistoryItem[] = [
     title: "Level maintenance",
     detail: "Level maintenance status not complete\n[0.00%Complete]",
     timestamp: "2026-04-01 00:19:20",
-    accent: "#FF8A77",
+    accent: "#D23838",
     value: "-40000000",
     suffix: "EXP",
   },
@@ -163,7 +211,7 @@ const HISTORY_ITEMS: HistoryItem[] = [
     title: "Level maintenance",
     detail: "Level maintenance status not complete\n[0.00%Complete]",
     timestamp: "2026-03-01 00:20:12",
-    accent: "#FF8A77",
+    accent: "#D23838",
     value: "-10000000",
     suffix: "EXP",
   },
@@ -172,7 +220,7 @@ const HISTORY_ITEMS: HistoryItem[] = [
     detail:
       "Relegation failed, experience points deducted and downgraded\n[VIP6]",
     timestamp: "2026-03-01 00:20:12",
-    accent: "#F2AA54",
+    accent: "#DD9138",
   },
 ];
 
@@ -258,6 +306,8 @@ function BenefitPromoCard({
   primary,
   received,
   onPress,
+  coinValue,
+  diamondValue,
   children,
 }: {
   title: string;
@@ -266,6 +316,8 @@ function BenefitPromoCard({
   primary?: boolean;
   received?: boolean;
   onPress?: () => void;
+  coinValue?: string;
+  diamondValue?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -277,7 +329,31 @@ function BenefitPromoCard({
           overflow: "hidden",
         }}
       >
-        {children}
+        <View>
+          {children}
+          {(coinValue !== undefined || diamondValue !== undefined) && (
+            <View style={styles.benefitValueStrip}>
+              <View style={styles.benefitValueItem}>
+                <Image
+                  source={require("@/assets/wallet2.webp")}
+                  style={styles.benefitValueIcon}
+                  contentFit="contain"
+                />
+                <Text style={styles.benefitValueText}>{coinValue ?? "0"}</Text>
+              </View>
+              <View style={styles.benefitValueItem}>
+                <Image
+                  source={require("@/assets/diamond.webp")}
+                  style={styles.benefitValueIcon}
+                  contentFit="contain"
+                />
+                <Text style={styles.benefitValueText}>
+                  {diamondValue ?? "0"}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
         <View style={{ paddingHorizontal: 6, backgroundColor: "#001C54" }}>
           <Text style={styles.promoTitle}>{title}</Text>
           <Text style={styles.promoSubtitle}>{subtitle}</Text>
@@ -331,7 +407,9 @@ function HistoryRow({ item }: { item: HistoryItem }) {
         </View>
       ) : item.value ? (
         <View style={styles.historyValueWrap}>
-          <Text style={styles.historyValue}>{item.value}</Text>
+          {item.value !== "0" && (
+            <Text style={styles.historyValue}>{item.value}</Text>
+          )}
           {item.suffix ? (
             <Text style={styles.historySuffix}>{item.suffix}</Text>
           ) : null}
@@ -547,6 +625,8 @@ export default function VipScreen() {
                     subtitle="Each account can only receive 1 time"
                     actionLabel="Received"
                     received
+                    coinValue="16,900"
+                    diamondValue="0"
                   >
                     <LinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
@@ -567,6 +647,8 @@ export default function VipScreen() {
                     subtitle="Each account can only receive 1 time per month"
                     actionLabel="Received"
                     received
+                    coinValue="6,900"
+                    diamondValue="0"
                   >
                     <LinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
@@ -588,6 +670,8 @@ export default function VipScreen() {
                     onPress={() =>
                       router.push("/activity/betting-rebate" as any)
                     }
+                    coinValue="0.15%"
+                    diamondValue="0"
                   >
                     <LinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
@@ -605,14 +689,20 @@ export default function VipScreen() {
                 </View>
               </View>
 
-              <View style={styles.panel}>
+              <View
+                style={[
+                  styles.panel,
+                  {
+                    backgroundColor: "transparent",
+                    borderRadius: 18,
+                    overflow: "hidden",
+                  },
+                ]}
+              >
                 <View style={styles.tabRow}>
                   <Pressable
                     onPress={() => setActiveTab("history")}
-                    style={[
-                      styles.tabButton,
-                      activeTab === "history" && styles.tabButtonActive,
-                    ]}
+                    style={styles.tabButton}
                   >
                     <Text
                       style={[
@@ -622,14 +712,14 @@ export default function VipScreen() {
                     >
                       History
                     </Text>
+                    {activeTab === "history" && (
+                      <View style={styles.tabIndicator} />
+                    )}
                   </Pressable>
 
                   <Pressable
                     onPress={() => setActiveTab("rules")}
-                    style={[
-                      styles.tabButton,
-                      activeTab === "rules" && styles.tabButtonActive,
-                    ]}
+                    style={styles.tabButton}
                   >
                     <Text
                       style={[
@@ -639,6 +729,9 @@ export default function VipScreen() {
                     >
                       Rules
                     </Text>
+                    {activeTab === "rules" && (
+                      <View style={styles.tabIndicator} />
+                    )}
                   </Pressable>
                 </View>
                 <View style={{}}>
@@ -677,9 +770,9 @@ export default function VipScreen() {
                   )}
                   <Pressable>
                     <LinearGradient
-                      colors={["#7CF5C8", "#2AC6D8"]}
-                      start={{ x: 0, y: 0.2 }}
-                      end={{ x: 1, y: 0.9 }}
+                      colors={["#7CF5C8", "#7CF5C8", "#39D3BC"]}
+                      start={{ x: 1, y: 0 }}
+                      end={{ x: 1, y: 1 }}
                       style={styles.viewAllButton}
                     >
                       <Text style={styles.viewAllButtonText}>View All</Text>
@@ -1124,8 +1217,6 @@ const styles = StyleSheet.create({
   },
   promoArtShell: {
     height: 86,
-    margin: 2,
-    borderRadius: 8,
     overflow: "hidden",
     position: "relative",
   },
@@ -1248,6 +1339,32 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 8,
   },
+  benefitValueStrip: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+  },
+  benefitValueItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+  },
+  benefitValueIcon: {
+    width: 14,
+    height: 14,
+  },
+  benefitValueText: {
+    color: "#281522",
+    fontSize: 10,
+    fontFamily: "SerifBold",
+  },
   receivedAction: {
     height: 30,
     borderRadius: 15,
@@ -1287,25 +1404,31 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: "red",
-    borderRadius: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#011341",
     overflow: "hidden",
+    borderRadius: 4,
   },
   tabButton: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
+    paddingVertical: 12,
+    paddingBottom: 0,
+    gap: 6,
+    backgroundColor: "#011341",
+    // backgroundColor: "red",
   },
-  tabButtonActive: {
-    borderBottomColor: "#23EBD1",
+  tabButtonActive: {},
+  tabIndicator: {
+    height: 2,
+    width: 70,
+    borderRadius: 2,
+    backgroundColor: "#23EBD1",
   },
   tabText: {
     color: "#7685C5",
     fontSize: 16,
-    fontFamily: "SerifBold",
+    fontFamily: "SerifRegular",
   },
   tabTextActive: {
     color: "#2CF1D5",
@@ -1325,17 +1448,17 @@ const styles = StyleSheet.create({
   },
   historyTitle: {
     fontSize: 15,
-    fontFamily: "SerifBold",
+    fontFamily: "SerifRegular",
     marginBottom: 2,
   },
   historyDetail: {
-    color: "#9AA7DB",
+    color: "#92A8E3",
     fontSize: 10.8,
     fontFamily: "SerifRegular",
     lineHeight: 13.5,
   },
   historyTimestamp: {
-    color: "#7F8DC5",
+    color: "#92A8E3",
     fontSize: 10.2,
     fontFamily: "SerifRegular",
     marginTop: 4,
@@ -1352,14 +1475,14 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
   },
   historyValue: {
-    color: "#8C97D1",
+    color: "#17B15E",
     fontSize: 12,
     fontFamily: "SerifRegular",
     lineHeight: 14,
     textAlign: "right",
   },
   historySuffix: {
-    color: "#8C97D1",
+    color: "#17B15E",
     fontSize: 11,
     fontFamily: "SerifBold",
     lineHeight: 12,
@@ -1400,14 +1523,17 @@ const styles = StyleSheet.create({
     fontFamily: "SerifRegular",
   },
   viewAllButton: {
-    height: 32,
-    borderRadius: 16,
+    height: 42,
+    borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 12,
   },
   viewAllButtonText: {
     color: "#0A2256",
+    width: 100,
+    textAlign: "center",
+
     fontSize: 13,
     fontFamily: "SerifBold",
   },
