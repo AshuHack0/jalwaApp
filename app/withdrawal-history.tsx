@@ -15,9 +15,10 @@ import {
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View, Pressable } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 export default function WithdrawalHistoryScreen() {
   const router = useRouter();
@@ -42,10 +43,39 @@ export default function WithdrawalHistoryScreen() {
     Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   const paymentMethods = [
-    { id: "All", label: "All", icon: "grid" },
-    { id: "ARPay", label: "ARPay", icon: "triangle" },
-    { id: "BANK CARD", label: "BANK CARD", icon: "card" },
-    { id: "Other", label: "Other", icon: "ellipsis-horizontal" },
+    {
+      id: "All",
+      label: "All",
+      icon: "grid",
+      image: require("@/assets/all1.png"),
+      image2: require("@/assets/all2.png"),
+    },
+    {
+      id: "ARPay",
+      label: "ARPay",
+      icon: "triangle",
+      image: require("@/assets/payNameIcon2_20250317165730f7ml.png"),
+    },
+    {
+      id: "BANK CARD",
+      label: "BANK CARD",
+      icon: "card",
+      image: require("@/assets/WithBeforeImgIcon_20250317170035rogo.png"),
+    },
+    {
+      id: "UPI",
+      label: "UPI",
+      icon: "qr-code-outline",
+      image: require("@/assets/WithBeforeImgIcon2_20250802174209t2y7.png"),
+      gateways: ["oxoxmg"],
+    },
+    {
+      id: "USDT",
+      label: "USDT",
+      icon: "qr-code-outline",
+      image: require("@/assets/payNameIcon_20250317165636a3yk.png"),
+      gateways: ["usdt"],
+    },
   ];
 
   return (
@@ -54,10 +84,7 @@ export default function WithdrawalHistoryScreen() {
       <ThemedView style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </Pressable>
           <ThemedText style={styles.screenTitle}>Withdrawal history</ThemedText>
@@ -71,38 +98,59 @@ export default function WithdrawalHistoryScreen() {
         >
           {/* Filter Tabs */}
           <View style={styles.filterTabs}>
-            {paymentMethods.map((method) => (
-              <Pressable
-                key={method.id}
-                style={[
-                  styles.filterTab,
-                  selectedFilter === method.id && styles.filterTabActive,
-                ]}
-                onPress={() => setSelectedFilter(method.id)}
-              >
-                {method.id === "ARPay" ? (
-                  <Ionicons
-                    name="triangle"
-                    size={18}
-                    color={selectedFilter === method.id ? "#FFD700" : "#92A8E3"}
-                  />
-                ) : (
-                  <Ionicons
-                    name={method.icon as any}
-                    size={18}
-                    color={selectedFilter === method.id ? "#05012B" : "#92A8E3"}
-                  />
-                )}
-                <ThemedText
+            {/* Filter Tabs - Horizontal Scroll */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.filterTabsContainer}
+              contentContainerStyle={styles.filterTabsContent}
+            >
+              {paymentMethods.map((method) => (
+                <Pressable
+                  key={method.id}
                   style={[
-                    styles.filterTabText,
-                    selectedFilter === method.id && styles.filterTabTextActive,
+                    styles.filterTab,
+                    selectedFilter === method.id && styles.filterTabActive,
                   ]}
+                  onPress={() => setSelectedFilter(method.id)}
                 >
-                  {method.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+                  {method.image2 === require("@/assets/all2.png") ? (
+                    <Image
+                      source={
+                        selectedFilter === method.id
+                          ? method.image
+                          : method.image2
+                      }
+                      style={{
+                        width: 22,
+                        height: 22,
+                        backgroundColor: "transparent",
+                      }}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <Image
+                      source={method.image}
+                      style={{
+                        width: 22,
+                        height: 22,
+                        backgroundColor: "transparent",
+                      }}
+                      contentFit="cover"
+                    />
+                  )}
+                  <ThemedText
+                    style={[
+                      styles.filterTabText,
+                      selectedFilter === method.id &&
+                        styles.filterTabTextActive,
+                    ]}
+                  >
+                    {method.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </ScrollView>
           </View>
 
           {/* Status and Date Filters */}
@@ -421,10 +469,18 @@ const styles = StyleSheet.create({
   },
   filterTabs: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    marginTop: 20,
+    marginTop: 13,
     gap: 8,
+    marginBottom: 0,
+  },
+  filterTabsContainer: {
+    maxHeight: 50,
     marginBottom: 16,
+  },
+  filterTabsContent: {
+    paddingHorizontal: 16,
+    gap: 8,
+    alignItems: "center",
   },
   filterTab: {
     flexDirection: "row",

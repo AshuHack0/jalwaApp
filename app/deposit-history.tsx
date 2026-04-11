@@ -20,7 +20,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, View, Pressable } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 function statusColor(status: DepositRecord["status"]) {
   if (status === "completed") return "#17B15E"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
@@ -87,7 +94,8 @@ export default function DepositHistoryScreen() {
       id: "All",
       label: "All",
       icon: "grid",
-      image: require("@/assets/dh1.png"),
+      image: require("@/assets/all1.png"),
+      image2: require("@/assets/all2.png"),
       gateways: [] as string[],
     },
     {
@@ -139,16 +147,14 @@ export default function DepositHistoryScreen() {
   const filteredByGateway =
     selectedFilter === "All"
       ? allDeposits
-      : allDeposits.filter((d) =>
-        selectedMethod?.gateways.includes(d.gateway)
-      );
+      : allDeposits.filter((d) => selectedMethod?.gateways.includes(d.gateway));
 
   const deposits =
     selectedStatus === "All"
       ? filteredByGateway
       : filteredByGateway.filter(
-        (d) => d.status === selectedStatus.toLowerCase()
-      );
+          (d) => d.status === selectedStatus.toLowerCase(),
+        );
 
   return (
     <>
@@ -156,10 +162,7 @@ export default function DepositHistoryScreen() {
       <ThemedView style={styles.container}>
         {/* Top Bar */}
         <View style={styles.topBar}>
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </Pressable>
           <ThemedText style={styles.screenTitle}>Deposit history</ThemedText>
@@ -194,15 +197,31 @@ export default function DepositHistoryScreen() {
                 ]}
                 onPress={() => setSelectedFilter(method.id)}
               >
-                <Image
-                  source={method.image}
-                  style={{
-                    width: 22,
-                    height: 22,
-                    backgroundColor: "transparent",
-                  }}
-                  contentFit="cover"
-                />
+                {method.image2 === require("@/assets/all2.png") ? (
+                  <Image
+                    source={
+                      selectedFilter === method.id
+                        ? method.image
+                        : method.image2
+                    }
+                    style={{
+                      width: 22,
+                      height: 22,
+                      backgroundColor: "transparent",
+                    }}
+                    contentFit="cover"
+                  />
+                ) : (
+                  <Image
+                    source={method.image}
+                    style={{
+                      width: 22,
+                      height: 22,
+                      backgroundColor: "transparent",
+                    }}
+                    contentFit="cover"
+                  />
+                )}
                 <ThemedText
                   style={[
                     styles.filterTabText,
@@ -249,7 +268,7 @@ export default function DepositHistoryScreen() {
                         style={[
                           styles.dropdownItemText,
                           selectedStatus === option &&
-                          styles.dropdownItemTextActive,
+                            styles.dropdownItemTextActive,
                         ]}
                       >
                         {option}
