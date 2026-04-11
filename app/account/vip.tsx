@@ -13,7 +13,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFonts as useExpoFonts } from "expo-font";
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
+import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import { router, Stack, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
@@ -26,6 +26,13 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, {
+  Defs,
+  LinearGradient,
+  Path,
+  Stop,
+  Text as SvgText,
+} from "react-native-svg";
 
 type BadgeTone = "gold" | "teal";
 
@@ -224,12 +231,39 @@ const HISTORY_ITEMS: HistoryItem[] = [
   },
 ];
 
-const RULES = [
-  "VIP level rewards are settled at 2:00 am on the 1st of every month.",
-  "Each account can only receive level up rewards 1 time.",
-  "Monthly rewards can only be received 1 time per month.",
-  "Rebate rate increases the income of rebate as the VIP level grows.",
-  "Failure to complete level maintenance may deduct experience points and downgrade the VIP level.",
+const RULES: { title: string; body: string }[] = [
+  {
+    title: "Upgrade standard",
+    body: "The VIP member's experience points (valid bet amount) that meet the requirements of the corresponding rank will be promoted to the corresponding VIP level, the member's VIP data statistics period starts from 00:00:00 days VIP system launched.VIP level calculation is refreshed every 10 minutes! The corresponding experience level is calculated according to valid odds 1:1 !",
+  },
+  {
+    title: "Upgrade order",
+    body: "The VIP level that meets the corresponding requirements can be promoted by one level every day, but the VIP level cannot be promoted by leapfrogging.",
+  },
+  {
+    title: "Level Maintenance",
+    body: 'VIP members need to complete the experience requirements of the corresponding level within 30 days after the "VIP level prompt". If the promotion is completed during this period, the maintenance requirement will be calculated according to the current level.',
+  },
+  {
+    title: "Downgrade standard",
+    body: "If a VIP member fails to complete the corresponding level maintenance requirements within 30 days after the VIP downgrade prompt, it will automatically deduct the experience points corresponding to the level. The experience point record display will be updated to downgraded, and the corresponding discounts will be adjusted to the downgraded level accordingly.",
+  },
+  {
+    title: "Upgrade Bonus",
+    body: "The upgrade bonus can be claimed on the VIP page after the member reaches the VIP membership level, and each VIP member can only get the upgrade reward of each level once.",
+  },
+  {
+    title: "Monthly reward",
+    body: "VIP members can earn the highest level of VIP rewards once a month.Can only be received once a month. Prizes cannot be accumulated. And any unclaimed rewards will be refreshed on the next settlement day. When receiving the highest level of monthly rewards this month Monthly Rewards earned in this month will be deducted e.g. when VIP1 earns 500 and upgrades to VIP2 to receive monthly rewards 500 will be deducted.",
+  },
+  {
+    title: "Real time rebate",
+    body: "The higher the VIP level, the higher the return rate, all the games are calculated in real time and can be self-rewarded!",
+  },
+  {
+    title: "Safe",
+    body: "VIP members who have reached the corresponding level will get corresponding rebate interest based on the member's VIP credit level.",
+  },
 ];
 
 function BadgePill({ tone, value }: VipBadge) {
@@ -366,14 +400,14 @@ function BenefitPromoCard({
               <Text style={styles.receivedActionText}>{actionLabel}</Text>
             </View>
           ) : primary ? (
-            <LinearGradient
+            <ExpoLinearGradient
               colors={["#7CF5C8", "#2AC6D8"]}
               start={{ x: 0, y: 0.2 }}
               end={{ x: 1, y: 0.9 }}
               style={styles.primaryAction}
             >
               <Text style={styles.primaryActionText}>{actionLabel}</Text>
-            </LinearGradient>
+            </ExpoLinearGradient>
           ) : (
             <View style={styles.secondaryAction}>
               <Text style={styles.secondaryActionText}>{actionLabel}</Text>
@@ -384,7 +418,68 @@ function BenefitPromoCard({
     </View>
   );
 }
+// ── Section Number Banner ─────────────────────────────────────────────────────
+function SectionHeader({ number }: { number: string }) {
+  return (
+    <Svg width="290" height="50" viewBox="0 0 295 50">
+      <Defs>
+        <LinearGradient id="bannerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <Stop offset="0%" stopColor="#011341" stopOpacity="1" />
+          <Stop offset="100%" stopColor="#011341" stopOpacity="1" />
+        </LinearGradient>
+      </Defs>
 
+      {/* Banner Shape */}
+      <Path
+        d="
+        M0 0
+        Q20 0 35 20
+        Q45 35 65 35
+        L230 35
+        Q250 35 260 20
+        Q275 0 295 0
+        L295 40
+        Q295 50 285 3000
+        L10 50
+        Q0 50 0 3000
+        Z
+        "
+        fill="url(#bannerGradient)"
+      />
+
+      <SvgText
+        x="147.5"
+        y="28"
+        fontSize="13"
+        fontWeight="600"
+        fill="white"
+        textAnchor="middle"
+      >
+        {number}
+      </SvgText>
+    </Svg>
+  );
+}
+
+// ── Rule Card ─────────────────────────────────────────────────────────────────
+function RuleCard({
+  number,
+  children,
+}: {
+  number: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <View style={styles.ruleCard}>
+      <View style={{ width: "100%", alignItems: "center" }}>
+        <View style={{ backgroundColor: "#2C5ECA", padding: 0 }}>
+          <SectionHeader number={number} />
+        </View>
+      </View>
+      <View style={styles.ruleBody}>{children}</View>
+    </View>
+  );
+}
 function HistoryRow({ item }: { item: HistoryItem }) {
   return (
     <View style={styles.historyItem}>
@@ -628,7 +723,7 @@ export default function VipScreen() {
                     coinValue="16,900"
                     diamondValue="0"
                   >
-                    <LinearGradient
+                    <ExpoLinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
                       start={{ x: 1, y: 0 }}
                       end={{ x: 1, y: 1 }}
@@ -639,7 +734,7 @@ export default function VipScreen() {
                         style={StyleSheet.absoluteFill}
                         contentFit="cover"
                       />
-                    </LinearGradient>
+                    </ExpoLinearGradient>
                   </BenefitPromoCard>
 
                   <BenefitPromoCard
@@ -650,7 +745,7 @@ export default function VipScreen() {
                     coinValue="6,900"
                     diamondValue="0"
                   >
-                    <LinearGradient
+                    <ExpoLinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
                       start={{ x: 1, y: 0 }}
                       end={{ x: 1, y: 1 }}
@@ -661,7 +756,7 @@ export default function VipScreen() {
                         style={StyleSheet.absoluteFill}
                         contentFit="cover"
                       />
-                    </LinearGradient>
+                    </ExpoLinearGradient>
                   </BenefitPromoCard>
                   <BenefitPromoCard
                     title="Rebate rate"
@@ -673,7 +768,7 @@ export default function VipScreen() {
                     coinValue="0.15%"
                     diamondValue="0"
                   >
-                    <LinearGradient
+                    <ExpoLinearGradient
                       colors={["#78FDC2", "#78FDC2", "#24C7D8"]}
                       start={{ x: 1, y: 0 }}
                       end={{ x: 1, y: 1 }}
@@ -684,7 +779,7 @@ export default function VipScreen() {
                         style={StyleSheet.absoluteFill}
                         contentFit="cover"
                       />
-                    </LinearGradient>
+                    </ExpoLinearGradient>
                   </BenefitPromoCard>
                 </View>
               </View>
@@ -752,32 +847,28 @@ export default function VipScreen() {
                   ) : (
                     <View key="rules" style={styles.rulesList}>
                       {RULES.map((rule, index) => (
-                        <View key={rule} style={styles.ruleItem}>
-                          <LinearGradient
-                            colors={["#74F6CC", "#24C7D8"]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={styles.ruleNumber}
-                          >
-                            <Text style={styles.ruleNumberText}>
-                              {index + 1}
-                            </Text>
-                          </LinearGradient>
-                          <Text style={styles.ruleText}>{rule}</Text>
-                        </View>
+                        <>
+                          <View></View>
+                          {/* ----------------------------- */}
+                          <RuleCard number={rule.title}>
+                            <Text style={styles.ruleText}>{rule.body}</Text>
+                          </RuleCard>
+                        </>
                       ))}
                     </View>
                   )}
-                  <Pressable>
-                    <LinearGradient
-                      colors={["#7CF5C8", "#7CF5C8", "#39D3BC"]}
-                      start={{ x: 1, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.viewAllButton}
-                    >
-                      <Text style={styles.viewAllButtonText}>View All</Text>
-                    </LinearGradient>
-                  </Pressable>
+                  {activeTab === "history" && (
+                    <Pressable>
+                      <ExpoLinearGradient
+                        colors={["#7CF5C8", "#7CF5C8", "#39D3BC"]}
+                        start={{ x: 1, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.viewAllButton}
+                      >
+                        <Text style={styles.viewAllButtonText}>View All</Text>
+                      </ExpoLinearGradient>
+                    </Pressable>
+                  )}
                 </View>
               </View>
             </View>
@@ -1492,6 +1583,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#0C225C",
     marginTop: 8,
   },
+
+  ruleCard: {
+    backgroundColor: "#011341",
+    borderRadius: 12,
+    overflow: "hidden",
+    marginBottom: 10,
+  },
+  ruleBody: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+    fontSize: 12.8,
+    fontFamily: "BahnschriftRegular",
+  },
   rulesList: {
     gap: 10,
     marginTop: 12,
@@ -1515,8 +1620,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "SerifRegular",
   },
-  ruleText: {
+  ruleContent: {
     flex: 1,
+    gap: 3,
+  },
+  ruleTitle: {
+    color: "#2CF1D5",
+    fontSize: 12.5,
+    fontFamily: "SerifBold",
+  },
+  ruleText: {
     color: "#A4B0E1",
     fontSize: 11.2,
     lineHeight: 15,
