@@ -450,10 +450,9 @@ function SectionHeader({ number }: { number: string }) {
         x="147.5"
         y="28"
         fontSize="13"
-        fontWeight="600"
         fill="white"
         textAnchor="middle"
-        fontFamily="SerifRegular"
+        fontFamily="SerifBold"
       >
         {number}
       </SvgText>
