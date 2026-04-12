@@ -43,6 +43,7 @@ interface OverlayButtonsModalProps {
 const OverlayButtonsModal = ({ visibleButtons, scrolling = false, bottom = 30 }: OverlayButtonsModalProps) => {
     const translateX = useRef(new Animated.Value(0)).current
     const isHidden = useRef(false)
+    const autoShowTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const hide = useCallback(() => {
         isHidden.current = true
@@ -62,12 +63,28 @@ const OverlayButtonsModal = ({ visibleButtons, scrolling = false, bottom = 30 }:
         }).start()
     }, [translateX])
 
-    // Hide instantly when scrolling starts
+    // Hide when scrolling starts; auto-show 3s after scrolling stops
     useEffect(() => {
-        if (scrolling && !isHidden.current) {
-            hide()
+        if (autoShowTimer.current) {
+            clearTimeout(autoShowTimer.current)
+            autoShowTimer.current = null
         }
-    }, [scrolling, hide])
+
+        if (scrolling) {
+            if (!isHidden.current) hide()
+        } else if (isHidden.current) {
+            autoShowTimer.current = setTimeout(() => {
+                show()
+            }, 2000)
+        }
+
+        return () => {
+            if (autoShowTimer.current) {
+                clearTimeout(autoShowTimer.current)
+                autoShowTimer.current = null
+            }
+        }
+    }, [scrolling, hide, show])
 
     const handlePress = () => {
         if (isHidden.current) {
