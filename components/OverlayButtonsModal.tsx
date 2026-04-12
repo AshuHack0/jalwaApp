@@ -1,33 +1,46 @@
-import { Pressable, Animated } from 'react-native'
+import { getToken } from '@/services/auth-storage'
+import { Pressable, Animated, Linking } from 'react-native'
 import React, { useRef, useEffect, useCallback } from 'react'
 import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 
+const SUPPORT_PORTAL_URL = 'https://support.indgames.online/'
+const WINGO_SCREEN = '/wingo'
 
-const overlayButtons = [
+type OverlayButton = {
+    name: string
+    image: string
+    route?: string
+    url?: string
+    /** Same link as Account → Customer Service (token in query when logged in). */
+    supportWithToken?: boolean
+}
+
+const overlayButtons: OverlayButton[] = [
     {
         name: "rewardCenter",
         image: "https://www.jalwagame.win/assets/png/rewardCenter-f8f2277a.png",
-        route: "/rewardCenter",
+        route: WINGO_SCREEN,
     },
     {
         name: "turntable",
         image: "https://www.jalwagame.win/assets/png/turntable-4464ae2e.png",
-        route: "/turntable",
+        route: WINGO_SCREEN,
     },
     {
         name: "tg_bg",
         image: "https://www.jalwagame.win/assets/png/tg_bg-8a7ff21e.png",
-        route: "/tg_bg",
+        url: "https://t.me/Jalwa_Channel_Official",
     },
     {
         name: "changlong",
         image: "https://www.jalwagame.win/assets/svg/changlong-5c3a8155.svg",
-        route: "/changlong",
+        route: WINGO_SCREEN,
     },
     {
         name: "icon_sevice",
         image: "https://www.jalwagame.win/assets/png/icon_sevice-65e9fbf7.webp",
-        route: "/icon_sevice",
+        supportWithToken: true,
     },
 ]
 
@@ -41,6 +54,7 @@ interface OverlayButtonsModalProps {
 }
 
 const OverlayButtonsModal = ({ visibleButtons, scrolling = false, bottom = 30 }: OverlayButtonsModalProps) => {
+    const router = useRouter()
     const translateX = useRef(new Animated.Value(0)).current
     const isHidden = useRef(false)
     const autoShowTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -86,11 +100,31 @@ const OverlayButtonsModal = ({ visibleButtons, scrolling = false, bottom = 30 }:
         }
     }, [scrolling, hide, show])
 
-    const handlePress = () => {
-        if (isHidden.current) {
-            show()
-        }
-    }
+    const handleButtonPress = useCallback(
+        async (button: OverlayButton) => {
+            if (isHidden.current) {
+                show()
+                return
+            }
+            if (button.supportWithToken) {
+                const token = await getToken()
+                let url = SUPPORT_PORTAL_URL
+                if (token) {
+                    url += `?token=${encodeURIComponent(token)}`
+                }
+                void Linking.openURL(url)
+                return
+            }
+            if (button.url) {
+                void Linking.openURL(button.url)
+                return
+            }
+            if (button.route) {
+                router.push(button.route as `/`)
+            }
+        },
+        [router, show],
+    )
 
     const filtered = overlayButtons.filter((b) => visibleButtons.includes(b.name))
 
@@ -108,7 +142,7 @@ const OverlayButtonsModal = ({ visibleButtons, scrolling = false, bottom = 30 }:
             pointerEvents="box-none"
         >
             {filtered.map((button) => (
-                <Pressable key={button.name} onPress={handlePress}>
+                <Pressable key={button.name} onPress={() => handleButtonPress(button)}>
                     <Image source={{ uri: button.image }} style={{ width: 62, aspectRatio: 1 }} contentFit='cover' />
                 </Pressable>
             ))}

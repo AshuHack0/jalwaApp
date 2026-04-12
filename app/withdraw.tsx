@@ -12,7 +12,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Image, Modal, ScrollView, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import Svg, {
   Defs,
   Path,
@@ -20,6 +30,9 @@ import Svg, {
   Stop,
   LinearGradient as SvgGradient,
 } from "react-native-svg";
+
+const TOTAL_ASSETS_BG =
+  "https://www.jalwagame.win/assets/png/TotalAssetsBg-ad5afbbb.webp";
 
 const BANK_CARD_ICON = require("@/assets/WithBeforeImgIcon_20250317170035rogo.png");
 const UPI_ICON = require("@/assets/WithBeforeImgIcon2_20250802174209t2y7.png");
@@ -172,21 +185,27 @@ export default function WithdrawScreen() {
       <ThemedView style={styles.container}>
         {/* ── Top Bar ── */}
         <View style={styles.topBar}>
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Ionicons name="chevron-back" size={24} color="#fff" />
-          </Pressable>
-          <ThemedText style={styles.screenTitle}>Withdraw</ThemedText>
-          <Pressable
-            onPress={() => router.push("/withdrawal-history")}
-            style={styles.historyNavButton}
-          >
-            <ThemedText style={styles.historyNavText}>
-              Withdrawal history
-            </ThemedText>
-          </Pressable>
+          <View style={[styles.topBarSide, styles.topBarSideLeft]}>
+            <Pressable
+              onPress={() => router.back()}
+              style={styles.backButton}
+            >
+              <Ionicons name="chevron-back" size={24} color="#fff" />
+            </Pressable>
+          </View>
+          <View style={[styles.topBarSide, styles.topBarSideRight]}>
+            <Pressable
+              onPress={() => router.push("/withdrawal-history")}
+              style={styles.historyNavButton}
+            >
+              <ThemedText style={styles.historyNavText}>
+                Withdrawal history
+              </ThemedText>
+            </Pressable>
+          </View>
+          <View style={styles.topBarTitleWrap} pointerEvents="none">
+            <ThemedText style={styles.screenTitle}>Withdraw</ThemedText>
+          </View>
         </View>
 
         <ScrollView
@@ -195,15 +214,15 @@ export default function WithdrawScreen() {
           showsVerticalScrollIndicator={false}
         >
           {/* ── Balance Card ── */}
-          <LinearGradient
-            colors={["#66F5C2", "#01B8BF"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <ImageBackground
+            source={{ uri: TOTAL_ASSETS_BG }}
             style={styles.balanceCard}
+            imageStyle={styles.balanceCardBgImage}
+            resizeMode="cover"
           >
             <View style={styles.balanceCardInner}>
               <View style={styles.balanceHeaderRow}>
-                <Ionicons name="wallet" size={16} color="#FFD700" />
+              <Image source={{ uri: "https://www.jalwagame.win/assets/png/balance-b2c8faab.webp" }} style={{ width: 18, height: 18, paddingLeft: 20 , marginLeft: 5 }} />
                 <ThemedText style={styles.balanceLabel}>
                   Available balance
                 </ThemedText>
@@ -216,30 +235,32 @@ export default function WithdrawScreen() {
                   onPress={refreshWallet}
                   style={styles.refreshBtn}
                 >
-                  <Ionicons
+                  {/* <Ionicons
                     name="refresh-circle-outline"
                     size={22}
                     color="rgba(255,255,255,0.85)"
-                  />
+                  /> */}
+               
+                  <Image source={{ uri: "https://www.jalwagame.win/assets/png/refresh-8e0efe26.webp" }} style={{ width: 18, height: 18, paddingLeft: 20 , marginLeft: 5 }} />
                 </Pressable>
               </View>
-              <View style={styles.cardFooterRow}>
-                <Ionicons
+              <View style={styles.cardFooterRow}  >
+                {/* <Ionicons
                   name="card-outline"
                   size={30}
                   color="rgba(255,255,255,0.55)"
-                />
-                <ThemedText style={styles.cardMask}>**** ****</ThemedText>
+                /> */}
+                <ThemedText style={styles.cardMask}></ThemedText>
               </View>
             </View>
-          </LinearGradient>
+          </ImageBackground>
 
           {/* ── ARPay + Method Tabs ── */}
           <View style={styles.methodSection}>
             {/* ARPay header */}
             <View style={styles.arPayRow}>
               <View style={styles.arPayIconWrap}>
-                <Ionicons name="triangle" size={20} color="#FFD700" />
+              <Image source={{ uri: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/WithBeforeImgIcon_2025031717011158q1.png" }} style={{ width: 42, height: 42 }} />
               </View>
               <View style={styles.arPayTextWrap}>
                 <ThemedText style={styles.arPayTitle}>ARPay</ThemedText>
@@ -394,8 +415,8 @@ export default function WithdrawScreen() {
                 </>
               ))}
 
-            {/* UPI / USDT placeholder */}
-            {
+            {/* UPI / USDT: add wallet (hidden on BANK CARD) */}
+            {(selectedMethod === "UPI" || selectedMethod === "USDT") && (
               <Pressable
                 style={styles.addBankBtn}
                 onPress={() => router.push("/add-bank")}
@@ -408,7 +429,7 @@ export default function WithdrawScreen() {
                   {selectedMethod === "UPI" ? "UPI ID" : "USDT wallet address"}
                 </ThemedText>
               </Pressable>
-            }
+            )}
           </View>
 
           {/* ── Amount Input ── */}
@@ -889,15 +910,39 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 100,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingTop: 48,
     paddingBottom: 12,
     backgroundColor: "#05012B",
   },
+  topBarSide: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  topBarSideLeft: {
+    justifyContent: "flex-start",
+  },
+  topBarSideRight: {
+    justifyContent: "flex-end",
+  },
   backButton: { padding: 4 },
-  screenTitle: { fontSize: 18, fontWeight: "700", color: "#fff" },
+  topBarTitleWrap: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 30,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  screenTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#fff",
+    textAlign: "center",
+  },
   historyNavButton: { padding: 4 },
   historyNavText: { fontSize: 13, color: "#ffffff" },
 
@@ -908,6 +953,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
   },
+  balanceCardBgImage: {
+    borderRadius: 16,
+  },
   balanceCardInner: { padding: 18 },
   balanceHeaderRow: {
     flexDirection: "row",
@@ -915,7 +963,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 10,
   },
-  balanceLabel: { fontSize: 14, color: "#fff", fontWeight: "500" },
+  balanceLabel: { fontSize: 14, color: "blacka", fontWeight: "500" },
   balanceAmountRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -959,8 +1007,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   arPayTextWrap: { gap: 2 },
-  arPayTitle: { fontSize: 16, fontWeight: "700", color: "#ffffff" },
-  arPaySubtitle: { fontSize: 12, color: "#92A8E3" },
+  arPayTitle: { fontSize: 18, fontWeight: "700", color: "#ffffff" },
+  arPaySubtitle: { fontSize: 14, color: "#92A8E3" },
 
   /* Tabs */
   tabsRow: {
@@ -1079,7 +1127,12 @@ const styles = StyleSheet.create({
     margin: 15,
   },
   currencySymbol: { fontSize: 20, fontWeight: "600", color: "#00ECBE" },
-  amountInput: { flex: 1, fontSize: 16, color: "#fff" },
+  amountInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#fff",
+    paddingLeft: 20,
+  },
   amountDivider: {
     height: 1,
     backgroundColor: "rgba(255,255,255,0.06)",
