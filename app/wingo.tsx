@@ -1,3 +1,4 @@
+
 import {
   StyleSheet,
   View,
@@ -28,7 +29,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import Svg, { Polygon, Rect, Line } from "react-native-svg";
+import Svg, { Defs, ClipPath, Polygon, Rect, Text as SvgText, Line } from "react-native-svg";
 import MaskedView from "@react-native-masked-view/masked-view";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -2235,7 +2236,7 @@ export default function WinGoScreen() {
                                     name="copy-outline"
                                     size={wp(6.5)}
                                     color="#666"
-                                    style={{transform: [{ rotate: '90deg' }]}}
+                                    style={{ transform: [{ rotate: '90deg' }] }}
                                   />
                                 </Pressable>
                               </View>
@@ -2621,7 +2622,7 @@ export default function WinGoScreen() {
 
                       const boxStyle = [
                         styles.winLossResultBox,
-                        { overflow: "hidden" },
+                        { overflow: "hidden", position: "relative" },
                         minWidth ? { minWidth } : {},
                         isCircle && {
                           width: minWidth || wp(8.5),
@@ -2630,6 +2631,7 @@ export default function WinGoScreen() {
                           paddingHorizontal: 0,
                           paddingVertical: 0,
                         },
+
                       ] as any;
 
                       if (showBg) {
@@ -2643,24 +2645,18 @@ export default function WinGoScreen() {
                             ]}
                           >
                             {hasMultiColor && (
-                              <Svg
-                                height="100%"
-                                width="100%"
-                                viewBox="0 0 100 100"
-                                style={StyleSheet.absoluteFill}
-                              >
-                                <Rect
-                                  x="0"
-                                  y="0"
-                                  width="100"
-                                  height="100"
-                                  fill={outcomeColors[0]}
-                                />
-                                <Polygon
-                                  points="0,100 100,100 100,0"
-                                  fill={outcomeColors[1]}
-                                />
-                              </Svg>
+                              <View style={{ borderRadius: 5, overflow: "hidden", position:"absolute" }}>
+                                <Svg width={wp(28)} height={wp(8.5)} style={{ borderRadius: 8, overflow: "hidden" }}>
+                                  <Polygon
+                                    points={`0,0 ${wp(28) / 2 + 8},0 ${wp(28) / 2 - 8},${wp(8.5)} 0,${wp(8.5)}`}
+                                    fill={outcomeColors[0]}
+                                  />
+                                  <Polygon
+                                    points={`${wp(28) / 2 + 8},0 ${wp(28)},0 ${wp(28)},${wp(8.5)} ${wp(28) / 2 - 8},${wp(8.5)}`}
+                                    fill={outcomeColors[1]}
+                                  />
+                                </Svg>
+                              </View>
                             )}
                             {children}
                           </View>
@@ -2675,11 +2671,10 @@ export default function WinGoScreen() {
                           <ResultBox alwaysShowBg={true}>
                             <Text style={styles.winLossResultBoxText}>
                               {settledBet.round.outcomeColor
-                                .charAt(0)
-                                .toUpperCase() +
-                                settledBet.round.outcomeColor
-                                  .slice(1)
-                                  .toLowerCase()}
+                                .replace(/_/g, " ")
+                                .split(" ")
+                                .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                                .join(" ")}
                             </Text>
                           </ResultBox>
                         )}
@@ -2727,7 +2722,7 @@ export default function WinGoScreen() {
                       >
                         ₹{settledBet.payoutAmount.toFixed(2)}
                       </Text>
-                      <View style={styles.winLossPeriodInfo}>
+                      <View style={[styles.winLossPeriodInfo, { marginTop: wp(0) }]}>
                         <Text style={styles.winLossPeriodText}>
                           Period: {selectedGame.name}
                         </Text>
@@ -3092,8 +3087,8 @@ const styles = StyleSheet.create({
   chartNumbersRow: {
     flexDirection: "row",
     alignItems: "center",
-    flex:1,
-    justifyContent:"space-between",
+    flex: 1,
+    justifyContent: "space-between",
     marginLeft: wp(1),
   },
   chartNumberCircle: {
@@ -3111,8 +3106,8 @@ const styles = StyleSheet.create({
   chartNumberText: {
     fontSize: 12,
     fontWeight: "400",
-    color:"#B1B1B4",
-    marginTop:-1,
+    color: "#B1B1B4",
+    marginTop: -1,
   },
   chartBSBadge: {
     width: wp(5.1),
@@ -3168,7 +3163,7 @@ const styles = StyleSheet.create({
   statsHeaderRight: {
     color: "#e3efff",
     fontSize: wp(5),
-    marginLeft:-15
+    marginLeft: -15
   },
   statsRow: {
     flexDirection: "row",
@@ -3194,7 +3189,7 @@ const styles = StyleSheet.create({
     color: "#DE4E59",
     fontSize: wp(4),
     fontWeight: "600",
-    marginTop:-3
+    marginTop: -3
   },
   statsValuesRow: {
     flexDirection: "row",
@@ -3203,7 +3198,7 @@ const styles = StyleSheet.create({
   statsValue: {
     color: "#9da7b3",
     fontSize: wp(5),
-    fontWeight:"500",
+    fontWeight: "500",
     width: wp(6),
     textAlign: "center",
   },
@@ -3435,7 +3430,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    paddingTop: hp(68),
+    paddingTop: "142%",
   },
   winLossTitle: {
     fontSize: wp(10),
@@ -3464,7 +3459,7 @@ const styles = StyleSheet.create({
   winLossResultBoxText: {
     color: "white",
     fontSize: wp(4.5),
-    fontWeight: "800",
+    fontWeight: "600"
   },
   winLossResultNumber: {
     fontSize: wp(5),
