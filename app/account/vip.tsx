@@ -6,15 +6,15 @@ import {
   getSelectedAvatarId,
 } from "@/services/avatar-storage";
 import {
-  EBGaramond_400Regular,
-  EBGaramond_700Bold,
-  useFonts as useSerifFonts,
-} from "@expo-google-fonts/eb-garamond";
+  Roboto_400Regular,
+  Roboto_700Bold,
+  useFonts,
+} from "@expo-google-fonts/roboto";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import { router, Stack, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -23,6 +23,7 @@ import {
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
@@ -58,29 +59,29 @@ type HistoryItem = {
   suffix?: string;
 };
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const CAROUSEL_WIDTH = SCREEN_WIDTH - 16; // Account for pagePadding (8px on each side)
-const ITEM_WIDTH = CAROUSEL_WIDTH * 0.86;
 const ITEM_GAP = 12;
+const VIP_CAROUSEL_CORNER_RADIUS = 8;
+/** width/height for VIP cards (matches previous fixed height 188 at ~86% of a 375-wide content area). */
+const VIP_CARD_ASPECT_RATIO = ((375 - 16) * 0.86) / 188;
 
 const vipcards = [
   {
-    image: require("@/assets/VipCards/vip1.png"),
+    image: require("@/assets/addd.png"),
     title: "VIP1",
     subtitle: "VIP1",
   },
   {
-    image: require("@/assets/VipCards/vip2.png"),
+    image: require("@/assets/ad.png"),
     title: "VIP2",
     subtitle: "VIP2",
   },
   {
-    image: require("@/assets/VipCards/vip3.png"),
+    image: require("@/assets/Screenshot 2026-04-12 at 4.07.37 PM.png"),
     title: "VIP3",
     subtitle: "VIP3",
   },
   {
-    image: require("@/assets/VipCards/vip4.png"),
+    image: require("@/assets/Screenshot 2026-04-12 at 4.08.25 PM.png"),
     title: "VIP4",
     subtitle: "VIP4",
   },
@@ -449,10 +450,10 @@ function SectionHeader({ number }: { number: string }) {
       <SvgText
         x="147.5"
         y="28"
-        fontSize="13"
+        fontSize="14"
         fill="white"
         textAnchor="middle"
-        fontFamily="SerifBold"
+        fontFamily="Roboto_700Bold"
       >
         {number}
       </SvgText>
@@ -519,9 +520,9 @@ export default function VipScreen() {
   //   BahnschriftBold: require("@/assets/fonts/Bahnschrift-Bold.ttf"),
   //   BahnschriftSemibold: require("@/assets/fonts/Bahnschrift-SemiBold.ttf"),
   // });
-  useSerifFonts({
-    SerifRegular: EBGaramond_400Regular,
-    SerifBold: EBGaramond_700Bold,
+  useFonts({
+    Roboto_400Regular,
+    Roboto_700Bold,
   });
 
   const insets = useSafeAreaInsets();
@@ -529,6 +530,16 @@ export default function VipScreen() {
   const [activeTab, setActiveTab] = useState<"history" | "rules">("history");
   const [selectedAvatarId, setSelectedAvatarId] = useState(DEFAULT_AVATAR_ID);
   const [selectedIndex, setSelectedIndex] = useState(5);
+
+  const { width: windowWidth } = useWindowDimensions();
+
+  const { carouselWidth, itemWidth } = useMemo(() => {
+    const w =
+      windowWidth > 0 ? windowWidth : Dimensions.get("window").width;
+    const cw = Math.max(260, w - 16);
+    const itemRatio = w < 360 ? 0.78 : 0.86;
+    return { carouselWidth: cw, itemWidth: cw * itemRatio };
+  }, [windowWidth]);
 
   useFocusEffect(
     useCallback(() => {
@@ -593,11 +604,11 @@ export default function VipScreen() {
                     <View style={styles.usernameRow}>
                       <Image
                         source={require("@/assets/pro.webp")}
-                        style={{ width: 40, height: 40 }}
+                        style={{ width: 60, height: 60 }}
                         contentFit="contain"
                       />
                       <ThemedText style={styles.username}>
-                        MEMBERNNGH2JM8
+                        MemberNNGH2JM8
                       </ThemedText>
                     </View>
                   </View>
@@ -607,7 +618,7 @@ export default function VipScreen() {
               <View style={styles.statGrid}>
                 <View style={styles.statCard}>
                   <Text style={[styles.statValue, styles.statValueTeal]}>
-                    207865479 EXP
+                    0 EXP
                   </Text>
                   <Text style={styles.statLabel}>My experience</Text>
                 </View>
@@ -634,14 +645,15 @@ export default function VipScreen() {
                 data={vipcards}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                snapToInterval={ITEM_WIDTH + ITEM_GAP}
+                snapToInterval={itemWidth + ITEM_GAP}
                 decelerationRate="fast"
                 snapToAlignment="start"
-                initialScrollIndex={5}
+                initialScrollIndex={Math.min(5, Math.max(0, vipcards.length - 1))}
                 scrollEventThrottle={16}
                 onScroll={(e) => {
                   const x = e.nativeEvent.contentOffset.x;
-                  const index = Math.round(x / (ITEM_WIDTH + ITEM_GAP));
+                  const step = itemWidth + ITEM_GAP;
+                  const index = Math.round(x / step);
                   if (
                     index !== selectedIndex &&
                     index >= 0 &&
@@ -651,28 +663,29 @@ export default function VipScreen() {
                   }
                 }}
                 getItemLayout={(data, index) => ({
-                  length: ITEM_WIDTH + ITEM_GAP,
-                  offset: (ITEM_WIDTH + ITEM_GAP) * index,
+                  length: itemWidth + ITEM_GAP,
+                  offset: (itemWidth + ITEM_GAP) * index,
                   index,
                 })}
                 contentContainerStyle={{
-                  paddingHorizontal: (CAROUSEL_WIDTH - ITEM_WIDTH) / 2,
+                  paddingHorizontal: (carouselWidth - itemWidth) / 2,
                   gap: ITEM_GAP,
                   paddingVertical: 10,
                 }}
                 renderItem={({ item }) => (
                   <View
-                    style={{
-                      width: ITEM_WIDTH,
-                      height: 188,
-                      borderRadius: 5,
-                      overflow: "hidden",
-                    }}
+                    style={[
+                      styles.vipCarouselCard,
+                      {
+                        width: itemWidth,
+                        aspectRatio: VIP_CARD_ASPECT_RATIO,
+                      },
+                    ]}
                   >
                     <Image
                       source={item.image}
-                      style={{ width: "100%", height: "100%" }}
-                      contentFit="cover"
+                      style={[styles.vipCarouselImage, StyleSheet.absoluteFill]}
+                      contentFit="contain"
                     />
                   </View>
                 )}
@@ -690,6 +703,9 @@ export default function VipScreen() {
                   </Text>
                 </View>
 
+ 
+<View style={{ height: 0.1, width: "100%", backgroundColor: "#022C68" , marginBottom: 10 }} />
+
                 {BENEFIT_ITEMS.map((item, index) => (
                   <View
                     key={item.title}
@@ -703,7 +719,7 @@ export default function VipScreen() {
                 ))}
               </View>
 
-              <View style={styles.panel}>
+              {/* <View style={styles.panel}>
                 <View style={styles.sectionHeader}>
                   <MaterialCommunityIcons
                     name="crown"
@@ -781,7 +797,7 @@ export default function VipScreen() {
                     </ExpoLinearGradient>
                   </BenefitPromoCard>
                 </View>
-              </View>
+              </View> */}
 
               <View
                 style={[
@@ -831,7 +847,7 @@ export default function VipScreen() {
                 <View style={{}}>
                   {activeTab === "history" ? (
                     <View key="history" style={styles.historyList}>
-                      {HISTORY_ITEMS.map((item, index) => (
+                      {/* {HISTORY_ITEMS.map((item, index) => (
                         <View
                           key={`${item.title}-${index}`}
                           style={styles.historyItemWrap}
@@ -841,27 +857,20 @@ export default function VipScreen() {
                             <View style={styles.divider} />
                           ) : null}
                         </View>
-                      ))}
+                      ))} */}
+                      
+                      <Image
+                        source={require("@/assets/no_data.png")}
+                        style={{ width: "100%", height: 200, alignSelf: "center" }}
+                        contentFit="contain"
+                      />
+                      
                     </View>
                   ) : (
                     <View key="rules" style={styles.rulesList}>
                       <View style={{ flex: 1, alignItems: "center" }}>
-                        <Text
-                          style={{
-                            color: "#02ECBE",
-                            fontFamily: "SerifBold",
-                            fontSize: 20,
-                          }}
-                        >
-                          VIP privileges
-                        </Text>
-                        <Text
-                          style={{
-                            color: "#A4B0E1",
-                            fontFamily: "SerifRegular",
-                            fontSize: 15,
-                          }}
-                        >
+                        <Text style={styles.rulesIntroTitle}>VIP privileges</Text>
+                        <Text style={styles.rulesIntroSubtitle}>
                           VIP rule description
                         </Text>
                       </View>
@@ -875,7 +884,9 @@ export default function VipScreen() {
                     </View>
                   )}
                   {activeTab === "history" && (
-                    <Pressable>
+                    <Pressable
+                      onPress={() => router.push("/account/vip-history")}
+                    >
                       <ExpoLinearGradient
                         colors={["#7CF5C8", "#7CF5C8", "#39D3BC"]}
                         start={{ x: 1, y: 0 }}
@@ -918,6 +929,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "white",
     fontSize: 19,
+    lineHeight: 24,
+    fontFamily: "Roboto_700Bold",
   },
   scrollArea: {
     flex: 1,
@@ -948,10 +961,10 @@ const styles = StyleSheet.create({
     marginTop: -10,
   },
   username: {
-    fontSize: 14,
+    fontSize: 15,
+    lineHeight: 20,
     color: "#fff",
-    fontWeight: "500",
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
     marginTop: -6,
   },
   vipBadge: {
@@ -965,7 +978,7 @@ const styles = StyleSheet.create({
   },
   vipText: {
     fontSize: 11,
-    fontWeight: "600",
+    fontFamily: "Roboto_700Bold",
     color: "#fff",
   },
 
@@ -1027,13 +1040,13 @@ const styles = StyleSheet.create({
   vipRibbonText: {
     color: "#F5FFF9",
     fontSize: 12,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     letterSpacing: 0.4,
   },
   profileName: {
     color: "#F4F8FF",
     fontSize: 18,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
     letterSpacing: 0.3,
   },
   statGrid: {
@@ -1060,28 +1073,39 @@ const styles = StyleSheet.create({
   statValueTeal: {
     color: "#00ecbe",
     fontSize: 14,
-    fontFamily: "SerifBold",
+    marginTop: 4,
+    fontFamily: "Roboto_700Bold",
   },
   statValueLarge: {
     color: "#e3efff",
     fontSize: 19,
     // fontWeight: "700",
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
   },
   statValueSmall: {
     color: "#92a8e3",
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_400Regular",
     fontSize: 12,
+    lineHeight: 16,
   },
   statLabel: {
     color: "#92a8e3",
-    fontSize: 12,
+    fontSize: 14,
+    lineHeight: 30,
     marginTop: 3,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_400Regular",
   },
   pagePadding: {
     paddingHorizontal: 8,
     paddingTop: 8,
+  },
+  vipCarouselCard: {
+    borderRadius: VIP_CAROUSEL_CORNER_RADIUS,
+    overflow: "hidden",
+    backgroundColor: "#021341",
+  },
+  vipCarouselImage: {
+    borderRadius: VIP_CAROUSEL_CORNER_RADIUS,
   },
   noteBanner: {
     paddingHorizontal: 12,
@@ -1094,8 +1118,8 @@ const styles = StyleSheet.create({
   noteText: {
     color: "#92a8e3",
     fontSize: 12,
-    // marginBottom: -16,
-    fontFamily: "SerifBold",
+    lineHeight: 16,
+    fontFamily: "Roboto_400Regular",
   },
   vipCarouselRow: {
     flexDirection: "row",
@@ -1150,7 +1174,7 @@ const styles = StyleSheet.create({
   vipTierLevel: {
     color: "#F7FBFF",
     fontSize: 25,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
   },
   vipAchievedRow: {
     flexDirection: "row",
@@ -1220,13 +1244,15 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    marginTop: 10,
+    gap: 9,
     marginBottom: 10,
   },
   sectionTitle: {
     color: "#e3efff",
-    fontSize: 18,
-    fontFamily: "SerifBold",
+    fontSize: 19,
+    lineHeight: 20,
+    fontFamily: "Roboto_700Bold",
   },
   benefitRowWrap: {
     paddingBottom: 10,
@@ -1258,13 +1284,15 @@ const styles = StyleSheet.create({
   benefitTitle: {
     color: "#e3efff",
     fontSize: 16,
-    fontFamily: "SerifRegular",
+    lineHeight: 25,
+
+    fontFamily: "Roboto_400Regular",
   },
   benefitSubtitle: {
     color: "#92a8e3",
-    fontSize: 12,
-    fontFamily: "SerifRegular",
-    lineHeight: 13,
+    fontSize: 13,
+    fontFamily: "Roboto_400Regular",
+    lineHeight: 16,
     marginTop: 2,
     width: "90%",
   },
@@ -1273,8 +1301,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   badgePill: {
-    minWidth: 60,
-    height: 20,
+    minWidth: 80,
+    height: 30,
     borderRadius: 4,
     paddingHorizontal: 5,
     flexDirection: "row",
@@ -1303,7 +1331,7 @@ const styles = StyleSheet.create({
   },
   badgePillText: {
     fontSize: 12,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   badgePillTextGold: {
     color: "#DD9137",
@@ -1420,12 +1448,12 @@ const styles = StyleSheet.create({
   cornerChipTextGold: {
     color: "#F2BE57",
     fontSize: 8.6,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   cornerChipTextTeal: {
     color: "#3BF5D5",
     fontSize: 8.6,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   promoContent: {
     paddingHorizontal: 6,
@@ -1435,13 +1463,13 @@ const styles = StyleSheet.create({
   promoTitle: {
     color: "#F5F8FF",
     fontSize: 13,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     marginTop: 2,
   },
   promoSubtitle: {
     color: "#92A0D5",
     fontSize: 13,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     lineHeight: 12,
     minHeight: 24,
     marginTop: 2,
@@ -1471,7 +1499,7 @@ const styles = StyleSheet.create({
   benefitValueText: {
     color: "#281522",
     fontSize: 10,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
   },
   receivedAction: {
     height: 30,
@@ -1483,7 +1511,7 @@ const styles = StyleSheet.create({
   receivedActionText: {
     color: "#FFFFFF",
     fontSize: 12,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   primaryAction: {
     height: 30,
@@ -1494,7 +1522,7 @@ const styles = StyleSheet.create({
   primaryActionText: {
     color: "#06204E",
     fontSize: 12,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   secondaryAction: {
     height: 30,
@@ -1508,7 +1536,7 @@ const styles = StyleSheet.create({
   secondaryActionText: {
     color: "#16EBD0",
     fontSize: 11,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   tabRow: {
     flexDirection: "row",
@@ -1535,8 +1563,9 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: "#7685C5",
-    fontSize: 16,
-    fontFamily: "SerifRegular",
+    fontSize: 14,
+    lineHeight: 18,
+    fontFamily: "Roboto_400Regular",
   },
   tabTextActive: {
     color: "#2CF1D5",
@@ -1556,19 +1585,19 @@ const styles = StyleSheet.create({
   },
   historyTitle: {
     fontSize: 15,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     marginBottom: 2,
   },
   historyDetail: {
     color: "#92A8E3",
     fontSize: 10.8,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     lineHeight: 13.5,
   },
   historyTimestamp: {
     color: "#92A8E3",
     fontSize: 10.2,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     marginTop: 4,
   },
   historyBadgeStack: {
@@ -1585,14 +1614,14 @@ const styles = StyleSheet.create({
   historyValue: {
     color: "#17B15E",
     fontSize: 12,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
     lineHeight: 14,
     textAlign: "right",
   },
   historySuffix: {
     color: "#17B15E",
     fontSize: 11,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
     lineHeight: 12,
   },
   divider: {
@@ -1609,15 +1638,28 @@ const styles = StyleSheet.create({
   },
   ruleBody: {
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 0,
     paddingBottom: 16,
     fontSize: 12.8,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   rulesList: {
     gap: 10,
     marginTop: 12,
     marginBottom: 4,
+  },
+  rulesIntroTitle: {
+    color: "#02ECBE",
+    fontSize: 20,
+    lineHeight: 26,
+    fontFamily: "Roboto_700Bold",
+  },
+  rulesIntroSubtitle: {
+    color: "#A4B0E1",
+    fontSize: 15,
+    lineHeight: 20,
+    marginTop: 4,
+    fontFamily: "Roboto_400Regular",
   },
   ruleItem: {
     flexDirection: "row",
@@ -1635,22 +1677,22 @@ const styles = StyleSheet.create({
   ruleNumberText: {
     color: "#06204E",
     fontSize: 11,
-    fontFamily: "SerifRegular",
+    fontFamily: "Roboto_400Regular",
   },
   ruleContent: {
     flex: 1,
-    gap: 3,
+    gap: 2,
   },
   ruleTitle: {
     color: "#2CF1D5",
     fontSize: 12.5,
-    fontFamily: "SerifBold",
+    // fontFamily: "Roboto_700Bold",
   },
   ruleText: {
     color: "#A4B0E1",
-    fontSize: 11.2,
-    lineHeight: 20,
-    fontFamily: "SerifRegular",
+    fontSize: 14,
+    lineHeight: 26,
+    // fontFamily: "Roboto_400Regular",
   },
   viewAllButton: {
     height: 42,
@@ -1665,7 +1707,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
 
     fontSize: 13,
-    fontFamily: "SerifBold",
+    fontFamily: "Roboto_700Bold",
   },
   scrollbarThumbOverlay: {
     position: "absolute",
