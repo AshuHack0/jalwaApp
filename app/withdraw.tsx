@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
+import { Image, Modal, ScrollView, StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 import Svg, {
   Defs,
   Path,
@@ -57,6 +57,7 @@ export default function WithdrawScreen() {
   const [recentWithdrawals, setRecentWithdrawals] = useState<
     WithdrawalRecord[]
   >([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -89,12 +90,7 @@ export default function WithdrawScreen() {
       if (result.success) {
         await refreshWallet();
         setWithdrawAmount("");
-        showToast({
-          type: "success",
-          title: "Withdrawal Submitted",
-          message: "Your withdrawal request has been submitted.",
-        });
-        router.push("/withdrawal-history");
+        setShowSuccessModal(true);
       } else {
         showToast({
           type: "error",
@@ -120,6 +116,59 @@ export default function WithdrawScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
+
+      {/* ── Success Modal ── */}
+      <Modal
+        visible={showSuccessModal}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            {/* Confetti dots */}
+            <View style={styles.confettiContainer}>
+              <View style={[styles.confettiDot, { backgroundColor: "#7AFEC3", top: 10, left: "34%" }]} />
+              <View style={[styles.confettiDot, { backgroundColor: "#FFD700", top: -10, right: "40%", width: 8, height: 8 }]} />
+              <View style={[styles.confettiDot, { backgroundColor: "#7AFEC3", top: -2, left: "45%", width: 10, height: 10 }]} />
+              <View style={[styles.confettiLine, { top: 25, left: "30%", transform: [{ rotate: "-45deg" }] }]} />
+              <View style={[styles.confettiLine, { top: -13, right: "32%", backgroundColor: "#FFD700", transform: [{ rotate: "-140deg" }] }]} />
+              <View style={[styles.confettiArc, { top: 20, right: "32%", borderColor: "#FFD700", transform: [{ rotate: "180deg" }] }]} />
+              <View style={[styles.confettiLine, { top: -20, right: "62%", backgroundColor: "#FFD700", transform: [{ rotate: "-60deg" }] }]} />
+
+            </View>
+
+            <Image source={require("@/assets/tick.png")} style={{ height: 50, aspectRatio: 1 }} />
+            <ThemedText style={styles.modalTitle}>
+              Withdrawal request successful
+            </ThemedText>
+            <ThemedText style={styles.modalSubtitle}>
+              We will complete the withdrawal within 2 hours!{"\n"}Please wait patiently...
+            </ThemedText>
+
+            <Pressable
+              style={styles.confirmButton}
+              onPress={() => {
+                setShowSuccessModal(false);
+                router.push("/withdrawal-history");
+              }}
+            >
+              <LinearGradient
+                colors={["#7AFEC3", "#02AFB6"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <ThemedText style={styles.confirmButtonText}>Confirm</ThemedText>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <ThemedView style={styles.container}>
         {/* ── Top Bar ── */}
         <View style={styles.topBar}>
@@ -1224,5 +1273,91 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: "#7AFEC3",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  modalCard: {
+    backgroundColor: "#011341",
+    borderRadius: 20,
+    paddingHorizontal: 24,
+    paddingBottom: 28,
+    paddingTop: 0,
+    width: "100%",
+    alignItems: "center"
+  },
+  confettiContainer: {
+    width: "100%",
+    height: 10,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    position: "relative",
+    marginBottom: 12,
+  },
+  confettiDot: {
+    position: "absolute",
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#7AFEC3",
+  },
+  confettiLine: {
+    position: "absolute",
+    width: 4,
+    height: 18,
+    borderRadius: 2,
+    backgroundColor: "#7AFEC3",
+  },
+  confettiArc: {
+    position: "absolute",
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 3,
+    borderColor: "#7AFEC3",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+  },
+  checkCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: "#7AFEC3",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    bottom: 0,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#E2EEFC",
+    textAlign: "center",
+    marginBottom: 10,
+    fontFamily: "BahnschriftBold",
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#92A8E3",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 28,
+    fontFamily: "BahnschriftRegular",
+  },
+  confirmButton: {
+    width: "100%",
+    height: 48,
+    borderRadius: 100,
+    overflow: "hidden"
+  },
+  confirmButtonText: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#05012B",
+    fontFamily: "BahnschriftSemibold",
   },
 });
