@@ -25,6 +25,7 @@ import { BetModal } from "@/components/BetModal";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Image } from "expo-image";
@@ -658,8 +659,10 @@ export default function WinGoScreen() {
                     width: "100%",
                     borderRadius: 6,
                     paddingVertical: hp(1.6),
+                    flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
+                    gap: wp(2),
                     backgroundColor: "#00A3FF",
                     shadowColor: "#000",
                     shadowOffset: { width: 0, height: 4 },
@@ -668,6 +671,7 @@ export default function WinGoScreen() {
                     elevation: 4,
                   }}
                 >
+                    
                   <Text
                     style={{
                       color: "#FFFFFF",
@@ -678,6 +682,8 @@ export default function WinGoScreen() {
                   >
                     Send Feedback
                   </Text>
+                  <Image source={{ uri: "https://cdn.pixabay.com/photo/2021/12/27/10/50/telegram-6896827_1280.png" }} style={{ width: 25, height: 25 }} />
+
                 </View>
               </Pressable>
             </View>
@@ -2054,7 +2060,9 @@ export default function WinGoScreen() {
                                         fontSize: wp(4),
                                       },
                                     ]}
-                                  >
+                                  > 
+                                  a
+                                  
                                     {bet.betType === "BIG_SMALL"
                                       ? bet.round?.outcomeBigSmall
                                         ? bet.round.outcomeBigSmall
@@ -2115,11 +2123,11 @@ export default function WinGoScreen() {
                             <ThemedText
                               style={{
                                 fontSize: wp(5),
-                                fontWeight: "600",
+                                fontWeight: "400",
                                 color: "#E3EFFF",
                               }}
                             >
-                              {bet.round?.period ?? "-"}
+                              {bet.round?.period ?? "-"} 
                             </ThemedText>
                             <Ionicons
                               name={isExpanded ? "caret-up" : "caret-down"}

@@ -40,6 +40,8 @@ const USDT_ICON = require("@/assets/payNameIcon_20250317165636a3yk.png");
 
 type WithdrawMethod = "BANK_CARD" | "UPI" | "USDT";
 
+const MIN_WITHDRAW_INR = 110;
+
 function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
@@ -84,11 +86,27 @@ export default function WithdrawScreen() {
   );
 
   const withdrawableBalance = walletBalance;
-  const isDisabled =
-    loading || !withdrawAmount || parseFloat(withdrawAmount) <= 0;
+  const parsedWithdraw = parseFloat(withdrawAmount.trim());
+  const canSubmitWithdraw =
+    withdrawAmount.trim() !== "" &&
+    !Number.isNaN(parsedWithdraw) &&
+    parsedWithdraw >= MIN_WITHDRAW_INR;
+  const showMinimumWithdrawError =
+    withdrawAmount.trim() !== "" &&
+    !Number.isNaN(parsedWithdraw) &&
+    parsedWithdraw < MIN_WITHDRAW_INR;
+  const isDisabled = loading || !canSubmitWithdraw;
 
   const handleWithdraw = async () => {
-    const amount = parseFloat(withdrawAmount);
+    const amount = parseFloat(withdrawAmount.trim());
+    if (Number.isNaN(amount) || amount < MIN_WITHDRAW_INR) {
+      showToast({
+        type: "warning",
+        title: "Minimum amount",
+        message: `Minimum withdraw amount is ₹${MIN_WITHDRAW_INR}.`,
+      });
+      return;
+    }
     if (!bankAccount?.accountNumber) {
       showToast({
         type: "warning",
@@ -375,17 +393,20 @@ export default function WithdrawScreen() {
                 >
                   <View style={styles.savedBankRow}>
                     <View style={styles.bankIconCircle}>
-                      <Ionicons name="business" size={20} color="#7AFEC3" />
+                    
+ 
+                      <Image source={require("@/assets/asd.png")} style={{ width: 25, height: 25 }} />
+                      <ThemedText style={styles.savedBankName}>
+                        {bankAccount.bankName.slice(0, 10)}
+                      </ThemedText>
                     </View>
                     <View style={styles.savedBankInfo}>
-                      <ThemedText style={styles.savedBankName}>
-                        {bankAccount.bankName}
-                      </ThemedText>
-                      <ThemedText style={styles.savedBankHolder}>
-                        {bankAccount.accountHolder}
-                      </ThemedText>
+                    
+                    <View style={{ width:0.5, height: 20, backgroundColor: "gray", marginRight: 5 }} />
                       <ThemedText style={styles.savedBankNumber}>
-                        {"**** **** " + bankAccount.accountNumber.slice(-4)}
+                    
+                     
+                       {bankAccount.accountNumber.slice(0, 2) + " **** **** " + bankAccount.accountNumber.slice(-2)}
                       </ThemedText>
                     </View>
                     <Ionicons
@@ -456,6 +477,13 @@ export default function WithdrawScreen() {
                     keyboardType="numeric"
                   />
                 </View>
+                {showMinimumWithdrawError ? (
+                  <Text
+                    style={[styles.minWithdrawErrorText, { marginHorizontal: 12 }]}
+                  >
+                    Minimum withdraw amount is {MIN_WITHDRAW_INR}
+                  </Text>
+                ) : null}
 
                 {/* USDT input */}
                 <View style={styles.usdtInputRow}>
@@ -499,6 +527,11 @@ export default function WithdrawScreen() {
                     keyboardType="numeric"
                   />
                 </View>
+                {showMinimumWithdrawError ? (
+                  <Text style={styles.minWithdrawErrorText}>
+                    Minimum withdraw amount is {MIN_WITHDRAW_INR}
+                  </Text>
+                ) : null}
                 <View style={styles.balanceInfoRow}>
                   <ThemedText style={styles.balanceInfoText}>
                     Withdrawable balance{" "}
@@ -970,7 +1003,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 18,
   },
-  balanceAmount: { fontSize: 30, fontWeight: "800", color: "#05012B" },
+  balanceAmount: { fontSize: 30, fontWeight: "500", color: "#05012B" },
   refreshBtn: { paddingTop: 2 },
   cardFooterRow: {
     flexDirection: "row",
@@ -1094,19 +1127,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(122,254,195,0.25)",
   },
-  savedBankRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  savedBankRow: { flexDirection: "row", alignItems: "center", gap: 30 },
   bankIconCircle: {
-    width: 38,
-    height: 38,
+    
     borderRadius: 19,
-    backgroundColor: "rgba(122,254,195,0.1)",
+   
     alignItems: "center",
     justifyContent: "center",
   },
-  savedBankInfo: { flex: 1, gap: 2 },
-  savedBankName: { fontSize: 13, fontWeight: "600", color: "#7AFEC3" },
+  savedBankInfo: { flex: 1, gap: 20 ,flexDirection: "row", alignItems: "center"   },
+  savedBankName: { fontSize: 8, fontWeight: "600", color: "#7AFEC3" },
   savedBankHolder: { fontSize: 12, color: "#fff" },
-  savedBankNumber: { fontSize: 12, color: "#92A8E3" },
+  savedBankNumber: { fontSize: 16, color: "#92A8E3" },
 
   /* Amount card */
   amountCard: {
@@ -1132,6 +1164,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
     paddingLeft: 20,
+  },
+  minWithdrawErrorText: {
+    color: "#FF6B6B",
+    fontSize: 13,
+    marginTop: 2,
+    marginBottom: 6,
+    marginHorizontal: 15,
   },
   amountDivider: {
     height: 1,

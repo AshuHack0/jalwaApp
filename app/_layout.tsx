@@ -111,6 +111,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="auth" />
           <Stack.Screen name="wingo" />
+          <Stack.Screen name="home-banner-one" />
           <Stack.Screen name="withdraw" />
           <Stack.Screen name="deposit-history" />
           <Stack.Screen name="withdrawal-history" />

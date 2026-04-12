@@ -11,6 +11,20 @@ import { Image, Linking, ScrollView, StyleSheet, Text, View, Pressable } from "r
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
 
+/** 10-char labels like Member1024; one is chosen at random per mount. */
+const RANDOM_MEMBER_NICKNAMES = [
+  "Member1024",
+  "Member8391",
+  "Member5027",
+  "Member2910",
+  "Member6743",
+  "Member1188",
+  "Member4402",
+  "Member9931",
+  "Member0563",
+  "Member7812",
+] as const;
+
 // ── Icons ────────────────────────────────────────────────────────────────────
 function IconBox({ emoji }: { emoji: string }) {
   return (
@@ -79,6 +93,12 @@ function SettingRow({
 export default function SettingsScreen() {
   const [selectedAvatarId, setSelectedAvatarId] =
     useState(DEFAULT_AVATAR_ID);
+  const [nickname] = useState(
+    () =>
+      RANDOM_MEMBER_NICKNAMES[
+        Math.floor(Math.random() * RANDOM_MEMBER_NICKNAMES.length)
+      ],
+  );
 
   const handleLoginPasswordPress = useCallback(async () => {
     const token = await getToken();
@@ -187,7 +207,7 @@ export default function SettingsScreen() {
               <Pressable style={styles.profileRow}>
                 <Text style={styles.profileLabel}>Nickname</Text>
                 <View style={styles.profileRight}>
-                  <Text style={styles.profileValue}>MiRACLE</Text>
+                  <Text style={styles.profileValue}>{nickname}</Text>
                   <Image
                     source={require("@/assets/Screenshot202603-09p230133-removebg-preview.png")}
                     style={[

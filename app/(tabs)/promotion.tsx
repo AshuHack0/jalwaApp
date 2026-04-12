@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 22,
-    fontWeight: "bold",
+    fontWeight: "400",
     color: "#fff",
     textAlign: "center",
   },
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   },
   promotionDataValue: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "400",
     color: "#fff",
     // fontStyle: "italic",
   },
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#92A8E3",
     textAlign: "center",
-    fontWeight: "500",
+    fontWeight: "400",
     lineHeight: 20,
 
     // fontStyle: "italic",

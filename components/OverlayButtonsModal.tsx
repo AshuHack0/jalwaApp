@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router'
 
 const SUPPORT_PORTAL_URL = 'https://support.indgames.online/'
 const WINGO_SCREEN = '/wingo'
+const TURNTABLE_SCREEN = '/home-banner-one'
 
 type OverlayButton = {
     name: string
@@ -25,7 +26,7 @@ const overlayButtons: OverlayButton[] = [
     {
         name: "turntable",
         image: "https://www.jalwagame.win/assets/png/turntable-4464ae2e.png",
-        route: WINGO_SCREEN,
+        route: TURNTABLE_SCREEN,
     },
     {
         name: "tg_bg",

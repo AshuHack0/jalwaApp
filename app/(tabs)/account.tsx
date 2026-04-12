@@ -587,13 +587,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Roboto_400Regular",
     letterSpacing: -0.5,
-    fontWeight: "800"
+    fontWeight: "400"
   },
   lastLogin: {
     fontSize: 14,
     fontFamily: "Roboto_400Regular",
     color: "#fff",
-    fontWeight: "bold"
+    fontWeight: "400"
   },
   balanceSectionContainer: {
     backgroundColor: "#001C54",

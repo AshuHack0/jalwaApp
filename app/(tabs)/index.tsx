@@ -601,14 +601,20 @@ export default function HomeScreen() {
       >
         {/* Promotional Banners */}
         <View style={styles.promoBanners}>
-          <Pressable style={styles.promoBanner}>
+          <Pressable
+            style={styles.promoBanner}
+            onPress={() => router.push("/home-banner-one")}
+          >
             <Image
               source={require("@/assets/home1-14aaac97.png")}
               style={styles.promoBannerImage}
               contentFit="contain"
             />
           </Pressable>
-          <Pressable style={styles.promoBanner}>
+          <Pressable
+            style={styles.promoBanner}
+            onPress={() => router.push("/account/vip")}
+          >
             <Image
               source={require("@/assets/home2-44a54115.png")}
               style={styles.promoBannerImage}
@@ -1387,7 +1393,7 @@ export default function HomeScreen() {
       </Modal>
 
       {/* Overlay Buttons Modal */}
-      <OverlayButtonsModal bottom={10} visibleButtons={['rewardCenter', 'turntable', 'tg_bg', 'changlong', 'icon_sevice']} scrolling={isPageScrolling} />
+      <OverlayButtonsModal bottom={10} visibleButtons={['turntable', 'tg_bg', 'changlong', 'icon_sevice']} scrolling={isPageScrolling} />
     </ThemedView>
   );
 }
