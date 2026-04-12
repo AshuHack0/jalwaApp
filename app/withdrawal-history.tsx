@@ -19,6 +19,7 @@ import { Image } from "expo-image";
 import { Stack, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 export default function WithdrawalHistoryScreen() {
   const router = useRouter();
@@ -85,7 +86,7 @@ export default function WithdrawalHistoryScreen() {
         {/* Top Navigation Bar */}
         <View style={styles.topBar}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="chevron-back" size={26} color="#F3F8FF" />
           </Pressable>
           <ThemedText style={styles.screenTitle}>Withdrawal history</ThemedText>
           <View style={styles.placeholder} />
@@ -108,46 +109,78 @@ export default function WithdrawalHistoryScreen() {
               {paymentMethods.map((method) => (
                 <Pressable
                   key={method.id}
-                  style={[
-                    styles.filterTab,
-                    selectedFilter === method.id && styles.filterTabActive,
-                  ]}
+                  style={[styles.filterTab, { paddingHorizontal: selectedFilter === method.id ? 0 : method.id == "All" ? 22 : 12, paddingVertical: selectedFilter === method.id ? 0 :  8 }]}
                   onPress={() => setSelectedFilter(method.id)}
                 >
-                  {method.image2 === require("@/assets/all2.png") ? (
-                    <Image
-                      source={
-                        selectedFilter === method.id
-                          ? method.image
-                          : method.image2
-                      }
+                  {selectedFilter === method.id ? (
+                    <ExpoLinearGradient
+                      colors={["#7AFEC3", "#02AFB6"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
                       style={{
-                        width: 22,
-                        height: 22,
-                        backgroundColor: "transparent",
+                        paddingHorizontal: method.id == "All" ? 22 : 12,
+                        paddingVertical: 8,
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 5
                       }}
-                      contentFit="cover"
-                    />
+                    >
+                      {method.image2 === require("@/assets/all2.png") ? (
+                        <Image
+                          source={method.image}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            backgroundColor: "transparent",
+                          }}
+                          contentFit="cover"
+                        />
+                      ) : (
+                        <Image
+                          source={method.image}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            backgroundColor: "transparent",
+                          }}
+                          contentFit="cover"
+                        />
+                      )}
+                      <ThemedText
+                        style={[styles.filterTabText, styles.filterTabTextActive]}
+                      >
+                        {method.label}
+                      </ThemedText>
+                    </ExpoLinearGradient>
                   ) : (
-                    <Image
-                      source={method.image}
-                      style={{
-                        width: 22,
-                        height: 22,
-                        backgroundColor: "transparent",
-                      }}
-                      contentFit="cover"
-                    />
+                    <>
+                      {method.image2 === require("@/assets/all2.png") ? (
+                        <Image
+                          source={method.image2}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            backgroundColor: "transparent",
+                          }}
+                          contentFit="cover"
+                        />
+                      ) : (
+                        <Image
+                          source={method.image}
+                          style={{
+                            width: 22,
+                            height: 22,
+                            backgroundColor: "transparent",
+                          }}
+                          contentFit="cover"
+                        />
+                      )}
+                      <ThemedText style={styles.filterTabText}>
+                        {method.label}
+                      </ThemedText>
+                    </>
                   )}
-                  <ThemedText
-                    style={[
-                      styles.filterTabText,
-                      selectedFilter === method.id &&
-                        styles.filterTabTextActive,
-                    ]}
-                  >
-                    {method.label}
-                  </ThemedText>
                 </Pressable>
               ))}
             </ScrollView>
@@ -486,11 +519,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 5,
     backgroundColor: "#011341",
     fontFamily: "BahnschriftRegular",
+    overflow: "hidden"
   },
   filterTabActive: {
     backgroundColor: "#7AFEC3",
@@ -504,6 +536,7 @@ const styles = StyleSheet.create({
   filterTabTextActive: {
     color: "#05012B",
     fontWeight: "600",
+    marginTop: -3
   },
   filterRow: {
     flexDirection: "row",
@@ -523,7 +556,8 @@ const styles = StyleSheet.create({
   },
   filterDropdownText: {
     fontSize: 14,
-    color: "#fff",
+    color: "#91A8E2",
+    fontWeight:"700"
   },
   noDataContainer: {
     flex: 1,

@@ -551,7 +551,7 @@ export default function DepositScreen() {
             onPress={() => router.back()}
             style={styles.backButton}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </Pressable>
           <ThemedText style={styles.screenTitle}>Deposit</ThemedText>
           <Pressable
