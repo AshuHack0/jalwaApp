@@ -6,7 +6,8 @@ import {
   getSelectedAvatarId,
 } from "@/services/avatar-storage";
 import { useCallback, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
+import { getToken } from "@/services/auth-storage";
+import { Image, Linking, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
 
@@ -78,6 +79,15 @@ function SettingRow({
 export default function SettingsScreen() {
   const [selectedAvatarId, setSelectedAvatarId] =
     useState(DEFAULT_AVATAR_ID);
+
+  const handleLoginPasswordPress = useCallback(async () => {
+    const token = await getToken();
+    let url = "https://support.indgames.online/";
+    if (token) {
+      url += `?token=${encodeURIComponent(token)}`;
+    }
+    await Linking.openURL(url);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -229,6 +239,7 @@ export default function SettingsScreen() {
                 imgg={require("@/assets/Screenshot 2026-02-20 030012.png")}
                 label="Login password"
                 value="Edit"
+                onPress={handleLoginPasswordPress}
               />
               {/* <View style={styles.rowDivider} /> */}
               <SettingRow
