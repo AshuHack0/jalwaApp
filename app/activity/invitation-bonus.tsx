@@ -11,7 +11,16 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const bonusData = [
   { id: 1, amount: "38.00", invitees: 1, recharge: "300.00" },
   { id: 2, amount: "158.00", invitees: 3, recharge: "300.00" },
-  { id: 3, amount: "580.00", invitees: 10, recharge: "300.00" },
+  { id: 3, amount: "580.00", invitees: 10, recharge: "500.00" },
+  { id: 4, amount: "1,800.00", invitees: 30, recharge: "800.00" },
+  { id: 5, amount: "2,800.00", invitees: 50, recharge: "1,200.00" },
+  { id: 6, amount: "4,500.00", invitees: 75, recharge: "1,200.00" },
+  { id: 7, amount: "5,800.00", invitees: 100, recharge: "1,200.00" },
+  { id: 8, amount: "11,800.00", invitees: 200, recharge: "1,200.00" },
+  { id: 9, amount: "29,000.00", invitees: 500, recharge: "1,200.00" },
+  { id: 10, amount: "58,000.00", invitees: 1000, recharge: "1,200.00" },
+  { id: 11, amount: "118,000.00", invitees: 2000, recharge: "1,200.00" },
+  { id: 12, amount: "300,000.00", invitees: 5000, recharge: "1,200.00" },
 ];
 
 export default function InvitationBanner() {
@@ -43,8 +52,8 @@ export default function InvitationBanner() {
           <LinearGradient
             colors={["#f99937", "#ff6922", "#ff8039"]}
             locations={[0.0272, 0.4354, 0.9854]}
-            start={{ x: 1, y: 0 }}
-            end={{ x: 0, y: 1 }}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 1, y: 0 }}
             style={styles.banner}
           >
             <Image source={{ uri: "https://www.jalwagame.win/assets/png/invitation_bg-611f71ab.webp" }} style={{ width: "100%", height: "100%", position: "absolute" }} />
@@ -87,10 +96,10 @@ export default function InvitationBanner() {
               >
                 <Image source={{ uri: "https://www.jalwagame.win/assets/svg/icon-83990d9a.svg" }} style={{ width: "100%", height: "100%" }} />
               </LinearGradient>
-              <Text style={styles.navText}>Invitation record j</Text>
+              <Text style={styles.navText}>Invitation record</Text>
             </Pressable>
           </View>
-
+          <View style={{ marginTop: 15 }} />
           {bonusData.map((item) => (
             <View key={item.id} style={styles.card}>
               <View style={styles.cardHeader}>
@@ -180,8 +189,8 @@ const styles = StyleSheet.create({
   },
   scrollView: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingBottom: 60 },
-  banner: { height: 220, flexDirection: "row", position: "relative" },
-  bannerLeft: { flex: 1, paddingHorizontal: 16 },
+  banner: { height: 190, flexDirection: "row", position: "relative" },
+  bannerLeft: { flex: 1, paddingHorizontal: 10 },
   bannerTitle: {
     marginTop: 10,
     color: "#fff",
@@ -197,12 +206,12 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     width: "70%",
   },
-  dateLabel: { color: "#fff", fontSize: 15, fontWeight: "600", marginTop: 8 },
-  dateRange: { color: "#fff", fontSize: 21, fontWeight: "bold", marginTop: 2 },
+  dateLabel: { color: "#fff", fontSize: 14, fontWeight: "600", marginTop: 8 },
+  dateRange: { color: "#fff", fontSize: 20, fontWeight: "bold", marginTop: 2 },
   navContainer: {
     flexDirection: "row",
     backgroundColor: "#001c54",
-    marginTop: -35,
+    marginTop: -25,
     marginHorizontal: 16,
     paddingVertical: 16,
     borderRadius: 15,

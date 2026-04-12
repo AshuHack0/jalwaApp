@@ -178,7 +178,7 @@ function TransactionCard({ item }: { item: TransactionItem }) {
           <View style={styles.rowContent}>
             <Text style={styles.rowLabel}>Balance</Text>
             <Text style={[styles.balanceValue, { color: item.amountColor }]}>
-              {item.balance}
+              ₹{item.balance}
             </Text>
           </View>
         </View>
@@ -315,16 +315,15 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 52,
     borderRadius: 7,
-    backgroundColor: "#0A215C",
+    backgroundColor: "#021341",
     paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
   dropdownText: {
-    color: TEXT_MUTED,
+    color: "#91A8E2",
     fontSize: 16,
-    lineHeight: 20,
     fontFamily: "Roboto_500Medium",
   },
   modalOverlay: {
@@ -371,11 +370,10 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   cardTitle: {
-    color: "#F7FBFF",
-    fontSize: 19,
-    lineHeight: 22,
+    color: "#e3efff",
+    fontSize: 16,
     fontFamily: "BahnschriftSemibold",
-    fontStyle: "italic",
+    fontWeight:"bold"
   },
   rowBox: {
     backgroundColor: INNER_BG,
@@ -389,31 +387,35 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    width:"100%"
   },
   rowLabel: {
     color: TEXT_MUTED,
     fontSize: 13,
     lineHeight: 16,
     fontFamily: "Roboto_500Medium",
+    fontWeight:"600"
   },
   rowValue: {
     color: "#AFC4F4",
     fontSize: 13,
     lineHeight: 16,
     fontFamily: "Roboto_500Medium",
+    fontWeight:"600"
   },
   balanceValue: {
     fontSize: 17,
     lineHeight: 21,
     fontFamily: "BahnschriftSemibold",
+    fontWeight:"600"
   },
   cardFooterBox: {
     marginTop: 13,
     height: 78,
     borderRadius: 5,
     // backgroundColor: INNER_EMPTY,
-    borderWidth: 0.4,
-    borderColor: "#173D86",
+    // borderWidth: 0.4,
+    // borderColor: "#173D86",
   },
   footerText: {
     color: "#F4F7FF",
