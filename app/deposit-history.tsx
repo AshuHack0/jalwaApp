@@ -153,8 +153,8 @@ export default function DepositHistoryScreen() {
     selectedStatus === "All"
       ? filteredByGateway
       : filteredByGateway.filter(
-          (d) => d.status === selectedStatus.toLowerCase(),
-        );
+        (d) => d.status === selectedStatus.toLowerCase(),
+      );
 
   return (
     <>
@@ -268,7 +268,7 @@ export default function DepositHistoryScreen() {
                         style={[
                           styles.dropdownItemText,
                           selectedStatus === option &&
-                            styles.dropdownItemTextActive,
+                          styles.dropdownItemTextActive,
                         ]}
                       >
                         {option}
@@ -313,10 +313,10 @@ export default function DepositHistoryScreen() {
                     <ThemedText
                       style={[
                         styles.statusText,
-                        { color: statusColor(item.status) },
+                        { color: item.status === "pending" ? "#458DD7" : statusColor(item.status) },
                       ]}
                     >
-                      {statusLabel(item.status)}
+                      {statusLabel(item.status) === "Pending" ? "To Be Paid" : statusLabel(item.status)}
                     </ThemedText>
                   </View>
 
@@ -335,17 +335,6 @@ export default function DepositHistoryScreen() {
                           : `₹${item.amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                       </ThemedText>
                     </View>
-
-                    {item.fee > 0 && (
-                      <View style={styles.cardDetailsRow}>
-                        <ThemedText style={styles.detailLabel}>Fee</ThemedText>
-                        <ThemedText style={styles.detailValue}>
-                          {item.gateway === "usdt"
-                            ? `USDT ${item.fee}`
-                            : `₹${item.fee}`}
-                        </ThemedText>
-                      </View>
-                    )}
 
                     <View style={styles.cardDetailsRow}>
                       <ThemedText style={styles.detailLabel}>Type</ThemedText>
@@ -379,11 +368,20 @@ export default function DepositHistoryScreen() {
                             name="copy-outline"
                             size={14}
                             color="#92A8E3"
+                            style={{ transform: [{ rotate: "90deg" }] }}
                           />
                         </Pressable>
                       </View>
                     </View>
                   </View>
+
+
+                  {item.status === "pending" && <View>
+                    <Pressable style={{ width: "97%", height: 40, backgroundColor: "#00E8BD", justifyContent: "center", alignItems: "center", borderRadius: 100, marginBottom: 20, marginHorizontal: 5 }}>
+                      <ThemedText style={{ color: "white", fontSize: 16, fontFamily: "BahnschriftRegular" }}>Submit Receipt</ThemedText>
+                    </Pressable>
+                  </View>}
+
                 </View>
               ))}
 
@@ -522,7 +520,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   depositBadge: {
-    backgroundColor: "#17B15E", // Deposit badge green
+    backgroundColor: "#17B15E",
     paddingHorizontal: 16,
     paddingVertical: 3,
     borderRadius: 6,
@@ -531,20 +529,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14.9,
     fontFamily: "BahnschriftRegular",
+    fontWeight: "700"
   },
   statusText: {
     fontSize: 13.8,
     fontFamily: "BahnschriftRegular",
   },
   divider: {
-    height: 1,
-    backgroundColor: "#2E3A59",
+    height: 1.2,
+    backgroundColor: "#3C496C",
     marginHorizontal: 16,
     marginBottom: 16,
   },
   detailsContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: 16
   },
   cardDetailsRow: {
     flexDirection: "row",
@@ -554,12 +552,13 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 14,
-    color: "#92A8E3",
+    color: "#8CA1DB",
     fontFamily: "BahnschriftRegular",
+    fontWeight: "bold"
   },
   detailValue: {
     fontSize: 14,
-    color: "#fff",
+    color: "#91A8E2",
     fontFamily: "BahnschriftRegular",
   },
   balanceValue: {
