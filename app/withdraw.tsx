@@ -451,14 +451,14 @@ export default function WithdrawScreen() {
             {(selectedMethod === "UPI" || selectedMethod === "USDT") && (
               <Pressable
                 style={styles.addBankBtn}
-                onPress={() => router.push("/add-bank")}
+                onPress={() => router.push("/payment-method")}
               >
                 <View style={styles.addBankIconBox}>
                   <Ionicons name="add" size={28} color="#92A8E3" />
                 </View>
                 <ThemedText style={styles.addBankText}>
                   Add{" "}
-                  {selectedMethod === "UPI" ? "UPI ID" : "USDT wallet address"}
+                  {selectedMethod === "UPI" ? "UPI" : "address"}
                 </ThemedText>
               </Pressable>
             )}
@@ -481,7 +481,7 @@ export default function WithdrawScreen() {
 
 
                 {/* Activation Banner */}
-                { (
+                {(
                   <View style={styles.activationBanner}>
                     <View style={styles.activationBannerLogo}>
                       <Image source={{ uri: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/WithBeforeImgIcon_2025031717011158q1.png" }} style={{ width: 30, height: 30 }} />
@@ -508,7 +508,7 @@ export default function WithdrawScreen() {
                     AR Wallet is a third-party payment service platform that facilitates fast payments on the platform using ARB (digital currency)
                   </ThemedText>
                   <ThemedText style={styles.arWalletInfoPoint}>Safe, stable and fast</ThemedText>
-                  
+
                   <Pressable style={styles.arWalletLinkRow}>
                     <ThemedText style={styles.arWalletLink}>How to activate AR wallet</ThemedText>
                     <Ionicons name="chevron-forward" size={14} color="#e3efff" />
@@ -528,7 +528,7 @@ export default function WithdrawScreen() {
                     This method reduces your bank transaction issues while you are playing, so you don't need to worry about bank limits. You just need to sell to UPI when you need to use the funds.
                   </ThemedText>
 
-                  { (
+                  {(
                     <Pressable
                       style={styles.bigActivateBtn}
                       onPress={() => setIsArWalletActivated(true)}
@@ -541,6 +541,8 @@ export default function WithdrawScreen() {
             )}
           </View>
 
+          {selectedMethod === "USDT" && <Text style={{ color: "#d23838", textAlign: "center", fontSize: 13, marginTop: 10, paddingHorizontal: 10 }}>Need to add beneficiary information to be able to withdraw money</Text>}
+
           {/* ── Amount Input ── */}
           {!(selectedMethod === "AR_PAY") && (
             <View style={styles.amountCard}>
@@ -548,7 +550,7 @@ export default function WithdrawScreen() {
                 <>
                   {/* USDT header */}
                   <View style={styles.usdtHeader}>
-                    <Image source={USDT_ICON} style={styles.usdtHeaderIcon} resizeMode="contain" />
+                    <Image source={{ uri: "https://www.jalwagame.win/assets/png/3-6bb1e3bd.webp" }} style={styles.usdtHeaderIcon} resizeMode="contain" />
                     <ThemedText style={styles.usdtHeaderTitle}>
                       Select amount of USDT
                     </ThemedText>
@@ -556,11 +558,13 @@ export default function WithdrawScreen() {
 
                   {/* INR input */}
                   <View style={styles.usdtInputRow}>
-                    <ThemedText style={styles.usdtInputCurrency}>₹</ThemedText>
+                    <View style={{ width: 30, alignItems: "center", justifyContent: "center" }}>
+                      <ThemedText style={styles.usdtInputCurrency}>₹</ThemedText>
+                    </View>
                     <TextInput
                       style={styles.usdtInput}
                       placeholder="Please enter withdrawal amount"
-                      placeholderTextColor="#4A5B7A"
+                      placeholderTextColor="#606E93"
                       value={withdrawAmount}
                       onChangeText={setWithdrawAmount}
                       keyboardType="numeric"
@@ -576,11 +580,13 @@ export default function WithdrawScreen() {
 
                   {/* USDT input */}
                   <View style={styles.usdtInputRow}>
-                    <Image source={USDT_ICON} style={styles.usdtInputIcon} resizeMode="contain" />
+                    <View style={{ width: 30, alignItems: "center", justifyContent: "center" }}>
+                      <Image source={{ uri: "https://www.jalwagame.win/assets/png/3-6bb1e3bd.webp" }} style={styles.usdtInputIcon} resizeMode="contain" />
+                    </View>
                     <TextInput
                       style={styles.usdtInput}
                       placeholder="Please enter USDT amount"
-                      placeholderTextColor="#4A5B7A"
+                      placeholderTextColor="#606E93"
                       value={usdtAmount}
                       onChangeText={setUsdtAmount}
                       keyboardType="numeric"
@@ -1234,8 +1240,8 @@ const styles = StyleSheet.create({
   amountCard: {
     marginHorizontal: 14,
     marginTop: 14,
-    backgroundColor: "#0A1A45",
-    borderRadius: 14,
+    backgroundColor: "#001444",
+    borderRadius: 8,
     overflow: "hidden",
   },
   amountInputRow: {
@@ -1305,13 +1311,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-  withdrawBtnDisabled: { backgroundColor: "#2A3A5C", opacity: 0.7 },
+  withdrawBtnDisabled: { backgroundColor: "#3D4863", opacity: 0.7, marginTop: -1 },
   withdrawBtnText: {
     fontSize: 17,
     fontWeight: "400",
-    color: "#05012B",
+    color: "#07052E",
   },
-  withdrawBtnTextDisabled: { color: "#6A7FA8" },
+  withdrawBtnTextDisabled: { color: "#07052E" },
 
   /* Rules */
   rulesSection: {
@@ -1409,26 +1415,25 @@ const styles = StyleSheet.create({
     height: 22,
   },
   usdtHeaderTitle: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: "700",
-    color: "#fff",
-    fontStyle: "italic",
+    color: "#e3efff",
   },
   usdtInputRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#0D1E52",
+    backgroundColor: "#05012B",
     borderRadius: 10,
     marginHorizontal: 12,
     marginBottom: 10,
     paddingHorizontal: 14,
-    paddingVertical: 13,
+    paddingVertical: 4,
     gap: 10,
   },
   usdtInputCurrency: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#92A8E3",
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#00ecbe",
   },
   usdtInputIcon: {
     width: 22,
@@ -1606,9 +1611,9 @@ const styles = StyleSheet.create({
   },
   arWalletInfo: {
     marginTop: 24,
-    backgroundColor:"#021341",
-    borderRadius:6,
-    padding:8
+    backgroundColor: "#021341",
+    borderRadius: 6,
+    padding: 8
   },
   arWalletInfoHeader: {
     flexDirection: "row",
