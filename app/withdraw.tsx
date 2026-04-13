@@ -9,11 +9,11 @@ import {
   initiateWithdrawal,
 } from "@/services/api/withdrawal";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
-  Image,
   ImageBackground,
   Modal,
   Pressable,
@@ -38,7 +38,7 @@ const BANK_CARD_ICON = require("@/assets/WithBeforeImgIcon_20250317170035rogo.pn
 const UPI_ICON = require("@/assets/WithBeforeImgIcon2_20250802174209t2y7.png");
 const USDT_ICON = require("@/assets/payNameIcon_20250317165636a3yk.png");
 
-type WithdrawMethod = "BANK_CARD" | "UPI" | "USDT";
+type WithdrawMethod = "BANK_CARD" | "UPI" | "USDT" | "AR_PAY";
 
 const MIN_WITHDRAW_INR = 110;
 
@@ -73,6 +73,7 @@ export default function WithdrawScreen() {
     WithdrawalRecord[]
   >([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isArWalletActivated, setIsArWalletActivated] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -240,7 +241,7 @@ export default function WithdrawScreen() {
           >
             <View style={styles.balanceCardInner}>
               <View style={styles.balanceHeaderRow}>
-              <Image source={{ uri: "https://www.jalwagame.win/assets/png/balance-b2c8faab.webp" }} style={{ width: 18, height: 18, paddingLeft: 20 , marginLeft: 5 }} />
+                <Image source={{ uri: "https://www.jalwagame.win/assets/png/balance-b2c8faab.webp" }} style={{ width: 18, height: 18, paddingLeft: 20, marginLeft: 5 }} />
                 <ThemedText style={styles.balanceLabel}>
                   Available balance
                 </ThemedText>
@@ -258,8 +259,8 @@ export default function WithdrawScreen() {
                     size={22}
                     color="rgba(255,255,255,0.85)"
                   /> */}
-               
-                  <Image source={{ uri: "https://www.jalwagame.win/assets/png/refresh-8e0efe26.webp" }} style={{ width: 18, height: 18, paddingLeft: 20 , marginLeft: 5 }} />
+
+                  <Image source={{ uri: "https://www.jalwagame.win/assets/png/refresh-8e0efe26.webp" }} style={{ width: 18, height: 18, paddingLeft: 20, marginLeft: 5 }} />
                 </Pressable>
               </View>
               <View style={styles.cardFooterRow}  >
@@ -276,17 +277,27 @@ export default function WithdrawScreen() {
           {/* ── ARPay + Method Tabs ── */}
           <View style={styles.methodSection}>
             {/* ARPay header */}
-            <View style={styles.arPayRow}>
-              <View style={styles.arPayIconWrap}>
-              <Image source={{ uri: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/WithBeforeImgIcon_2025031717011158q1.png" }} style={{ width: 42, height: 42 }} />
-              </View>
-              <View style={styles.arPayTextWrap}>
-                <ThemedText style={styles.arPayTitle}>ARPay</ThemedText>
-                <ThemedText style={styles.arPaySubtitle}>
-                  Supports UPI for fast payment
-                </ThemedText>
-              </View>
-            </View>
+            <Pressable
+              style={styles.methodTabWrap}
+              onPress={() => setSelectedMethod("AR_PAY")}
+            >
+              <LinearGradient
+                colors={selectedMethod === "AR_PAY" ? ["#66F5C2", "#01B8BF"] : ["#0A1A45", "#0A1A45"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.arPayRow}
+              >
+                <View style={[styles.arPayIconWrap, selectedMethod === "AR_PAY" && { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                  <Image source={{ uri: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/WithBeforeImgIcon_2025031717011158q1.png" }} style={{ width: 42, height: 42 }} />
+                </View>
+                <View style={styles.arPayTextWrap}>
+                  <ThemedText style={[styles.arPayTitle, selectedMethod === "AR_PAY" && { color: "#05012B" }]}>ARPay</ThemedText>
+                  <ThemedText style={[styles.arPaySubtitle, selectedMethod === "AR_PAY" && { color: "rgba(5,1,43,0.7)" }]}>
+                    Supports UPI for fast payment
+                  </ThemedText>
+                </View>
+              </LinearGradient>
+            </Pressable>
 
             {/* Tabs */}
             <View style={styles.tabsRow}>
@@ -393,20 +404,20 @@ export default function WithdrawScreen() {
                 >
                   <View style={styles.savedBankRow}>
                     <View style={styles.bankIconCircle}>
-                    
- 
+
+
                       <Image source={require("@/assets/asd.png")} style={{ width: 25, height: 25 }} />
                       <ThemedText style={styles.savedBankName}>
                         {bankAccount.bankName.slice(0, 10)}
                       </ThemedText>
                     </View>
                     <View style={styles.savedBankInfo}>
-                    
-                    <View style={{ width:0.5, height: 20, backgroundColor: "gray", marginRight: 5 }} />
+
+                      <View style={{ width: 0.5, height: 20, backgroundColor: "gray", marginRight: 5 }} />
                       <ThemedText style={styles.savedBankNumber}>
-                    
-                     
-                       {bankAccount.accountNumber.slice(0, 2) + " **** **** " + bankAccount.accountNumber.slice(-2)}
+
+
+                        {bankAccount.accountNumber.slice(0, 2) + " **** **** " + bankAccount.accountNumber.slice(-2)}
                       </ThemedText>
                     </View>
                     <Ionicons
@@ -451,167 +462,246 @@ export default function WithdrawScreen() {
                 </ThemedText>
               </Pressable>
             )}
-          </View>
 
-          {/* ── Amount Input ── */}
-          <View style={styles.amountCard}>
-            {selectedMethod === "USDT" ? (
+            {/* ARPay Sections */}
+            {selectedMethod === "AR_PAY" && (
               <>
-                {/* USDT header */}
-                <View style={styles.usdtHeader}>
-                  <Image source={USDT_ICON} style={styles.usdtHeaderIcon} resizeMode="contain" />
-                  <ThemedText style={styles.usdtHeaderTitle}>
-                    Select amount of USDT
+                {/* Transaction rules */}
+                <Pressable style={styles.arPayRulesRow}>
+                  <View style={styles.arPayRulesLeft}>
+                    <Image source={require("@/assets/icon-arpay1.svg")} style={{ width: 24, height: 24 }} />
+                    <ThemedText style={styles.arPayRulesText}>AR Pay transaction rules</ThemedText>
+                  </View>
+                  <View style={styles.arPayRulesRight}>
+                    <ThemedText style={styles.arPayCheckText}>Check</ThemedText>
+                    <Ionicons name="chevron-forward" size={14} color="#92A8E3" />
+                  </View>
+                </Pressable>
+
+
+
+                {/* Activation Banner */}
+                { (
+                  <View style={styles.activationBanner}>
+                    <View style={styles.activationBannerLogo}>
+                      <Image source={{ uri: "https://jalwaimg.jalwa-jalwa.com/Jalwa/payNameIcon/WithBeforeImgIcon_2025031717011158q1.png" }} style={{ width: 30, height: 30 }} />
+                    </View>
+                    <ThemedText style={styles.activationBannerText}>
+                      Your AR wallet has not been{"\n"}activated yet
+                    </ThemedText>
+                    <Pressable
+                      style={styles.activationBtn}
+                      onPress={() => setIsArWalletActivated(true)}
+                    >
+                      <ThemedText style={styles.activationBtnText}>Activate</ThemedText>
+                    </Pressable>
+                  </View>
+                )}
+
+                {/* AR Wallet Info */}
+                <View style={styles.arWalletInfo}>
+                  <View style={styles.arWalletInfoHeader}>
+                    <Image source={require("@/assets/icon-arpay2.svg")} style={{ width: 22, height: 22 }} />
+                    <ThemedText style={styles.arWalletInfoTitle}>AR Wallet</ThemedText>
+                  </View>
+                  <ThemedText style={styles.arWalletInfoDesc}>
+                    AR Wallet is a third-party payment service platform that facilitates fast payments on the platform using ARB (digital currency)
                   </ThemedText>
-                </View>
-
-                {/* INR input */}
-                <View style={styles.usdtInputRow}>
-                  <ThemedText style={styles.usdtInputCurrency}>₹</ThemedText>
-                  <TextInput
-                    style={styles.usdtInput}
-                    placeholder="Please enter withdrawal amount"
-                    placeholderTextColor="#4A5B7A"
-                    value={withdrawAmount}
-                    onChangeText={setWithdrawAmount}
-                    keyboardType="numeric"
-                  />
-                </View>
-                {showMinimumWithdrawError ? (
-                  <Text
-                    style={[styles.minWithdrawErrorText, { marginHorizontal: 12 }]}
-                  >
-                    Minimum withdraw amount is {MIN_WITHDRAW_INR}
-                  </Text>
-                ) : null}
-
-                {/* USDT input */}
-                <View style={styles.usdtInputRow}>
-                  <Image source={USDT_ICON} style={styles.usdtInputIcon} resizeMode="contain" />
-                  <TextInput
-                    style={styles.usdtInput}
-                    placeholder="Please enter USDT amount"
-                    placeholderTextColor="#4A5B7A"
-                    value={usdtAmount}
-                    onChangeText={setUsdtAmount}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                {/* Balance + All */}
-                <View style={styles.usdtBalanceRow}>
-                  <ThemedText style={styles.usdtBalanceText}>
-                    Withdrawable balance{" "}
-                    <Text style={styles.usdtBalanceAmount}>
-                      {formatBalance(withdrawableBalance)}
-                    </Text>
-                  </ThemedText>
-                  <Pressable
-                    onPress={() => setWithdrawAmount(withdrawableBalance.toFixed(2))}
-                    style={styles.allBtn}
-                  >
-                    <ThemedText style={styles.allBtnText}>All</ThemedText>
+                  <ThemedText style={styles.arWalletInfoPoint}>Safe, stable and fast</ThemedText>
+                  
+                  <Pressable style={styles.arWalletLinkRow}>
+                    <ThemedText style={styles.arWalletLink}>How to activate AR wallet</ThemedText>
+                    <Ionicons name="chevron-forward" size={14} color="#e3efff" />
                   </Pressable>
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={styles.amountInputRow}>
-                  <ThemedText style={styles.currencySymbol}>₹</ThemedText>
-                  <TextInput
-                    style={styles.amountInput}
-                    placeholder="Please enter the amount"
-                    placeholderTextColor="#4A5B7A"
-                    value={withdrawAmount}
-                    onChangeText={setWithdrawAmount}
-                    keyboardType="numeric"
-                  />
-                </View>
-                {showMinimumWithdrawError ? (
-                  <Text style={styles.minWithdrawErrorText}>
-                    Minimum withdraw amount is {MIN_WITHDRAW_INR}
-                  </Text>
-                ) : null}
-                <View style={styles.balanceInfoRow}>
-                  <ThemedText style={styles.balanceInfoText}>
-                    Withdrawable balance{" "}
-                    <Text style={styles.balanceInfoAmount}>
-                      {formatBalance(withdrawableBalance)}
-                    </Text>
+
+                  <ThemedText style={styles.arWalletFeaturesTitle}>AR wallet features</ThemedText>
+                  <ThemedText style={styles.arWalletFeatureText}>
+                    You only need Jalwa to withdraw the balance to AR Wallet
                   </ThemedText>
-                  <Pressable
-                    onPress={handleAllAmount}
-                    style={styles.allBtn}
-                  >
-                    <ThemedText style={styles.allBtnText}>All</ThemedText>
-                  </Pressable>
-                </View>
-                <View style={styles.receivedRow}>
-                  <ThemedText style={styles.receivedLabel}>
-                    Withdrawal amount received
+                  <ThemedText style={styles.arWalletFeatureText}>
+                    When you want to play games, you can quickly recharge to the Jalwa platform through AR Pay, with the recharge process taking only 5 seconds to complete
                   </ThemedText>
-                  <ThemedText style={styles.receivedValue}>
-                    ₹
-                    {withdrawAmount
-                      ? parseFloat(withdrawAmount).toFixed(2)
-                      : "0.00"}
+                  <ThemedText style={styles.arWalletFeatureText}>
+                    When you need to withdraw money to your bank card, you can quickly sell ARB through UPI in your AR wallet to get rupees, and you can also get additional rewards!
                   </ThemedText>
+                  <ThemedText style={styles.arWalletFeatureText}>
+                    This method reduces your bank transaction issues while you are playing, so you don't need to worry about bank limits. You just need to sell to UPI when you need to use the funds.
+                  </ThemedText>
+
+                  { (
+                    <Pressable
+                      style={styles.bigActivateBtn}
+                      onPress={() => setIsArWalletActivated(true)}
+                    >
+                      <ThemedText style={styles.bigActivateBtnText}>activate AR wallet</ThemedText>
+                    </Pressable>
+                  )}
                 </View>
               </>
             )}
-
-            {/* ── Withdraw Button ── */}
-            <Pressable
-              style={[
-                styles.withdrawBtn,
-                isDisabled && styles.withdrawBtnDisabled,
-              ]}
-              onPress={handleWithdraw}
-              disabled={isDisabled}
-            >
-              <ThemedText
-                style={[
-                  styles.withdrawBtnText,
-                  isDisabled && styles.withdrawBtnTextDisabled,
-                ]}
-              >
-                {loading ? "Processing..." : "Withdraw"}
-              </ThemedText>
-            </Pressable>
-            {/* ── Withdrawal Rules ── */}
-            <View style={styles.rulesSection}>
-              <RuleItem>
-                {"Need to bet "}
-                <Text style={styles.highlight}>{formatBalance(0)}</Text>
-                {" to be able to withdraw"}
-              </RuleItem>
-              <RuleItem>
-                {"Withdraw time "}
-                <Text style={styles.highlight}>{"00:00-23:59"}</Text>
-              </RuleItem>
-              <RuleItem>
-                {"Inday Remaining Withdrawal Times"}
-                <Text style={styles.highlight}>{"3"}</Text>
-              </RuleItem>
-              <RuleItem>
-                {"Withdrawal amount range "}
-                <Text style={styles.highlight}>{"₹110.00-₹100,000.00"}</Text>
-              </RuleItem>
-              <RuleItem>
-                {
-                  "Please confirm your beneficial account information before withdrawing. If your information is incorrect, our company will not be liable for the amount of loss"
-                }
-              </RuleItem>
-              <RuleItem>
-                {
-                  "If your beneficial information is incorrect, please contact customer service"
-                }
-              </RuleItem>
-            </View>
           </View>
 
+          {/* ── Amount Input ── */}
+          {!(selectedMethod === "AR_PAY") && (
+            <View style={styles.amountCard}>
+              {selectedMethod === "USDT" ? (
+                <>
+                  {/* USDT header */}
+                  <View style={styles.usdtHeader}>
+                    <Image source={USDT_ICON} style={styles.usdtHeaderIcon} resizeMode="contain" />
+                    <ThemedText style={styles.usdtHeaderTitle}>
+                      Select amount of USDT
+                    </ThemedText>
+                  </View>
+
+                  {/* INR input */}
+                  <View style={styles.usdtInputRow}>
+                    <ThemedText style={styles.usdtInputCurrency}>₹</ThemedText>
+                    <TextInput
+                      style={styles.usdtInput}
+                      placeholder="Please enter withdrawal amount"
+                      placeholderTextColor="#4A5B7A"
+                      value={withdrawAmount}
+                      onChangeText={setWithdrawAmount}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  {showMinimumWithdrawError ? (
+                    <Text
+                      style={[styles.minWithdrawErrorText, { marginHorizontal: 12 }]}
+                    >
+                      Minimum withdraw amount is {MIN_WITHDRAW_INR}
+                    </Text>
+                  ) : null}
+
+                  {/* USDT input */}
+                  <View style={styles.usdtInputRow}>
+                    <Image source={USDT_ICON} style={styles.usdtInputIcon} resizeMode="contain" />
+                    <TextInput
+                      style={styles.usdtInput}
+                      placeholder="Please enter USDT amount"
+                      placeholderTextColor="#4A5B7A"
+                      value={usdtAmount}
+                      onChangeText={setUsdtAmount}
+                      keyboardType="numeric"
+                    />
+                  </View>
+
+                  {/* Balance + All */}
+                  <View style={styles.usdtBalanceRow}>
+                    <ThemedText style={styles.usdtBalanceText}>
+                      Withdrawable balance{" "}
+                      <Text style={styles.usdtBalanceAmount}>
+                        {formatBalance(withdrawableBalance)}
+                      </Text>
+                    </ThemedText>
+                    <Pressable
+                      onPress={() => setWithdrawAmount(withdrawableBalance.toFixed(2))}
+                      style={styles.allBtn}
+                    >
+                      <ThemedText style={styles.allBtnText}>All</ThemedText>
+                    </Pressable>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View style={styles.amountInputRow}>
+                    <ThemedText style={styles.currencySymbol}>₹</ThemedText>
+                    <TextInput
+                      style={styles.amountInput}
+                      placeholder="Please enter the amount"
+                      placeholderTextColor="#4A5B7A"
+                      value={withdrawAmount}
+                      onChangeText={setWithdrawAmount}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                  {showMinimumWithdrawError ? (
+                    <Text style={styles.minWithdrawErrorText}>
+                      Minimum withdraw amount is {MIN_WITHDRAW_INR}
+                    </Text>
+                  ) : null}
+                  <View style={styles.balanceInfoRow}>
+                    <ThemedText style={styles.balanceInfoText}>
+                      Withdrawable balance{" "}
+                      <Text style={styles.balanceInfoAmount}>
+                        {formatBalance(withdrawableBalance)}
+                      </Text>
+                    </ThemedText>
+                    <Pressable
+                      onPress={handleAllAmount}
+                      style={styles.allBtn}
+                    >
+                      <ThemedText style={styles.allBtnText}>All</ThemedText>
+                    </Pressable>
+                  </View>
+                  <View style={styles.receivedRow}>
+                    <ThemedText style={styles.receivedLabel}>
+                      Withdrawal amount received
+                    </ThemedText>
+                    <ThemedText style={styles.receivedValue}>
+                      ₹
+                      {withdrawAmount
+                        ? parseFloat(withdrawAmount).toFixed(2)
+                        : "0.00"}
+                    </ThemedText>
+                  </View>
+                </>
+              )}
+
+              {/* ── Withdraw Button ── */}
+              <Pressable
+                style={[
+                  styles.withdrawBtn,
+                  isDisabled && styles.withdrawBtnDisabled,
+                ]}
+                onPress={handleWithdraw}
+                disabled={isDisabled}
+              >
+                <ThemedText
+                  style={[
+                    styles.withdrawBtnText,
+                    isDisabled && styles.withdrawBtnTextDisabled,
+                  ]}
+                >
+                  {loading ? "Processing..." : "Withdraw"}
+                </ThemedText>
+              </Pressable>
+              {/* ── Withdrawal Rules ── */}
+              <View style={styles.rulesSection}>
+                <RuleItem>
+                  {"Need to bet "}
+                  <Text style={styles.highlight}>{formatBalance(0)}</Text>
+                  {" to be able to withdraw"}
+                </RuleItem>
+                <RuleItem>
+                  {"Withdraw time "}
+                  <Text style={styles.highlight}>{"00:00-23:59"}</Text>
+                </RuleItem>
+                <RuleItem>
+                  {"Inday Remaining Withdrawal Times"}
+                  <Text style={styles.highlight}>{"3"}</Text>
+                </RuleItem>
+                <RuleItem>
+                  {"Withdrawal amount range "}
+                  <Text style={styles.highlight}>{"₹110.00-₹100,000.00"}</Text>
+                </RuleItem>
+                <RuleItem>
+                  {
+                    "Please confirm your beneficial account information before withdrawing. If your information is incorrect, our company will not be liable for the amount of loss"
+                  }
+                </RuleItem>
+                <RuleItem>
+                  {
+                    "If your beneficial information is incorrect, please contact customer service"
+                  }
+                </RuleItem>
+              </View>
+            </View>
+          )}
+
           {/* ── Withdrawal History Preview ── */}
-          <View style={styles.historySection}>
+          {selectedMethod != "AR_PAY" && <View style={styles.historySection}>
             <View style={styles.historySectionHeader}>
               <Image
                 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -911,7 +1001,7 @@ export default function WithdrawScreen() {
                 All history
               </ThemedText>
             </Pressable>
-          </View>
+          </View>}
         </ScrollView>
       </ThemedView>
     </>
@@ -1129,13 +1219,13 @@ const styles = StyleSheet.create({
   },
   savedBankRow: { flexDirection: "row", alignItems: "center", gap: 30 },
   bankIconCircle: {
-    
+
     borderRadius: 19,
-   
+
     alignItems: "center",
     justifyContent: "center",
   },
-  savedBankInfo: { flex: 1, gap: 20 ,flexDirection: "row", alignItems: "center"   },
+  savedBankInfo: { flex: 1, gap: 20, flexDirection: "row", alignItems: "center" },
   savedBankName: { fontSize: 8, fontWeight: "600", color: "#7AFEC3" },
   savedBankHolder: { fontSize: 12, color: "#fff" },
   savedBankNumber: { fontSize: 16, color: "#92A8E3" },
@@ -1451,5 +1541,130 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#05012B",
     fontFamily: "BahnschriftSemibold",
+  },
+  /* ARPay Styles */
+  arPayRulesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#071F55",
+    padding: 8,
+    borderRadius: 8
+  },
+  arPayRulesLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  arPayRulesText: {
+    fontSize: 12,
+    color: "#91A8E2",
+  },
+  arPayRulesRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  arPayCheckText: {
+    fontSize: 12,
+    color: "#92A8E3",
+  },
+  activationBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#0D1E52",
+    padding: 6,
+    borderRadius: 8,
+    marginTop: 14,
+    gap: 8,
+  },
+  activationBannerLogo: {
+    width: 44,
+    height: 44,
+    borderRadius: 6,
+    backgroundColor: "#12204E",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  activationBannerText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#92A8E3",
+    lineHeight: 20,
+  },
+  activationBtn: {
+    backgroundColor: "#00ECBE",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 5,
+  },
+  activationBtnText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "white",
+  },
+  arWalletInfo: {
+    marginTop: 24,
+    backgroundColor:"#021341",
+    borderRadius:6,
+    padding:8
+  },
+  arWalletInfoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 12,
+  },
+  arWalletInfoTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#e3efff",
+  },
+  arWalletInfoDesc: {
+    fontSize: 14,
+    color: "#e3efff",
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  arWalletInfoPoint: {
+    fontSize: 14,
+    color: "#e3efff",
+    marginBottom: 12,
+  },
+  arWalletLinkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 24,
+  },
+  arWalletLink: {
+    fontSize: 15,
+    color: "#e3efff",
+  },
+  arWalletFeaturesTitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#e3efff",
+    marginBottom: 16,
+  },
+  arWalletFeatureText: {
+    fontSize: 14,
+    color: "#e3efff",
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  bigActivateBtn: {
+    backgroundColor: "#00ECBE",
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 12,
+    marginBottom: 20,
+  },
+  bigActivateBtnText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#05012B",
   },
 });
