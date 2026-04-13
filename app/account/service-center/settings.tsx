@@ -10,20 +10,10 @@ import { getToken } from "@/services/auth-storage";
 import { Image, Linking, ScrollView, StyleSheet, Text, View, Pressable } from "react-native";
 
 import { CustomHeader } from "@/components/ui/CustomHeader";
+import { NicknameModal } from "@/components/NicknameModal";
+import { getMe, updateNickname } from "@/services/api";
 
-/** 10-char labels like Member1024; one is chosen at random per mount. */
-const RANDOM_MEMBER_NICKNAMES = [
-  "Member1024",
-  "Member8391",
-  "Member5027",
-  "Member2910",
-  "Member6743",
-  "Member1188",
-  "Member4402",
-  "Member9931",
-  "Member0563",
-  "Member7812",
-] as const;
+
 
 // ── Icons ────────────────────────────────────────────────────────────────────
 function IconBox({ emoji }: { emoji: string }) {
@@ -93,12 +83,10 @@ function SettingRow({
 export default function SettingsScreen() {
   const [selectedAvatarId, setSelectedAvatarId] =
     useState(DEFAULT_AVATAR_ID);
-  const [nickname] = useState(
-    () =>
-      RANDOM_MEMBER_NICKNAMES[
-        Math.floor(Math.random() * RANDOM_MEMBER_NICKNAMES.length)
-      ],
-  );
+  const [nickname, setNickname] = useState<string>("");
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tempNickname, setTempNickname] = useState<string>("");
 
   const handleLoginPasswordPress = useCallback(async () => {
     const token = await getToken();
@@ -109,15 +97,36 @@ export default function SettingsScreen() {
     await Linking.openURL(url);
   }, []);
 
+  const handleOpenNicknameModal = () => {
+    setTempNickname(nickname);
+    setModalVisible(true);
+  };
+
+  const handleConfirmNickname = async () => {
+    if (!tempNickname.trim() || tempNickname === nickname) {
+      setModalVisible(false);
+      return;
+    }
+    const result = await updateNickname(tempNickname.trim());
+    if (result.success && result.data) {
+      setNickname(result.data.nickname);
+    }
+    setModalVisible(false);
+  };
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
 
       (async () => {
-        const avatarId = await getSelectedAvatarId();
+        const [avatarId, user] = await Promise.all([
+          getSelectedAvatarId(),
+          getMe(),
+        ]);
 
         if (isActive) {
           setSelectedAvatarId(avatarId);
+          if (user?.nickname) setNickname(user.nickname);
         }
       })();
 
@@ -204,7 +213,10 @@ export default function SettingsScreen() {
               <View style={styles.cardDivider} />
 
               {/* Nickname */}
-              <Pressable style={styles.profileRow}>
+              <Pressable
+                style={styles.profileRow}
+                onPress={handleOpenNicknameModal}
+              >
                 <Text style={styles.profileLabel}>Nickname</Text>
                 <View style={styles.profileRight}>
                   <Text style={styles.profileValue}>{nickname}</Text>
@@ -276,6 +288,14 @@ export default function SettingsScreen() {
             </View>
           </View>
         </ScrollView>
+
+        <NicknameModal
+          visible={modalVisible}
+          nickname={tempNickname}
+          onNicknameChange={setTempNickname}
+          onConfirm={handleConfirmNickname}
+          onClose={() => setModalVisible(false)}
+        />
       </ThemedView>
     </>
   );
@@ -285,7 +305,7 @@ export default function SettingsScreen() {
 const BG = "#060B2E";
 const CARD_BG = "#0A1540";
 const TEAL = "#2BC4C4";
-const TEAL_DIM = "#4A9EBF";
+const TEAL_DIM = "#91A6E1";
 const DIVIDER = "#0F1D55";
 const ICON_BG = "#0D4A4A";
 

@@ -3,9 +3,11 @@ export {
   getWalletBalance,
   login,
   register,
+  updateNickname,
   type AuthResponse,
   type AuthUser,
   type GetMeResponse,
+  type UpdateNicknameResponse,
   type WalletResponse,
 } from "./auth";
 export { API_BASE_URL, API_DEBUG, API_ENV } from "./config";

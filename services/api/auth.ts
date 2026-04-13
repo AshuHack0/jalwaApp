@@ -123,6 +123,53 @@ export async function getMe(): Promise<AuthUser | null> {
   }
 }
 
+export type UpdateNicknameResponse = {
+  success: boolean;
+  data?: { nickname: string };
+  message?: string;
+};
+
+/**
+ * Update the authenticated user's nickname.
+ * Returns the updated nickname or an error message.
+ */
+export async function updateNickname(
+  nickname: string
+): Promise<UpdateNicknameResponse> {
+  const token = await getToken();
+  if (!token) return { success: false, message: "Not authenticated" };
+
+  const url = `${AUTH_BASE}/nickname`;
+
+  if (API_DEBUG) {
+    console.log("[API] updateNickname PATCH:", url, { nickname });
+  }
+
+  try {
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ nickname }),
+    });
+
+    const json: UpdateNicknameResponse = await res.json();
+
+    if (API_DEBUG) {
+      console.log("[API] updateNickname response:", { status: res.status, ...json });
+    }
+
+    return json;
+  } catch (err) {
+    if (API_DEBUG) {
+      console.warn("[API] updateNickname error:", err);
+    }
+    return { success: false, message: "Network error. Please check your connection." };
+  }
+}
+
 export type WalletResponse = {
   success: boolean;
   data?: { balance: number };
