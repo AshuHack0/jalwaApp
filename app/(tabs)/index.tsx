@@ -52,7 +52,7 @@ export default function HomeScreen() {
     Inter_Regular_Italic: Inter_400Regular_Italic,
   });
   const router = useRouter();
-  const { isAuthenticated, walletBalance, refreshWallet } = useAuth();
+  const { isAuthenticated, walletBalance, refreshWallet, user } = useAuth();
   const { openDepositModal } = useDepositModal();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Lottery");
@@ -120,9 +120,14 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (showGameErrorModal && isAuthenticated) {
-      gameErrorPlayer.seekTo(0);
-      gameErrorPlayer.play();
+    if (isAuthenticated && showGameErrorModal) {
+      if ((user?.totalDeposited as number) > 0) {
+        gameErrorPlayer.seekTo(0);
+        gameErrorPlayer.play();
+        setTimeout(() => {
+          router.push("/wingo")
+        }, 500);
+      }
     }
   }, [showGameErrorModal, isAuthenticated, gameErrorPlayer]);
 
@@ -1347,50 +1352,52 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Game Error Modal */}
-      <Modal
-        visible={showGameErrorModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowGameErrorModal(false)}
-      >
-        <Pressable
-          style={styles.gameErrorOverlay}
-          onPress={() => setShowGameErrorModal(false)}
+      {user?.totalDeposited == 0 && (
+        <Modal
+          visible={showGameErrorModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowGameErrorModal(false)}
         >
           <Pressable
-            onPress={(e) => e.stopPropagation()}
-            style={styles.gameErrorPopup}
+            style={styles.gameErrorOverlay}
+            onPress={() => setShowGameErrorModal(false)}
           >
-            <ThemedText style={styles.gameErrorTitle}>Tips</ThemedText>
-            <ThemedText style={styles.gameErrorMessage}>
-              Minimum recharge ₹100.00 to enter
-            </ThemedText>
-            <View style={styles.gameErrorSeparator} />
-            <View style={styles.gameErrorButtonRow}>
-              <Pressable
-                style={styles.gameErrorButton}
-                onPress={() => setShowGameErrorModal(false)}
-              >
-                <ThemedText style={styles.gameErrorButtonTextCancel}>
-                  Cancel
-                </ThemedText>
-              </Pressable>
-              <View style={styles.gameErrorButtonDivider} />
-              <Pressable
-                style={styles.gameErrorButton}
-                onPress={() => {
-                  setShowGameErrorModal(false);
-                  openDepositModal();
-                }}
-              >
-                <ThemedText style={styles.gameErrorButtonTextConfirm}>
-                  Confirm
-                </ThemedText>
-              </Pressable>
-            </View>
+            <Pressable
+              onPress={(e) => e.stopPropagation()}
+              style={styles.gameErrorPopup}
+            >
+              <ThemedText style={styles.gameErrorTitle}>Tips</ThemedText>
+              <ThemedText style={styles.gameErrorMessage}>
+                Minimum recharge ₹100.00 to enter
+              </ThemedText>
+              <View style={styles.gameErrorSeparator} />
+              <View style={styles.gameErrorButtonRow}>
+                <Pressable
+                  style={styles.gameErrorButton}
+                  onPress={() => setShowGameErrorModal(false)}
+                >
+                  <ThemedText style={styles.gameErrorButtonTextCancel}>
+                    Cancel
+                  </ThemedText>
+                </Pressable>
+                <View style={styles.gameErrorButtonDivider} />
+                <Pressable
+                  style={styles.gameErrorButton}
+                  onPress={() => {
+                    setShowGameErrorModal(false);
+                    openDepositModal();
+                  }}
+                >
+                  <ThemedText style={styles.gameErrorButtonTextConfirm}>
+                    Confirm
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
+      )}
 
       {/* Overlay Buttons Modal */}
       <OverlayButtonsModal bottom={10} visibleButtons={['turntable', 'tg_bg', 'changlong', 'icon_sevice']} scrolling={isPageScrolling} />

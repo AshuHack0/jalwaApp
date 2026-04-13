@@ -28,6 +28,8 @@ export default function RegisterScreen() {
       playsInSilentMode: true,
       shouldPlayInBackground: false,
     });
+    registerPlayer.seekTo(0);
+    registerPlayer.play();
   }, []);
 
   const handleRegister = async () => {

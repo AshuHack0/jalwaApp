@@ -597,7 +597,7 @@ export default function WithdrawalHistoryScreen() {
                       <View style={styles.cardDetailsRow}>
                         <ThemedText style={styles.detailLabel}>Type</ThemedText>
                         <ThemedText style={styles.detailValue}>
-                          {item.bankName}
+                          BANK CARD
                         </ThemedText>
                       </View>
 
@@ -844,7 +844,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   detailLabel: {
     fontSize: 15,
