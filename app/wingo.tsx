@@ -671,7 +671,7 @@ export default function WinGoScreen() {
                     elevation: 4,
                   }}
                 >
-                    
+
                   <Text
                     style={{
                       color: "#FFFFFF",
@@ -1559,22 +1559,22 @@ export default function WinGoScreen() {
               <View style={styles.historyTable}>
                 <View style={styles.tableHeader}>
                   <ThemedText
-                    style={[styles.tableHeaderText, styles.periodHeader]}
+                    style={[styles.tableHeaderText, styles.periodHeader, { width: "45%", textAlign: "center" }]}
                   >
                     Period
                   </ThemedText>
                   <ThemedText
-                    style={[styles.tableHeaderText, styles.numberHeader]}
+                    style={[styles.tableHeaderText, styles.numberHeader, { width: "15%", textAlign: "center" }]}
                   >
                     Number
                   </ThemedText>
                   <ThemedText
-                    style={[styles.tableHeaderText, styles.bigSmallHeader]}
+                    style={[styles.tableHeaderText, styles.bigSmallHeader, { width: "15%", textAlign: "center" }]}
                   >
                     Big Small
                   </ThemedText>
                   <ThemedText
-                    style={[styles.tableHeaderText, styles.colorHeader]}
+                    style={[styles.tableHeaderText, styles.colorHeader, { width: "15%", textAlign: "center" }]}
                   >
                     Color
                   </ThemedText>
@@ -1585,10 +1585,10 @@ export default function WinGoScreen() {
                       key={`history-${item.period}-${index}`}
                       style={styles.tableRow}
                     >
-                      <ThemedText style={styles.periodCell}>
+                      <ThemedText style={[styles.periodCell, , { width: "45%", textAlign: "center" }]}>
                         {item.period}
                       </ThemedText>
-                      <View style={styles.numberCell}>
+                      <View style={[styles.numberCell, { width: "15%" }]}>
                         {isGradientNumber(item.number) ? (
                           <MaskedView
                             style={styles.gradientNumberMask}
@@ -1603,7 +1603,7 @@ export default function WinGoScreen() {
                                 <Text
                                   style={[
                                     styles.numberText,
-                                    { color: "black" },
+                                    { color: "black", textAlign: "center" },
                                   ]}
                                 >
                                   {item.number}
@@ -1637,10 +1637,10 @@ export default function WinGoScreen() {
                           </ThemedText>
                         )}
                       </View>
-                      <ThemedText style={styles.bigSmallCell}>
+                      <ThemedText style={[styles.bigSmallCell, { width: "15%", textAlign: "center" }]}>
                         {item.size}
                       </ThemedText>
-                      <View style={styles.colorDotsContainer}>
+                      <View style={[styles.colorDotsContainer, { width: "15%" }]}>
                         {getColorDots(item.number).map((color, idx) => (
                           <View
                             key={idx}
@@ -1688,14 +1688,14 @@ export default function WinGoScreen() {
               <View style={styles.chartContainer}>
                 {/* Chart Header */}
                 <View style={styles.chartHeader}>
-                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderPeriod]}>Period</ThemedText>
-                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderNumber]}>Number</ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderPeriod, { width: "45%", textAlign: "center", }]}>Period</ThemedText>
+                  <ThemedText style={[styles.tableHeaderText, styles.chartHeaderNumber, { width: "55%", textAlign: "center" }]}>Number</ThemedText>
                 </View>
                 <View style={{
 
                 }}>
                   <View style={{
-                    paddingHorizontal: wp(3.2),
+                    // paddingHorizontal: wp(3.2),
                   }}>
                     {/* Statistics Table */}
                     {(() => {
@@ -1727,13 +1727,13 @@ export default function WinGoScreen() {
                       });
                       return (
                         <View style={styles.statsTable}>
-                          <View style={styles.statsHeaderRow}>
-                            <Text style={styles.statsHeaderLeft}>Statistic</Text>
-                            <Text style={styles.statsHeaderRight}>(last 100 Periods)</Text>
+                          <View style={[styles.statsHeaderRow]}>
+                            <Text style={[styles.statsHeaderLeft, { width: "45%", textAlign: "left"}]}>Statistic</Text>
+                            <Text style={[styles.statsHeaderRight, { width: "55%", textAlign: "left" }]}> (last 100 Periods)</Text>
                           </View>
                           <View style={styles.statsRow}>
-                            <Text style={styles.statsLabel}>Winning Numbers</Text>
-                            <View style={styles.statsValuesRow}>
+                            <Text style={[styles.statsLabel, { width: "45%", textAlign: "left" }]}>Winning Numbers</Text>
+                            <View style={[styles.statsValuesRow, { width: "55%", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }]}>
                               {nums.map((n) => (
                                 <View key={n} style={styles.statsNumCircle}>
                                   <Text style={styles.statsNumCircleText}>{n}</Text>
@@ -1742,8 +1742,8 @@ export default function WinGoScreen() {
                             </View>
                           </View>
                           <View style={styles.statsRow}>
-                            <Text style={styles.statsLabel}>Missing</Text>
-                            <View style={styles.statsValuesRow}>
+                            <Text style={[styles.statsLabel, { width: "45%", textAlign: "left" }]}>Missing</Text>
+                            <View style={[styles.statsValuesRow, { width: "55%", flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }]}>
                               {missing.map((v, i) => <Text key={i} style={styles.statsValue}>{v}</Text>)}
                             </View>
                           </View>
@@ -1817,7 +1817,6 @@ export default function WinGoScreen() {
                         <View
                           key={`chart-row-${item.period}-${index}`}
                           style={[styles.chartRow, {
-                            paddingHorizontal: wp(3.2),
                             borderBottomWidth: index === gameHistory.length - 1 ? 0 : 0.7,
                             borderBottomColor: "#E2E3F2",
                           }]}
@@ -2060,9 +2059,9 @@ export default function WinGoScreen() {
                                         fontSize: wp(4),
                                       },
                                     ]}
-                                  > 
-                                  a
-                                  
+                                  >
+                                    a
+
                                     {bet.betType === "BIG_SMALL"
                                       ? bet.round?.outcomeBigSmall
                                         ? bet.round.outcomeBigSmall
@@ -2127,7 +2126,7 @@ export default function WinGoScreen() {
                                 color: "#E3EFFF",
                               }}
                             >
-                              {bet.round?.period ?? "-"} 
+                              {bet.round?.period ?? "-"}
                             </ThemedText>
                             <Ionicons
                               name={isExpanded ? "caret-up" : "caret-down"}
@@ -2653,7 +2652,7 @@ export default function WinGoScreen() {
                             ]}
                           >
                             {hasMultiColor && (
-                              <View style={{ borderRadius: 5, overflow: "hidden", position:"absolute" }}>
+                              <View style={{ borderRadius: 5, overflow: "hidden", position: "absolute" }}>
                                 <Svg width={wp(28)} height={wp(8.5)} style={{ borderRadius: 8, overflow: "hidden" }}>
                                   <Polygon
                                     points={`0,0 ${wp(28) / 2 + 8},0 ${wp(28) / 2 - 8},${wp(8.5)} 0,${wp(8.5)}`}
@@ -3084,7 +3083,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: hp(1.5),
-    paddingHorizontal: 0
+    paddingHorizontal: wp(3.2),
   },
   chartPeriod: {
     fontSize: wp(4.2),
@@ -3095,13 +3094,13 @@ const styles = StyleSheet.create({
   chartNumbersRow: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
-    justifyContent: "space-between",
-    marginLeft: wp(1),
+    marginLeft: wp(1.7),
+    gap: RS.chartGap,
+    justifyContent: "flex-start",
   },
   chartNumberCircle: {
-    width: wp(5.2),
-    height: wp(5.2),
+    width: RS.chartCircleSize,
+    height: RS.chartCircleSize,
     borderRadius: 100,
     borderWidth: 1,
     borderColor: "#B1B1B4",
@@ -3123,7 +3122,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: wp(2.7),
+    marginLeft: "auto",
   },
   chartBSBadgeBig: {
     backgroundColor: "#EAB308",
@@ -3146,11 +3145,9 @@ const styles = StyleSheet.create({
     marginBottom: hp(1.2),
   },
   chartHeaderPeriod: {
-    width: wp(40),
     textAlign: "left",
   },
   chartHeaderNumber: {
-    flex: 1,
     textAlign: "center",
   },
   statsTable: {
@@ -3158,10 +3155,10 @@ const styles = StyleSheet.create({
   },
   statsHeaderRow: {
     flexDirection: "row",
-    gap: wp(32),
     alignItems: "center",
     paddingVertical: hp(0.6),
     marginBottom: hp(0.2),
+    padding: 10
   },
   statsHeaderLeft: {
     color: "#e3efff",
@@ -3171,18 +3168,17 @@ const styles = StyleSheet.create({
   statsHeaderRight: {
     color: "#e3efff",
     fontSize: wp(5),
-    marginLeft: -15
   },
   statsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: hp(0.75),
+    padding: 10
   },
   statsLabel: {
     color: "#e3efff",
-    fontSize: wp(5),
-    flex: 1,
+    fontSize: wp(5)
   },
   statsNumCircle: {
     width: wp(5.9),
@@ -3201,7 +3197,6 @@ const styles = StyleSheet.create({
   },
   statsValuesRow: {
     flexDirection: "row",
-    gap: 2.2,
   },
   statsValue: {
     color: "#9da7b3",
@@ -3314,11 +3309,12 @@ const styles = StyleSheet.create({
   },
   tableHeaderText: {
     color: "#fff",
-    fontSize: wp(4.5),
+    fontSize: wp(4.1),
     fontWeight: "400",
+    textAlign: "center",
   },
   periodHeader: {
-    flex: 1.5,
+    // flex: 1.5,
     textAlign: "left",
   },
   numberHeader: {
@@ -3340,8 +3336,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   periodCell: {
-    flex: 2,
-    fontSize: wp(4.3),
+    // flex: 2,
+    fontSize: wp(4),
     color: "#fff",
   },
   numberCell: {
@@ -3350,7 +3346,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   numberText: {
-    fontSize: wp(7.4),
+    fontSize: wp(7.1),
     fontWeight: "bold",
   },
   gradientNumberMask: {
@@ -3365,7 +3361,7 @@ const styles = StyleSheet.create({
   },
   bigSmallCell: {
     flex: 1,
-    fontSize: wp(4.3),
+    fontSize: wp(4),
     color: "#fff",
     textAlign: "center",
   },
