@@ -28,6 +28,7 @@ import {
   TextInput,
   View,
   Pressable,
+  Modal,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,6 +36,9 @@ import { API_BASE_URL } from "@/services/api/config";
 import { getToken } from "@/services/auth-storage";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
+import { ThemedText } from "@/components/themed-text";
+import { useDepositModal } from "@/contexts/DepositModalContext";
+import { useAudioPlayer } from "expo-audio";
 
 // ── Empty History Illustration ────────────────────────────────────────────────
 function EmptyHistory() {
@@ -84,6 +88,7 @@ export default function GiftScreen() {
   const [loadingMyCode, setLoadingMyCode] = useState(true);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showGameErrorModal, setShowGameErrorModal] = useState(false);
 
   const [redeeming, setRedeeming] = useState(false);
   const [redeemHistory, setRedeemHistory] = useState<RedeemHistoryItem[]>([]);
@@ -91,6 +96,18 @@ export default function GiftScreen() {
   const insets = useSafeAreaInsets();
   const { user, refreshWallet } = useAuth();
   const { showToast } = useToast();
+  const { openDepositModal } = useDepositModal();
+
+  const minDeposit5kPlayer = useAudioPlayer(
+    require("@/assets/MinimumDeposit5K.mp3"),
+  );
+
+  useEffect(() => {
+    if (showGameErrorModal) {
+      minDeposit5kPlayer.seekTo(0);
+      minDeposit5kPlayer.play();
+    }
+  }, [showGameErrorModal]);
 
   // On mount: fetch user's already-generated code and redemption history
   useEffect(() => {
@@ -139,6 +156,12 @@ export default function GiftScreen() {
   };
 
   const handleGenerateCode = async () => {
+
+    if ((user?.totalDeposited as number) <= 0) {
+      setShowGameErrorModal(true);
+      return;
+    }
+
     setGenerating(true);
     setGenerateError(null);
     try {
@@ -209,55 +232,53 @@ export default function GiftScreen() {
       <ThemedView style={styles.container}>
 
         {/* ── Generate Gift Code Panel ── */}
-        {((user?.totalDeposited as number) ?? 0) >= 5000 && (
-          <View style={styles.generateCard}>
-            <View style={styles.generateHeader}>
-              <Text style={styles.generateTitle}>Generate Gift Code</Text>
-            </View>
-
-            {loadingMyCode ? (
-              <ActivityIndicator color="#FFFFFF" size="small" style={{ paddingVertical: 14 }} />
-            ) : !generatedCode ? (
-              <>
-                <Pressable
-                  style={styles.generateBtnWrapper}
-                  onPress={handleGenerateCode}
-                  disabled={generating}
-                >
-                  <View style={styles.generateBtn}>
-                    {generating ? (
-                      <ActivityIndicator color="#FFFFFF" size="small" />
-                    ) : (
-                      <Text style={styles.generateBtnText}>
-                        Generate Gift Code
-                      </Text>
-                    )}
-                  </View>
-                </Pressable>
-
-                {generateError ? (
-                  <Text style={styles.generateError}>{generateError}</Text>
-                ) : null}
-              </>
-            ) : (
-              <View style={styles.codeRevealBox}>
-                <View style={styles.codeRow}>
-                  <Text style={styles.codeText}>{generatedCode}</Text>
-                  <Pressable style={styles.copyBtn} onPress={handleCopy}>
-                    <Text style={styles.copyBtnText}>
-                      {copied ? "Copied!" : "Copy"}
-                    </Text>
-                  </Pressable>
-                </View>
-                {generatedAmount !== null && (
-                  <Text style={styles.codeAmountText}>
-                    Worth: ₹{generatedAmount}
-                  </Text>
-                )}
-              </View>
-            )}
+        <View style={styles.generateCard}>
+          <View style={styles.generateHeader}>
+            <Text style={styles.generateTitle}>Gift Code</Text>
           </View>
-        )}
+
+          {loadingMyCode ? (
+            <ActivityIndicator color="#FFFFFF" size="small" style={{ paddingVertical: 14 }} />
+          ) : !generatedCode ? (
+            <>
+              <Pressable
+                style={styles.generateBtnWrapper}
+                onPress={handleGenerateCode}
+                disabled={generating}
+              >
+                <View style={styles.generateBtn}>
+                  {generating ? (
+                    <ActivityIndicator color="#FFFFFF" size="small" />
+                  ) : (
+                    <Text style={styles.generateBtnText}>
+                      Generate Gift Code
+                    </Text>
+                  )}
+                </View>
+              </Pressable>
+
+              {generateError ? (
+                <Text style={styles.generateError}>{generateError}</Text>
+              ) : null}
+            </>
+          ) : (
+            <View style={styles.codeRevealBox}>
+              <View style={styles.codeRow}>
+                <Text style={styles.codeText}>{generatedCode}</Text>
+                <Pressable style={styles.copyBtn} onPress={handleCopy}>
+                  <Text style={styles.copyBtnText}>
+                    {copied ? "Copied!" : "Copy"}
+                  </Text>
+                </Pressable>
+              </View>
+              {generatedAmount !== null && (
+                <Text style={styles.codeAmountText}>
+                  Worth: ₹{generatedAmount}
+                </Text>
+              )}
+            </View>
+          )}
+        </View>
 
         <CustomHeader title="Gift" onBack={() => router.back()} paddingTop={1} />
 
@@ -356,6 +377,51 @@ export default function GiftScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </ThemedView>
+
+      <Modal
+        visible={showGameErrorModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowGameErrorModal(false)}
+      >
+        <Pressable
+          style={styles.gameErrorOverlay}
+          onPress={() => setShowGameErrorModal(false)}
+        >
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            style={styles.gameErrorPopup}
+          >
+            <ThemedText style={styles.gameErrorTitle}>Tips</ThemedText>
+            <ThemedText style={styles.gameErrorMessage}>
+              Minimum recharge ₹5000.00 to enter
+            </ThemedText>
+            <View style={styles.gameErrorSeparator} />
+            <View style={styles.gameErrorButtonRow}>
+              <Pressable
+                style={styles.gameErrorButton}
+                onPress={() => setShowGameErrorModal(false)}
+              >
+                <ThemedText style={styles.gameErrorButtonTextCancel}>
+                  Cancel
+                </ThemedText>
+              </Pressable>
+              <View style={styles.gameErrorButtonDivider} />
+              <Pressable
+                style={styles.gameErrorButton}
+                onPress={() => {
+                  setShowGameErrorModal(false);
+                  openDepositModal();
+                }}
+              >
+                <ThemedText style={styles.gameErrorButtonTextConfirm}>
+                  Confirm
+                </ThemedText>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </>
   );
 }
@@ -365,7 +431,7 @@ const BG = "#060B2E";
 const TEAL = "#2BC4C4";
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: BG },
+  container: { flex: 1, backgroundColor: BG, marginTop: 50 },
 
   // Scroll
   scroll: { flex: 1 },
@@ -652,5 +718,62 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 13,
     textAlign: "center",
+  },
+  gameErrorOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  gameErrorPopup: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    paddingTop: 18,
+    alignItems: "center",
+    width: "100%",
+    maxWidth: 320,
+  },
+  gameErrorTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 10,
+  },
+  gameErrorMessage: {
+    fontSize: 18,
+    color: "#6B7280",
+    textAlign: "center",
+    marginBottom: 18,
+    paddingHorizontal: 18,
+  },
+  gameErrorSeparator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+    alignSelf: "stretch",
+  },
+  gameErrorButtonRow: {
+    flexDirection: "row",
+    alignSelf: "stretch",
+    height: 50,
+  },
+  gameErrorButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gameErrorButtonDivider: {
+    width: StyleSheet.hairlineWidth,
+    backgroundColor: "#E5E7EB",
+  },
+  gameErrorButtonTextCancel: {
+    color: "#111827",
+    fontSize: 22,
+    fontWeight: "500",
+  },
+  gameErrorButtonTextConfirm: {
+    color: "#3B82F6",
+    fontSize: 22,
+    fontWeight: "500",
   },
 });
