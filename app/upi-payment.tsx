@@ -17,7 +17,7 @@ import { useToast } from "@/contexts/ToastContext";
 export default function UPIPaymentScreen() {
   const router = useRouter();
   const { showToast } = useToast();
-  
+
   const [upiName, setUpiName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [upiId, setUpiId] = useState("");
@@ -74,7 +74,7 @@ export default function UPIPaymentScreen() {
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      
+
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -89,7 +89,7 @@ export default function UPIPaymentScreen() {
         <View style={styles.upiBanner}>
           <View style={styles.upiBannerContent}>
             <Image
-              source={require("@/assets/WithBeforeImgIcon2_20250802174209t2y7.png")}
+              source={require("@/assets/usp1.png")}
               style={styles.upiLogo}
               resizeMode="contain"
             />
@@ -130,9 +130,12 @@ export default function UPIPaymentScreen() {
             <View style={styles.hintContainer}>
               <Ionicons name="information-circle-outline" size={14} color="#00ECBE" />
               <ThemedText style={styles.hintText}>
-                For the security of your account, please fill in your real mobile phone number
+                For the security of your account, please fill in your real mobile
               </ThemedText>
             </View>
+            <ThemedText style={[styles.hintText, { marginTop: -10 }]}>
+              phone number
+            </ThemedText>
           </View>
 
           {/* UPI ID */}
@@ -264,7 +267,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     color: "#00ECBE",
-    lineHeight: 16,
+    lineHeight: 16
   },
   footer: {
     position: "absolute",
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: "#353F54",
     paddingVertical: 16,
-    paddingBottom:40,
+    paddingBottom: 40,
     alignItems: "center",
     justifyContent: "center",
   },
