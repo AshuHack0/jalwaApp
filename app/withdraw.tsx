@@ -408,7 +408,7 @@ export default function WithdrawScreen() {
 
                       <Image source={require("@/assets/asd.png")} style={{ width: 25, height: 25 }} />
                       <ThemedText style={styles.savedBankName}>
-                        {bankAccount.bankName.slice(0, 10)}
+                        {bankAccount.bankName.length > 10 ? bankAccount.bankName.slice(0, 10) + "..." : bankAccount.bankName}
                       </ThemedText>
                     </View>
                     <View style={styles.savedBankInfo}>
@@ -417,7 +417,7 @@ export default function WithdrawScreen() {
                       <ThemedText style={styles.savedBankNumber}>
 
 
-                        {bankAccount.accountNumber.slice(0, 2) + " **** **** " + bankAccount.accountNumber.slice(-2)}
+                        {bankAccount.accountNumber.slice(0, 6) + "****" + bankAccount.accountNumber.slice(-3)}
                       </ThemedText>
                     </View>
                     <Ionicons
@@ -1217,11 +1217,9 @@ const styles = StyleSheet.create({
 
   /* Saved bank card */
   savedBankCard: {
-    backgroundColor: "#0D1E52",
+    backgroundColor: "#001547",
     borderRadius: 10,
     padding: 14,
-    borderWidth: 1,
-    borderColor: "rgba(122,254,195,0.25)",
   },
   savedBankRow: { flexDirection: "row", alignItems: "center", gap: 30 },
   bankIconCircle: {
@@ -1232,7 +1230,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   savedBankInfo: { flex: 1, gap: 20, flexDirection: "row", alignItems: "center" },
-  savedBankName: { fontSize: 8, fontWeight: "600", color: "#7AFEC3" },
+  savedBankName: { fontSize: 8, fontWeight: "600", color: "#8DA9E8" },
   savedBankHolder: { fontSize: 12, color: "#fff" },
   savedBankNumber: { fontSize: 16, color: "#92A8E3" },
 
