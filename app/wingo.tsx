@@ -2572,8 +2572,8 @@ export default function WinGoScreen() {
         <Modal
           transparent
           animationType="fade"
-          visible={winLossPopupVisible}
-          // visible={true}
+          // visible={winLossPopupVisible}
+          visible={true}
           onRequestClose={() => setWinLossPopupVisible(false)}
         >
           <View style={styles.winLossModalOverlay}>
@@ -3434,11 +3434,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "57%",
+    top: "58%",
   },
   winLossTitle: {
     fontSize: wp(10),
-    fontWeight: "500",
+    fontWeight: "700",
 
     marginBottom: hp(3),
   },
