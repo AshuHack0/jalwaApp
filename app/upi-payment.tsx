@@ -106,7 +106,7 @@ export default function UPIPaymentScreen() {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                placeholder="SATYAJIT SAHOO"
+                placeholder="Please enter the UPI Name"
                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                 value={upiName}
                 onChangeText={setUpiName}

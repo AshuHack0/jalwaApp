@@ -531,18 +531,17 @@ export default function WinGoScreen() {
   const getResultColor = (num: number) => {
     const baseColor = getNumberColor(num);
 
-    if (baseColor === "green") return "#10B981";
-    if (baseColor === "red") return "#EF4444";
-    return "#8B5CF6";
+    if (baseColor === "green") return BET_SELECTION_MAP.green;
+    if (baseColor === "red") return BET_SELECTION_MAP.red;
+    return BET_SELECTION_MAP.violet;
   };
 
   const getColorDots = (num: number): string[] => {
-    const mapping = getColorMapping(num);
-    if (!mapping) return ["#10B981"];
-    if (mapping.color === COLOR_MAP.RED_VIOLET) return ["#EF4444", "#8B5CF6"];
-    if (mapping.color === COLOR_MAP.GREEN_VIOLET) return ["#10B981", "#8B5CF6"];
-    if (mapping.color === COLOR_MAP.RED) return ["#EF4444"];
-    return ["#10B981"];
+    return (
+      BET_SELECTION_NUMBER_MAP[
+        num.toString() as keyof typeof BET_SELECTION_NUMBER_MAP
+      ] || [BET_SELECTION_MAP.green]
+    );
   };
 
   const isGradientNumber = (num: number) => {
@@ -571,9 +570,9 @@ export default function WinGoScreen() {
       return { text: "Pending", color: "#EAB308" };
     }
     if (bet.isWin === true)
-      return { text: `+₹${bet.payoutAmount.toFixed(2)}`, color: "#10B981" };
+      return { text: `+₹${bet.payoutAmount.toFixed(2)}`, color: BET_SELECTION_MAP.green };
     if (bet.isWin === false)
-      return { text: `-₹${bet.amount.toFixed(2)}`, color: "#EF4444" };
+      return { text: `-₹${bet.amount.toFixed(2)}`, color: BET_SELECTION_MAP.red };
     return { text: "Pending", color: "#EAB308" };
   };
 
@@ -912,7 +911,7 @@ export default function WinGoScreen() {
                   {
                     width: wp(40),
                     height: "100%",
-                    backgroundColor: "#EF4444",
+                    backgroundColor: BET_SELECTION_MAP.red,
                     borderRadius: 100,
                     alignItems: "center",
                     justifyContent: "center",
@@ -932,7 +931,7 @@ export default function WinGoScreen() {
                   {
                     width: wp(40),
                     height: "100%",
-                    backgroundColor: "#10B981",
+                    backgroundColor: BET_SELECTION_MAP.green,
                     borderRadius: 100,
                     alignItems: "center",
                     justifyContent: "center",
@@ -1580,53 +1579,52 @@ export default function WinGoScreen() {
                   </ThemedText>
                 </View>
                 <View style={{ backgroundColor: "#021341" }}>
-                  {gameHistory.map((item, index) => (
-                    <View
-                      key={`history-${item.period}-${index}`}
-                      style={styles.tableRow}
-                    >
-                      <ThemedText style={[styles.periodCell, , { width: "45%", textAlign: "center" }]}>
-                        {item.period}
-                      </ThemedText>
-                      <View style={[styles.numberCell, { width: "15%" }]}>
-                        {isGradientNumber(item.number) ? (
-                          <MaskedView
-                            style={styles.gradientNumberMask}
-                            maskElement={
-                              <View
-                                style={{
-                                  backgroundColor: "transparent",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <Text
-                                  style={[
-                                    styles.numberText,
-                                    { color: "black", textAlign: "center" },
-                                  ]}
+                  {gameHistory.map((item, index) => {
+                    const dots = getColorDots(item.number);
+                    return (
+                      <View
+                        key={`history-${item.period}-${index}`}
+                        style={styles.tableRow}
+                      >
+                        <ThemedText style={[styles.periodCell, , { width: "45%", textAlign: "center" }]}>
+                          {item.period}
+                        </ThemedText>
+                        <View style={[styles.numberCell, { width: "15%" }]}>
+                          {isGradientNumber(item.number) ? (
+                            <MaskedView
+                              style={styles.gradientNumberMask}
+                              maskElement={
+                                <View
+                                  style={{
+                                    backgroundColor: "transparent",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                  }}
                                 >
+                                  <Text
+                                    style={[
+                                      styles.numberText,
+                                      { color: "black", textAlign: "center" },
+                                    ]}
+                                  >
+                                    {item.number}
+                                  </Text>
+                                </View>
+                              }
+                            >
+                              <LinearGradient
+                                colors={[dots[0], dots[0], dots[1], dots[1]]}
+                                locations={[0, 0.5, 0.5, 1]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 0, y: 1 }}
+                                style={styles.gradientNumberGradient}
+                              >
+                                <Text style={[styles.numberText, { opacity: 0 }]}>
                                   {item.number}
                                 </Text>
-                              </View>
-                            }
-                          >
-                            <LinearGradient
-                              colors={
-                                item.number === 0
-                                  ? ["#8B5CF6", "#EF4444"]
-                                  : ["#10B981", "#8B5CF6"]
-                              }
-                              start={{ x: 0, y: 1 }}
-                              end={{ x: 0, y: 0 }}
-                              style={styles.gradientNumberGradient}
-                            >
-                              <Text style={[styles.numberText, { opacity: 0 }]}>
-                                {item.number}
-                              </Text>
-                            </LinearGradient>
-                          </MaskedView>
-                        ) : (
+                              </LinearGradient>
+                            </MaskedView>
+                          ) : (
                           <ThemedText
                             style={[
                               styles.numberText,
@@ -1650,12 +1648,13 @@ export default function WinGoScreen() {
                             ]}
                           />
                         ))}
-                      </View>
-                    </View>
-                  ))}
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
                 </View>
-              </View>
-            ) : (
+              ) : (
               <View
                 style={{
                   flex: 1,
@@ -1728,7 +1727,7 @@ export default function WinGoScreen() {
                       return (
                         <View style={styles.statsTable}>
                           <View style={[styles.statsHeaderRow]}>
-                            <Text style={[styles.statsHeaderLeft, { width: "45%", textAlign: "left"}]}>Statistic</Text>
+                            <Text style={[styles.statsHeaderLeft, { width: "45%", textAlign: "left" }]}>Statistic</Text>
                             <Text style={[styles.statsHeaderRight, { width: "55%", textAlign: "left" }]}> (last 100 Periods)</Text>
                           </View>
                           <View style={styles.statsRow}>
@@ -1806,7 +1805,7 @@ export default function WinGoScreen() {
                             y1={centerY1}
                             x2={centerX2}
                             y2={centerY2}
-                            stroke="#EF4444"
+                            stroke={BET_SELECTION_MAP.red}
                             strokeWidth={1.5}
                           />
                         );
@@ -1855,27 +1854,28 @@ export default function WinGoScreen() {
                               if (isGradientNumber(n)) {
                                 const dots = getColorDots(n);
                                 return (
-                                  <LinearGradient
-                                    key={n}
-                                    colors={
-                                      [dots[0], dots[1]] as [string, string]
-                                    }
-                                    start={{ x: 0, y: 1 }}
-                                    end={{ x: 0, y: 0 }}
-                                    style={[
-                                      styles.chartNumberCircle,
-                                      styles.chartNumberCircleHighlighted,
-                                    ]}
-                                  >
-                                    <Text
+                                  <>
+                                    <View
                                       style={[
-                                        styles.chartNumberText,
-                                        { color: "#fff" },
+                                        styles.chartNumberCircle,
+                                        styles.chartNumberCircleHighlighted,
+                                        { borderWidth: isHighlighted ? 0 : 1, overflow: "hidden", position: "relative", transform: [{ rotate: "45deg" }] }
                                       ]}
                                     >
-                                      {n}
-                                    </Text>
-                                  </LinearGradient>
+
+                                      <View style={{ width: "50%", backgroundColor: dots[0], position: "absolute", top: 0, left: 0, height: "100%" }} />
+                                      <View style={{ width: "50%", backgroundColor: dots[1], position: "absolute", top: 0, right: 0, height: "100%" }} />
+                                      <Text
+                                        style={[
+                                          styles.chartNumberText,
+                                          { color: "#fff", transform: [{ rotate: "-45deg" }] },
+                                        ]}
+                                      >
+                                        {n}
+                                      </Text>
+                                    </View>
+
+                                  </>
                                 );
                               }
                               return (
@@ -1884,7 +1884,7 @@ export default function WinGoScreen() {
                                   style={[
                                     styles.chartNumberCircle,
                                     styles.chartNumberCircleHighlighted,
-                                    { backgroundColor: getResultColor(n) },
+                                    { backgroundColor: getResultColor(n), borderWidth: isHighlighted ? 0 : 1 },
                                   ]}
                                 >
                                   <Text
@@ -3086,7 +3086,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(3.2),
   },
   chartPeriod: {
-    fontSize: wp(4.2),
+    fontSize: wp(4),
     color: "#e3efff",
     fontWeight: "400",
     width: wp(40),
@@ -3434,11 +3434,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "59%",
+    top: "57%",
   },
   winLossTitle: {
     fontSize: wp(10),
-    fontWeight: "800",
+    fontWeight: "500",
 
     marginBottom: hp(3),
   },
@@ -3486,7 +3486,7 @@ const styles = StyleSheet.create({
   },
   winLossBonusAmount: {
     fontSize: wp(9),
-    fontWeight: "900",
+    fontWeight: "500",
     color: "#FF4500",
   },
   winLossLoseTitle: {
