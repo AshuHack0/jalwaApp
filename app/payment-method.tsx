@@ -34,19 +34,14 @@ export default function PaymentMethodScreen() {
         {/* Footer Button */}
         <View style={styles.footer}>
           <Pressable
-            style={styles.addButton}
+            style={styles.gradient}
             onPress={() => {
-              // For now, redirect to add-bank or a placeholder
-              router.push("/add-bank");
+              router.push("/upi-payment");
             }}
           >
-            <Pressable
-              style={styles.gradient}
-            >
-              <ThemedText style={styles.addButtonText}>
-                Add payment method
-              </ThemedText>
-            </Pressable>
+            <ThemedText style={styles.addButtonText}>
+              Add payment method
+            </ThemedText>
           </Pressable>
         </View>
       </ThemedView>
