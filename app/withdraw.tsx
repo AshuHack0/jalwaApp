@@ -451,7 +451,13 @@ export default function WithdrawScreen() {
             {(selectedMethod === "UPI" || selectedMethod === "USDT") && (
               <Pressable
                 style={styles.addBankBtn}
-                onPress={() => router.push("/payment-method")}
+                onPress={() => {
+                  if (selectedMethod === "USDT") {
+                    router.push("/add-usdt-address");
+                  } else {
+                    router.push("/payment-method");
+                  }
+                }}
               >
                 <View style={styles.addBankIconBox}>
                   <Ionicons name="add" size={28} color="#92A8E3" />
