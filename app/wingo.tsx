@@ -2778,7 +2778,7 @@ export default function WinGoScreen() {
               >
                 <Ionicons
                   name="close-circle-outline"
-                  size={wp(15)}
+                  size={wp(13)}
                   color="white"
                 />
               </Pressable>
@@ -3434,7 +3434,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "58%",
+    top: "26.2%",
   },
   winLossTitle: {
     fontSize: wp(10),
@@ -3449,7 +3449,7 @@ const styles = StyleSheet.create({
   },
   lotteryResultsRowLabel: {
     color: "#7190B4",
-    fontSize: wp(4.6),
+    fontSize: wp(4.4),
     marginRight: wp(2),
   },
   winLossResultBox: {
@@ -3462,7 +3462,7 @@ const styles = StyleSheet.create({
   },
   winLossResultBoxText: {
     color: "white",
-    fontSize: wp(4.5),
+    fontSize: wp(4.4),
     fontWeight: "600"
   },
   winLossResultNumber: {
@@ -3479,8 +3479,8 @@ const styles = StyleSheet.create({
     marginTop: hp(1.5),
   },
   winLossBonusTitle: {
-    fontSize: wp(5.5),
-    fontWeight: "700",
+    fontSize: wp(5.6),
+    fontWeight: "600",
     color: "#FF4500",
     marginBottom: hp(0.4),
   },
@@ -3500,7 +3500,7 @@ const styles = StyleSheet.create({
   },
   winLossPeriodText: {
     color: "#92A9E3",
-    fontSize: wp(4.5),
+    fontSize: wp(4.3),
     textAlign: "center",
   },
   winLossAutoClose: {
@@ -3511,10 +3511,10 @@ const styles = StyleSheet.create({
   },
   winLossAutoCloseText: {
     color: "#fff",
-    fontSize: wp(5),
+    fontSize: wp(4.6),
     marginLeft: wp(2),
   },
   winLossCloseButton: {
-    marginBottom: hp(40),
+    marginTop: -250
   },
 });
