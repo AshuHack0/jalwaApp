@@ -127,7 +127,7 @@ export function BetModal({
             <View style={styles.body}>
               {/* Balance */}
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Balance</ThemedText>
+                <ThemedText style={{ fontSize: 18, fontWeight: "400", color: "#E3EFFF" }}>Balance</ThemedText>
                 <View style={{ flexDirection: "row", gap: 6 }}>
                   {BALANCE_AMOUNTS.map((amt) => (
                     <Pressable
@@ -140,7 +140,7 @@ export function BetModal({
                     >
                       <ThemedText
                         style={[
-                          { fontSize: 15, fontWeight: "500", color: "#92A8E3" },
+                          { fontSize: 15, fontWeight: "400", color: "#92A8E3" },
                           selectedBalanceAmount === amt &&
                           { color: "white" },
                         ]}
@@ -154,7 +154,7 @@ export function BetModal({
 
               {/* Quantity */}
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-                <ThemedText style={{ fontSize: 18, fontWeight: "500", color: "#E3EFFF" }}>Quantity</ThemedText>
+                <ThemedText style={{ fontSize: 18, fontWeight: "400", color: "#E3EFFF" }}>Quantity</ThemedText>
                 <View style={{ flexDirection: "row", gap: 14 }}>
                   <Pressable
                     style={[styles.quantityBtn, { backgroundColor: headerColors[0] }]}
@@ -189,7 +189,7 @@ export function BetModal({
                   >
                     <ThemedText
                       style={[
-                        { fontSize: 14, fontWeight: "500", color: "#92A8E3" },
+                        { fontSize: 14, fontWeight: "400", color: "#92A8E3" },
                         selectedMultiplier === mult &&
                         { color: "white" },
                       ]}
@@ -215,8 +215,8 @@ export function BetModal({
                     <Ionicons name="checkmark" size={16} color="#fff" />
                   )}
                 </View>
-                <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
-                <ThemedText style={{ fontSize: 14, fontWeight: "500", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
+                <ThemedText style={{ fontSize: 14, fontWeight: "400", color: "#92A8E3", marginRight: 2 }}>I agree </ThemedText>
+                <ThemedText style={{ fontSize: 14, fontWeight: "400", color: "#Fd565d" }}>《Pre-sale rules》</ThemedText>
               </Pressable>
             </View>
 
@@ -226,7 +226,7 @@ export function BetModal({
                 style={{ flex: 1, paddingVertical: 10, backgroundColor: "#001C54", alignItems: "center" }}
                 onPress={onClose}
               >
-                <ThemedText style={{ fontSize: 16, fontWeight: "500", color: "#92A8E3" }}>Cancel</ThemedText>
+                <ThemedText style={{ fontSize: 16, fontWeight: "400", color: "#92A8E3" }}>Cancel</ThemedText>
               </Pressable>
               <Pressable
                 style={[
@@ -241,7 +241,7 @@ export function BetModal({
               >
                 <ThemedText
                   style={[
-                    { fontSize: 16, fontWeight: "500", color: "#fff" },
+                    { fontSize: 16, fontWeight: "400", color: "#fff" },
                     !agreed && { color: "#94a3b8" },
                   ]}
                 >
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: "400",
     color: "white",
     textAlign: "center",
   },
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   selectionText: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "400",
     color: "black"
   },
   body: {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#fff",
     marginBottom: 8,
   },
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#92A8E3",
   },
   amountTextActive: {
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   quantityBtnText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "400",
     color: "black",
   },
   quantityValue: {
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   quantityText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "400",
     color: "#fff",
   },
   multiplierRow: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   multiplierText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#92A8E3",
   },
   multiplierTextActive: {
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#fff",
   },
   confirmBtn: {
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   },
   confirmText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#fff",
   },
   confirmTextDisabled: {
