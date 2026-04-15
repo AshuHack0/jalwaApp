@@ -1,27 +1,33 @@
 import { ThemedView } from "@/components/themed-view";
 import {
+  getMyTransactions,
+  txAmountColor,
+  txTitle,
+  type TransactionRecord,
+} from "@/services/api/transaction";
+import {
   Roboto_400Regular,
   Roboto_500Medium,
   useFonts,
 } from "@expo-google-fonts/roboto";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
-import { useState } from "react";
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View,  } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type DropdownProps = {
   value: string;
   options: string[];
   onSelect: (option: string) => void;
-};
-
-type TransactionItem = {
-  title: string;
-  detail: string;
-  time: string;
-  balance: string;
-  amountColor: string;
 };
 
 const FILTER_OPTIONS = [
@@ -40,60 +46,25 @@ const DATE_OPTIONS = [
   "Last 30 days",
 ];
 
-const transactions: TransactionItem[] = [
-  {
-    title: "Game moved out",
-    detail: "Game moved out",
-    time: "2026-04-01 04:16:14",
-    balance: "195,208.23",
-    amountColor: "#17B15E",
-  },
-  {
-    title: "Game moved in",
-    detail: "Game moved in",
-    time: "2026-03-31 20:30:02",
-    balance: "194,970.00",
-    amountColor: "#D23838",
-  },
-  {
-    title: "Deposit",
-    detail: "Deposit",
-    time: "2026-03-30 20:23:41",
-    balance: "970.00",
-    amountColor: "#17B15E",
-  },
-  {
-    title: "Deposit",
-    detail: "Deposit",
-    time: "2026-03-30 03:02:27",
-    balance: "97,000.00",
-    amountColor: "#17B15E",
-  },
-  {
-    title: "Deposit",
-    detail: "Deposit",
-    time: "2026-03-31 00:03:23",
-    balance: "97,000.00",
-    amountColor: "#17B15E",
-  },
-  {
-    title: "Game moved in",
-    detail: "Game moved in",
-    time: "2026-03-30 18:15:55",
-    balance: "238.23",
-    amountColor: "#D23838",
-  },
-];
+function formatAmount(amount: number): string {
+  return amount.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatTime(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
 
 function Dropdown({ value, options, onSelect }: DropdownProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <Pressable
-        style={styles.dropdown}
-        onPress={() => setOpen(true)}
-      >
+      <Pressable style={styles.dropdown} onPress={() => setOpen(true)}>
         <Text style={styles.dropdownText}>{value}</Text>
         <Ionicons name="chevron-down" size={16} color="#89A4DF" />
       </Pressable>
@@ -108,7 +79,6 @@ function Dropdown({ value, options, onSelect }: DropdownProps) {
           <Pressable style={styles.dropdownMenu}>
             {options.map((option, index) => {
               const isSelected = option === value;
-
               return (
                 <Pressable
                   key={option}
@@ -140,7 +110,10 @@ function Dropdown({ value, options, onSelect }: DropdownProps) {
   );
 }
 
-function TransactionCard({ item }: { item: TransactionItem }) {
+function TransactionCard({ item }: { item: TransactionRecord }) {
+  const title = txTitle(item.type);
+  const color = txAmountColor(item.type);
+
   return (
     <View
       style={{
@@ -157,28 +130,28 @@ function TransactionCard({ item }: { item: TransactionItem }) {
           paddingVertical: 10,
         }}
       >
-        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardTitle}>{title}</Text>
       </View>
       <View style={styles.card}>
         <View style={styles.rowBox}>
           <View style={styles.rowContent}>
             <Text style={styles.rowLabel}>Detail</Text>
-            <Text style={styles.rowValue}>{item.detail}</Text>
+            <Text style={styles.rowValue}>{item.detail || title}</Text>
           </View>
         </View>
 
         <View style={styles.rowBox}>
           <View style={styles.rowContent}>
             <Text style={styles.rowLabel}>Time</Text>
-            <Text style={styles.rowValue}>{item.time}</Text>
+            <Text style={styles.rowValue}>{formatTime(item.createdAt)}</Text>
           </View>
         </View>
 
         <View style={styles.rowBox}>
           <View style={styles.rowContent}>
             <Text style={styles.rowLabel}>Balance</Text>
-            <Text style={[styles.balanceValue, { color: item.amountColor }]}>
-              ₹{item.balance}
+            <Text style={[styles.balanceValue, { color }]}>
+              ₹{formatAmount(item.amount)}
             </Text>
           </View>
         </View>
@@ -193,6 +166,9 @@ export default function TransactionHistoryScreen() {
   const insets = useSafeAreaInsets();
   const [selectedFilter, setSelectedFilter] = useState("All");
   const [selectedDate, setSelectedDate] = useState("Choose a date");
+  const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   useFonts({
     BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
@@ -202,15 +178,31 @@ export default function TransactionHistoryScreen() {
     Roboto_500Medium,
   });
 
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    getMyTransactions(1, selectedFilter, selectedDate).then((res) => {
+      if (cancelled) return;
+      if (res.success && res.data) {
+        setTransactions(res.data.transactions);
+        setHasMore(res.data.page < res.data.pages);
+      } else {
+        setTransactions([]);
+        setHasMore(false);
+      }
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedFilter, selectedDate]);
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ThemedView style={styles.container}>
         <View style={[styles.header, { paddingTop: insets.top + 6 }]}>
-          <Pressable
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="chevron-back" size={29} color="#DCE7FF" />
           </Pressable>
 
@@ -245,14 +237,26 @@ export default function TransactionHistoryScreen() {
             </View>
           </View>
 
-          {transactions.map((item, index) => (
-            <TransactionCard
-              key={`${item.title}-${item.time}-${index}`}
-              item={item}
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#89A4DF"
+              style={{ marginTop: 48 }}
             />
-          ))}
+          ) : transactions.length === 0 ? (
+            <Text style={styles.emptyText}>No transactions found</Text>
+          ) : (
+            transactions.map((item, index) => (
+              <TransactionCard
+                key={`${item._id}-${index}`}
+                item={item}
+              />
+            ))
+          )}
 
-          <Text style={styles.footerText}>No more</Text>
+          {!loading && !hasMore && transactions.length > 0 && (
+            <Text style={styles.footerText}>No more</Text>
+          )}
         </ScrollView>
       </ThemedView>
     </>
@@ -260,9 +264,7 @@ export default function TransactionHistoryScreen() {
 }
 
 const BG = "#05012B";
-const CARD_BG = "#0B2B69";
 const INNER_BG = "#080231";
-const INNER_EMPTY = "#0B245C";
 const MODAL_BG = "#11245B";
 const TEXT_MUTED = "#9AB4E9";
 const TEXT_WHITE = "#F3F7FF";
@@ -373,7 +375,7 @@ const styles = StyleSheet.create({
     color: "#e3efff",
     fontSize: 16,
     fontFamily: "BahnschriftSemibold",
-    fontWeight:"bold"
+    fontWeight: "bold",
   },
   rowBox: {
     backgroundColor: INNER_BG,
@@ -387,35 +389,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width:"100%"
+    width: "100%",
   },
   rowLabel: {
     color: TEXT_MUTED,
     fontSize: 13,
     lineHeight: 16,
     fontFamily: "Roboto_500Medium",
-    fontWeight:"600"
+    fontWeight: "600",
   },
   rowValue: {
     color: "#AFC4F4",
     fontSize: 13,
     lineHeight: 16,
     fontFamily: "Roboto_500Medium",
-    fontWeight:"600"
+    fontWeight: "600",
   },
   balanceValue: {
     fontSize: 17,
     lineHeight: 21,
     fontFamily: "BahnschriftSemibold",
-    fontWeight:"600"
+    fontWeight: "600",
   },
   cardFooterBox: {
     marginTop: 13,
     height: 78,
     borderRadius: 5,
-    // backgroundColor: INNER_EMPTY,
-    // borderWidth: 0.4,
-    // borderColor: "#173D86",
   },
   footerText: {
     color: "#F4F7FF",
@@ -424,5 +423,12 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontFamily: "Roboto_400Regular",
     marginTop: 3,
+  },
+  emptyText: {
+    color: TEXT_MUTED,
+    textAlign: "center",
+    fontSize: 14,
+    fontFamily: "Roboto_400Regular",
+    marginTop: 64,
   },
 });
