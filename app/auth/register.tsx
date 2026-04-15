@@ -16,7 +16,7 @@ export default function RegisterScreen() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
+  const [inviteCode, setInviteCode] = useState("22644115085");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(true);
@@ -249,6 +249,7 @@ export default function RegisterScreen() {
                   placeholder="Please enter the invitation code"
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   value={inviteCode}
+                  editable={false}
                   onChangeText={setInviteCode}
                 />
               </View>
