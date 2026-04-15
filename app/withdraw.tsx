@@ -61,7 +61,7 @@ function statusColor(status: WithdrawalRecord["status"]): string {
 
 export default function WithdrawScreen() {
   const router = useRouter();
-  const { walletBalance, refreshWallet } = useAuth();
+  const { walletBalance, refreshWallet, user } = useAuth();
   const { showToast } = useToast();
   const [withdrawAmount, setWithdrawAmount] = useState<string>("");
   const [usdtAmount, setUsdtAmount] = useState<string>("");
@@ -86,12 +86,14 @@ export default function WithdrawScreen() {
     }, []),
   );
 
-  const withdrawableBalance = walletBalance;
+  const totalDeposited = (user?.totalDeposited as number) ?? 0;
+  const withdrawableBalance = Math.max(0, walletBalance - totalDeposited);
   const parsedWithdraw = parseFloat(withdrawAmount.trim());
   const canSubmitWithdraw =
     withdrawAmount.trim() !== "" &&
     !Number.isNaN(parsedWithdraw) &&
-    parsedWithdraw >= MIN_WITHDRAW_INR;
+    parsedWithdraw >= MIN_WITHDRAW_INR &&
+    parsedWithdraw <= withdrawableBalance;
   const showMinimumWithdrawError =
     withdrawAmount.trim() !== "" &&
     !Number.isNaN(parsedWithdraw) &&
