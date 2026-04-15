@@ -3434,7 +3434,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "26%",
+    top: "27%",
   },
   winLossTitle: {
     fontSize: wp(10),
