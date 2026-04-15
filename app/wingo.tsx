@@ -2567,8 +2567,8 @@ export default function WinGoScreen() {
         <Modal
           transparent
           animationType="fade"
-          visible={winLossPopupVisible}
-          // visible={true}
+          // visible={winLossPopupVisible}
+          visible={true}
           onRequestClose={() => setWinLossPopupVisible(false)}
         >
           <View style={styles.winLossModalOverlay}>
@@ -2596,7 +2596,7 @@ export default function WinGoScreen() {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                top: 92
+                top: 98
               }]}>
                 <Text
                   style={[
@@ -3526,6 +3526,6 @@ const styles = StyleSheet.create({
     marginLeft: wp(2),
   },
   winLossCloseButton: {
-    marginTop: 20
+    marginTop: 30
   },
 });
