@@ -88,9 +88,10 @@ export default function SettingsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [tempNickname, setTempNickname] = useState<string>("");
 
+  
   const handleLoginPasswordPress = useCallback(async () => {
     const token = await getToken();
-    let url = "https://support.indgames.online/";
+    let url = "https://support.indgames.online/change-password";
     if (token) {
       url += `?token=${encodeURIComponent(token)}`;
     }

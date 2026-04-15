@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import type { DepositRecord } from "@/services/api/deposit";
 import { useMyDeposits } from "@/services/api/hooks/useDeposit";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Inter_400Regular,
   Inter_400Regular_Italic,
@@ -20,8 +21,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
+import { getToken } from "@/services/auth-storage";
 import {
   ActivityIndicator,
+  Linking,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -80,6 +83,7 @@ export default function DepositHistoryScreen() {
     Inter_Bold_Italic: Inter_700Bold_Italic,
   });
   const { data, isLoading, refetch, isRefetching } = useMyDeposits();
+  const { user } = useAuth();
 
   const [selectedFilter, setSelectedFilter] = useState<string>(filter || "All");
   const [selectedStatus, setSelectedStatus] = useState<string>("All");
@@ -377,7 +381,22 @@ export default function DepositHistoryScreen() {
 
 
                   {item.status === "pending" && <View>
-                    <Pressable style={{ width: "97%", height: 40, backgroundColor: "#00E8BD", justifyContent: "center", alignItems: "center", borderRadius: 100, marginBottom: 20, marginHorizontal: 5 }}>
+                    <Pressable onPress={async () => {
+                      const token = await getToken();
+                      // Try user object first, then decode from JWT payload
+                      let userId = (user as any)?._id || user?.id || "";
+                      if (!userId && token) {
+                        try {
+                          const payload = JSON.parse(atob(token.split(".")[1]));
+                          userId = payload.id || payload._id || "";
+                        } catch {}
+                      }
+                      const orderNo = item.merchantOrderNo || item._id;
+                      const url = token
+                        ? `https://support.indgames.online/deposit-not-receive?token=${token}&userId=${userId}&orderNumber=${orderNo}`
+                        : `https://support.indgames.online/deposit-not-receive?userId=${userId}&orderNumber=${orderNo}`;
+                      Linking.openURL(url);
+                    }} style={{ width: "97%", height: 40, backgroundColor: "#00E8BD", justifyContent: "center", alignItems: "center", borderRadius: 100, marginBottom: 20, marginHorizontal: 5 }}>
                       <ThemedText style={{ color: "white", fontSize: 16, fontFamily: "BahnschriftRegular" }}>Submit Receipt</ThemedText>
                     </Pressable>
                   </View>}
