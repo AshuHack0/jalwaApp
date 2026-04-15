@@ -133,7 +133,7 @@ export function BetModal({
                     <Pressable
                       key={amt}
                       style={[
-                        { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#05012B", alignItems: "center", justifyContent: "center", borderRadius: 6 },
+                        { paddingHorizontal: 12, paddingVertical: 4, backgroundColor: "#001C54", alignItems: "center", justifyContent: "center", borderRadius: 6 },
                         selectedBalanceAmount === amt && { backgroundColor: headerColors[0], borderRadius: 0 },
                       ]}
                       onPress={() => onBalanceAmountChange(amt)}
@@ -182,14 +182,14 @@ export function BetModal({
                   <Pressable
                     key={mult}
                     style={[
-                      { paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#05012B" },
+                      { paddingVertical: 6, paddingHorizontal: 14, borderRadius: 5, backgroundColor: "#001C54" },
                       selectedMultiplier === mult && { backgroundColor: headerColors[0], borderRadius: 0 },
                     ]}
                     onPress={() => handleMultiplierPress(mult)}
                   >
                     <ThemedText
                       style={[
-                        { fontSize: 14, fontWeight: "600", color: "#92A8E3" },
+                        { fontSize: 14, fontWeight: "500", color: "#92A8E3" },
                         selectedMultiplier === mult &&
                         { color: "white" },
                       ]}
@@ -223,10 +223,10 @@ export function BetModal({
             {/* Modal Footer */}
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
               <Pressable
-                style={{ flex: 1, paddingVertical: 10, backgroundColor: "#05012B", alignItems: "center" }}
+                style={{ flex: 1, paddingVertical: 10, backgroundColor: "#001C54", alignItems: "center" }}
                 onPress={onClose}
               >
-                <ThemedText style={{ fontSize: 16, fontWeight: "600", color: "#92A8E3" }}>Cancel</ThemedText>
+                <ThemedText style={{ fontSize: 16, fontWeight: "500", color: "#92A8E3" }}>Cancel</ThemedText>
               </Pressable>
               <Pressable
                 style={[
@@ -241,7 +241,7 @@ export function BetModal({
               >
                 <ThemedText
                   style={[
-                    { fontSize: 16, fontWeight: "600", color: "#fff" },
+                    { fontSize: 16, fontWeight: "500", color: "#fff" },
                     !agreed && { color: "#94a3b8" },
                   ]}
                 >
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   quantityBtnText: {
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "500",
     color: "black",
   },
   quantityValue: {
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   quantityText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
     color: "#fff",
   },
   multiplierRow: {

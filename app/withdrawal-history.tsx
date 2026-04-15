@@ -619,18 +619,17 @@ export default function WithdrawalHistoryScreen() {
                           </Pressable>
                         </View>
                       </View>
-
-                      {item.remark ? (
-                        <View style={styles.cardDetailsRow}>
-                          <ThemedText style={styles.detailLabel}>Remarks</ThemedText>
-                          <ThemedText style={styles.detailValue}>{item.remark}</ThemedText>
-                        </View>
-                      ) : (
-                        <View style={styles.cardDetailsRow}>
-                          <ThemedText style={styles.detailLabel}>Remarks</ThemedText>
-                          <ThemedText style={styles.detailValue}></ThemedText>
-                        </View>
+                      {item?.remark && (
+                        <>
+                          <View style={styles.cardDetailsRow}>
+                            <ThemedText style={styles.detailLabel}>Remarks</ThemedText>
+                          </View>
+                          <View style={{ minHeight: 60, width: "100%", backgroundColor: "#001D57", borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 }}>
+                            <ThemedText style={[styles.detailValue, { textAlign: "left" }]}>{item?.remark || "ddsdsdsdsds"}</ThemedText>
+                          </View>
+                        </>
                       )}
+
                     </View>
                   </View>
                 );

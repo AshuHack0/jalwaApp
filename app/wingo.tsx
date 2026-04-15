@@ -3434,7 +3434,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "26.2%",
+    top: "26%",
   },
   winLossTitle: {
     fontSize: wp(10),
@@ -3486,7 +3486,7 @@ const styles = StyleSheet.create({
   },
   winLossBonusAmount: {
     fontSize: wp(9),
-    fontWeight: "500",
+    fontWeight: "400",
     color: "#FF4500",
   },
   winLossLoseTitle: {
