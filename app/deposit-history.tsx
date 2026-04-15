@@ -31,6 +31,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { extractUID } from "./(tabs)/account";
 function statusColor(status: DepositRecord["status"]) {
   if (status === "completed") return "#17B15E"; // Bright Green from image
   if (status === "failed") return "#FF4D4D";
@@ -393,8 +394,8 @@ export default function DepositHistoryScreen() {
                       }
                       const orderNo = item.merchantOrderNo || item._id;
                       const url = token
-                        ? `https://support.indgames.online/deposit-not-receive?token=${token}&userId=${userId}&orderNumber=${orderNo}`
-                        : `https://support.indgames.online/deposit-not-receive?userId=${userId}&orderNumber=${orderNo}`;
+                        ? `https://support.indgames.online/deposit-not-receive?token=${token}&userId=${extractUID(userId)}&orderNumber=${orderNo}`
+                        : `https://support.indgames.online/deposit-not-receive?userId=${extractUID(userId)}&orderNumber=${orderNo}`;
                       Linking.openURL(url);
                     }} style={{ width: "97%", height: 40, backgroundColor: "#00E8BD", justifyContent: "center", alignItems: "center", borderRadius: 100, marginBottom: 20, marginHorizontal: 5 }}>
                       <ThemedText style={{ color: "white", fontSize: 16, fontFamily: "BahnschriftRegular" }}>Submit Receipt</ThemedText>

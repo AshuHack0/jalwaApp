@@ -2091,20 +2091,15 @@ export default function WinGoScreen() {
                                   style={[
                                     styles.myHistoryNumberText,
                                     bet.betType === "BIG_SMALL" && {
-                                      fontSize: wp(4),
+                                      fontSize: 11,
                                     },
                                   ]}
                                 >
-                                  {bet.betType === "BIG_SMALL"
-                                    ? bet.round?.outcomeBigSmall
-                                      ? bet.round.outcomeBigSmall
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      bet.round.outcomeBigSmall
-                                        .slice(1)
-                                        .toLowerCase()
-                                      : "?"
-                                    : outcomeNumber}
+                                  {
+                                    bet.betType === "BIG_SMALL"
+                                      ? bet.choiceBigSmall === "BIG" ? "Big" : "Small"
+                                      : outcomeNumber
+                                  }
                                 </Text>
                               </View>
                             );
@@ -2601,7 +2596,7 @@ export default function WinGoScreen() {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                top:92
+                top: 92
               }]}>
                 <Text
                   style={[
@@ -3249,7 +3244,7 @@ const styles = StyleSheet.create({
   },
   myHistoryNumberText: {
     color: "#fff",
-    fontSize: wp(8),
+    fontSize: 25,
     fontWeight: "500",
   },
   myHistoryMiddle: {

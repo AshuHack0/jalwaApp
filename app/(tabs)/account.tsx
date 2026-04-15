@@ -30,6 +30,24 @@ function formatBalance(amount: number): string {
   return `₹${amount.toFixed(2)}`;
 }
 
+function formatDate(dateString: string | number | undefined): string {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+export function extractUID(id: string | undefined): string {
+  if (!id) return "0000000";
+  const digits = id.replace(/\D/g, "");
+  return digits.slice(-7).padStart(7, "0");
+}
+
 export default function AccountScreen() {
   useFonts({
     BahnschriftRegular: require("@/assets/fonts/Bahnschrift-Regular.ttf"),
@@ -48,7 +66,7 @@ export default function AccountScreen() {
     Inter_Regular_Italic: Inter_400Regular_Italic,
   });
   const router = useRouter();
-  const { walletBalance, logout } = useAuth();
+  const { walletBalance, logout, user } = useAuth();
   useDepositModal();
   const [notificationCount] = useState(2);
   const [selectedAvatarId, setSelectedAvatarId] =
@@ -113,7 +131,7 @@ export default function AccountScreen() {
           <View style={styles.profileInfo}>
 
             <View style={styles.usernameRow}>
-              <ThemedText style={styles.username}>MEMBERNNGH2JM8</ThemedText>
+              <ThemedText style={styles.username}>{user?.nickname}</ThemedText>
               <Image
                 source={require("@/assets/pro.webp")}
                 style={{ width: 40, height: 40 }}
@@ -127,11 +145,11 @@ export default function AccountScreen() {
             >
               <ThemedText style={styles.uidLabel}>UID</ThemedText>
               <View style={{ width: 1, height: "60%", backgroundColor: "white" }} />
-              <ThemedText style={styles.uidValue}>9111383</ThemedText>
+              <ThemedText style={styles.uidValue}>{extractUID((user?._id as any))}</ThemedText>
               <Ionicons name="copy-outline" size={12} color="#fff" style={{ transform: [{ rotate: '90deg' }] }} />
             </Pressable>
             <ThemedText style={styles.lastLogin}>
-              Last login: 2026-01-25 23:01:42
+              Last login: {formatDate(user?.lastLogin as string | number)}
             </ThemedText>
           </View>
         </View>
