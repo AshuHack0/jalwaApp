@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
   },
   amountButton: {
     width: "30.5%",
-    borderWidth: 1,
-    borderColor: "#022c68",
+    borderWidth: 0.6,
+    borderColor: "#022C68",
     borderRadius: 4,
     padding: 4,
     flexDirection: "row",

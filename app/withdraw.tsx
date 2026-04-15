@@ -402,7 +402,7 @@ export default function WithdrawScreen() {
               (bankAccount && bankAccount.accountNumber ? (
                 <Pressable
                   style={styles.savedBankCard}
-                  onPress={() => router.push("/add-bank")}
+                  onPress={() => router.push("/bank-account-detail")}
                 >
                   <View style={styles.savedBankRow}>
                     <View style={styles.bankIconCircle}>
