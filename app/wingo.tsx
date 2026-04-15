@@ -539,7 +539,7 @@ export default function WinGoScreen() {
   const getColorDots = (num: number): string[] => {
     return (
       BET_SELECTION_NUMBER_MAP[
-        num.toString() as keyof typeof BET_SELECTION_NUMBER_MAP
+      num.toString() as keyof typeof BET_SELECTION_NUMBER_MAP
       ] || [BET_SELECTION_MAP.green]
     );
   };
@@ -1625,36 +1625,36 @@ export default function WinGoScreen() {
                               </LinearGradient>
                             </MaskedView>
                           ) : (
-                          <ThemedText
-                            style={[
-                              styles.numberText,
-                              { color: getResultColor(item.number) },
-                            ]}
-                          >
-                            {item.number}
-                          </ThemedText>
-                        )}
-                      </View>
-                      <ThemedText style={[styles.bigSmallCell, { width: "15%", textAlign: "center" }]}>
-                        {item.size}
-                      </ThemedText>
-                      <View style={[styles.colorDotsContainer, { width: "15%" }]}>
-                        {getColorDots(item.number).map((color, idx) => (
-                          <View
-                            key={idx}
-                            style={[
-                              styles.colorDot,
-                              { backgroundColor: color },
-                            ]}
-                          />
-                        ))}
-                          </View>
+                            <ThemedText
+                              style={[
+                                styles.numberText,
+                                { color: getResultColor(item.number) },
+                              ]}
+                            >
+                              {item.number}
+                            </ThemedText>
+                          )}
                         </View>
-                      );
-                    })}
-                  </View>
+                        <ThemedText style={[styles.bigSmallCell, { width: "15%", textAlign: "center" }]}>
+                          {item.size}
+                        </ThemedText>
+                        <View style={[styles.colorDotsContainer, { width: "15%" }]}>
+                          {getColorDots(item.number).map((color, idx) => (
+                            <View
+                              key={idx}
+                              style={[
+                                styles.colorDot,
+                                { backgroundColor: color },
+                              ]}
+                            />
+                          ))}
+                        </View>
+                      </View>
+                    );
+                  })}
                 </View>
-              ) : (
+              </View>
+            ) : (
               <View
                 style={{
                   flex: 1,
@@ -2577,18 +2577,32 @@ export default function WinGoScreen() {
           onRequestClose={() => setWinLossPopupVisible(false)}
         >
           <View style={styles.winLossModalOverlay}>
-            <View style={styles.winLossContentContainer}>
-              <Image
-                source={
-                  settledBet?.isWin
-                    ? require("@/assets/win.webp")
-                    : require("@/assets/loose.webp")
-                }
-                style={styles.winLossBackgroundImage}
-                contentFit="contain"
-              />
+            <View style={[styles.winLossContentContainer, {}]}>
 
-              <View style={styles.winLossPopupContent}>
+              <View style={[styles.winLossPopupContent, {
+                position: "absolute",
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }]}>
+                <Image
+                  source={
+                    settledBet?.isWin
+                      ? require("@/assets/win.webp")
+                      : require("@/assets/loose.webp")
+                  }
+                  style={styles.winLossBackgroundImage}
+                  contentFit="contain"
+                />
+              </View>
+
+              <View style={[styles.winLossPopupContent, {
+                position: "absolute",
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                top:92
+              }]}>
                 <Text
                   style={[
                     styles.winLossTitle,
@@ -2770,18 +2784,20 @@ export default function WinGoScreen() {
                     3 seconds auto close
                   </Text>
                 </View>
+
+
+                <Pressable
+                  style={styles.winLossCloseButton}
+                  onPress={() => setWinLossPopupVisible(false)}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={wp(13)}
+                    color="white"
+                  />
+                </Pressable>
               </View>
 
-              <Pressable
-                style={styles.winLossCloseButton}
-                onPress={() => setWinLossPopupVisible(false)}
-              >
-                <Ionicons
-                  name="close-circle-outline"
-                  size={wp(13)}
-                  color="white"
-                />
-              </Pressable>
             </View>
           </View>
         </Modal>
@@ -3415,7 +3431,7 @@ const styles = StyleSheet.create({
   },
   winLossModalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -3424,20 +3440,20 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
   winLossBackgroundImage: {
-    ...StyleSheet.absoluteFillObject,
-    width: "100%",
+    // ...StyleSheet.absoluteFillObject,
     height: "100%",
+    width: "96%",
   },
   winLossPopupContent: {
     width: "100%",
     height: "100%",
     alignItems: "center",
-    top: "27%",
   },
   winLossTitle: {
-    fontSize: wp(10),
+    fontSize: wp(8),
     fontWeight: "700",
 
     marginBottom: hp(3),
@@ -3515,6 +3531,6 @@ const styles = StyleSheet.create({
     marginLeft: wp(2),
   },
   winLossCloseButton: {
-    marginTop: -250
+    marginTop: 20
   },
 });
