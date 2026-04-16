@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ashutosh-sehgal-nit.jalwaApp"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,15 +41,7 @@
       ],
       [
         "expo-font",
-        {
-          // "fonts": [
-          //   "./assets/fonts/GillSans-Bold.ttf",
-          //   "./assets/fonts/GillSans-Heavy.ttf",
-          //   "./assets/fonts/GillSans-Medium.ttf",
-          //   "./assets/fonts/GillSans-Light.ttf",
-          //   "./assets/fonts/GillSans.ttf"h
-          // ]
-        }
+        {}
       ]
     ],
     "experiments": {
