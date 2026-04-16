@@ -2567,8 +2567,8 @@ export default function WinGoScreen() {
         <Modal
           transparent
           animationType="fade"
-          // visible={winLossPopupVisible}
-          visible={true}
+          visible={winLossPopupVisible}
+          // visible={true}
           onRequestClose={() => setWinLossPopupVisible(false)}
         >
           <View style={styles.winLossModalOverlay}>
