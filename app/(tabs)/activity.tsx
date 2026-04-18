@@ -160,12 +160,12 @@ export default function ActivityScreen() {
             <Pressable
               key={banner.id}
               style={styles.bannerCard}
-              onPress={() =>
-                router.push({
-                  pathname: "/activity/activity-details",
-                  params: { id: String(banner.id) },
-                } as Href)
-              }
+            // onPress={() =>
+            //   router.push({
+            //     pathname: "/activity/activity-details",
+            //     params: { id: String(banner.id) },
+            //   } as Href)
+            // }
             >
               {banner.id !== 1 && <View style={styles.bannerHeader}>
                 <Image
